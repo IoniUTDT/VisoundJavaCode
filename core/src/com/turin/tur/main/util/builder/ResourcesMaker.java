@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.ExperimentalObject;
+import com.turin.tur.main.diseno.Boxes.Box;
 import com.turin.tur.main.diseno.ExperimentalObject.JsonResourcesMetaData;
 import com.turin.tur.main.diseno.Trial.ResourceId;
 import com.turin.tur.main.util.Constants;
@@ -34,86 +35,31 @@ public class ResourcesMaker {
 		}
 		
 		// Crea los objetos reservados (por ahora textos de botones y categorias)
+/*		
 		Array<Texto> objetosTexto = objetosTexto();
 		for (Texto text : objetosTexto) {
 			SVG.SVGtexto(text);
 		}
-
+*/
 		// Crea los objetos
 		Array<Imagen> objetos = new Array<Imagen>();
 
 		boolean geometrias = true;
 		if (geometrias) {
-			if (Builder.AppVersion == "UmbralCompleto") {
-				JsonSetupExpSensibilidad setup = new JsonSetupExpSensibilidad();
-
-				// Creamos los recursos de -6 a 6 con saltos de 3
-				// Vamos a trabajar todas las cuentas en radianes
-				setup.nombre = "Eje horizontal";
-				setup.tag = "H";
-				setup.titaRefInicial = -6;
-				setup.saltoTitaRefInt = 3;
-				setup.saltoTitaRef = setup.saltoTitaRefInt;
-				setup.anguloMinimo = 0.5f;  
-				setup.anguloMaximo = 30;
-				setup.largo=80; // Largo de las lineas
-				setup.separacionMinima = 15; // Separacion predeterminada
-				setup.separacionIncremento = 10;
-				setup.cantidadReferencias = 5;
-				setup.cantidadSeparaciones = 2;
-				setup.cantidadDeltas = 50;   
-				objetos.addAll(recursosParalelismoAnalisisUmbral(setup));
-				
-				// Creamos los recursos de 10 a 80 con saltos de 10
-				// Vamos a trabajar todas las cuentas en radianes
-				setup.nombre = "Primer cuadrante";
-				setup.tag = "1C";
-				setup.titaRefInicial = 10;
-				setup.saltoTitaRefInt = 10;
-				setup.saltoTitaRef = setup.saltoTitaRefInt;
-				setup.anguloMinimo = 1f;  
-				setup.anguloMaximo = 30;
-				setup.largo=80; // Largo de las lineas
-				setup.separacionMinima = 15; // Separacion predeterminada
-				setup.separacionIncremento = 10;
-				setup.cantidadReferencias = 8;
-				setup.cantidadSeparaciones = 2;
-				setup.cantidadDeltas = 50;   
-				objetos.addAll(recursosParalelismoAnalisisUmbral(setup));
-				
-				// Creamos los recursos verticales
-				// Vamos a trabajar todas las cuentas en radianes
-				setup.nombre = "eje vertical";
-				setup.tag = "V";
-				setup.titaRefInicial = 86;
-				setup.saltoTitaRefInt = 2;
-				setup.saltoTitaRef = setup.saltoTitaRefInt;
-				setup.anguloMinimo = 0.02f;  
-				setup.anguloMaximo = 10;
-				setup.largo=80; // Largo de las lineas
-				setup.separacionMinima = 15; // Separacion predeterminada
-				setup.separacionIncremento = 10;
-				setup.cantidadReferencias = 5;
-				setup.cantidadSeparaciones = 2;
-				setup.cantidadDeltas = 50;   
-				objetos.addAll(recursosParalelismoAnalisisUmbral(setup));
-
-				// Creamos los recursos de 100 a 170 con saltos de 10
-				// Vamos a trabajar todas las cuentas en radianes
-				setup.nombre = "Segundo cuadrante";
-				setup.tag = "2C";
-				setup.titaRefInicial = 100;
-				setup.saltoTitaRefInt = 10;
-				setup.saltoTitaRef = setup.saltoTitaRefInt;
-				setup.anguloMinimo = 1f;  
-				setup.anguloMaximo = 30;
-				setup.largo=80; // Largo de las lineas
-				setup.separacionMinima = 15; // Separacion predeterminada
-				setup.separacionIncremento = 10;
-				setup.cantidadReferencias = 8;
-				setup.cantidadSeparaciones = 2;
-				setup.cantidadDeltas = 50;   
-				objetos.addAll(recursosParalelismoAnalisisUmbral(setup));
+			if (Builder.AppVersion == "UmbralCompleto")
+				extracted(objetos);
+			if (Builder.AppVersion == "UmbralCompletoAngulos") {
+				JsonSetupExpSensibilidadAngulos setup = new JsonSetupExpSensibilidadAngulos();
+				setup.nombre="SetupAngulosUmbral";
+				setup.saltoChico=1;
+				setup.saltoGrande=30;
+				/*
+				setup.angulosCriticos.add(0);
+				setup.angulosCriticos.add(90);
+				setup.angulosCriticos.add(180);
+				setup.angulosCriticos.add(270);
+				*/
+				recursosAnguloAnalisisUmbral(setup);
 			}
 		}
 		// Crea los archivos correspondientes
@@ -123,6 +69,81 @@ public class ResourcesMaker {
 
 		
 	}
+
+	private static void extracted(Array<Imagen> objetos) {
+		{
+			JsonSetupExpSensibilidad setup = new JsonSetupExpSensibilidad();
+
+			// Creamos los recursos de -6 a 6 con saltos de 3
+			// Vamos a trabajar todas las cuentas en radianes
+			setup.nombre = "Eje horizontal";
+			setup.tag = "H";
+			setup.titaRefInicial = -6;
+			setup.saltoTitaRefInt = 3;
+			setup.saltoTitaRef = setup.saltoTitaRefInt;
+			setup.anguloMinimo = 0.5f;  
+			setup.anguloMaximo = 30;
+			setup.largo=80; // Largo de las lineas
+			setup.separacionMinima = 15; // Separacion predeterminada
+			setup.separacionIncremento = 10;
+			setup.cantidadReferencias = 5;
+			setup.cantidadSeparaciones = 2;
+			setup.cantidadDeltas = 50;   
+			objetos.addAll(recursosParalelismoAnalisisUmbral(setup));
+			
+			// Creamos los recursos de 10 a 80 con saltos de 10
+			// Vamos a trabajar todas las cuentas en radianes
+			setup.nombre = "Primer cuadrante";
+			setup.tag = "1C";
+			setup.titaRefInicial = 10;
+			setup.saltoTitaRefInt = 10;
+			setup.saltoTitaRef = setup.saltoTitaRefInt;
+			setup.anguloMinimo = 1f;  
+			setup.anguloMaximo = 30;
+			setup.largo=80; // Largo de las lineas
+			setup.separacionMinima = 15; // Separacion predeterminada
+			setup.separacionIncremento = 10;
+			setup.cantidadReferencias = 8;
+			setup.cantidadSeparaciones = 2;
+			setup.cantidadDeltas = 50;   
+			objetos.addAll(recursosParalelismoAnalisisUmbral(setup));
+			
+			// Creamos los recursos verticales
+			// Vamos a trabajar todas las cuentas en radianes
+			setup.nombre = "eje vertical";
+			setup.tag = "V";
+			setup.titaRefInicial = 86;
+			setup.saltoTitaRefInt = 2;
+			setup.saltoTitaRef = setup.saltoTitaRefInt;
+			setup.anguloMinimo = 0.02f;  
+			setup.anguloMaximo = 10;
+			setup.largo=80; // Largo de las lineas
+			setup.separacionMinima = 15; // Separacion predeterminada
+			setup.separacionIncremento = 10;
+			setup.cantidadReferencias = 5;
+			setup.cantidadSeparaciones = 2;
+			setup.cantidadDeltas = 50;   
+			objetos.addAll(recursosParalelismoAnalisisUmbral(setup));
+
+			// Creamos los recursos de 100 a 170 con saltos de 10
+			// Vamos a trabajar todas las cuentas en radianes
+			setup.nombre = "Segundo cuadrante";
+			setup.tag = "2C";
+			setup.titaRefInicial = 100;
+			setup.saltoTitaRefInt = 10;
+			setup.saltoTitaRef = setup.saltoTitaRefInt;
+			setup.anguloMinimo = 1f;  
+			setup.anguloMaximo = 30;
+			setup.largo=80; // Largo de las lineas
+			setup.separacionMinima = 15; // Separacion predeterminada
+			setup.separacionIncremento = 10;
+			setup.cantidadReferencias = 8;
+			setup.cantidadSeparaciones = 2;
+			setup.cantidadDeltas = 50;   
+			objetos.addAll(recursosParalelismoAnalisisUmbral(setup));
+		}
+	}
+	
 
 	private static Array<Texto> objetosTexto() {
 		Array<Texto> objetos = new Array<Texto>();
@@ -144,6 +165,93 @@ public class ResourcesMaker {
 		return objetos;
 	}
 
+	
+	/*
+	 * Esta rutin crea los recursos de angulos necesarios segun parametros que se pasan en la clase setup
+	 */
+	private static Array<Imagen> recursosAnguloAnalisisUmbral(JsonSetupExpSensibilidadAngulos setup) {
+		
+		float largo;
+		if (width>height) {
+			largo = height;
+		} else {
+			largo = width;
+		}
+		// Array de imagenes creadas
+		Array<Imagen> objetos = new Array<Imagen>();
+		
+		Array<Integer> angulos = new Array<Integer>(); // Genera un array con todos los angulos en los que se debe dibujar angulos
+		for (int i=0; i<=360; i=i+setup.saltoGrande) {
+			angulos.add(i);
+			if (setup.angulosCriticos.contains(i,false)){ // Si es un angulo critico
+				int numeroDeAngulosExtra = setup.saltoGrande/setup.saltoChico;
+				for (int j=1; j<numeroDeAngulosExtra; j++) {
+					int value = j*setup.saltoChico+i;
+					if (value < 0) {
+						value = 360 + value; 
+					}
+					angulos.add(value);
+					value = -j*setup.saltoChico+i;
+					if (value < 0) {
+						value = 360 + value; 
+					}
+					angulos.add(value);
+				}
+			}
+		}
+		
+		for (int angulo1 : angulos) {
+			for (int angulo2: angulos) {
+				if (angulo1<angulo2) {
+					Imagen imagen = crearImagen();
+					float Xcenter = width/2;
+					float Ycenter = height/2;
+					imagen.infoConceptualAngulos.direccionLado1 = angulo1;
+					imagen.infoConceptualAngulos.direccionLado2 = angulo2;
+					int deltaAngulo = angulo2-angulo1;
+					imagen.infoConceptualAngulos.separacionAngular = deltaAngulo;
+					if (deltaAngulo < 90) {
+						imagen.infoConceptualAngulos.categoriaAngulo = CategoriaAngulo.Agudo;
+						imagen.categories.add(Categorias.Agudo);
+					} else {
+						if (deltaAngulo > 90) {
+							imagen.infoConceptualAngulos.categoriaAngulo = CategoriaAngulo.Grave;
+							imagen.categories.add(Categorias.Grave);
+						} else {
+							imagen.infoConceptualAngulos.categoriaAngulo = CategoriaAngulo.Recto;
+							imagen.categories.add(Categorias.Recto);
+						}
+					}
+					// agrega la primer linea
+					InfoLinea infoLinea = new InfoLinea();
+					infoLinea.angulo=angulo1;
+					infoLinea.largo=largo/2;
+					infoLinea.Xcenter = (float) (Xcenter + largo/4 * MathUtils.cosDeg(angulo1));
+					infoLinea.Ycenter = (float) (Ycenter + largo/4 * MathUtils.sinDeg(angulo1));
+					imagen.parametros.addAll(ExtremosLinea.Linea(infoLinea));
+					imagen.infoLineas.add(infoLinea);
+					// agrega la segunda linea
+					infoLinea = new InfoLinea();
+					infoLinea.angulo=angulo2;
+					infoLinea.largo=largo/2;
+					infoLinea.Xcenter = (float) (Xcenter + largo/4 * MathUtils.cosDeg(angulo2));
+					infoLinea.Ycenter = (float) (Ycenter + largo/4 * MathUtils.sinDeg(angulo2));
+					imagen.parametros.addAll(ExtremosLinea.Linea(infoLinea));
+					imagen.infoLineas.add(infoLinea);
+					
+					imagen.comments = "Imagen generada por secuencia automatica 'recursosAnguloAnalisisUmbral'.";
+					imagen.name = "Imagen de angulos generada automaticamente";
+					imagen.idVinculo = "";
+					imagen.categories.add(Categorias.Angulo);
+					imagen.nivelDificultad = -1;
+					objetos.add(imagen);
+				}
+			}
+		}
+		
+		return null;
+	}
+	
 	/*
 	 * Esta es una clase para manejar el setup experimental del diseño de experimento donde se quiere medir la sensibilidad al detectar el delta tita
 	 */
@@ -164,6 +272,17 @@ public class ResourcesMaker {
 		int cantidadDeltas; // Cantidad de delta titas que se generan en cada condicion de angulo de referencia y de separacion	
 		public String tagRefPos="+"; // Guarda el tag de la ref positiva
 		public String tagRefNeg="-"; // Guarda el tag de la ref negativa
+	}
+	
+	/*
+	 * Esta es una clase para manejar el setup experimental del diseño de experimentos para medir sensibilidad en angulos.
+	 * Todos los angulos estan en grados
+	 */
+	public static class JsonSetupExpSensibilidadAngulos{
+		public String nombre; // Nombre del setup
+		public int saltoGrande;
+		public int saltoChico;
+		public Array<Integer> angulosCriticos = new Array<Integer>(); // Nota: tiene que estar entre los angulo pertenecientes al salto grande para que los considere
 	}
 	
 	private static Array<Imagen> recursosParalelismoAnalisisUmbral(JsonSetupExpSensibilidad setup) {
@@ -204,7 +323,7 @@ public class ResourcesMaker {
 				float Xcenter2 = width/2 + separacion/2 * MathUtils.sinDeg(anguloReferencia);
 				float Ycenter1 = width/2 - separacion/2 * MathUtils.cosDeg(anguloReferencia);
 				float Ycenter2 = width/2 + separacion/2 * MathUtils.cosDeg(anguloReferencia);
-				imagen.infoConceptual.direccionAnguloReferencia = anguloReferencia;
+				imagen.infoConceptualParalelismo.direccionAnguloReferencia = anguloReferencia;
 				
 				// agrega la primer linea
 				InfoLinea infoLinea = new InfoLinea();
@@ -224,9 +343,9 @@ public class ResourcesMaker {
 				imagen.infoLineas.add(infoLinea);
 				// Datos generales
 				// Nota, aca no tiene sentido poner ni parametro linelizado ni si se juntan! ...
-				imagen.infoConceptual.deltaAnguloLinealizado=0;
-				imagen.infoConceptual.deltaAngulo=0;
-				imagen.infoConceptual.separacion=separacion;
+				imagen.infoConceptualParalelismo.deltaAnguloLinealizado=0;
+				imagen.infoConceptualParalelismo.deltaAngulo=0;
+				imagen.infoConceptualParalelismo.separacion=separacion;
 				
 				imagen.comments = "Imagen generada por secuencia automatica 'recursosParalelismoAnalisisUmbral'.";
 				imagen.name = "Imagen de rectas no paralelas generada automaticamente";
@@ -246,11 +365,11 @@ public class ResourcesMaker {
 					imagen = crearImagen();
 					
 					// Almacenamos la data de la info de la geometria que queremos estudiar.
-					imagen.infoConceptual.deltaAngulo = anguloDelta;
-					imagen.infoConceptual.deltaAnguloLinealizado = k;
-					imagen.infoConceptual.direccionAnguloReferencia = anguloReferencia;
-					imagen.infoConceptual.seJuntan = true;
-					imagen.infoConceptual.separacion = separacion;
+					imagen.infoConceptualParalelismo.deltaAngulo = anguloDelta;
+					imagen.infoConceptualParalelismo.deltaAnguloLinealizado = k;
+					imagen.infoConceptualParalelismo.direccionAnguloReferencia = anguloReferencia;
+					imagen.infoConceptualParalelismo.seJuntan = true;
+					imagen.infoConceptualParalelismo.separacion = separacion;
 					
 					// agrega la primer linea
 					infoLinea = new InfoLinea();
@@ -283,11 +402,11 @@ public class ResourcesMaker {
 						System.out.println(imagenRefNeg.resourceId.id);
 						
 						// Almacenamos la data de la info de la geometria que queremos estudiar.
-						imagenRefNeg.infoConceptual.deltaAngulo = anguloDelta;
-						imagenRefNeg.infoConceptual.deltaAnguloLinealizado = k;
-						imagenRefNeg.infoConceptual.direccionAnguloReferencia = anguloReferencia;
-						imagenRefNeg.infoConceptual.seJuntan = true;
-						imagenRefNeg.infoConceptual.separacion = separacion;
+						imagenRefNeg.infoConceptualParalelismo.deltaAngulo = anguloDelta;
+						imagenRefNeg.infoConceptualParalelismo.deltaAnguloLinealizado = k;
+						imagenRefNeg.infoConceptualParalelismo.direccionAnguloReferencia = anguloReferencia;
+						imagenRefNeg.infoConceptualParalelismo.seJuntan = true;
+						imagenRefNeg.infoConceptualParalelismo.separacion = separacion;
 						
 						// agrega la primer linea
 						infoLinea = new InfoLinea();
@@ -321,11 +440,11 @@ public class ResourcesMaker {
 					imagen = crearImagen();
 					
 					// Almacenamos la data de la info de la geometria que queremos estudiar.
-					imagen.infoConceptual.deltaAngulo = anguloDelta;
-					imagen.infoConceptual.deltaAnguloLinealizado = k;
-					imagen.infoConceptual.direccionAnguloReferencia = anguloReferencia;
-					imagen.infoConceptual.seJuntan = false;
-					imagen.infoConceptual.separacion = separacion;
+					imagen.infoConceptualParalelismo.deltaAngulo = anguloDelta;
+					imagen.infoConceptualParalelismo.deltaAnguloLinealizado = k;
+					imagen.infoConceptualParalelismo.direccionAnguloReferencia = anguloReferencia;
+					imagen.infoConceptualParalelismo.seJuntan = false;
+					imagen.infoConceptualParalelismo.separacion = separacion;
 					
 					// agrega la primer linea
 					infoLinea = new InfoLinea();
@@ -359,11 +478,11 @@ public class ResourcesMaker {
 						System.out.println(imagenPos.resourceId.id);
 						
 						// Almacenamos la data de la info de la geometria que queremos estudiar.
-						imagenPos.infoConceptual.deltaAngulo = anguloDelta;
-						imagenPos.infoConceptual.deltaAnguloLinealizado = k;
-						imagenPos.infoConceptual.direccionAnguloReferencia = anguloReferencia;
-						imagenPos.infoConceptual.seJuntan = false;
-						imagenPos.infoConceptual.separacion = separacion;
+						imagenPos.infoConceptualParalelismo.deltaAngulo = anguloDelta;
+						imagenPos.infoConceptualParalelismo.deltaAnguloLinealizado = k;
+						imagenPos.infoConceptualParalelismo.direccionAnguloReferencia = anguloReferencia;
+						imagenPos.infoConceptualParalelismo.seJuntan = false;
+						imagenPos.infoConceptualParalelismo.separacion = separacion;
 						
 						// agrega la primer linea
 						infoLinea = new InfoLinea();
@@ -419,7 +538,7 @@ public class ResourcesMaker {
 		Imagen imagen = new Imagen();
 		imagen.resourceId.id = contadorDeRecursos;
 		imagen.resourceId.resourceVersion = Builder.ResourceVersion;
-		imagen.infoConceptual = new InfoConcelptualExpSensibilidad();
+		imagen.infoConceptualParalelismo = new InfoConceptualParalelismo();
 		return imagen;
 	}
 	
@@ -432,16 +551,26 @@ public class ResourcesMaker {
 		Array<InfoLinea> infoLineas = new Array<InfoLinea>();
 		String idVinculo; // Sirve para identificar cuando varias imagenes pertenecen a un mismo subgrupo
 		int nivelDificultad = -1; // Define un nivel de dificultad, 1 es el mas facil. -1 implica que no esta catalogado por dificultad y 0 que es compatible con cualquier dificultad (en gral para usar en las referencias, por ej rectas paralelas con las que se compara)
-		InfoConcelptualExpSensibilidad infoConceptual;
+		InfoConceptualParalelismo infoConceptualParalelismo;
+		InfoConceptualAngulos infoConceptualAngulos = new InfoConceptualAngulos();
 	}
 	
-	public static class InfoConcelptualExpSensibilidad {
+	public static class InfoConceptualParalelismo {
 		public float direccionAnguloReferencia;
 		public float deltaAngulo;
 		public int deltaAnguloLinealizado;
 		public boolean seJuntan;
 		public float separacion; 
 		public String DescripcionDeParametros = "AnguloReferencia: direccion media entre las dos rectas; deltaAngulo: diferencia entre los angulos de ambas rectas, siempre en modulo; deltaAnguloLinealizado: el mismo parametro pero transformado de manera que una escala linea tenga mas densidad en angulos chicos; seJuntan: diferencia si las rectas se van juntando en la direccion de referencia o se van separando; separacion: deparacion en el punto medio"; 
+	}
+	
+	public static class InfoConceptualAngulos {
+		public float direccionLado1;
+		public float direccionLado2;
+		public float separacionAngular;
+		public CategoriaAngulo categoriaAngulo;
+		public boolean critico;
+		public String DescripcionParametros = "Se almacena (todo en grados) la direccion de ambos lados, el angulo formado entre ambos lados, si el angulo es agudo recto o grave, y si e critico, o sea, alguno de los lados esta sobre un eje.";
 	}
 	
 	public static class SVG {
@@ -502,7 +631,7 @@ public class ResourcesMaker {
 			jsonMetaData.infoLineas = imagen.infoLineas;
 			jsonMetaData.parametros = imagen.parametros;
 			jsonMetaData.nivelDificultad = imagen.nivelDificultad;
-			jsonMetaData.infoConceptual = imagen.infoConceptual;
+			jsonMetaData.infoConceptual = imagen.infoConceptualParalelismo;
 			ExperimentalObject.JsonResourcesMetaData.CreateJsonMetaData(jsonMetaData, Resources.Paths.currentVersionPath);
 
 		}
@@ -617,5 +746,9 @@ public class ResourcesMaker {
 			lineas.add(p2);
 			return lineas;
 		}
+	}
+	
+	public static enum CategoriaAngulo {
+		Agudo, Recto, Grave;
 	}
 }

@@ -9,7 +9,7 @@ import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeLEVEL;
 import com.turin.tur.main.util.FileHelper;
-import com.turin.tur.main.util.builder.ResourcesMaker.InfoConcelptualExpSensibilidad;
+import com.turin.tur.main.util.builder.ResourcesMaker.InfoConceptualParalelismo;
 
 
 public class Level {
@@ -192,7 +192,7 @@ public class Level {
 	public static class AnalisisUmbral {
 		public static class DetectionObject {
 			public boolean answerTrue;
-			public InfoConcelptualExpSensibilidad infoConceptual;
+			public InfoConceptualParalelismo infoConceptual;
 		}
 		
 		public float anguloReferencia;
