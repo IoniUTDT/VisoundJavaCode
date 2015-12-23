@@ -35,12 +35,12 @@ public class ResourcesMaker {
 		}
 		
 		// Crea los objetos reservados (por ahora textos de botones y categorias)
-/*		
+		
 		Array<Texto> objetosTexto = objetosTexto();
 		for (Texto text : objetosTexto) {
 			SVG.SVGtexto(text);
 		}
-*/
+
 		// Crea los objetos
 		Array<Imagen> objetos = new Array<Imagen>();
 
@@ -51,15 +51,13 @@ public class ResourcesMaker {
 			if (Builder.AppVersion == "UmbralCompletoAngulos") {
 				JsonSetupExpSensibilidadAngulos setup = new JsonSetupExpSensibilidadAngulos();
 				setup.nombre="SetupAngulosUmbral";
-				setup.saltoChico=1;
-				setup.saltoGrande=30;
-				/*
+				setup.saltoChico=2;
+				setup.saltoGrande=10;
 				setup.angulosCriticos.add(0);
 				setup.angulosCriticos.add(90);
 				setup.angulosCriticos.add(180);
 				setup.angulosCriticos.add(270);
-				*/
-				recursosAnguloAnalisisUmbral(setup);
+				objetos.addAll(recursosAnguloAnalisisUmbral(setup));
 			}
 		}
 		// Crea los archivos correspondientes
@@ -72,7 +70,7 @@ public class ResourcesMaker {
 
 	private static void extracted(Array<Imagen> objetos) {
 		{
-			JsonSetupExpSensibilidad setup = new JsonSetupExpSensibilidad();
+			JsonSetupExpSensibilidadParalelismo setup = new JsonSetupExpSensibilidadParalelismo();
 
 			// Creamos los recursos de -6 a 6 con saltos de 3
 			// Vamos a trabajar todas las cuentas en radianes
@@ -180,9 +178,10 @@ public class ResourcesMaker {
 		// Array de imagenes creadas
 		Array<Imagen> objetos = new Array<Imagen>();
 		
-		Array<Integer> angulos = new Array<Integer>(); // Genera un array con todos los angulos en los que se debe dibujar angulos
+		Array<Integer> angulosNoDetalle = new Array<Integer>(); // Genera un array con todos los angulos en los que se debe dibujar angulos de al salto grande
+		Array<Integer> angulosDetalle = new Array<Integer>(); // Genera un array con todos los angulos en los que se debe dibujar angulos de al salto chico
 		for (int i=0; i<=360; i=i+setup.saltoGrande) {
-			angulos.add(i);
+			angulosNoDetalle.add(i);
 			if (setup.angulosCriticos.contains(i,false)){ // Si es un angulo critico
 				int numeroDeAngulosExtra = setup.saltoGrande/setup.saltoChico;
 				for (int j=1; j<numeroDeAngulosExtra; j++) {
@@ -190,72 +189,84 @@ public class ResourcesMaker {
 					if (value < 0) {
 						value = 360 + value; 
 					}
-					angulos.add(value);
+					angulosDetalle.add(value);
 					value = -j*setup.saltoChico+i;
 					if (value < 0) {
 						value = 360 + value; 
 					}
-					angulos.add(value);
+					angulosDetalle.add(value);
 				}
 			}
 		}
+		Array<Integer> angulos = new Array<Integer>(); // Genera un array con todos los angulos en los que se debe dibujar angulos
+		angulos.addAll(angulosDetalle);
+		angulos.addAll(angulosNoDetalle);
 		
-		for (int angulo1 : angulos) {
-			for (int angulo2: angulos) {
-				if (angulo1<angulo2) {
-					Imagen imagen = crearImagen();
-					float Xcenter = width/2;
-					float Ycenter = height/2;
-					imagen.infoConceptualAngulos.direccionLado1 = angulo1;
-					imagen.infoConceptualAngulos.direccionLado2 = angulo2;
-					int deltaAngulo = angulo2-angulo1;
-					imagen.infoConceptualAngulos.separacionAngular = deltaAngulo;
-					if (deltaAngulo < 90) {
-						imagen.infoConceptualAngulos.categoriaAngulo = CategoriaAngulo.Agudo;
-						imagen.categories.add(Categorias.Agudo);
-					} else {
-						if (deltaAngulo > 90) {
-							imagen.infoConceptualAngulos.categoriaAngulo = CategoriaAngulo.Grave;
-							imagen.categories.add(Categorias.Grave);
-						} else {
-							imagen.infoConceptualAngulos.categoriaAngulo = CategoriaAngulo.Recto;
-							imagen.categories.add(Categorias.Recto);
-						}
-					}
-					// agrega la primer linea
-					InfoLinea infoLinea = new InfoLinea();
-					infoLinea.angulo=angulo1;
-					infoLinea.largo=largo/2;
-					infoLinea.Xcenter = (float) (Xcenter + largo/4 * MathUtils.cosDeg(angulo1));
-					infoLinea.Ycenter = (float) (Ycenter + largo/4 * MathUtils.sinDeg(angulo1));
-					imagen.parametros.addAll(ExtremosLinea.Linea(infoLinea));
-					imagen.infoLineas.add(infoLinea);
-					// agrega la segunda linea
-					infoLinea = new InfoLinea();
-					infoLinea.angulo=angulo2;
-					infoLinea.largo=largo/2;
-					infoLinea.Xcenter = (float) (Xcenter + largo/4 * MathUtils.cosDeg(angulo2));
-					infoLinea.Ycenter = (float) (Ycenter + largo/4 * MathUtils.sinDeg(angulo2));
-					imagen.parametros.addAll(ExtremosLinea.Linea(infoLinea));
-					imagen.infoLineas.add(infoLinea);
+		for (int indice1 = 0; indice1<angulos.size ; indice1++) {
+			for (int indice2 = indice1 +1; indice2<angulos.size-1; indice2++) {
+				int angulo1 = angulos.get(indice1);
+				int angulo2 = angulos.get(indice2);
+				
+				if (angulosNoDetalle.contains(angulo1, false) || angulosNoDetalle.contains(angulo2, false)) {
 					
-					imagen.comments = "Imagen generada por secuencia automatica 'recursosAnguloAnalisisUmbral'.";
-					imagen.name = "Imagen de angulos generada automaticamente";
-					imagen.idVinculo = "";
-					imagen.categories.add(Categorias.Angulo);
-					imagen.nivelDificultad = -1;
-					objetos.add(imagen);
+					int deltaAngulo = angulo2-angulo1;
+					
+					if (deltaAngulo >= setup.saltoGrande) { 
+						Imagen imagen = crearImagen();
+						float Xcenter = width/2;
+						float Ycenter = height/2;
+						imagen.infoConceptualAngulos.direccionLado1 = angulo1;
+						imagen.infoConceptualAngulos.direccionLado2 = angulo2;
+						
+						imagen.infoConceptualAngulos.separacionAngular = deltaAngulo;
+						if (deltaAngulo < 90) {
+							imagen.infoConceptualAngulos.categoriaAngulo = CategoriaAngulo.Agudo;
+							imagen.categories.add(Categorias.Agudo);
+						} else {
+							if (deltaAngulo > 90) {
+								imagen.infoConceptualAngulos.categoriaAngulo = CategoriaAngulo.Grave;
+								imagen.categories.add(Categorias.Grave);
+							} else {
+								imagen.infoConceptualAngulos.categoriaAngulo = CategoriaAngulo.Recto;
+								imagen.categories.add(Categorias.Recto);
+							}
+						}
+						// agrega la primer linea
+						InfoLinea infoLinea = new InfoLinea();
+						infoLinea.angulo=angulo1;
+						infoLinea.largo=largo/2;
+						infoLinea.Xcenter = (float) (Xcenter + largo/4 * MathUtils.cosDeg(angulo1));
+						infoLinea.Ycenter = (float) (Ycenter - largo/4 * MathUtils.sinDeg(angulo1)); //TODO: revisar q onda la notacion y los ejes!
+						imagen.parametros.addAll(ExtremosLinea.Linea(infoLinea));
+						imagen.infoLineas.add(infoLinea);
+						// agrega la segunda linea
+						infoLinea = new InfoLinea();
+						infoLinea.angulo=angulo2;
+						infoLinea.largo=largo/2;
+						infoLinea.Xcenter = (float) (Xcenter + largo/4 * MathUtils.cosDeg(angulo2));
+						infoLinea.Ycenter = (float) (Ycenter - largo/4 * MathUtils.sinDeg(angulo2));//TODO: revisar que onda la notacion y los ejes!
+						imagen.parametros.addAll(ExtremosLinea.Linea(infoLinea));
+						imagen.infoLineas.add(infoLinea);
+						
+						imagen.comments = "Imagen generada por secuencia automatica 'recursosAnguloAnalisisUmbral'.";
+						imagen.name = "Imagen de angulos generada automaticamente";
+						imagen.idVinculo = "";
+						imagen.categories.add(Categorias.Angulo);
+						imagen.nivelDificultad = -1;
+						objetos.add(imagen);
+					}
 				}
 			}
 		}
 		
-		return null;
+		saveSetupAngulos(setup);
+		return objetos;
 	}
 	
 	/*
 	 * Esta es una clase para manejar el setup experimental del diseño de experimento donde se quiere medir la sensibilidad al detectar el delta tita
 	 */
-	public static class JsonSetupExpSensibilidad {
+	public static class JsonSetupExpSensibilidadParalelismo {
 		public String tag;
 		// Vamos a trabajar todas las cuentas en radianes
 		String nombre; // Nombre del setup
@@ -285,7 +296,7 @@ public class ResourcesMaker {
 		public Array<Integer> angulosCriticos = new Array<Integer>(); // Nota: tiene que estar entre los angulo pertenecientes al salto grande para que los considere
 	}
 	
-	private static Array<Imagen> recursosParalelismoAnalisisUmbral(JsonSetupExpSensibilidad setup) {
+	private static Array<Imagen> recursosParalelismoAnalisisUmbral(JsonSetupExpSensibilidadParalelismo setup) {
 		
 		/*
 		 * Queremos mapear una escala log en una lineal, es decir que parametro [pmin-->pmax] mapee angulos que van de anguloMin --> angluloMax de manera que p = 1/A*log(1/B*angulo)
@@ -521,18 +532,25 @@ public class ResourcesMaker {
 				System.out.println("Warning! : No se creo el recurso negativo de referencia!");
 			}
 		} // Termina el loop de referencias
-		saveSetup(setup);
+		saveSetupParalelismo(setup);
 		contadorDeReferenciasUmbral = contadorDeReferenciasUmbral + setup.cantidadReferencias;
 		return objetos;
 	}
 	
-	private static void saveSetup(JsonSetupExpSensibilidad jsonSetup) {
+	private static void saveSetupParalelismo(JsonSetupExpSensibilidadParalelismo jsonSetup) {
 		String path = Resources.Paths.currentVersionPath+"/extras/jsonSetup"+contadorDeReferenciasUmbral+".meta";
 		Json json = new Json();
 		json.setUsePrototypes(false);
 		FileHelper.writeFile(path, json.toJson(jsonSetup));
 	}
-		
+
+	private static void saveSetupAngulos(JsonSetupExpSensibilidadAngulos jsonSetup) {
+		String path = Resources.Paths.currentVersionPath+"/extras/jsonSetup"+contadorDeReferenciasUmbral+".meta";
+		Json json = new Json();
+		json.setUsePrototypes(false);
+		FileHelper.writeFile(path, json.toJson(jsonSetup));
+	}
+
 	private static Imagen crearImagen() {
 		contadorDeRecursos += 1;
 		Imagen imagen = new Imagen();
@@ -631,7 +649,8 @@ public class ResourcesMaker {
 			jsonMetaData.infoLineas = imagen.infoLineas;
 			jsonMetaData.parametros = imagen.parametros;
 			jsonMetaData.nivelDificultad = imagen.nivelDificultad;
-			jsonMetaData.infoConceptual = imagen.infoConceptualParalelismo;
+			jsonMetaData.infoConceptualParalelismo = imagen.infoConceptualParalelismo;
+			jsonMetaData.infoConceptualAngulos = imagen.infoConceptualAngulos;
 			ExperimentalObject.JsonResourcesMetaData.CreateJsonMetaData(jsonMetaData, Resources.Paths.currentVersionPath);
 
 		}
@@ -713,12 +732,14 @@ public class ResourcesMaker {
 			return Linea(infoLinea.Xcenter, infoLinea.Ycenter, infoLinea.angulo, infoLinea.largo);
 		}
 
+		/*
 		public static Array<ExtremosLinea> Angulo(float xVertice,
 				float yVertice, float angleInicial, float angleFinal,
 				float length) {
 			/*
 			 * El angulo esta formado por dos linas, ambas del mismo largo orientado cada uno en un angulo diferente.
 			 */
+		/*
 			Array<ExtremosLinea> lineas = new Array<ExtremosLinea>();
 			Vector2 V1 = new Vector2(1, 1);
 			Vector2 V2 = new Vector2(1, 1);
@@ -746,6 +767,7 @@ public class ResourcesMaker {
 			lineas.add(p2);
 			return lineas;
 		}
+		*/
 	}
 	
 	public static enum CategoriaAngulo {

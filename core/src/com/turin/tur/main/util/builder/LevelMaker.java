@@ -13,7 +13,7 @@ import com.turin.tur.main.diseno.Level.JsonLevel;
 import com.turin.tur.main.diseno.Level.Significancia;
 import com.turin.tur.main.diseno.Level.TIPOdeSIGNIFICANCIA;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
-import com.turin.tur.main.diseno.Trial.ParametrosSetup;
+import com.turin.tur.main.diseno.Trial.ParametrosSetupParalelismo;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Stadistics;
@@ -21,16 +21,17 @@ import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
 import com.turin.tur.main.util.Constants.Resources.Categorias;
-import com.turin.tur.main.util.builder.ResourcesMaker.JsonSetupExpSensibilidad;
+import com.turin.tur.main.util.builder.ResourcesMaker.JsonSetupExpSensibilidadAngulos;
+import com.turin.tur.main.util.builder.ResourcesMaker.JsonSetupExpSensibilidadParalelismo;
 import com.turin.tur.main.util.builder.ResourcesSelectors.Agrupamientos;
 
 public class LevelMaker {
 	
 	private static final String TAG = LevelMaker.class.getName();
 	
-	static Array<JsonResourcesMetaData> listadoRecursos = Builder.listadoRecursos;
-	static Array<Array<Integer>> listadosId = Builder.listadosId;
-	static Array<Agrupamientos> listadosGrupos = Builder.listadosGrupos;
+	static Array<JsonResourcesMetaData> listadoRecursos = ResourcesSelectors.listadoRecursos;
+	static Array<Array<Integer>> listadosId = ResourcesSelectors.listadosId;
+	static Array<Agrupamientos> listadosGrupos = ResourcesSelectors.listadosGrupos;
 
 	static int contadorLevels = 0;
 	static int contadorTrials = 0;
@@ -72,6 +73,10 @@ public class LevelMaker {
 		// Crea los niveles
 		if (Builder.AppVersion == "UmbralCompleto") {
 			Levels.MakeLevelParalelismoUmbral();
+		}
+		
+		if (Builder.AppVersion == "UmbralCompletoAngulos") {
+			Levels.MakeLevelsAngulosUmbral();
 		}
 	}
 	
@@ -137,7 +142,7 @@ public class LevelMaker {
 			System.out.println("intentando:"+file.getAbsolutePath());
 			while (file.exists()) { // Se hace para cada setup q exista
 				// Cargamos el setup 
-				JsonSetupExpSensibilidad setup = loadSetup(nSetup);
+				JsonSetupExpSensibilidadParalelismo setup = loadSetup(nSetup);
 				// Hacemos un loop para cada referencia dentro del nivel
 				for (int n=0; n<setup.cantidadReferencias; n++) {
 					int R = n + nSetup; // Indice angulo de referencia
@@ -166,8 +171,8 @@ public class LevelMaker {
 						for (int id: recursos) {
 							JsonTrial trial = crearTrial("Seleccione a que se parece mas", "", DISTRIBUCIONESenPANTALLA.LINEALx2,
 									new int[] {ResourcesSelectors.findResourceByTag("R"+R+setup.tagRefPos).first(),ResourcesSelectors.findResourceByTag("R"+R+setup.tagRefNeg).first()}, TIPOdeTRIAL.TEST, id , false, true, false);
-							trial.parametros.D=D;
-							trial.parametros.R=R;
+							trial.parametrosParalelismo.D=D;
+							trial.parametrosParalelismo.R=R;
 							level.jsonTrials.add(trial);
 						}
 					}
@@ -180,12 +185,44 @@ public class LevelMaker {
 			
 		}
 		
-		private static JsonSetupExpSensibilidad loadSetup(int nSetup) {
+		public static void MakeLevelsAngulosUmbral() {
+			// Cargamos los datos del setup
+			String path = Resources.Paths.currentVersionPath+"extras/jsonSetup0.meta";
+			String savedData = FileHelper.readLocalFile(path);
+			Json json = new Json();
+			json.setUsePrototypes(false);
+			JsonSetupExpSensibilidadAngulos setup = json.fromJson(JsonSetupExpSensibilidadAngulos.class, savedData);
+			
+			for (int i = 0; i<=(90/setup.saltoGrande); i++) { // Hacemos solo para el primer cuadrante
+				JsonLevel level = crearLevel();
+				level.levelTitle = "Angulos con referencia: "+(setup.saltoGrande*i);
+				level.randomTrialSort=false;
+				level.show = true;
+				
+				// agregamos un trial por recurso. 
+				Array<Integer> recursos = ResourcesSelectors.findAngles(setup.saltoGrande*i);
+				for (int recurso:recursos) {
+					JsonTrial trial = crearTrial("Selecciones a que categoria pertenece el angulo", "", DISTRIBUCIONESenPANTALLA.LINEALx3,
+							new int[] {Constants.Resources.Categorias.Grave.ID,Constants.Resources.Categorias.Recto.ID,Constants.Resources.Categorias.Agudo.ID}, TIPOdeTRIAL.TEST, recurso, false, true, false);
+					savedData = FileHelper.readFile(Resources.Paths.fullCurrentVersionPath + recurso + ".meta");
+					json = new Json();
+					json.setUsePrototypes(false);
+					trial.jsonEstimulo =  json.fromJson(JsonResourcesMetaData.class, savedData);
+					level.jsonTrials.add(trial);
+				}
+				level.build(Resources.Paths.levelsPath);
+			}
+			
+		}
+
+
+		
+		private static JsonSetupExpSensibilidadParalelismo loadSetup(int nSetup) {
 			String path = Resources.Paths.currentVersionPath+"extras/jsonSetup"+nSetup+".meta";
 			String savedData = FileHelper.readLocalFile(path);
 			Json json = new Json();
 			json.setUsePrototypes(false);
-			return json.fromJson(JsonSetupExpSensibilidad.class, savedData);
+			return json.fromJson(JsonSetupExpSensibilidadParalelismo.class, savedData);
 		}
 		
 		
@@ -334,7 +371,7 @@ public class LevelMaker {
 		jsonTrial.title = title;
 		jsonTrial.resourceVersion = Builder.ResourceVersion;
 		jsonTrial.feedback = feedback;
-		jsonTrial.parametros = new ParametrosSetup();
+		jsonTrial.parametrosParalelismo = new ParametrosSetupParalelismo();
 		return jsonTrial;
 	}
 

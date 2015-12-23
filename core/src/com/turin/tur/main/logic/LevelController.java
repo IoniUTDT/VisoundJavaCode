@@ -143,7 +143,7 @@ public class LevelController implements InputProcessor {
 					// Creamos la info del objeto analizado
 					DetectionObject detected = new DetectionObject();
 					detected.answerTrue = this.trial.log.touchLog.peek().isTrue;
-					detected.infoConceptual = this.trial.log.touchLog.peek().jsonMetaDataTouched.infoConceptual;
+					detected.infoConceptual = this.trial.log.touchLog.peek().jsonMetaDataTouched.infoConceptualParalelismo;
 					
 					// Se fija en comparacion al ultimo intento para ver si hubo un "rebote o no" y en funcion de eso disminuir el salto
 					if (analisis.historialAciertosCurvaSuperior.size>0) { // Si hay historia previa
@@ -205,7 +205,7 @@ public class LevelController implements InputProcessor {
 		Array<Integer> listaDeTrialPosibles = new Array<Integer>();
 		for (int idTrialaMirar : this.level.secuenciaTrailsId) {
 			JsonTrial jsonTrial = Trial.JsonTrial.LoadTrial(idTrialaMirar);
-			if ((jsonTrial.parametros.R == anguloReferencia) && (jsonTrial.parametros.D == nivelDificultad)) {
+			if ((jsonTrial.parametrosParalelismo.R == anguloReferencia) && (jsonTrial.parametrosParalelismo.D == nivelDificultad)) {
 				listaDeTrialPosibles.add(idTrialaMirar);
 			}
 		}
@@ -419,7 +419,7 @@ public class LevelController implements InputProcessor {
 			// Verfica si se toco la opcion correcta o no.
 			JsonResourcesMetaData JsonEstimulo = JsonResourcesMetaData.Load(trial.jsonTrial.rtaCorrectaId);
 			JsonResourcesMetaData JsonSeleccion = JsonResourcesMetaData.Load(touchData.experimentalObjectTouch.resourceId.id);
-			if (JsonEstimulo.infoConceptual.seJuntan == JsonSeleccion.infoConceptual.seJuntan) {
+			if (JsonEstimulo.infoConceptualParalelismo.seJuntan == JsonSeleccion.infoConceptualParalelismo.seJuntan) {
 				correcta = true;
 			}
 			

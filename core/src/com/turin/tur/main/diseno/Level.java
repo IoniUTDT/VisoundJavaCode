@@ -115,6 +115,7 @@ public class Level {
 		public AnalisisUmbral analisisUmbral = new AnalisisUmbral();
 		
 		
+		
 		public static void CreateLevel(JsonLevel jsonLevel, String path) {
 			Json json = new Json();
 			json.setUsePrototypes(false);

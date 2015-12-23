@@ -150,7 +150,7 @@ public class Trial {
 
 	// devuelve la info de la metadata
 
-	public static class ParametrosSetup {
+	public static class ParametrosSetupParalelismo {
 		public int R;
 		public int D;
 	}
@@ -170,7 +170,8 @@ public class Trial {
 		public boolean randomSort;
 		public int resourceVersion;
 		public String identificador;
-		public ParametrosSetup parametros;
+		public ParametrosSetupParalelismo parametrosParalelismo;
+		public JsonResourcesMetaData jsonEstimulo;
 		
 		public static void CreateTrial(JsonTrial jsonTrial, String path) {
 			Json json = new Json();

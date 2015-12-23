@@ -5,15 +5,17 @@ import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.ExperimentalObject.JsonResourcesMetaData;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.builder.LevelMaker.Dificultad;
+import com.turin.tur.main.util.builder.ResourcesSelectors.Agrupamientos;
 import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.main.util.Constants.Resources.Categorias;
 
 
 public class ResourcesSelectors {
 
-	static Array<JsonResourcesMetaData> listadoRecursos = Builder.listadoRecursos;
-	static Array<Array<Integer>> listadosId = Builder.listadosId;
-	static Array<Agrupamientos> listadosGrupos = Builder.listadosGrupos;
+	public static Array<JsonResourcesMetaData> listadoRecursos = new Array<JsonResourcesMetaData>();
+	public static Array<Array<Integer>> listadosId = new Array<Array<Integer>>();
+	public static Array<Agrupamientos> listadosGrupos = new Array<Agrupamientos>();
+	
 	
 	
 	static Array<Integer> findResourceByTag (String tag) {
@@ -219,5 +221,22 @@ public class ResourcesSelectors {
 	public static class Agrupamientos {
 		public String nombre;
 		public Array<Integer> ids = new Array<Integer>();
+	}
+
+
+
+
+
+
+	public static Array<Integer> findAngles(int angulo) {
+		Array<Integer> listaIds = new Array<Integer>();
+		for (JsonResourcesMetaData json: listadoRecursos) {
+			if (json.noSound!=true) {
+				if ((json.infoConceptualAngulos.direccionLado1 == angulo) || (json.infoConceptualAngulos.direccionLado2 == angulo)) {
+					listaIds.add(json.resourceId.id);
+				}
+			}
+		}
+		return listaIds;
 	}
 }

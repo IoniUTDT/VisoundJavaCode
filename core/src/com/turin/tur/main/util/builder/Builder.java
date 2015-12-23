@@ -20,12 +20,12 @@ public class Builder {
 	public static final int levelVersion = 23;
 	public static final String AppVersion = "UmbralCompletoAngulos"; 
 	
-	static final Boolean makeLevels = false;
-	static final Boolean makeResources = true;
+	static final Boolean makeLevels = true;
+	static final Boolean makeResources = false;
 	
-	public static Array<JsonResourcesMetaData> listadoRecursos = new Array<JsonResourcesMetaData>();
-	public static Array<Array<Integer>> listadosId = new Array<Array<Integer>>();
-	public static Array<Agrupamientos> listadosGrupos = new Array<Agrupamientos>();
+	//public static Array<JsonResourcesMetaData> listadoRecursos = new Array<JsonResourcesMetaData>();
+	//public static Array<Array<Integer>> listadosId = new Array<Array<Integer>>();
+
 	
 	public static void build() {
 
