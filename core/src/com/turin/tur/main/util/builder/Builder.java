@@ -1,10 +1,6 @@
 package com.turin.tur.main.util.builder;
 
-import com.badlogic.gdx.utils.Array;
-import com.turin.tur.main.diseno.ExperimentalObject.JsonResourcesMetaData;
 import com.turin.tur.main.util.Constants.Resources;
-import com.turin.tur.main.util.builder.ResourcesSelectors.Agrupamientos;
-
 
 public class Builder {
 
@@ -20,12 +16,9 @@ public class Builder {
 	public static final int levelVersion = 23;
 	public static final String AppVersion = "UmbralCompletoAngulos"; 
 	
-	static final Boolean makeLevels = true;
+	static final Boolean makeLevels = false;
 	static final Boolean makeResources = false;
 	
-	//public static Array<JsonResourcesMetaData> listadoRecursos = new Array<JsonResourcesMetaData>();
-	//public static Array<Array<Integer>> listadosId = new Array<Array<Integer>>();
-
 	
 	public static void build() {
 

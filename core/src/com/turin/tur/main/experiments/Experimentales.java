@@ -118,7 +118,8 @@ public class Experimentales {
 		public class AnguloOrdenable implements Comparable<AnguloOrdenable> {
 			int angulo;
 			int anguloRef;
-
+			int nivel;
+			
 			public AnguloOrdenable(int angulo, int anguloRef) {
 				this.angulo = angulo;
 			    this.anguloRef = anguloRef;
@@ -131,19 +132,31 @@ public class Experimentales {
 		}
 
 		/**
+		 * Clase que agrupa en el historial de eventos, el angulo, el nivel de dificultad, y si se acerto o no
+		 * @author ionatan
+		 *
+		 */
+		public class Historial {
+			AnguloOrdenable angulo;
+			boolean acertado;
+		}
+		/**
 		 * Esta clase guarda todos los parametros necesarios para hacer la convergencia. Es una clase aparte porque se repite x cuatro
 		 * Hace falta una serie de datos para agudo y otro para grave en el angulo + 90 y - 90.
-		 * Llamo a las cuatro señales segun el cuadrante asumiendo la refrencia como el angulo 0. 
+		 * Llamo a las cuatro señales segun el cuadrante asumiendo la refrencia como el angulo 0.
+		 * 
+		 *  
+		 *  En ask se encuentra todo el algoritmo encargado de proponer un proximo estimulo.
+		 *  en aswer el algoritmo encargado de procesar la respuesta y modificar los registros.
 		 * @author ionatan
 		 *
 		 */
 		public class Parametros{
 			private int nivelEstimulo; // nivel de señal enviada
 			private int saltosActivos; // nivel del proximo salto (en numero de niveles de señal)
-			private Array<Integer> historialAngulo = new Array<Integer>(); // Historial de angulos enviados
-			private Array<Integer> historialNiveles = new Array<Integer>(); // Historial de niveles de señal enviado
-			private Array<Boolean> historialAciertos = new Array<Boolean>(); // Historial de aciertos
-			private Array<Integer> listaEstimulos = new Array<Integer>(); // Lista de estimulos ordenados de menor a mayor dificultad
+			private boolean convergenciaAlcanzada=false;
+			private Array<Historial> historial = new Array<Historial>(); // Se almacena la info de lo que va pasando
+			private Array<AnguloOrdenable> listaEstimulos = new Array<AnguloOrdenable>(); // Lista de estimulos ordenados de menor a mayor dificultad
 		}
 		
 		private Array<Parametros> cuadrantes = new Array<Parametros>();
@@ -154,10 +167,11 @@ public class Experimentales {
 		private int proporcionAciertos=2;
 		private int proporcionErrores=1;
 		// Variables que regulan en intercambio de datos con el levelcontroller.
-		private int next; //Proximo valor a medir (en terminos absolutos)
+		private AnguloOrdenable next; //Proximo valor a medir (en terminos absolutos)
 		private int cuadranteActivo; // En cual de los cuadrantes esta la señal que se va a medir
-		private boolean waitingAnswer; //Si se esta esperando la rta.
-
+		private boolean waitingAnswer=false; //Si se esta esperando la rta.
+		
+		
 		/**
 		 * Al incializar el analisis hace falta a partir del setup determinar la siguiente informacion:
 		 * Cuanto es el salto inicial en termino de numero de angulos en funcion de la relacion entre el salto buscado (en grados) y la densidad de angulos del setup
@@ -167,7 +181,7 @@ public class Experimentales {
 		public AnalisisUmbralAngulos (SetupUmbralAngulos setup, int anguloReferencia) {
 			this.anguloDeReferencia = anguloReferencia;
 			// Agrega 4 parametros. Cada una corresponde a la convergencia al angulo recto en cada uno de los cuadrantes. Es decir la 0 es la convergencia de angulos agudos al angulo de 90 grados en sentido antihorario y el 3 la convcergencia desde los agudos al angulo recto en sentido horario.
-			int salto = saltoInicialEnGrados%setup.saltoGrande;
+			int salto = saltoInicialEnGrados/setup.saltoGrande;
 			Array<AnguloOrdenable> angulosCuadrante1 = new Array<AnguloOrdenable>();
 			Array<AnguloOrdenable> angulosCuadrante2 = new Array<AnguloOrdenable>();
 			Array<AnguloOrdenable> angulosCuadrante3 = new Array<AnguloOrdenable>();
@@ -189,63 +203,147 @@ public class Experimentales {
 					angulosCuadrante4.add(new AnguloOrdenable(angulo, anguloRef));
 				}
 			}
+			// Ordenamos los angulos segun corresponda
 			angulosCuadrante1.sort();
-			angulosCuadrante2.sort();
-			angulosCuadrante3.sort();
-			angulosCuadrante4.sort();
-			
-			System.out.println(angulosCuadrante1);
-			
-			for (int i=0; i<4; i++) {
-				Parametros cuadrante = new Parametros();
-				cuadrante.saltosActivos = salto;
+			angulosCuadrante1.reverse();
+			for (AnguloOrdenable angulo :angulosCuadrante1) {
+				angulo.nivel = angulosCuadrante1.indexOf(angulo, true);
 			}
+			angulosCuadrante2.sort();
+			for (AnguloOrdenable angulo :angulosCuadrante2) {
+				angulo.nivel = angulosCuadrante2.indexOf(angulo, true);
+			}
+			angulosCuadrante3.sort();
+			angulosCuadrante3.reverse();
+			for (AnguloOrdenable angulo :angulosCuadrante3) {
+				angulo.nivel = angulosCuadrante3.indexOf(angulo, true);
+			}
+			angulosCuadrante4.sort();
+			for (AnguloOrdenable angulo :angulosCuadrante4) {
+				angulo.nivel = angulosCuadrante4.indexOf(angulo, true);
+			}
+			// Agregamos los datos a cada cuadrante
+			Parametros cuadrante1 = new Parametros();
+			cuadrante1.saltosActivos = salto;
+			cuadrante1.nivelEstimulo = angulosCuadrante1.size-1;
+			cuadrante1.listaEstimulos = angulosCuadrante1;
+			this.cuadrantes.add(cuadrante1);
+			Parametros cuadrante2 = new Parametros();
+			cuadrante2.saltosActivos = salto;
+			cuadrante2.nivelEstimulo = angulosCuadrante2.size-1;
+			cuadrante2.listaEstimulos = angulosCuadrante2;
+			this.cuadrantes.add(cuadrante2);
+			Parametros cuadrante3 = new Parametros();
+			cuadrante3.saltosActivos = salto;
+			cuadrante3.nivelEstimulo = angulosCuadrante3.size-1;
+			cuadrante3.listaEstimulos = angulosCuadrante3;
+			this.cuadrantes.add(cuadrante3);
+			Parametros cuadrante4 = new Parametros();
+			cuadrante4.saltosActivos = salto;
+			cuadrante4.nivelEstimulo = angulosCuadrante4.size-1;
+			cuadrante4.listaEstimulos = angulosCuadrante4;
+			this.cuadrantes.add(cuadrante4);
 		}
 
-		/*
-		 * Este metodo devuelve el valor absoluto del proximo angulo a preguntar  
+		/**
+		 * Este metodo busca un nuevo estimulo a preguntar, lo carga en la clase y devuelve su valor absoluto  
 		 */
-		/*
 		public int askNext() {
 			if (!waitingAnswer) {
-				// Elije si probar con angulo agudo o grave
-				// Mientras pruebo el codigo trabajo solo con agudos
-				boolean proximoAgudo = true; // MathUtils.randomBoolean();
-				if (proximoAgudo) {
-					boolean incrementarDificultad;
-					if (this.historialAciertosAgudo.size >= (this.proporcionAciertos+this.proporcionErrores)) { // Estamos en el caso en que hay que mirar el historial
-						int contadorAciertos=0;
-						for (int i=0; i<(this.proporcionAciertos+this.proporcionErrores); i++){
-							if (this.historialAciertosAgudo.get(this.historialAciertosAgudo.size-i)==true){
-								contadorAciertos++;
-							}
+				// Elije un cuadrante al azar y carga esos datos
+				int cuadranteAUsar=MathUtils.random(3);
+				Parametros cuadrante = this.cuadrantes.get(cuadranteAUsar);
+				// pone los datos en la clase principal
+				this.cuadranteActivo = cuadranteAUsar;
+				this.next = cuadrante.listaEstimulos.get(cuadrante.nivelEstimulo);
+				this.waitingAnswer = true;
+			}
+			return this.next.angulo;
+		}
+		
+		/**
+		 * Esta funcion se encarga de recibir el feedback del usuario y actualizar todas las estadisticas en consecuencia
+		 * @param acerto
+		 */
+		
+		public void answer(boolean acierto) {
+
+			if (waitingAnswer) {
+				// Seteamos que ya hay rta.
+				this.waitingAnswer=false;
+				// Seleccionamos el cuadrante que corresponde
+				Parametros cuadrante = this.cuadrantes.get(this.cuadranteActivo);
+				// Agregamos la info del ultimo toque.
+				Historial historial = new Historial();
+				historial.acertado=acierto;
+				historial.angulo=this.next;
+				cuadrante.historial.add(historial);
+				
+				// Elije si hay que incrementar la dificultad o no
+				boolean incrementarDificultad;
+				if (cuadrante.historial.size >= (this.proporcionAciertos+this.proporcionErrores)) { // Estamos en el caso en que hay que mirar el historial
+					int contadorAciertos=0;
+					for (int i=1; i<=(this.proporcionAciertos+this.proporcionErrores); i++){
+						if (cuadrante.historial.get(cuadrante.historial.size-i).acertado==true){
+							contadorAciertos++;
 						}
-						if (contadorAciertos>= this.proporcionAciertos) {
+					}
+					if (contadorAciertos>= this.proporcionAciertos) {
+						incrementarDificultad=true;
+					} else {
+						incrementarDificultad=false;
+					}
+				} else { // Estamos en el caso de que no haya suficiente historia
+					if (cuadrante.historial.size>0) {
+						if (cuadrante.historial.peek().acertado) { // Se fija si lo ultimo fue un acierto.
 							incrementarDificultad=true;
 						} else {
 							incrementarDificultad=false;
 						}
-					} else { // Estamos en el caso de que no haya suficiente historia
-						if (this.historialAciertosAgudo.size>0) {
-							if (this.historialAciertosAgudo.peek()) { // Se fija si lo ultimo fue un acierto.
-								incrementarDificultad=true;
-							} else {
-								incrementarDificultad=false;
-							}
-						} else { // Estamos en el caso de que no haya historial
-							incrementarDificultad=true;
-						}
-					}
-					// aca ya eligio si aumentar o disminuir la dificultad
-					if (this.deltaAgudo > 0) { // En caso de que tenga sentido 
-						
+					} else { // Estamos en el caso de que no haya historial
+						incrementarDificultad=true;
 					}
 				}
 				
+				// Se fija si hay que disminuir el salto entre nivel y nivel
+				if (cuadrante.historial.size >= (this.proporcionAciertos+this.proporcionErrores)+1) { // Estamos en el caso en que hay que mirar el historial
+					boolean incrementarDificultadUltimo;
+					int contadorAciertos=0;
+					for (int i=0; i<(this.proporcionAciertos+this.proporcionErrores); i++){
+						if (cuadrante.historial.get(cuadrante.historial.size-(i+1)).acertado==true){
+							contadorAciertos++;
+						}
+					}
+					if (contadorAciertos>= this.proporcionAciertos) {
+						incrementarDificultadUltimo=true;
+					} else {
+						incrementarDificultadUltimo=false;
+					}
+					if (incrementarDificultadUltimo!=incrementarDificultad) {
+						cuadrante.saltosActivos = cuadrante.saltosActivos - 1;
+						if (cuadrante.saltosActivos==0) {
+							cuadrante.saltosActivos = 1;
+						}
+					}
+				}
+				
+				// Aqui ya se determino si hay que incrementar o dosminuir la dificultad y por lo tanto se aplica, cuidando que no exceda los limites
+				if (incrementarDificultad) {
+					cuadrante.nivelEstimulo=cuadrante.nivelEstimulo-cuadrante.saltosActivos;
+					if (cuadrante.nivelEstimulo<0) {cuadrante.nivelEstimulo=0;}
+				} else {
+					cuadrante.nivelEstimulo=cuadrante.nivelEstimulo+cuadrante.saltosActivos;
+					if (cuadrante.nivelEstimulo<cuadrante.listaEstimulos.size) {cuadrante.nivelEstimulo=cuadrante.listaEstimulos.size-1;}
+				}
 			}
-			
-			return this.next;
 		}
-		*/
+
+		/**
+		 * Esta funcion se fija se se termino el level o no
+		 * @return
+		 */
+		public boolean complete() {
+			return ((this.cuadrantes.get(0).historial.size+this.cuadrantes.get(1).historial.size+this.cuadrantes.get(2).historial.size+this.cuadrantes.get(3).historial.size)>10);
+		}
 	}
 }

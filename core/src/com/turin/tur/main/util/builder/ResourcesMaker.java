@@ -7,9 +7,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.ExperimentalObject;
-import com.turin.tur.main.diseno.Boxes.Box;
 import com.turin.tur.main.diseno.ExperimentalObject.JsonResourcesMetaData;
 import com.turin.tur.main.diseno.Trial.ResourceId;
+import com.turin.tur.main.experiments.Experimentales.Setups.SetupUmbralAngulos;
+import com.turin.tur.main.experiments.Experimentales.Setups.SetupUmbralParalelismo;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Constants.Resources;
@@ -49,7 +50,7 @@ public class ResourcesMaker {
 			if (Builder.AppVersion == "UmbralCompleto")
 				extracted(objetos);
 			if (Builder.AppVersion == "UmbralCompletoAngulos") {
-				JsonSetupExpSensibilidadAngulos setup = new JsonSetupExpSensibilidadAngulos();
+				SetupUmbralAngulos setup = new SetupUmbralAngulos();
 				setup.nombre="SetupAngulosUmbral";
 				setup.saltoChico=2;
 				setup.saltoGrande=10;
@@ -57,6 +58,8 @@ public class ResourcesMaker {
 				setup.angulosCriticos.add(90);
 				setup.angulosCriticos.add(180);
 				setup.angulosCriticos.add(270);
+				setup.searchAngles();
+
 				objetos.addAll(recursosAnguloAnalisisUmbral(setup));
 			}
 		}
@@ -70,7 +73,7 @@ public class ResourcesMaker {
 
 	private static void extracted(Array<Imagen> objetos) {
 		{
-			JsonSetupExpSensibilidadParalelismo setup = new JsonSetupExpSensibilidadParalelismo();
+			SetupUmbralParalelismo setup = new SetupUmbralParalelismo();
 
 			// Creamos los recursos de -6 a 6 con saltos de 3
 			// Vamos a trabajar todas las cuentas en radianes
@@ -167,7 +170,7 @@ public class ResourcesMaker {
 	/*
 	 * Esta rutin crea los recursos de angulos necesarios segun parametros que se pasan en la clase setup
 	 */
-	private static Array<Imagen> recursosAnguloAnalisisUmbral(JsonSetupExpSensibilidadAngulos setup) {
+	private static Array<Imagen> recursosAnguloAnalisisUmbral(SetupUmbralAngulos setup) {
 		
 		float largo;
 		if (width>height) {
@@ -178,36 +181,13 @@ public class ResourcesMaker {
 		// Array de imagenes creadas
 		Array<Imagen> objetos = new Array<Imagen>();
 		
-		Array<Integer> angulosNoDetalle = new Array<Integer>(); // Genera un array con todos los angulos en los que se debe dibujar angulos de al salto grande
-		Array<Integer> angulosDetalle = new Array<Integer>(); // Genera un array con todos los angulos en los que se debe dibujar angulos de al salto chico
-		for (int i=0; i<=360; i=i+setup.saltoGrande) {
-			angulosNoDetalle.add(i);
-			if (setup.angulosCriticos.contains(i,false)){ // Si es un angulo critico
-				int numeroDeAngulosExtra = setup.saltoGrande/setup.saltoChico;
-				for (int j=1; j<numeroDeAngulosExtra; j++) {
-					int value = j*setup.saltoChico+i;
-					if (value < 0) {
-						value = 360 + value; 
-					}
-					angulosDetalle.add(value);
-					value = -j*setup.saltoChico+i;
-					if (value < 0) {
-						value = 360 + value; 
-					}
-					angulosDetalle.add(value);
-				}
-			}
-		}
-		Array<Integer> angulos = new Array<Integer>(); // Genera un array con todos los angulos en los que se debe dibujar angulos
-		angulos.addAll(angulosDetalle);
-		angulos.addAll(angulosNoDetalle);
-		
-		for (int indice1 = 0; indice1<angulos.size ; indice1++) {
-			for (int indice2 = indice1 +1; indice2<angulos.size-1; indice2++) {
-				int angulo1 = angulos.get(indice1);
-				int angulo2 = angulos.get(indice2);
+	
+		for (int indice1 = 0; indice1<setup.angulos.size ; indice1++) {
+			for (int indice2 = indice1 +1; indice2<setup.angulos.size-1; indice2++) {
+				int angulo1 = setup.angulos.get(indice1);
+				int angulo2 = setup.angulos.get(indice2);
 				
-				if (angulosNoDetalle.contains(angulo1, false) || angulosNoDetalle.contains(angulo2, false)) {
+				if (setup.angulosNoDetalle.contains(angulo1, false) || setup.angulosNoDetalle.contains(angulo2, false)) {
 					
 					int deltaAngulo = angulo2-angulo1;
 					
@@ -259,44 +239,16 @@ public class ResourcesMaker {
 			}
 		}
 		
-		saveSetupAngulos(setup);
+		// Guardamos el setup 
+		String path = Resources.Paths.currentVersionPath+"/extras/jsonSetupUmbralAngulos.meta";
+		Json json = new Json();
+		json.setUsePrototypes(false);
+		FileHelper.writeFile(path, json.toJson(setup));
+		
 		return objetos;
 	}
-	
-	/*
-	 * Esta es una clase para manejar el setup experimental del diseño de experimento donde se quiere medir la sensibilidad al detectar el delta tita
-	 */
-	public static class JsonSetupExpSensibilidadParalelismo {
-		public String tag;
-		// Vamos a trabajar todas las cuentas en radianes
-		String nombre; // Nombre del setup
-		float titaRefInicial; // Angulo de referencia inicial
-		int saltoTitaRefInt; // Salto del tita de referencia 
-		float saltoTitaRef; //Salto del tita pero en formato float
-		float anguloMinimo; //Angulo minimo del delta
-		float anguloMaximo; //Angulo maximo del delta
-		float largo; //Largo de los segmentos
-		float separacionMinima; // Separacion minima de los segmentos
-		float separacionIncremento; // Incremento de la separacion de los segmentos
-		int cantidadReferencias; // Cantidad de angulos tita (referencia)
-		int cantidadSeparaciones; // Cantidad de saltos en la separacion de las rectas
-		int cantidadDeltas; // Cantidad de delta titas que se generan en cada condicion de angulo de referencia y de separacion	
-		public String tagRefPos="+"; // Guarda el tag de la ref positiva
-		public String tagRefNeg="-"; // Guarda el tag de la ref negativa
-	}
-	
-	/*
-	 * Esta es una clase para manejar el setup experimental del diseño de experimentos para medir sensibilidad en angulos.
-	 * Todos los angulos estan en grados
-	 */
-	public static class JsonSetupExpSensibilidadAngulos{
-		public String nombre; // Nombre del setup
-		public int saltoGrande;
-		public int saltoChico;
-		public Array<Integer> angulosCriticos = new Array<Integer>(); // Nota: tiene que estar entre los angulo pertenecientes al salto grande para que los considere
-	}
-	
-	private static Array<Imagen> recursosParalelismoAnalisisUmbral(JsonSetupExpSensibilidadParalelismo setup) {
+		
+	private static Array<Imagen> recursosParalelismoAnalisisUmbral(SetupUmbralParalelismo setup) {
 		
 		/*
 		 * Queremos mapear una escala log en una lineal, es decir que parametro [pmin-->pmax] mapee angulos que van de anguloMin --> angluloMax de manera que p = 1/A*log(1/B*angulo)
@@ -537,14 +489,14 @@ public class ResourcesMaker {
 		return objetos;
 	}
 	
-	private static void saveSetupParalelismo(JsonSetupExpSensibilidadParalelismo jsonSetup) {
+	private static void saveSetupParalelismo(SetupUmbralParalelismo jsonSetup) {
 		String path = Resources.Paths.currentVersionPath+"/extras/jsonSetup"+contadorDeReferenciasUmbral+".meta";
 		Json json = new Json();
 		json.setUsePrototypes(false);
 		FileHelper.writeFile(path, json.toJson(jsonSetup));
 	}
 
-	private static void saveSetupAngulos(JsonSetupExpSensibilidadAngulos jsonSetup) {
+	private static void saveSetupAngulos(SetupUmbralAngulos jsonSetup) {
 		String path = Resources.Paths.currentVersionPath+"/extras/jsonSetup"+contadorDeReferenciasUmbral+".meta";
 		Json json = new Json();
 		json.setUsePrototypes(false);

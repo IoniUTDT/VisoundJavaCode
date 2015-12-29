@@ -76,7 +76,7 @@ public class Constants {
 		}
 
 		public enum TIPOdeLEVEL {
-			UMBRAL
+			UMBRALPARALELISMO,UMBRALANGULO
 		}
 		
 		public enum DISTRIBUCIONESenPANTALLA {

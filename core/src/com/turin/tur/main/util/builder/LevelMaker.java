@@ -14,15 +14,16 @@ import com.turin.tur.main.diseno.Level.Significancia;
 import com.turin.tur.main.diseno.Level.TIPOdeSIGNIFICANCIA;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.diseno.Trial.ParametrosSetupParalelismo;
+import com.turin.tur.main.experiments.Experimentales.Setups.SetupUmbralAngulos;
+import com.turin.tur.main.experiments.Experimentales.Setups.SetupUmbralParalelismo;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Stadistics;
 import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
+import com.turin.tur.main.util.Constants.Diseno.TIPOdeLEVEL;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
 import com.turin.tur.main.util.Constants.Resources.Categorias;
-import com.turin.tur.main.util.builder.ResourcesMaker.JsonSetupExpSensibilidadAngulos;
-import com.turin.tur.main.util.builder.ResourcesMaker.JsonSetupExpSensibilidadParalelismo;
 import com.turin.tur.main.util.builder.ResourcesSelectors.Agrupamientos;
 
 public class LevelMaker {
@@ -142,7 +143,7 @@ public class LevelMaker {
 			System.out.println("intentando:"+file.getAbsolutePath());
 			while (file.exists()) { // Se hace para cada setup q exista
 				// Cargamos el setup 
-				JsonSetupExpSensibilidadParalelismo setup = loadSetup(nSetup);
+				SetupUmbralParalelismo setup = loadSetup(nSetup);
 				// Hacemos un loop para cada referencia dentro del nivel
 				for (int n=0; n<setup.cantidadReferencias; n++) {
 					int R = n + nSetup; // Indice angulo de referencia
@@ -187,14 +188,16 @@ public class LevelMaker {
 		
 		public static void MakeLevelsAngulosUmbral() {
 			// Cargamos los datos del setup
-			String path = Resources.Paths.currentVersionPath+"extras/jsonSetup0.meta";
+			String path = Resources.Paths.currentVersionPath+"extras/jsonSetupUmbralAngulos.meta";
 			String savedData = FileHelper.readLocalFile(path);
 			Json json = new Json();
 			json.setUsePrototypes(false);
-			JsonSetupExpSensibilidadAngulos setup = json.fromJson(JsonSetupExpSensibilidadAngulos.class, savedData);
+			SetupUmbralAngulos setup = json.fromJson(SetupUmbralAngulos.class, savedData);
 			
 			for (int i = 0; i<=(90/setup.saltoGrande); i++) { // Hacemos solo para el primer cuadrante
 				JsonLevel level = crearLevel();
+				level.tipoDeLevel = TIPOdeLEVEL.UMBRALANGULO;
+				level.anguloReferencia = setup.saltoGrande*i;
 				level.levelTitle = "Angulos con referencia: "+(setup.saltoGrande*i);
 				level.randomTrialSort=false;
 				level.show = true;
@@ -210,6 +213,7 @@ public class LevelMaker {
 					trial.jsonEstimulo =  json.fromJson(JsonResourcesMetaData.class, savedData);
 					level.jsonTrials.add(trial);
 				}
+				level.setup = setup;
 				level.build(Resources.Paths.levelsPath);
 			}
 			
@@ -217,12 +221,12 @@ public class LevelMaker {
 
 
 		
-		private static JsonSetupExpSensibilidadParalelismo loadSetup(int nSetup) {
+		private static SetupUmbralParalelismo loadSetup(int nSetup) {
 			String path = Resources.Paths.currentVersionPath+"extras/jsonSetup"+nSetup+".meta";
 			String savedData = FileHelper.readLocalFile(path);
 			Json json = new Json();
 			json.setUsePrototypes(false);
-			return json.fromJson(JsonSetupExpSensibilidadParalelismo.class, savedData);
+			return json.fromJson(SetupUmbralParalelismo.class, savedData);
 		}
 		
 		

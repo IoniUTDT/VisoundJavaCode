@@ -6,10 +6,11 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.turin.tur.main.diseno.Enviables.STATUS;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
+import com.turin.tur.main.experiments.Experimentales.Analisis.AnalisisUmbralParalelismo;
+import com.turin.tur.main.experiments.Experimentales.Setups.SetupUmbralAngulos;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeLEVEL;
 import com.turin.tur.main.util.FileHelper;
-import com.turin.tur.main.util.builder.ResourcesMaker.InfoConceptualParalelismo;
 
 
 public class Level {
@@ -111,8 +112,10 @@ public class Level {
 		public int aciertosPorCategorias; // Esto guarda el numero de aciertos en trials por categoria. Al generar el level hay que inlcuir un numero de aciertos que vuelve significativo el resultado y comparar con eso.
 		public int aciertosPorImagenes; // Esto guarda el numero de aciertos en trials por imagenes. Al generar el level hay que incluir el numero de aciertos que vuelve significativo el resultado
 		// Informacion relacionada al procesamiento en tiempo real.
-		public TIPOdeLEVEL tipoDeLevel = TIPOdeLEVEL.UMBRAL;
-		public AnalisisUmbral analisisUmbral = new AnalisisUmbral();
+		public TIPOdeLEVEL tipoDeLevel = TIPOdeLEVEL.UMBRALPARALELISMO;
+		public AnalisisUmbralParalelismo analisisUmbral = new AnalisisUmbralParalelismo();
+		public Object setup;
+		public int anguloReferencia;
 		
 		
 		
@@ -190,18 +193,4 @@ public class Level {
 		}
 	}
 	
-	public static class AnalisisUmbral {
-		public static class DetectionObject {
-			public boolean answerTrue;
-			public InfoConceptualParalelismo infoConceptual;
-		}
-		
-		public float anguloReferencia;
-		public int indiceAnguloRefrencia;
-		public int cantidadDeNivelesDeDificultad;
-		public float trueRate; // Nivel de aciertos de deteccion de señal que se quiere medir. Sirve para el setup experimental de umbral
-		public Array<DetectionObject> historialAciertosCurvaSuperior = new Array<DetectionObject>();
-		public int saltoCurvaSuperior;
-		public int proximoNivelCurvaSuperior;  
-	}
 }
