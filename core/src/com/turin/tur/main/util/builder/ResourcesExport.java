@@ -36,9 +36,9 @@ import it.sauronsoftware.jave.EncoderException;
 import it.sauronsoftware.jave.EncodingAttributes;
 import it.sauronsoftware.jave.InputFormatException;
 
-public class LevelExport {
+public class ResourcesExport {
 
-	private static final String TAG = LevelExport.class.getName();
+	private static final String TAG = ResourcesExport.class.getName();
 	
 	public static void createStructure() {
 		seleccionarRecursos(); // Copia solo los recursos que se usan a una carpeta para su procesamiento

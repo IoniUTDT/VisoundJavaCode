@@ -1,5 +1,6 @@
 package com.turin.tur.main.experiments;
 
+import com.badlogic.gdx.math.CumulativeDistribution;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.turin.tur.main.experiments.Experimentales.Setups.SetupUmbralAngulos;
@@ -74,6 +75,13 @@ public class Experimentales {
 				
 				this.angulos.addAll(this.angulosDetalle);
 				this.angulos.addAll(this.angulosNoDetalle);
+			}
+			
+			public boolean cumpleCriterioDistanciaMinima (int angulo1, int angulo2) {
+				int deltaAngulo = angulo2-angulo1;
+				if (deltaAngulo < 0) {deltaAngulo=-deltaAngulo;}  // Hacemos que sean todos los numeros positivos
+				if (deltaAngulo >= 180) {deltaAngulo = 360 - deltaAngulo;} // Hacemos que los angulos sean considerados siempre del lado "concavo")
+				return (deltaAngulo >= this.saltoGrande);
 			}
 		}
 
@@ -188,19 +196,22 @@ public class Experimentales {
 			Array<AnguloOrdenable> angulosCuadrante4 = new Array<AnguloOrdenable>();
 			
 			for (int angulo: setup.angulos) {
-				int anguloRef = angulo - this.anguloDeReferencia;
-				if (anguloRef < 0) {anguloRef = anguloRef + 360;} // corrige para que sean todos angulos en la primer vuelta
-				if (anguloRef > 0 && anguloRef <= 90) {
-					angulosCuadrante1.add(new AnguloOrdenable(angulo, anguloRef));
-				}
-				if (anguloRef >= 90 && anguloRef < 180) {
-					angulosCuadrante2.add(new AnguloOrdenable(angulo, anguloRef));
-				}
-				if (anguloRef > 180 && anguloRef <= 270) {
-					angulosCuadrante3.add(new AnguloOrdenable(angulo, anguloRef));
-				}
-				if (anguloRef >= 270 && anguloRef < 360) {
-					angulosCuadrante4.add(new AnguloOrdenable(angulo, anguloRef));
+				if (setup.cumpleCriterioDistanciaMinima(angulo, this.anguloDeReferencia)) {
+					int anguloRef = angulo - this.anguloDeReferencia;
+					if (anguloRef < 0) {anguloRef = anguloRef + 360;} // corrige para que sean todos angulos en la primer vuelta
+					
+					if (anguloRef > 0 && anguloRef <= 90) {
+						angulosCuadrante1.add(new AnguloOrdenable(angulo, anguloRef));
+					}
+					if (anguloRef >= 90 && anguloRef < 180) {
+						angulosCuadrante2.add(new AnguloOrdenable(angulo, anguloRef));
+					}
+					if (anguloRef > 180 && anguloRef <= 270) {
+						angulosCuadrante3.add(new AnguloOrdenable(angulo, anguloRef));
+					}
+					if (anguloRef >= 270 && anguloRef < 360) {
+						angulosCuadrante4.add(new AnguloOrdenable(angulo, anguloRef));
+					}
 				}
 			}
 			// Ordenamos los angulos segun corresponda
@@ -333,7 +344,7 @@ public class Experimentales {
 					if (cuadrante.nivelEstimulo<0) {cuadrante.nivelEstimulo=0;}
 				} else {
 					cuadrante.nivelEstimulo=cuadrante.nivelEstimulo+cuadrante.saltosActivos;
-					if (cuadrante.nivelEstimulo<cuadrante.listaEstimulos.size) {cuadrante.nivelEstimulo=cuadrante.listaEstimulos.size-1;}
+					if (cuadrante.nivelEstimulo>cuadrante.listaEstimulos.size) {cuadrante.nivelEstimulo=cuadrante.listaEstimulos.size-1;}
 				}
 			}
 		}
@@ -343,7 +354,22 @@ public class Experimentales {
 		 * @return
 		 */
 		public boolean complete() {
-			return ((this.cuadrantes.get(0).historial.size+this.cuadrantes.get(1).historial.size+this.cuadrantes.get(2).historial.size+this.cuadrantes.get(3).historial.size)>10);
+			if ((this.cuadrantes.get(0).historial.size+this.cuadrantes.get(1).historial.size+this.cuadrantes.get(2).historial.size+this.cuadrantes.get(3).historial.size)>100) {
+				System.out.println("Nivel finalizado:");
+				System.out.println("Cuadrante1:");
+				for (Historial elemento :this.cuadrantes.get(0).historial)
+				System.out.print(elemento.angulo.angulo+":"+elemento.acertado+" ");
+				System.out.println("Cuadrante2:");
+				for (Historial elemento :this.cuadrantes.get(1).historial)
+				System.out.print(elemento.angulo.angulo+":"+elemento.acertado+" ");
+				System.out.println("Cuadrante3:");
+				for (Historial elemento :this.cuadrantes.get(2).historial)
+				System.out.print(elemento.angulo.angulo+":"+elemento.acertado+" ");
+				System.out.println("Cuadrante4:");
+				for (Historial elemento :this.cuadrantes.get(3).historial)
+				System.out.print(elemento.angulo.angulo+":"+elemento.acertado+" ");
+			}
+			return ((this.cuadrantes.get(0).historial.size+this.cuadrantes.get(1).historial.size+this.cuadrantes.get(2).historial.size+this.cuadrantes.get(3).historial.size)>100);
 		}
 	}
 }

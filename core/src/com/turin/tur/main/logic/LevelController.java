@@ -207,6 +207,7 @@ public class LevelController implements InputProcessor {
 						int anguloABuscar = this.analisis.askNext();
 						nextTrialPosition = findTrialAngulo(anguloABuscar);
 						this.level.activeTrialPosition = nextTrialPosition;
+						this.initTrial();
 						break;
 					
 					default:
@@ -218,22 +219,8 @@ public class LevelController implements InputProcessor {
 						}
 						break;
 				}
-				
-				if (this.level.jsonLevel.tipoDeLevel == TIPOdeLEVEL.UMBRALPARALELISMO) {
-					
-				
-					
-				} else { //TODO SEGUIR ACA
-					if (isLastTrial()) {
-						completeLevel();
-					} else {
-						this.level.activeTrialPosition += 1;
-						this.initTrial();
-					}
-				}
 			}
 		}
-
 	}
 	
 	private int findTrialId(int anguloReferencia, int nivelDificultad) {
@@ -263,8 +250,6 @@ public class LevelController implements InputProcessor {
 		Array<Integer> listaDeTrialPosibles = new Array<Integer>();
 		for (int idTrialaMirar : this.level.secuenciaTrailsId) {
 			JsonTrial jsonTrial = Trial.JsonTrial.LoadTrial(idTrialaMirar);
-			System.out.print(jsonTrial.jsonEstimulo.infoConceptualAngulos.direccionLado1);
-			System.out.print(jsonTrial.jsonEstimulo.infoConceptualAngulos.direccionLado2);
 			if ((jsonTrial.jsonEstimulo.infoConceptualAngulos.direccionLado1 == angulo) || (jsonTrial.jsonEstimulo.infoConceptualAngulos.direccionLado2 == angulo)) {
 				listaDeTrialPosibles.add(idTrialaMirar);
 			}

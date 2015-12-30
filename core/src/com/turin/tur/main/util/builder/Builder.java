@@ -29,7 +29,7 @@ public class Builder {
 		if (makeLevels) {
 			
 			LevelMaker.makeLevels();
-			LevelExport.createStructure();
+			ResourcesExport.createStructure();
 			System.exit(0);
 		}
 

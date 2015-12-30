@@ -188,10 +188,11 @@ public class ResourcesMaker {
 				int angulo2 = setup.angulos.get(indice2);
 				
 				if (setup.angulosNoDetalle.contains(angulo1, false) || setup.angulosNoDetalle.contains(angulo2, false)) {
-					
-					int deltaAngulo = angulo2-angulo1;
-					
-					if (deltaAngulo >= setup.saltoGrande) { 
+					if (setup.cumpleCriterioDistanciaMinima(angulo1, angulo2)) {
+						int deltaAngulo = angulo2-angulo1;
+						if (deltaAngulo < 0) {deltaAngulo=-deltaAngulo;}  // Hacemos que sean todos los numeros positivos
+						if (deltaAngulo >= 180) {deltaAngulo = 360 - deltaAngulo;} // Hacemos que los angulos sean considerados siempre del lado "concavo")
+						
 						Imagen imagen = crearImagen();
 						float Xcenter = width/2;
 						float Ycenter = height/2;
