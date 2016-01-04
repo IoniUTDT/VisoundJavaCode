@@ -53,7 +53,7 @@ public class LevelController implements InputProcessor {
 	public float timeInTrial = 0; // Tiempo desde que se inicalizo el ultimo trial.
 	boolean elementoSeleccionado = false; // Sin seleccion
 	public Session session;
-	AnalisisUmbralAngulos analisis;
+	// AnalisisUmbralAngulos analisis;
 
 		
 	public LevelController(Game game, int levelNumber, int trialNumber, Session session) {
@@ -77,9 +77,9 @@ public class LevelController implements InputProcessor {
 		}
 		if (this.level.jsonLevel.tipoDeLevel == TIPOdeLEVEL.UMBRALANGULO) {
 			SetupUmbralAngulos setup = (SetupUmbralAngulos) this.level.jsonLevel.setup;
-			analisis = new AnalisisUmbralAngulos(setup,this.level.jsonLevel.anguloReferencia);
+			this.level.levelLog.analisis = new AnalisisUmbralAngulos(setup,this.level.jsonLevel.anguloReferencia);
 			// Usamos la clase analisis para elegir el angulo q hay que mostrar
-			int anguloABuscar = analisis.askNext();
+			int anguloABuscar = this.level.levelLog.analisis.askNext();
 			int nextTrialPosition = findTrialAngulo(anguloABuscar);
 			this.level.activeTrialPosition = nextTrialPosition;
 		}
@@ -94,7 +94,7 @@ public class LevelController implements InputProcessor {
 		trial.newLog(this.session, this.level);
 		
 		// Carga la interfaz
-		this.levelInterfaz = new LevelInterfaz(this.level, this.level.activeTrialPosition, trial, analisis);
+		this.levelInterfaz = new LevelInterfaz(this.level, this.level.activeTrialPosition, trial);
 		timeInTrial = 0;
 
 		// Registra el evento de la creacion del trial
@@ -200,11 +200,11 @@ public class LevelController implements InputProcessor {
 					case UMBRALANGULO:
 						
 						
-						this.analisis.answer(this.trial.log.touchLog.peek().isTrue);
-						if (this.analisis.complete()) {
+						this.level.levelLog.analisis.answer(this.trial.log.touchLog.peek().isTrue);
+						if (this.level.levelLog.analisis.complete()) {
 							completeLevel();
 						}
-						int anguloABuscar = this.analisis.askNext();
+						int anguloABuscar = this.level.levelLog.analisis.askNext();
 						nextTrialPosition = findTrialAngulo(anguloABuscar);
 						this.level.activeTrialPosition = nextTrialPosition;
 						this.initTrial();

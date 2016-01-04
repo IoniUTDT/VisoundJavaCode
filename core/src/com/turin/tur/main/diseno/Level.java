@@ -7,6 +7,7 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.turin.tur.main.diseno.Enviables.STATUS;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.experiments.Experimentales.Analisis.AnalisisUmbralParalelismo;
+import com.turin.tur.main.experiments.Experimentales.AnalisisUmbralAngulos;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeLEVEL;
 import com.turin.tur.main.util.FileHelper;
@@ -162,6 +163,7 @@ public class Level {
 		public int startTrialPosition;
 		public Array<Integer> sortOfTrials;
 		public Array<Integer> trialsVisited = new Array<Integer>();
+		public AnalisisUmbralAngulos analisis;
 
 	}
 	
