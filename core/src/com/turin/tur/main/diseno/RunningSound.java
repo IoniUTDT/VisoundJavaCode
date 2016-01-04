@@ -45,9 +45,11 @@ public class RunningSound {
 		}
 		if (this.action == NEXT.PLAY) {
 			if (Gdx.graphics.getFramesPerSecond()>40) {
-				this.play(nextContenido);
-				this.playTime =0;
-				this.action = NEXT.NADA;
+				if (nextContenido!=null) {
+					this.play(nextContenido);
+					this.playTime =0;
+					this.action = NEXT.NADA;
+				}
 			}
 		}
 	}

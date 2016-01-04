@@ -94,7 +94,7 @@ public class LevelController implements InputProcessor {
 		trial.newLog(this.session, this.level);
 		
 		// Carga la interfaz
-		this.levelInterfaz = new LevelInterfaz(this.level, this.level.activeTrialPosition, trial);
+		this.levelInterfaz = new LevelInterfaz(this.level, this.level.activeTrialPosition, trial, analisis);
 		timeInTrial = 0;
 
 		// Registra el evento de la creacion del trial

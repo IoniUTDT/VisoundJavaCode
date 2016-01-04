@@ -52,14 +52,13 @@ public class ResourcesMaker {
 			if (Builder.AppVersion == "UmbralCompletoAngulos") {
 				SetupUmbralAngulos setup = new SetupUmbralAngulos();
 				setup.nombre="SetupAngulosUmbral";
-				setup.saltoChico=2;
-				setup.saltoGrande=10;
+				setup.saltoChico=1;
+				setup.saltoGrande=5;
 				setup.angulosCriticos.add(0);
 				setup.angulosCriticos.add(90);
 				setup.angulosCriticos.add(180);
 				setup.angulosCriticos.add(270);
 				setup.searchAngles();
-
 				objetos.addAll(recursosAnguloAnalisisUmbral(setup));
 			}
 		}
@@ -187,56 +186,56 @@ public class ResourcesMaker {
 				int angulo1 = setup.angulos.get(indice1);
 				int angulo2 = setup.angulos.get(indice2);
 				
-				if (setup.angulosNoDetalle.contains(angulo1, false) || setup.angulosNoDetalle.contains(angulo2, false)) {
-					if (setup.cumpleCriterioDistanciaMinima(angulo1, angulo2)) {
-						int deltaAngulo = angulo2-angulo1;
-						if (deltaAngulo < 0) {deltaAngulo=-deltaAngulo;}  // Hacemos que sean todos los numeros positivos
-						if (deltaAngulo >= 180) {deltaAngulo = 360 - deltaAngulo;} // Hacemos que los angulos sean considerados siempre del lado "concavo")
-						
-						Imagen imagen = crearImagen();
-						float Xcenter = width/2;
-						float Ycenter = height/2;
-						imagen.infoConceptualAngulos.direccionLado1 = angulo1;
-						imagen.infoConceptualAngulos.direccionLado2 = angulo2;
-						
-						imagen.infoConceptualAngulos.separacionAngular = deltaAngulo;
-						if (deltaAngulo < 90) {
-							imagen.infoConceptualAngulos.categoriaAngulo = CategoriaAngulo.Agudo;
-							imagen.categories.add(Categorias.Agudo);
+				// if (setup.angulosNoDetalle.contains(angulo1, false) || setup.angulosNoDetalle.contains(angulo2, false)) {
+				if (setup.cumpleCriterioDistanciaMinima(angulo1, angulo2)) {
+					int deltaAngulo = angulo2-angulo1;
+					if (deltaAngulo < 0) {deltaAngulo=-deltaAngulo;}  // Hacemos que sean todos los numeros positivos
+					if (deltaAngulo >= 180) {deltaAngulo = 360 - deltaAngulo;} // Hacemos que los angulos sean considerados siempre del lado "concavo")
+					
+					Imagen imagen = crearImagen();
+					float Xcenter = width/2;
+					float Ycenter = height/2;
+					imagen.infoConceptualAngulos.direccionLado1 = angulo1;
+					imagen.infoConceptualAngulos.direccionLado2 = angulo2;
+					
+					imagen.infoConceptualAngulos.separacionAngular = deltaAngulo;
+					if (deltaAngulo < 90) {
+						imagen.infoConceptualAngulos.categoriaAngulo = CategoriaAngulo.Agudo;
+						imagen.categories.add(Categorias.Agudo);
+					} else {
+						if (deltaAngulo > 90) {
+							imagen.infoConceptualAngulos.categoriaAngulo = CategoriaAngulo.Grave;
+							imagen.categories.add(Categorias.Grave);
 						} else {
-							if (deltaAngulo > 90) {
-								imagen.infoConceptualAngulos.categoriaAngulo = CategoriaAngulo.Grave;
-								imagen.categories.add(Categorias.Grave);
-							} else {
-								imagen.infoConceptualAngulos.categoriaAngulo = CategoriaAngulo.Recto;
-								imagen.categories.add(Categorias.Recto);
-							}
+							imagen.infoConceptualAngulos.categoriaAngulo = CategoriaAngulo.Recto;
+							imagen.categories.add(Categorias.Recto);
 						}
-						// agrega la primer linea
-						InfoLinea infoLinea = new InfoLinea();
-						infoLinea.angulo=angulo1;
-						infoLinea.largo=largo/2;
-						infoLinea.Xcenter = (float) (Xcenter + largo/4 * MathUtils.cosDeg(angulo1));
-						infoLinea.Ycenter = (float) (Ycenter - largo/4 * MathUtils.sinDeg(angulo1)); //TODO: revisar q onda la notacion y los ejes!
-						imagen.parametros.addAll(ExtremosLinea.Linea(infoLinea));
-						imagen.infoLineas.add(infoLinea);
-						// agrega la segunda linea
-						infoLinea = new InfoLinea();
-						infoLinea.angulo=angulo2;
-						infoLinea.largo=largo/2;
-						infoLinea.Xcenter = (float) (Xcenter + largo/4 * MathUtils.cosDeg(angulo2));
-						infoLinea.Ycenter = (float) (Ycenter - largo/4 * MathUtils.sinDeg(angulo2));//TODO: revisar que onda la notacion y los ejes!
-						imagen.parametros.addAll(ExtremosLinea.Linea(infoLinea));
-						imagen.infoLineas.add(infoLinea);
-						
-						imagen.comments = "Imagen generada por secuencia automatica 'recursosAnguloAnalisisUmbral'.";
-						imagen.name = "Imagen de angulos generada automaticamente";
-						imagen.idVinculo = "";
-						imagen.categories.add(Categorias.Angulo);
-						imagen.nivelDificultad = -1;
-						objetos.add(imagen);
 					}
+					// agrega la primer linea
+					InfoLinea infoLinea = new InfoLinea();
+					infoLinea.angulo=angulo1;
+					infoLinea.largo=largo/2;
+					infoLinea.Xcenter = (float) (Xcenter + largo/4 * MathUtils.cosDeg(angulo1));
+					infoLinea.Ycenter = (float) (Ycenter - largo/4 * MathUtils.sinDeg(angulo1)); //TODO: revisar q onda la notacion y los ejes!
+					imagen.parametros.addAll(ExtremosLinea.Linea(infoLinea));
+					imagen.infoLineas.add(infoLinea);
+					// agrega la segunda linea
+					infoLinea = new InfoLinea();
+					infoLinea.angulo=angulo2;
+					infoLinea.largo=largo/2;
+					infoLinea.Xcenter = (float) (Xcenter + largo/4 * MathUtils.cosDeg(angulo2));
+					infoLinea.Ycenter = (float) (Ycenter - largo/4 * MathUtils.sinDeg(angulo2));//TODO: revisar que onda la notacion y los ejes!
+					imagen.parametros.addAll(ExtremosLinea.Linea(infoLinea));
+					imagen.infoLineas.add(infoLinea);
+					
+					imagen.comments = "Imagen generada por secuencia automatica 'recursosAnguloAnalisisUmbral'.";
+					imagen.name = "Imagen de angulos generada automaticamente";
+					imagen.idVinculo = "";
+					imagen.categories.add(Categorias.Angulo);
+					imagen.nivelDificultad = -1;
+					objetos.add(imagen);
 				}
+				//}
 			}
 		}
 		

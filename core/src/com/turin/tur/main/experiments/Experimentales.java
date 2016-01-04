@@ -1,7 +1,6 @@
 package com.turin.tur.main.experiments;
 
-import com.badlogic.gdx.math.CumulativeDistribution;
-import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.WindowedMean;
 import com.badlogic.gdx.utils.Array;
 import com.turin.tur.main.experiments.Experimentales.Setups.SetupUmbralAngulos;
 import com.turin.tur.main.util.builder.ResourcesMaker.InfoConceptualParalelismo;
@@ -81,7 +80,11 @@ public class Experimentales {
 				int deltaAngulo = angulo2-angulo1;
 				if (deltaAngulo < 0) {deltaAngulo=-deltaAngulo;}  // Hacemos que sean todos los numeros positivos
 				if (deltaAngulo >= 180) {deltaAngulo = 360 - deltaAngulo;} // Hacemos que los angulos sean considerados siempre del lado "concavo")
-				return (deltaAngulo >= this.saltoGrande);
+				if (this.angulosDetalle.contains(angulo1, false) && this.angulosDetalle.contains(angulo2, false)) {
+					return (deltaAngulo >= this.saltoGrande*2);
+				} else {
+					return (deltaAngulo >= this.saltoGrande);
+				}
 			}
 		}
 
@@ -165,6 +168,7 @@ public class Experimentales {
 			private boolean convergenciaAlcanzada=false;
 			private Array<Historial> historial = new Array<Historial>(); // Se almacena la info de lo que va pasando
 			private Array<AnguloOrdenable> listaEstimulos = new Array<AnguloOrdenable>(); // Lista de estimulos ordenados de menor a mayor dificultad
+			private WindowedMean ventana = new WindowedMean(5);
 		}
 		
 		private Array<Parametros> cuadrantes = new Array<Parametros>();
@@ -262,7 +266,16 @@ public class Experimentales {
 		public int askNext() {
 			if (!waitingAnswer) {
 				// Elije un cuadrante al azar y carga esos datos
-				int cuadranteAUsar=MathUtils.random(3);
+				Array<Integer> listaCuadrantesAnalizar = new Array<Integer>();
+				for (int i=0; i<4; i++) { // agrega los cuadrantes que todavia no convergieron
+					if (!cuadrantes.get(i).convergenciaAlcanzada) {
+						listaCuadrantesAnalizar.add(i);
+					}
+				}
+				if (listaCuadrantesAnalizar.size==0) {
+					return -1;
+				}
+				int cuadranteAUsar=listaCuadrantesAnalizar.random();
 				Parametros cuadrante = this.cuadrantes.get(cuadranteAUsar);
 				// pone los datos en la clase principal
 				this.cuadranteActivo = cuadranteAUsar;
@@ -346,6 +359,15 @@ public class Experimentales {
 					cuadrante.nivelEstimulo=cuadrante.nivelEstimulo+cuadrante.saltosActivos;
 					if (cuadrante.nivelEstimulo>cuadrante.listaEstimulos.size) {cuadrante.nivelEstimulo=cuadrante.listaEstimulos.size-1;}
 				}
+				
+				// Nos fijamos si se alcanzo la convergencia
+				cuadrante.ventana.addValue(historial.angulo.nivel);
+				if (cuadrante.ventana.hasEnoughData()) {
+					if (cuadrante.ventana.standardDeviation() < 1) { // Como la señal medida es el nivel, cada paso tiene valor uno y si se estabiliza no deberia fluctuar mas de uno alrededor de la media
+						cuadrante.convergenciaAlcanzada=true;
+						System.out.println("Convergencia alcanzada en el valor "+cuadrante.historial.peek().angulo.anguloRef );
+					}
+				}
 			}
 		}
 
@@ -354,22 +376,22 @@ public class Experimentales {
 		 * @return
 		 */
 		public boolean complete() {
-			if ((this.cuadrantes.get(0).historial.size+this.cuadrantes.get(1).historial.size+this.cuadrantes.get(2).historial.size+this.cuadrantes.get(3).historial.size)>100) {
-				System.out.println("Nivel finalizado:");
-				System.out.println("Cuadrante1:");
-				for (Historial elemento :this.cuadrantes.get(0).historial)
-				System.out.print(elemento.angulo.angulo+":"+elemento.acertado+" ");
-				System.out.println("Cuadrante2:");
-				for (Historial elemento :this.cuadrantes.get(1).historial)
-				System.out.print(elemento.angulo.angulo+":"+elemento.acertado+" ");
-				System.out.println("Cuadrante3:");
-				for (Historial elemento :this.cuadrantes.get(2).historial)
-				System.out.print(elemento.angulo.angulo+":"+elemento.acertado+" ");
-				System.out.println("Cuadrante4:");
-				for (Historial elemento :this.cuadrantes.get(3).historial)
-				System.out.print(elemento.angulo.angulo+":"+elemento.acertado+" ");
+			boolean completado=false;
+			if ((this.cuadrantes.get(0).historial.size+this.cuadrantes.get(1).historial.size+this.cuadrantes.get(2).historial.size+this.cuadrantes.get(3).historial.size)>80) {
+				completado=true;
 			}
-			return ((this.cuadrantes.get(0).historial.size+this.cuadrantes.get(1).historial.size+this.cuadrantes.get(2).historial.size+this.cuadrantes.get(3).historial.size)>100);
+			boolean completadosTodos = true;
+			for (Parametros cuadrante:cuadrantes) {
+				if (!cuadrante.convergenciaAlcanzada) {
+					completadosTodos=false;
+				}
+			}
+			if (completadosTodos) {completado=true;} 
+			return completado;
+		}
+		
+		public boolean convergencia (int cuadrante) {
+			return this.cuadrantes.get(cuadrante).convergenciaAlcanzada;
 		}
 	}
 }

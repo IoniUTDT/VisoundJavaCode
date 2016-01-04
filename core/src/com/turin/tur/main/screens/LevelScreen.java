@@ -3,7 +3,9 @@ package com.turin.tur.main.screens;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.turin.tur.main.diseno.Level;
 import com.turin.tur.main.diseno.Session;
+import com.turin.tur.main.diseno.RunningSound.NEXT;
 import com.turin.tur.main.logic.LevelController;
 import com.turin.tur.main.logic.LevelRenderer;
 
@@ -67,12 +69,14 @@ public class LevelScreen extends AbstractGameScreen  {
 	
 	@Override
 	public void pause () {
+		this.levelController.trial.runningSound.stop();
 		paused = true;
 	}
 	
 	@Override
 	public void resume () {
 		super.resume();
+		this.levelController.trial.runningSound.action = NEXT.PLAY;
 		// Only called on Android!
 		paused = false;
 	}

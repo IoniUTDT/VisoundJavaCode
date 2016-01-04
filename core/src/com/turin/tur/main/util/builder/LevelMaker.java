@@ -198,7 +198,7 @@ public class LevelMaker {
 				JsonLevel level = crearLevel();
 				level.tipoDeLevel = TIPOdeLEVEL.UMBRALANGULO;
 				level.anguloReferencia = setup.saltoGrande*i;
-				level.levelTitle = "Angulos con referencia: "+(setup.saltoGrande*i);
+				level.levelTitle = "R: "+(setup.saltoGrande*i);
 				level.randomTrialSort=false;
 				level.show = true;
 				
