@@ -180,7 +180,7 @@ public class Experimentales {
 		private int proporcionTotal=3;
 		private float sdEsperada = 1f;
 		private int numeroMaximoDeTrialsXLevel=60;
-		private int tamanoVentanaAnalisisConvergencia=7;
+		private int tamanoVentanaAnalisisConvergencia=6;
 		
 		
 		// Variables que regulan en intercambio de datos con el levelcontroller.
