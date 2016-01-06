@@ -177,7 +177,8 @@ public class Experimentales {
 		
 		// Los siguientes dos numeros representan la relacion entre errores y aciertos que se espera para regular el umbral 
 		private int proporcionAciertos=2;
-		private int proporcionErrores=1;
+		private int proporcionTotal=3;
+		private float sdEsperada = 1f;
 		// Variables que regulan en intercambio de datos con el levelcontroller.
 		private AnguloOrdenable next; //Proximo valor a medir (en terminos absolutos)
 		private int cuadranteActivo; // En cual de los cuadrantes esta la señal que se va a medir
@@ -303,50 +304,39 @@ public class Experimentales {
 				historial.angulo=this.next;
 				cuadrante.historial.add(historial);
 				
-				// Elije si hay que incrementar la dificultad o no
-				boolean incrementarDificultad;
-				if (cuadrante.historial.size >= (this.proporcionAciertos+this.proporcionErrores)) { // Estamos en el caso en que hay que mirar el historial
-					int contadorAciertos=0;
-					for (int i=1; i<=(this.proporcionAciertos+this.proporcionErrores); i++){
-						if (cuadrante.historial.get(cuadrante.historial.size-i).acertado==true){
-							contadorAciertos++;
+				// Elije si hay que incrementar la dificultad, disminuirla o no hacer nada.
+				boolean incrementarDificultad=false;
+				boolean disminuirDificultad=false;
+				if (cuadrante.historial.peek().acertado) { // Si se acerto y no hay suficiente historial se debe disminuir la dificultad, sino hay que revisar si la proporcion de aciertos requeridos esta cumpleida
+					if (cuadrante.historial.size >= this.proporcionTotal) { // Estamos en el caso en que hay que mirar el historial
+						// Nos fijamos si hay suficientes aciertos en el ultimo tramo como para aumentar la dificultad
+						int contadorAciertos=0;
+						for (int i=1; i<=(this.proporcionTotal); i++){
+							if (cuadrante.historial.get(cuadrante.historial.size-i).acertado==true){
+								contadorAciertos++;
+							}
 						}
-					}
-					if (contadorAciertos>= this.proporcionAciertos) {
-						incrementarDificultad=true;
-					} else {
-						incrementarDificultad=false;
-					}
-				} else { // Estamos en el caso de que no haya suficiente historia
-					if (cuadrante.historial.size>0) {
-						if (cuadrante.historial.peek().acertado) { // Se fija si lo ultimo fue un acierto.
+						if (contadorAciertos>= this.proporcionAciertos) {
 							incrementarDificultad=true;
-						} else {
-							incrementarDificultad=false;
 						}
-					} else { // Estamos en el caso de que no haya historial
+					} else { // Si no hay historial suficiente
 						incrementarDificultad=true;
 					}
+				} else { // Significa q hubo un desacierto en este caso siempre se disminuye la dificultad
+					disminuirDificultad = true;
 				}
+				 
 				
-				// Se fija si hay que disminuir el salto entre nivel y nivel
-				if (cuadrante.historial.size >= (this.proporcionAciertos+this.proporcionErrores)+1) { // Estamos en el caso en que hay que mirar el historial
-					boolean incrementarDificultadUltimo;
-					int contadorAciertos=0;
-					for (int i=0; i<(this.proporcionAciertos+this.proporcionErrores); i++){
-						if (cuadrante.historial.get(cuadrante.historial.size-(i+1)).acertado==true){
-							contadorAciertos++;
-						}
-					}
-					if (contadorAciertos>= this.proporcionAciertos) {
-						incrementarDificultadUltimo=true;
-					} else {
-						incrementarDificultadUltimo=false;
-					}
-					if (incrementarDificultadUltimo!=incrementarDificultad) {
-						cuadrante.saltosActivos = cuadrante.saltosActivos - 1;
-						if (cuadrante.saltosActivos==0) {
-							cuadrante.saltosActivos = 1;
+				// Se fija si hay que disminuir el salto entre nivel y nivel. Para simplicar solo se considera que disminuye cuando hay un rebote "hacia arriba"
+				
+				if (cuadrante.historial.size >1) { // Verifica q haya al menos dos datos
+					if (!cuadrante.historial.peek().acertado) { // Se se erro el ultimo 
+						if (cuadrante.historial.get(cuadrante.historial.size-2).acertado) { // Si se acerto el anterior (hay rebote) 
+							cuadrante.saltosActivos = cuadrante.saltosActivos - 1;
+							// Verificamos que no llegue a cero el salto
+							if (cuadrante.saltosActivos==0) {
+								cuadrante.saltosActivos = 1;
+							}
 						}
 					}
 				}
@@ -355,7 +345,8 @@ public class Experimentales {
 				if (incrementarDificultad) {
 					cuadrante.nivelEstimulo=cuadrante.nivelEstimulo-cuadrante.saltosActivos;
 					if (cuadrante.nivelEstimulo<0) {cuadrante.nivelEstimulo=0;}
-				} else {
+				}
+				if (disminuirDificultad) {
 					cuadrante.nivelEstimulo=cuadrante.nivelEstimulo+cuadrante.saltosActivos;
 					if (cuadrante.nivelEstimulo>cuadrante.listaEstimulos.size) {cuadrante.nivelEstimulo=cuadrante.listaEstimulos.size-1;}
 				}
@@ -363,7 +354,7 @@ public class Experimentales {
 				// Nos fijamos si se alcanzo la convergencia
 				cuadrante.ventana.addValue(historial.angulo.nivel);
 				if (cuadrante.ventana.hasEnoughData()) {
-					if (cuadrante.ventana.standardDeviation() < 1) { // Como la señal medida es el nivel, cada paso tiene valor uno y si se estabiliza no deberia fluctuar mas de uno alrededor de la media
+					if (cuadrante.ventana.standardDeviation() < this.sdEsperada) { // Como la señal medida es el nivel, cada paso tiene valor uno y si se estabiliza no deberia fluctuar mas de uno alrededor de la media
 						cuadrante.convergenciaAlcanzada=true;
 						System.out.println("Convergencia alcanzada en el valor "+cuadrante.historial.peek().angulo.anguloRef );
 					}
