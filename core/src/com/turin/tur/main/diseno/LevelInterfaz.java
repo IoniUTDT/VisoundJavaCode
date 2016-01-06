@@ -48,10 +48,11 @@ public class LevelInterfaz {
 		fpsFont.draw(batch, levelInfo.levelTitle, cameraGUI.viewportWidth*1/20 , cameraGUI.viewportHeight*1/10); 
 		fpsFont.draw(batch, trial.jsonTrial.title , cameraGUI.viewportWidth*2/5 , cameraGUI.viewportHeight*1/10);
 		Assets.instance.fonts.defaultFont.draw(batch, trial.jsonTrial.caption , cameraGUI.viewportWidth*1/5 , cameraGUI.viewportHeight*9/10);
-		Assets.instance.fonts.defaultFont.draw(batch, "Convergencia cuandrante 1: "+ this.levelInfo.levelLog.analisis.convergencia(0), cameraGUI.viewportWidth*3/5, cameraGUI.viewportHeight*16/20);
-		Assets.instance.fonts.defaultFont.draw(batch, "Convergencia cuandrante 2: "+ this.levelInfo.levelLog.analisis.convergencia(1), cameraGUI.viewportWidth*3/5, cameraGUI.viewportHeight*17/20);
-		Assets.instance.fonts.defaultFont.draw(batch, "Convergencia cuandrante 3: "+ this.levelInfo.levelLog.analisis.convergencia(2), cameraGUI.viewportWidth*3/5, cameraGUI.viewportHeight*18/20);
-		Assets.instance.fonts.defaultFont.draw(batch, "Convergencia cuandrante 4: "+ this.levelInfo.levelLog.analisis.convergencia(3), cameraGUI.viewportWidth*3/5, cameraGUI.viewportHeight*19/20);
+		//Assets.instance.fonts.defaultFont.draw(batch, "Convergencia cuandrante 1: "+ this.levelInfo.levelLog.analisis.convergencia(0), cameraGUI.viewportWidth*3/5, cameraGUI.viewportHeight*16/20);
+		//Assets.instance.fonts.defaultFont.draw(batch, "Convergencia cuandrante 2: "+ this.levelInfo.levelLog.analisis.convergencia(1), cameraGUI.viewportWidth*3/5, cameraGUI.viewportHeight*17/20);
+		//Assets.instance.fonts.defaultFont.draw(batch, "Convergencia cuandrante 3: "+ this.levelInfo.levelLog.analisis.convergencia(2), cameraGUI.viewportWidth*3/5, cameraGUI.viewportHeight*18/20);
+		//Assets.instance.fonts.defaultFont.draw(batch, "Convergencia cuandrante 4: "+ this.levelInfo.levelLog.analisis.convergencia(3), cameraGUI.viewportWidth*3/5, cameraGUI.viewportHeight*19/20);
+		Assets.instance.fonts.defaultFont.draw(batch, "Numero de trials maximos restantes: " + this.levelInfo.levelLog.analisis.trialsRestantes(), cameraGUI.viewportWidth*2/5, cameraGUI.viewportHeight*19/20);
 		// Assets.instance.fonts.defaultFont.draw(batch, String.valueOf(trial.jsonTrial.parametros.D), cameraGUI.viewportWidth*1/5, cameraGUI.viewportHeight*1/10);
 		// Assets.instance.fonts.defaultFont.draw(batch, "Trial #" + trialNumber + " Id: " + trial.Id+" de " + levelInfo.secuenciaTrailsId.size, cameraGUI.viewportWidth*7/10, cameraGUI.viewportHeight*1/10); 
 	}

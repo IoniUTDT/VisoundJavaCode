@@ -168,7 +168,7 @@ public class Experimentales {
 			private boolean convergenciaAlcanzada=false;
 			private Array<Historial> historial = new Array<Historial>(); // Se almacena la info de lo que va pasando
 			private Array<AnguloOrdenable> listaEstimulos = new Array<AnguloOrdenable>(); // Lista de estimulos ordenados de menor a mayor dificultad
-			private WindowedMean ventana = new WindowedMean(5);
+			private WindowedMean ventana = new WindowedMean(tamanoVentanaAnalisisConvergencia);
 		}
 		
 		private Array<Parametros> cuadrantes = new Array<Parametros>();
@@ -179,6 +179,10 @@ public class Experimentales {
 		private int proporcionAciertos=2;
 		private int proporcionTotal=3;
 		private float sdEsperada = 1f;
+		private int numeroMaximoDeTrialsXLevel=60;
+		private int tamanoVentanaAnalisisConvergencia=7;
+		
+		
 		// Variables que regulan en intercambio de datos con el levelcontroller.
 		private AnguloOrdenable next; //Proximo valor a medir (en terminos absolutos)
 		private int cuadranteActivo; // En cual de los cuadrantes esta la señal que se va a medir
@@ -348,7 +352,7 @@ public class Experimentales {
 				}
 				if (disminuirDificultad) {
 					cuadrante.nivelEstimulo=cuadrante.nivelEstimulo+cuadrante.saltosActivos;
-					if (cuadrante.nivelEstimulo>cuadrante.listaEstimulos.size) {cuadrante.nivelEstimulo=cuadrante.listaEstimulos.size-1;}
+					if (cuadrante.nivelEstimulo>cuadrante.listaEstimulos.size-1) {cuadrante.nivelEstimulo=cuadrante.listaEstimulos.size-1;}
 				}
 				
 				// Nos fijamos si se alcanzo la convergencia
@@ -368,7 +372,7 @@ public class Experimentales {
 		 */
 		public boolean complete() {
 			boolean completado=false;
-			if ((this.cuadrantes.get(0).historial.size+this.cuadrantes.get(1).historial.size+this.cuadrantes.get(2).historial.size+this.cuadrantes.get(3).historial.size)>80) {
+			if ((this.cuadrantes.get(0).historial.size+this.cuadrantes.get(1).historial.size+this.cuadrantes.get(2).historial.size+this.cuadrantes.get(3).historial.size)>=this.numeroMaximoDeTrialsXLevel) {
 				completado=true;
 			}
 			boolean completadosTodos = true;
@@ -383,6 +387,10 @@ public class Experimentales {
 		
 		public boolean convergencia (int cuadrante) {
 			return this.cuadrantes.get(cuadrante).convergenciaAlcanzada;
+		}
+		
+		public int trialsRestantes () {
+			return this.numeroMaximoDeTrialsXLevel - (this.cuadrantes.get(0).historial.size + this.cuadrantes.get(1).historial.size + this.cuadrantes.get(2).historial.size + this.cuadrantes.get(3).historial.size);
 		}
 	}
 }

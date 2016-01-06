@@ -81,7 +81,13 @@ public class LevelLogHistory {
 		if (!savedData.isEmpty()) {
 			Json json = new Json();
 			json.setUsePrototypes(false);
-			this.historySended = json.fromJson(this.historySended.getClass(),savedData);
+			try {
+				this.historySended = json.fromJson(this.historySended.getClass(),savedData);
+			}
+			catch (Exception e) { // Hubo un problema al cargar el json. Esto pasa cuando se modifica la estructura de datos y no coincide con el json
+				this.historySended = new Array<LevelLog>(); 
+			}
+			
 		} else {
 			this.historySended = new Array<LevelLog>();
 		}
