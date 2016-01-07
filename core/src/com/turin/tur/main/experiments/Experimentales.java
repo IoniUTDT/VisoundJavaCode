@@ -1,7 +1,12 @@
 package com.turin.tur.main.experiments;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.WindowedMean;
 import com.badlogic.gdx.utils.Array;
+import com.turin.tur.main.diseno.Level;
+import com.turin.tur.main.diseno.Trial;
+import com.turin.tur.main.diseno.Trial.JsonTrial;
+import com.turin.tur.main.diseno.Trial.ResourceId;
 import com.turin.tur.main.experiments.Experimentales.Setups.SetupUmbralAngulos;
 import com.turin.tur.main.util.builder.ResourcesMaker.InfoConceptualParalelismo;
 
@@ -11,6 +16,8 @@ import com.turin.tur.main.util.builder.ResourcesMaker.InfoConceptualParalelismo;
  *
  */
 public class Experimentales {
+	
+	private static final String TAG = Experimentales.class.getName();
 
 	public static class Setups {
 	
@@ -51,9 +58,10 @@ public class Experimentales {
 			public Array<Integer> angulosNoDetalle = new Array<Integer>(); // Genera un array con todos los angulos en los que se debe dibujar angulos de al salto grande
 			public Array<Integer> angulosDetalle = new Array<Integer>(); // Genera un array con todos los angulos en los que se debe dibujar angulos de al salto chico
 			public Array<Integer> angulos = new Array<Integer>(); // Genera un array con todos los angulos en los que se debe dibujar angulos
+			public int numeroDeRefrenciasConjuntas = 3; // Es el numero de angulos de referencia distintos que se intercalan en un mismo nivel para evitar feedback 
 			
 			public void searchAngles() {
-				for (int i=0; i<=360; i=i+this.saltoGrande) {
+				for (int i=0; i<360; i=i+this.saltoGrande) {
 					this.angulosNoDetalle.add(i);
 					if (this.angulosCriticos.contains(i,false)){ // Si es un angulo critico
 						int numeroDeAngulosExtra = this.saltoGrande/this.saltoChico;
@@ -127,9 +135,11 @@ public class Experimentales {
 		 *
 		 */
 		public class AnguloOrdenable implements Comparable<AnguloOrdenable> {
-			int angulo;
-			int anguloRef;
-			int nivel;
+			public int angulo;
+			public int anguloRef;
+			public int nivel;
+			public ResourceId idResource;
+			public int idTrial;
 			
 			public AnguloOrdenable(int angulo, int anguloRef) {
 				this.angulo = angulo;
@@ -139,6 +149,10 @@ public class Experimentales {
 			@Override
 			public int compareTo(AnguloOrdenable o) {
 				return Integer.valueOf(anguloRef).compareTo(o.anguloRef);
+			}
+
+			public int nivel() {
+				return this.nivel;
 			}
 		}
 
@@ -162,7 +176,7 @@ public class Experimentales {
 		 * @author ionatan
 		 *
 		 */
-		public class Parametros{
+		public class CuadranteInfo{
 			private int nivelEstimulo; // nivel de señal enviada
 			private int saltosActivos; // nivel del proximo salto (en numero de niveles de señal)
 			private boolean convergenciaAlcanzada=false;
@@ -171,7 +185,7 @@ public class Experimentales {
 			private WindowedMean ventana = new WindowedMean(tamanoVentanaAnalisisConvergencia);
 		}
 		
-		private Array<Parametros> cuadrantes = new Array<Parametros>();
+		private Array<CuadranteInfo> cuadrantes = new Array<CuadranteInfo>();
 		private int anguloDeReferencia; // Angulo correspondiente al lado que se deja quieto.
 		private int saltoInicialEnGrados=20; // Esta cantidad representa el salto inicial en terminos absolutos. Sirve para configurar el numero de saltos iniciales en funcion del setup experimental
 		
@@ -184,9 +198,10 @@ public class Experimentales {
 		
 		
 		// Variables que regulan en intercambio de datos con el levelcontroller.
-		private AnguloOrdenable next; //Proximo valor a medir (en terminos absolutos)
+		public AnguloOrdenable next; //Proximo valor a medir (en terminos absolutos)
 		private int cuadranteActivo; // En cual de los cuadrantes esta la señal que se va a medir
 		private boolean waitingAnswer=false; //Si se esta esperando la rta.
+		public boolean completed;
 		
 		
 		/**
@@ -195,7 +210,7 @@ public class Experimentales {
 		 * Armar una lista ordenada de cuales son los angulos agudos y cuales los graves para poder iterar sobre esa lista el nivel de dificultad independientemente de los valores numericos
 		 *   
 		 */
-		public AnalisisUmbralAngulos (SetupUmbralAngulos setup, int anguloReferencia) {
+		public AnalisisUmbralAngulos (SetupUmbralAngulos setup, int anguloReferencia, Level level) {
 			this.anguloDeReferencia = anguloReferencia;
 			// Agrega 4 parametros. Cada una corresponde a la convergencia al angulo recto en cada uno de los cuadrantes. Es decir la 0 es la convergencia de angulos agudos al angulo de 90 grados en sentido antihorario y el 3 la convcergencia desde los agudos al angulo recto en sentido horario.
 			int salto = saltoInicialEnGrados/setup.saltoGrande;
@@ -223,6 +238,7 @@ public class Experimentales {
 					}
 				}
 			}
+			
 			// Ordenamos los angulos segun corresponda
 			angulosCuadrante1.sort();
 			angulosCuadrante1.reverse();
@@ -243,32 +259,75 @@ public class Experimentales {
 				angulo.nivel = angulosCuadrante4.indexOf(angulo, true);
 			}
 			// Agregamos los datos a cada cuadrante
-			Parametros cuadrante1 = new Parametros();
+			CuadranteInfo cuadrante1 = new CuadranteInfo();
 			cuadrante1.saltosActivos = salto;
 			cuadrante1.nivelEstimulo = angulosCuadrante1.size-1;
 			cuadrante1.listaEstimulos = angulosCuadrante1;
 			this.cuadrantes.add(cuadrante1);
-			Parametros cuadrante2 = new Parametros();
+			CuadranteInfo cuadrante2 = new CuadranteInfo();
 			cuadrante2.saltosActivos = salto;
 			cuadrante2.nivelEstimulo = angulosCuadrante2.size-1;
 			cuadrante2.listaEstimulos = angulosCuadrante2;
 			this.cuadrantes.add(cuadrante2);
-			Parametros cuadrante3 = new Parametros();
+			CuadranteInfo cuadrante3 = new CuadranteInfo();
 			cuadrante3.saltosActivos = salto;
 			cuadrante3.nivelEstimulo = angulosCuadrante3.size-1;
 			cuadrante3.listaEstimulos = angulosCuadrante3;
 			this.cuadrantes.add(cuadrante3);
-			Parametros cuadrante4 = new Parametros();
+			CuadranteInfo cuadrante4 = new CuadranteInfo();
 			cuadrante4.saltosActivos = salto;
 			cuadrante4.nivelEstimulo = angulosCuadrante4.size-1;
 			cuadrante4.listaEstimulos = angulosCuadrante4;
 			this.cuadrantes.add(cuadrante4);
+			this.buscarInfoTrialsIds(level);
 		}
 
 		/**
+		 * Esta funcion busca la info del id del trial y de recurso que corresponde a cada angulo
+		 * @param angulo
+		 */
+		public void buscarInfoTrialsIds (Level level) {
+			int numeroDeTrialsNoEncontrados=0; // Esto es para debug, porque se supone q todos tienen que ser encontrados
+			for (int idTrialaMirar : level.secuenciaTrailsId) {
+				JsonTrial jsonTrial = Trial.JsonTrial.LoadTrial(idTrialaMirar);
+				if ((jsonTrial.jsonEstimulo.infoConceptualAngulos.direccionLado1 == this.anguloDeReferencia) || (jsonTrial.jsonEstimulo.infoConceptualAngulos.direccionLado2 == this.anguloDeReferencia)) {
+					// Seleccionamos el angulo de interes
+					int anguloNoReferencia;
+					if (jsonTrial.jsonEstimulo.infoConceptualAngulos.direccionLado1 == this.anguloDeReferencia) {
+						anguloNoReferencia = (int) jsonTrial.jsonEstimulo.infoConceptualAngulos.direccionLado2;
+					} else {
+						anguloNoReferencia = (int) jsonTrial.jsonEstimulo.infoConceptualAngulos.direccionLado1;
+					}
+					// Buscamos en todos los cuadrantes a ver si efectivamente esta el angulo y le asignamos el id del trial y del recurso
+					for (CuadranteInfo cuadrante : this.cuadrantes) {
+						for (AnguloOrdenable angulo : cuadrante.listaEstimulos) {
+							if (angulo.angulo == anguloNoReferencia) {
+								angulo.idTrial = jsonTrial.Id;
+								angulo.idResource = jsonTrial.jsonEstimulo.resourceId;
+								break; // Ojo que es importante que el loop continue en el proximo cuadrante, porque los angulos rectos aparecen en mas de un cuadrante!
+							}
+						}
+					}
+					numeroDeTrialsNoEncontrados ++;
+				}
+			}
+			// Mensajes de warning / error
+			if (numeroDeTrialsNoEncontrados!=0) {
+				Gdx.app.debug(TAG, "Warning: Hay " + numeroDeTrialsNoEncontrados + " trials que no estan asociados a ningun cuadrante en el nivel");
+			}
+			for (CuadranteInfo cuadrante : cuadrantes) {
+				for (AnguloOrdenable angulo : cuadrante.listaEstimulos) {
+					if (angulo.idResource==null) {
+						Gdx.app.error(TAG, "Error: La figura con angulos: " + angulo.angulo + " y " + this.anguloDeReferencia + " no pudo ser identificada en ningun trial!");
+					}
+				}
+			}
+		}
+		
+		/**
 		 * Este metodo busca un nuevo estimulo a preguntar, lo carga en la clase y devuelve su valor absoluto  
 		 */
-		public int askNext() {
+		public void askNext() {
 			if (!waitingAnswer) {
 				// Elije un cuadrante al azar y carga esos datos
 				Array<Integer> listaCuadrantesAnalizar = new Array<Integer>();
@@ -277,17 +336,15 @@ public class Experimentales {
 						listaCuadrantesAnalizar.add(i);
 					}
 				}
-				if (listaCuadrantesAnalizar.size==0) {
-					return -1;
+				if (listaCuadrantesAnalizar.size!=0) {
+					int cuadranteAUsar=listaCuadrantesAnalizar.random();
+					CuadranteInfo cuadrante = this.cuadrantes.get(cuadranteAUsar);
+					// pone los datos en la clase principal
+					this.cuadranteActivo = cuadranteAUsar;
+					this.next = cuadrante.listaEstimulos.get(cuadrante.nivelEstimulo);
+					this.waitingAnswer = true;
 				}
-				int cuadranteAUsar=listaCuadrantesAnalizar.random();
-				Parametros cuadrante = this.cuadrantes.get(cuadranteAUsar);
-				// pone los datos en la clase principal
-				this.cuadranteActivo = cuadranteAUsar;
-				this.next = cuadrante.listaEstimulos.get(cuadrante.nivelEstimulo);
-				this.waitingAnswer = true;
 			}
-			return this.next.angulo;
 		}
 		
 		/**
@@ -301,7 +358,7 @@ public class Experimentales {
 				// Seteamos que ya hay rta.
 				this.waitingAnswer=false;
 				// Seleccionamos el cuadrante que corresponde
-				Parametros cuadrante = this.cuadrantes.get(this.cuadranteActivo);
+				CuadranteInfo cuadrante = this.cuadrantes.get(this.cuadranteActivo);
 				// Agregamos la info del ultimo toque.
 				Historial historial = new Historial();
 				historial.acertado=acierto;
@@ -376,13 +433,32 @@ public class Experimentales {
 				completado=true;
 			}
 			boolean completadosTodos = true;
-			for (Parametros cuadrante:cuadrantes) {
+			for (CuadranteInfo cuadrante:cuadrantes) {
 				if (!cuadrante.convergenciaAlcanzada) {
 					completadosTodos=false;
 				}
 			}
 			if (completadosTodos) {completado=true;} 
 			return completado;
+		}
+		
+		public void chkCompleted() {
+			boolean completado=false;
+			if ((this.cuadrantes.get(0).historial.size+this.cuadrantes.get(1).historial.size+this.cuadrantes.get(2).historial.size+this.cuadrantes.get(3).historial.size)>=this.numeroMaximoDeTrialsXLevel) {
+				completado=true;
+			}
+			boolean completadosTodos = true;
+			for (CuadranteInfo cuadrante:cuadrantes) {
+				if (!cuadrante.convergenciaAlcanzada) {
+					completadosTodos=false;
+				}
+			}
+			if (completadosTodos) {completado=true;}
+			this.completed=completado;
+		}
+		
+		public int referencia(){
+			return this.anguloDeReferencia;
 		}
 		
 		public boolean convergencia (int cuadrante) {

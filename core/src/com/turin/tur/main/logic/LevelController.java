@@ -76,18 +76,35 @@ public class LevelController implements InputProcessor {
 			this.level.activeTrialPosition = nextTrialPosition;
 		}
 		if (this.level.jsonLevel.tipoDeLevel == TIPOdeLEVEL.UMBRALANGULO) {
-			SetupUmbralAngulos setup = (SetupUmbralAngulos) this.level.jsonLevel.setup;
-			this.level.levelLog.analisis = new AnalisisUmbralAngulos(setup,this.level.jsonLevel.anguloReferencia);
+			this.level.levelLog.setupAngulos = (SetupUmbralAngulos) this.level.jsonLevel.setup;
+			for (int ref: this.level.jsonLevel.angulosReferencia) {
+				this.level.levelLog.analisis.add(new AnalisisUmbralAngulos(this.level.levelLog.setupAngulos,ref,this.level));
+			}
 			// Usamos la clase analisis para elegir el angulo q hay que mostrar
-			int anguloABuscar = this.level.levelLog.analisis.askNext();
-			int nextTrialPosition = findTrialAngulo(anguloABuscar);
-			this.level.activeTrialPosition = nextTrialPosition;
+			this.selectAnalisis();
+			this.level.levelLog.analisisActivo.askNext();
+			this.level.activeTrial = this.level.levelLog.analisisActivo.next.idTrial;
 		}
 		this.initTrial();
 	}
 
+	private void selectAnalisis () {
+		Array<AnalisisUmbralAngulos> listaPosibles = new Array<AnalisisUmbralAngulos>();
+		for (AnalisisUmbralAngulos analisis : this.level.levelLog.analisis){
+			if (!analisis.completed) { 
+				listaPosibles.add(analisis);
+			}
+		}
+		if (listaPosibles.size>0) {
+			this.level.levelLog.analisisActivo = listaPosibles.random();
+		} else {
+			completeLevel();
+		}
+		
+	}
+	
 	private void initTrial() {
-		trial = new Trial(this.level.IdTrial(this.level.activeTrialPosition));
+		trial = new Trial(this.level.activeTrial);
 		trial.runningSound = new RunningSound(this.trial);
 		
 		// Carga la info general del trial al log
@@ -199,14 +216,12 @@ public class LevelController implements InputProcessor {
 					
 					case UMBRALANGULO:
 						
-						
-						this.level.levelLog.analisis.answer(this.trial.log.touchLog.peek().isTrue);
-						if (this.level.levelLog.analisis.complete()) {
-							completeLevel();
-						}
-						int anguloABuscar = this.level.levelLog.analisis.askNext();
-						nextTrialPosition = findTrialAngulo(anguloABuscar);
-						this.level.activeTrialPosition = nextTrialPosition;
+						this.level.levelLog.analisisActivo.answer(this.trial.log.touchLog.peek().isTrue);
+						this.level.levelLog.analisisActivo.chkCompleted();
+						this.selectAnalisis(); // Cambia el angulo de referencia
+						this.level.levelLog.analisisActivo.askNext();
+						// this.level.activeTrialPosition = this.level.levelLog.analisisActivo.next.idTrial;
+						this.level.activeTrial = this.level.levelLog.analisisActivo.next.idTrial;
 						this.initTrial();
 						break;
 					
@@ -239,28 +254,6 @@ public class LevelController implements InputProcessor {
 			return this.level.secuenciaTrailsId.indexOf(id, false);
 		}
 		
-	}
-
-	/**
-	 * Esta funcion busca el trial que corresponde al angulo buscado.
-	 * @param angulo
-	 * @return
-	 */
-	private int findTrialAngulo (int angulo) {
-		Array<Integer> listaDeTrialPosibles = new Array<Integer>();
-		for (int idTrialaMirar : this.level.secuenciaTrailsId) {
-			JsonTrial jsonTrial = Trial.JsonTrial.LoadTrial(idTrialaMirar);
-			if ((jsonTrial.jsonEstimulo.infoConceptualAngulos.direccionLado1 == angulo) || (jsonTrial.jsonEstimulo.infoConceptualAngulos.direccionLado2 == angulo)) {
-				listaDeTrialPosibles.add(idTrialaMirar);
-			}
-		}
-		if (listaDeTrialPosibles.size == 0) {
-			System.out.println("Error se esta buscando un trial con refrencia " + angulo + " y no se ha encontrado");
-			return 0;
-		} else {
-			int id = listaDeTrialPosibles.random();			
-			return this.level.secuenciaTrailsId.indexOf(id, false);
-		}
 	}
 	
 	private void completeLevel() {

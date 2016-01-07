@@ -13,7 +13,7 @@ public class Builder {
 	public static int height = Resources.Paths.height;
 	public static int width = Resources.Paths.width;
 	public static final int ResourceVersion = 130;
-	public static final int levelVersion = 23;
+	public static final int levelVersion = 24;
 	public static final String AppVersion = "UmbralCompletoAngulos"; 
 	
 	static final Boolean makeLevels = false;

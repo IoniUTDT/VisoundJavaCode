@@ -67,7 +67,7 @@ public class LevelMaker {
 		String str = Resources.Paths.fullLevelsPath.substring(0, Resources.Paths.fullLevelsPath.length()-1)+"olds/"+TimeUtils.millis()+"/";
 		File newDir = new File(str);
 		newDir.mkdirs();
-		System.out.println(oldDir.renameTo(newDir));
+		oldDir.renameTo(newDir);
 		new File(Resources.Paths.fullLevelsPath).mkdirs();
 
 
@@ -194,29 +194,51 @@ public class LevelMaker {
 			json.setUsePrototypes(false);
 			SetupUmbralAngulos setup = json.fromJson(SetupUmbralAngulos.class, savedData);
 			
+			Array<Integer> angulosdeReferencia = new Array<Integer>(); 
+			
 			for (int i = 0; i<=(90/setup.saltoGrande); i++) { // Hacemos solo para el primer cuadrante
+				angulosdeReferencia.add(setup.saltoGrande*i);
+			}
+
+			while (angulosdeReferencia.size>0) {
+				// Seleccionamos tres angulos consecutivos
+				Array<Integer> angulosElegidos = new Array<Integer>();
+				// Los quita de la lista general y lo pasa a la de los que se van a incluir en el proximo nivel
+				if (angulosdeReferencia.size>=setup.numeroDeRefrenciasConjuntas) {
+					for (int i=0; i<setup.numeroDeRefrenciasConjuntas; i++) {
+						angulosElegidos.add(angulosdeReferencia.removeIndex(0));
+					}	
+				} else {
+					angulosElegidos.addAll(angulosdeReferencia);
+					angulosdeReferencia.clear();
+				}
+				// Ahora creamos el nivel
 				JsonLevel level = crearLevel();
 				level.tipoDeLevel = TIPOdeLEVEL.UMBRALANGULO;
-				level.anguloReferencia = setup.saltoGrande*i;
-				level.levelTitle = "R: "+(setup.saltoGrande*i);
+				level.angulosReferencia = angulosElegidos;
+				level.levelTitle = "";
+				for (int i=0; i<angulosElegidos.size; i++) {
+					level.levelTitle = level.levelTitle + "R: "+angulosElegidos.get(i);
+				}
 				level.randomTrialSort=false;
 				level.show = true;
-				
+
 				// agregamos un trial por recurso. 
-				Array<Integer> recursos = ResourcesSelectors.findAngles(setup.saltoGrande*i);
-				for (int recurso:recursos) {
-					JsonTrial trial = crearTrial("Selecciones a que categoria pertenece el angulo", "", DISTRIBUCIONESenPANTALLA.LINEALx3,
-							new int[] {Constants.Resources.Categorias.Grave.ID,Constants.Resources.Categorias.Recto.ID,Constants.Resources.Categorias.Agudo.ID}, TIPOdeTRIAL.TEST, recurso, false, true, false);
-					savedData = FileHelper.readFile(Resources.Paths.fullCurrentVersionPath + recurso + ".meta");
-					json = new Json();
-					json.setUsePrototypes(false);
-					trial.jsonEstimulo =  json.fromJson(JsonResourcesMetaData.class, savedData);
-					level.jsonTrials.add(trial);
+				for (int anguloRef:angulosElegidos) {
+					Array<Integer> recursos = ResourcesSelectors.findAngles(anguloRef);
+					for (int recurso:recursos) {
+						JsonTrial trial = crearTrial("Selecciones a que categoria pertenece el angulo", "", DISTRIBUCIONESenPANTALLA.LINEALx3,
+								new int[] {Constants.Resources.Categorias.Grave.ID,Constants.Resources.Categorias.Recto.ID,Constants.Resources.Categorias.Agudo.ID}, TIPOdeTRIAL.TEST, recurso, false, true, false);
+						savedData = FileHelper.readFile(Resources.Paths.fullCurrentVersionPath + recurso + ".meta");
+						json = new Json();
+						json.setUsePrototypes(false);
+						trial.jsonEstimulo =  json.fromJson(JsonResourcesMetaData.class, savedData);
+						level.jsonTrials.add(trial);
+					}
 				}
 				level.setup = setup;
 				level.build(Resources.Paths.levelsPath);
 			}
-			
 		}
 
 

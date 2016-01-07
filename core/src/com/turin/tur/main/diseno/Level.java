@@ -7,6 +7,7 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.turin.tur.main.diseno.Enviables.STATUS;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.experiments.Experimentales.Analisis.AnalisisUmbralParalelismo;
+import com.turin.tur.main.experiments.Experimentales.Setups.SetupUmbralAngulos;
 import com.turin.tur.main.experiments.Experimentales.AnalisisUmbralAngulos;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeLEVEL;
@@ -24,6 +25,7 @@ public class Level {
 
 	// variable del nivel
 	public int activeTrialPosition; // Posicion del trial activo
+	public int activeTrial; // Hay que revisar porque la linea anterior cumple una funcion parecida
 	public String levelTitle;
 	public LevelLog levelLog;
 	public JsonLevel jsonLevel;
@@ -70,6 +72,7 @@ public class Level {
 		this.activeTrialPosition = 0;
 	}
 
+	/*
 	public int IdTrial(int trialPosition) {
 		int IdTrial;
 		if (trialPosition < this.secuenciaTrailsId.size) {
@@ -80,6 +83,7 @@ public class Level {
 		}
 		return IdTrial;
 	}
+	*/  
 
 	/*
 	 * Aca empieza info accesoria para el load
@@ -100,7 +104,7 @@ public class Level {
 	public static class JsonLevel {
 		public String appVersion; // Identifica que version de la aplicacion se esta construyendo.
 		public String levelTitle;
-		public int levelVersion;
+		public int levelVersion; 
 		public int Id; // Id q identifica al level
 		public Array<Integer> trials = new Array<Integer>(); // Lista de ids de los trial que incluye el nivel
 		public Array<JsonTrial> jsonTrials = new Array<JsonTrial>(); // Este se usa solamente en el proceso de creacion de niveles (pero por como esta dise�ado el codigo que graba y carga el json completo se guarda   
@@ -116,6 +120,7 @@ public class Level {
 		public AnalisisUmbralParalelismo analisisUmbral = new AnalisisUmbralParalelismo();
 		public Object setup;
 		public int anguloReferencia;
+		public Array<Integer> angulosReferencia = new Array<Integer>();
 		
 		
 		
@@ -163,7 +168,9 @@ public class Level {
 		public int startTrialPosition;
 		public Array<Integer> sortOfTrials;
 		public Array<Integer> trialsVisited = new Array<Integer>();
-		public AnalisisUmbralAngulos analisis;
+		public Array<AnalisisUmbralAngulos> analisis = new Array<AnalisisUmbralAngulos>();
+		public AnalisisUmbralAngulos analisisActivo;
+		public SetupUmbralAngulos setupAngulos;
 
 	}
 	
