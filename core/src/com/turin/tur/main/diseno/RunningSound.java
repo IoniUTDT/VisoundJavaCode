@@ -111,11 +111,12 @@ public class RunningSound {
 
 		long idsonido;
 		// Espera a q se cargue el recurso (no se porque esto funciona pero lo saque de internet)
+		/*
 		while ((idsonido = sound.play(0)) == -1) {
 			long t = TimeUtils.nanoTime();
-			while (TimeUtils.nanoTime() - t < 50000000)
-				;
+			while (TimeUtils.nanoTime() - t < 50000000);
 		}
+		*/
 		sound.play();
 		this.running = true;
 	}
@@ -136,6 +137,7 @@ public class RunningSound {
 			trial.log.soundLog.add(soundLog);
 			// Detiene el sonido
 			sound.stop();
+			sound.dispose();
 			running = false;
 		}
 	}
