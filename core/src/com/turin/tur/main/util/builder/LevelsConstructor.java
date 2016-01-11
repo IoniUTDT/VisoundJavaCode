@@ -2,7 +2,18 @@ package com.turin.tur.main.util.builder;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Paths;
 import java.util.Arrays;
+
+import org.apache.batik.transcoder.TranscoderException;
+import org.apache.batik.transcoder.TranscoderInput;
+import org.apache.batik.transcoder.TranscoderOutput;
+import org.apache.batik.transcoder.image.PNGTranscoder;
+import org.apache.commons.io.FileUtils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
@@ -10,11 +21,14 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.turin.tur.main.diseno.ExperimentalObject.JsonResourcesMetaData;
+import com.turin.tur.main.diseno.Level;
 import com.turin.tur.main.diseno.Level.JsonLevel;
 import com.turin.tur.main.diseno.Level.Significancia;
 import com.turin.tur.main.diseno.Level.TIPOdeSIGNIFICANCIA;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.diseno.Trial.ParametrosSetupParalelismo;
+import com.turin.tur.main.experiments.Experiments.SetupUmbralAngulos;
+import com.turin.tur.main.experiments.Experiments.SetupUmbralParalelismo;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Stadistics;
@@ -26,7 +40,7 @@ import com.turin.tur.main.util.Constants.Resources.Categorias;
 
 public class LevelsConstructor {
 
-/*	
+
 	private static final String TAG = LevelsConstructor.class.getName();
 	private Array<Array<Integer>> listadosIdbyCategory = new Array<Array<Integer>>();
 	
@@ -44,14 +58,15 @@ public class LevelsConstructor {
 		if (Builder.categorizar) {
 			//categorizeResources();// Categoriza los recursos para que despues se pueda seleccionar recursos conceptualmente
 		}
-		this.archiveOldLevels();
+		this.moveOldLevelsToArchive();
 		// Crea los niveles
 		if (Builder.AppVersion == "UmbralCompleto") {
 			//this.MakeLevelParalelismoUmbral();
 		}
 		
 		if (Builder.AppVersion == "UmbralCompletoAngulos") {
-			//this.MakeLevelsAngulosUmbral();
+			Levels levelbuilder = new Levels();
+			levelbuilder.MakeLevelsAngulosUmbral();
 		}
 
 	}
@@ -61,11 +76,12 @@ public class LevelsConstructor {
 			listadosIdbyCategory.add(new Array<Integer>());
 		}
 	}
+	
 	private void verifyLevelVersion(){
 		// Verifica que no haya niveles ya numerados con la version marcada
-		File file = new File(Resources.Paths.fullLevelsPath + "level" + 1 + ".meta");
+		File file = new File(Resources.Paths.finalPath + "level" + 1 + ".meta");
 		if (file.exists()) {
-			String savedData = FileHelper.readLocalFile(Resources.Paths.levelsPath + "level" + 1 + ".meta");
+			String savedData = FileHelper.readLocalFile(Resources.Paths.finalPath + "level" + 1 + ".meta");
 			if (!savedData.isEmpty()) {
 				Json json = new Json();
 				json.setUsePrototypes(false);
@@ -86,122 +102,21 @@ public class LevelsConstructor {
 		}
 	}
 
-	private void archiveOldLevels() {
+	private void moveOldLevelsToArchive() {
 		// Manda los levels que ya estaban creados a una carpeta nueva para archivarlos
-		File oldDir = new File(Resources.Paths.fullLevelsPath);
+		File oldDir = new File(Resources.Paths.finalPath);
 		String str = Resources.Paths.fullLevelsPath.substring(0, Resources.Paths.fullLevelsPath.length()-1)+"olds/"+TimeUtils.millis()+"/";
 		File newDir = new File(str);
 		newDir.mkdirs();
 		oldDir.renameTo(newDir);
-		new File(Resources.Paths.fullLevelsPath).mkdirs();
+		new File(Resources.Paths.finalPath).mkdirs();
 	}
 	
-	private File[] loadFilelist () {
-		File dir = new File(Resources.Paths.fullCurrentVersionPath);
-		return dir.listFiles(new MetaFileFilter());
-	}
-
-	private void categorizeResources(File[] archivos) {
-		// Ahora carga la info de cada archivo encontrado
-		for (File archivo: archivos) {
-			String savedData = FileHelper.readFile(archivo.getPath());
-			if (!savedData.isEmpty()) {
-				Json json = new Json();
-				json.setUsePrototypes(false);
-				JsonResourcesMetaData metaData = json.fromJson(JsonResourcesMetaData.class, savedData);
-
-				// Clasifica los recursos por categorias. Usa los id de las categorias para armar la lista. Tambien por grupos
-				for (Categorias categoria:metaData.categories) {
-					listadosIdbyCategory.get(categoria.ID).add(metaData.resourceId.id);
-				}
-				
-				// Clasifica los recursos por grupos
-			
-				
-			} else { Gdx.app.error(TAG,"Error leyendo el archivo de metadatos"); }
-		}
-
-			if (metadata.idVinculo != null) {
-				boolean nuevo=true;
-				for (Agrupamientos agrupamiento:listadosGrupos) {
-					if (agrupamiento.nombre.equals(metadata.idVinculo)) {
-						agrupamiento.ids.add(metadata.resourceId.id);
-						nuevo = false;
-						break;
-					}
-				}
-				if (nuevo) {
-					Agrupamientos agrupamiento = new Agrupamientos();
-					agrupamiento.nombre = metadata.idVinculo;
-					agrupamiento.ids.add(metadata.resourceId.id);
-					listadosGrupos.add(agrupamiento);
-				}
-			}
-		}
-		System.out.println("Recursos catalogados");
-		
-	}
 	
-
-	private static class Levels {
-			
-
-
+	
+	private class Levels {
 		
-		private static void MakeLevelParalelismoUmbral () {
-			
-			int nSetup = 0;
-			// Se fija si encuentra el setup experimental correspondiente
-			
-			String path = Resources.Paths.fullCurrentVersionPath+"extras/jsonSetup"+nSetup+".meta";
-			File file = new File(path);
-			System.out.println("intentando:"+file.getAbsolutePath());
-			while (file.exists()) { // Se hace para cada setup q exista
-				// Cargamos el setup 
-				SetupUmbralParalelismo setup = loadSetup(nSetup);
-				// Hacemos un loop para cada referencia dentro del nivel
-				for (int n=0; n<setup.cantidadReferencias; n++) {
-					int R = n + nSetup; // Indice angulo de referencia
-					System.out.println("Creando nivel:"+R);
-					// Creamos el nivel
-					JsonLevel level = crearLevel();
-					level.levelTitle = setup.tag + n + "R:"+(setup.saltoTitaRef*n+setup.titaRefInicial)+"º";
-					level.randomTrialSort=false;
-					level.show = true;
-					level.analisisUmbral.indiceAnguloRefrencia = R;
-					level.analisisUmbral.anguloReferencia = setup.saltoTitaRef*n;
-					level.analisisUmbral.trueRate = 0.5f;
-					level.analisisUmbral.cantidadDeNivelesDeDificultad=setup.cantidadDeltas;
-					level.analisisUmbral.saltoCurvaSuperior=setup.cantidadDeltas/10;
-					level.analisisUmbral.proximoNivelCurvaSuperior = setup.cantidadDeltas;
-					
-					/*
-					 * Queremos crear una lista de trials que incluya todos los trials por dificultad
-					 */
-/*					
-					for (int D=0; D<=setup.cantidadDeltas; D++) {
-						String tag = "R"+R+"D"+D;
-						
-						Array<Integer> recursos = ResourcesSelectors.findResourceByTag(tag);
-						
-						for (int id: recursos) {
-							JsonTrial trial = crearTrial("Seleccione a que se parece mas", "", DISTRIBUCIONESenPANTALLA.LINEALx2,
-									new int[] {ResourcesSelectors.findResourceByTag("R"+R+setup.tagRefPos).first(),ResourcesSelectors.findResourceByTag("R"+R+setup.tagRefNeg).first()}, TIPOdeTRIAL.TEST, id , false, true, false);
-							trial.parametrosParalelismo.D=D;
-							trial.parametrosParalelismo.R=R;
-							level.jsonTrials.add(trial);
-						}
-					}
-					level.build(Resources.Paths.levelsPath);
-				}
-				nSetup = nSetup + setup.cantidadReferencias; 
-				path = Resources.Paths.fullCurrentVersionPath+"extras/jsonSetup"+nSetup+".meta";
-				file = new File(path);
-			}
-			
-		}
-		
-		public static void MakeLevelsAngulosUmbral() {
+		public void MakeLevelsAngulosUmbral() {
 			// Cargamos los datos del setup
 			String path = Resources.Paths.currentVersionPath+"extras/jsonSetupUmbralAngulos.meta";
 			String savedData = FileHelper.readLocalFile(path);
@@ -215,8 +130,7 @@ public class LevelsConstructor {
 				angulosdeReferencia.add(setup.saltoGrande*i);
 			}
 
-			while (angulosdeReferencia.size>0) {
-				// Seleccionamos tres angulos consecutivos
+			while (angulosdeReferencia.size>0) { // Seleccionamos angulos en forma random segun parametros del setup
 				Array<Integer> angulosElegidos = new Array<Integer>();
 				// Los quita de la lista general y lo pasa a la de los que se van a incluir en el proximo nivel
 				if (angulosdeReferencia.size>=setup.numeroDeRefrenciasConjuntas) {
@@ -252,215 +166,121 @@ public class LevelsConstructor {
 						json = new Json();
 						json.setUsePrototypes(false);
 						trial.jsonEstimulo =  json.fromJson(JsonResourcesMetaData.class, savedData);
-						level.jsonTrials.add(trial);
+						level.jsonTrials.add(trial); 
 					}
 				}
 				level.setup = setup;
-				level.build(Resources.Paths.levelsPath);
+				extract(level);
+				buildJsons(level);
 			}
 		}
 
-
+		private void extract(JsonLevel level) {
+			Gdx.app.debug(TAG,"Procesando nivel "+level.Id);
+			Array<Integer> listado = new Array<Integer>(); // Listado de ids de recursos utilizados
+			for (JsonTrial jsonTrial : level.jsonTrials) {
+				for (int idResource : jsonTrial.elementosId) {
+					listado.add(idResource);
+				}
+				listado.add(jsonTrial.rtaCorrectaId);
+			}
+			// Limpiamos la carpeta temporal
+			
+			for (int id : listado) {
+				File fileSVG = new File(Resources.Paths.fullCurrentVersionPath + id + ".svg");
+				convertirSVGtoPNG(fileSVG);
+			}
+		}
 		
-		private static SetupUmbralParalelismo loadSetup(int nSetup) {
-			String path = Resources.Paths.currentVersionPath+"extras/jsonSetup"+nSetup+".meta";
-			String savedData = FileHelper.readLocalFile(path);
+		private void buildJsons (JsonLevel level) {
+			String path = Resources.Paths.finalPath + '/' + level.Id + '/';
+			for (JsonTrial jsonTrial : level.jsonTrials) {
+				level.trials.add(jsonTrial.Id);
+				CreateTrial(jsonTrial, path);
+			}
+			level.jsonTrials.clear();
+			CreateLevel(level,Resources.Paths.finalPath);
+		}
+		
+		public void CreateTrial(JsonTrial jsonTrial, String path) {
 			Json json = new Json();
 			json.setUsePrototypes(false);
-			return json.fromJson(SetupUmbralParalelismo.class, savedData);
+			FileHelper.writeFile(path + "trial" + jsonTrial.Id + ".meta", json.toJson(jsonTrial));
 		}
 		
-		
-		/**
-		 * Agrega al json del level la entrada que corresponde al analisis de significancia considerando todo el nivel
-		 * @param level
-		 */
-/*		private static void addSignificanciaTotal(JsonLevel level) {
-			Significancia significancia = new Significancia();
-			significancia.tipo=TIPOdeSIGNIFICANCIA.COMPLETO;
-			// Filtra los trials que son test para no procesar los que son "entrenamiento"
-			Array<Integer> listaIdsSoloTests = new Array<Integer>();
-			for (JsonTrial json:level.jsonTrials) {
-				if (json.modo == TIPOdeTRIAL.TEST) {
-					listaIdsSoloTests.add(json.Id);
-				}
-			}
-			// Nota, aca tengo el mismo problema de siempre de acceder a las listas! Estoy haciendo mucho codigo pero no se como solucionarlo
-			significancia.trialIncluidos = new Integer[listaIdsSoloTests.size];
-			for (int i=0; i<listaIdsSoloTests.size;i++) {
-				significancia.trialIncluidos[i]=listaIdsSoloTests.get(i);
-			}
-			addSignificancia (significancia, level);
-		}
-		
-		/**
-		 * Agrega al json del level la entrada que corresponde al analisis de significancia considerando los trials que son seleccion de imagen
-		 * @param level
-		 */
-/*		private static void addSignificanciaImagen(JsonLevel level) {
-			Significancia significancia = new Significancia();
-			significancia.tipo = TIPOdeSIGNIFICANCIA.IMAGEN;
-			// Filtra los trials que son test para no procesar los que son "entrenamiento"
-			Array<Integer> listaIds = new Array<Integer>();
-			for (JsonTrial json:level.jsonTrials) {
-				if (json.modo == TIPOdeTRIAL.TEST){
-					boolean categoria=true;
-					for (int id:json.elementosId) {
-						if (id > Constants.Resources.Reservados) { // Se fija si los elementos apuntan a una categoria o no en funcion de que las categorias estan asociadas a IDs reservados
-							categoria=false;
-							break;
-						}
-					}
-					if (!categoria) {
-						listaIds.add(json.Id);
-					}
-				}
-			}
-			// Nota, aca tengo el mismo problema de siempre de acceder a las listas! Estoy haciendo mucho codigo pero no se como solucionarlo
-			significancia.trialIncluidos = new Integer[listaIds.size];
-			for (int i=0; i<listaIds.size;i++) {
-				significancia.trialIncluidos[i]=listaIds.get(i);
-			}
-			addSignificancia (significancia, level);
-		}
-		
-		/**
-		 * Agrega al json del level la entrada que corresponde al analisis de significancia considerando los trials que son seleccion de imagen
-		 * @param level
-		 */
-/*		private static void addSignificanciaCategoria(JsonLevel level) {
-			Significancia significancia = new Significancia();
-			significancia.tipo = TIPOdeSIGNIFICANCIA.CATEGORIA;
-			// Filtra los trials que son test para no procesar los que son "entrenamiento"
-			Array<Integer> listaIds = new Array<Integer>();
-			for (JsonTrial json:level.jsonTrials) {
-				if (json.modo == TIPOdeTRIAL.TEST){
-					boolean categoria=true;
-					for (int id:json.elementosId) {
-						if (id > Constants.Resources.Reservados) { // Se fija si los elementos apuntan a una categoria o no en funcion de que las categorias estan asociadas a IDs reservados
-							categoria=false;
-							break;
-						}
-					}
-					if (categoria) { 
-						listaIds.add(json.Id);
-					}
-				}
-			}
-			// Nota, aca tengo el mismo problema de siempre de acceder a las listas! Estoy haciendo mucho codigo pero no se como solucionarlo
-			significancia.trialIncluidos = new Integer[listaIds.size];
-			for (int i=0; i<listaIds.size;i++) {
-				significancia.trialIncluidos[i]=listaIds.get(i);
-			}
-			addSignificancia (significancia, level);
+		public void CreateLevel(JsonLevel jsonLevel, String path) {
+			Json json = new Json();
+			json.setUsePrototypes(false);
+			FileHelper.writeFile(path + "level" + jsonLevel.Id + ".meta", json.toJson(jsonLevel));
 		}
 
-		/**
-		 *  Ultimo paso del calculo de significancias que es independiente del subconjunto de datos elegidos
-		 * @param significancia
-		 * @param level
-		 */
-/*		private static void addSignificancia (Significancia significancia, JsonLevel level) {
-			
-			significancia.histogramaTrials = trialHistograma(significancia.trialIncluidos,level);
-			significancia.distribucion = Stadistics.distribucion(significancia.histogramaTrials);
-			Float acumulado=0f;
-			significancia.exitoMinimo=0;
-			for (int i=0; i<significancia.distribucion.length; i++) {
-				acumulado = acumulado + significancia.distribucion[i];
-				if (acumulado > 1-significancia.tipo.pValue) {
-					significancia.exitoMinimo=i;
-					break;
-				}
-			}
-			level.significancias.add(significancia);
+		private JsonTrial crearTrial(String title, String caption, DISTRIBUCIONESenPANTALLA distribucion, int[] elementos, TIPOdeTRIAL modo,
+				int rtaCorrecta, Boolean randomAnswer, Boolean randomSort, Boolean feedback) {
+			// Crea un JsonTrial y aumenta en 1 el contador de trials
+			contadorTrials += 1;
+			JsonTrial jsonTrial = new JsonTrial();
+			jsonTrial.Id = contadorTrials;
+			jsonTrial.caption = caption;
+			jsonTrial.distribucion = distribucion;
+			jsonTrial.elementosId = elementos;
+			jsonTrial.modo = modo;
+			jsonTrial.rtaCorrectaId = rtaCorrecta;
+			jsonTrial.rtaRandom = randomAnswer;
+			jsonTrial.randomSort = randomSort;
+			jsonTrial.title = title;
+			jsonTrial.resourceVersion = Builder.ResourceVersion;
+			jsonTrial.feedback = feedback;
+			jsonTrial.parametrosParalelismo = new ParametrosSetupParalelismo();
+			return jsonTrial;
+		}
+
+		private JsonLevel crearLevel() {
+			// Crea un JsonLevel y aumenta en 1 el contador de niveles
+			contadorLevels += 1;
+			JsonLevel jsonLevel = new JsonLevel();
+			jsonLevel.appVersion = Builder.AppVersion;
+			jsonLevel.Id = contadorLevels;
+			jsonLevel.resourceVersion = Builder.ResourceVersion;
+			jsonLevel.levelVersion = Builder.levelVersion;
+			return jsonLevel;
 		}
 		
-		private static int[] trialHistograma(Integer[] trialIncluidos, JsonLevel level) {
-			int[] histograma_t = new int[10]; // Nota, lo inicializamos en 10 porque asumimos que nunca va a haber ms de 10, despues se recorta
-			// Contamos cuantos trials de cada numero de opciones hay 
-			for (JsonTrial json:level.jsonTrials) {
-				int n = json.elementosId.length;
-				if (Arrays.asList(trialIncluidos).contains(json.Id)) {
-					histograma_t[n]++;
-				}
-			}
-			// Recortamos los resultados
-			int longitud = histograma_t.length;
-			while (true) {
-				if ((histograma_t[longitud-1]!=0) || (longitud==1)){
-					break;
-				} else { longitud--;}
-			}
-			int[] histograma = new int[longitud];
-			for (int i=0;i<longitud;i++) {
-				histograma[i]=histograma_t[i];
-			}
-			return histograma;
-		}
 	}
 	
-	private static JsonTrial crearTrial(String title, String caption, DISTRIBUCIONESenPANTALLA distribucion, int[] elementos, TIPOdeTRIAL modo,
-			int rtaCorrecta, Boolean randomAnswer, Boolean randomSort, Boolean feedback) {
-		// Crea un JsonTrial y aumenta en 1 el contador de trials
-		contadorTrials += 1;
-		JsonTrial jsonTrial = new JsonTrial();
-		jsonTrial.Id = contadorTrials;
-		jsonTrial.caption = caption;
-		jsonTrial.distribucion = distribucion;
-		jsonTrial.elementosId = elementos;
-		jsonTrial.modo = modo;
-		jsonTrial.rtaCorrectaId = rtaCorrecta;
-		jsonTrial.rtaRandom = randomAnswer;
-		jsonTrial.randomSort = randomSort;
-		jsonTrial.title = title;
-		jsonTrial.resourceVersion = Builder.ResourceVersion;
-		jsonTrial.feedback = feedback;
-		jsonTrial.parametrosParalelismo = new ParametrosSetupParalelismo();
-		return jsonTrial;
+	/**
+	 * 
+	 * Funcion que transforma los archivos svg en png
+	 * 
+	 * @param file
+	 * @param i 
+	 */
+	private void convertirSVGtoPNG(File file) {
+		try {
+			//Step -1: We read the input SVG document into Transcoder Input
+			//We use Java NIO for this purpose
+			String svg_URI_input = Paths.get(file.getAbsolutePath()).toUri().toURL().toString();
+			TranscoderInput input_svg_image = new TranscoderInput(svg_URI_input);
+			//Step-2: Define OutputStream to PNG Image and attach to TranscoderOutput
+			OutputStream png_ostream;
+			file = new File(Resources.Paths.fullUsedResources + file.getName().substring(0, file.getName().lastIndexOf(".")) + ".png");
+			png_ostream = new FileOutputStream(file);
+
+			TranscoderOutput output_png_image = new TranscoderOutput(png_ostream);
+			// Step-3: Create PNGTranscoder and define hints if required
+			PNGTranscoder my_converter = new PNGTranscoder();
+			// Step-4: Convert and Write output
+			my_converter.transcode(input_svg_image, output_png_image);
+			// Step 5- close / flush Output Stream
+			png_ostream.flush();
+			png_ostream.close();
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (TranscoderException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
-	private static JsonLevel crearLevel() {
-		// Crea un JsonLevel y aumenta en 1 el contador de niveles
-		contadorLevels += 1;
-		JsonLevel jsonLevel = new JsonLevel();
-		jsonLevel.appVersion = Builder.AppVersion;
-		jsonLevel.Id = contadorLevels;
-		jsonLevel.resourceVersion = Builder.ResourceVersion;
-		jsonLevel.levelVersion = Builder.levelVersion;
-		return jsonLevel;
-	}
-	
-	public static class MetaFileFilter implements FileFilter
-	{
-		private final String[] okFileExtensions =
-				new String[] { "meta" };
-
-		@Override
-		public boolean accept(File file)
-		{
-			for (String extension : okFileExtensions)
-			{
-				if (file.getName().toLowerCase().endsWith(extension))
-				{
-					return true;
-				}
-			}
-			return false;
-		}
-	}
-	
-	public static class Dificultad {
-		
-		int dificultad;
-		
-		public Dificultad (int dificultad){
-			this.dificultad=dificultad;
-		}
-		
-		public Dificultad(){
-			
-		}
-	}
-	*/
 }

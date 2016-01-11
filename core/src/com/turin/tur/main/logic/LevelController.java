@@ -167,7 +167,7 @@ public class LevelController implements InputProcessor {
 						AnalisisUmbralParalelismo analisis = this.level.jsonLevel.analisisUmbral;
 						
 						// Creamos la info del objeto analizado
-						DetectionObject detected = new Experiments().new AnalisisUmbralParalelismo().new DetectionObject();
+						DetectionObject detected = new DetectionObject();
 						detected.answerTrue = this.trial.log.touchLog.peek().isTrue;
 						detected.infoConceptual = this.trial.log.touchLog.peek().jsonMetaDataTouched.infoConceptualParalelismo;
 						

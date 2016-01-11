@@ -47,7 +47,7 @@ public class Experiments {
 	 * Por un lado que haya angulos cubriendo la vuelta entera variando los lados de a un salto grande.
 	 * Por otro lado que alrededor de angulos que se consideran criticos agregue una mayor densidad de angulos equidistantes a un salto "chico" 
 	 */
-	public class SetupUmbralAngulos{
+	public static class SetupUmbralAngulos{
 		public String nombre; // Nombre del setup
 		public int saltoGrande; // Salto que hay entre angulo no critico y angulo no critico
 		public int saltoChico; // Salto que hay entre angulo dos angulos consecutivos alrededor de los angulos criticos
@@ -116,7 +116,7 @@ public class Experiments {
 	 * @author ionatan
 	 *
 	 */
-	public class InfoConceptualParalelismo {
+	public static class InfoConceptualParalelismo {
 		public float direccionAnguloReferencia;
 		public float deltaAngulo;
 		public int deltaAnguloLinealizado;
@@ -130,7 +130,7 @@ public class Experiments {
 	 * @author ionatan
 	 *
 	 */
-	public class InfoConceptualAngulos {
+	public static class InfoConceptualAngulos {
 		public float direccionLado1;
 		public float direccionLado2;
 		public float separacionAngular;
@@ -151,8 +151,8 @@ public class Experiments {
 	 * @author ionatan
 	 *
 	 */
-	public class AnalisisUmbralParalelismo {
-		public class DetectionObject {
+	public static class AnalisisUmbralParalelismo {
+		public static class DetectionObject {
 			public boolean answerTrue;
 			public InfoConceptualParalelismo infoConceptual;
 		}

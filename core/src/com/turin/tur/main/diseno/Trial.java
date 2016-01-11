@@ -15,6 +15,7 @@ import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.Constants.Resources.Categorias;
 import com.turin.tur.main.util.builder.Builder;
 import com.turin.tur.main.util.FileHelper;
+import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
 
@@ -173,11 +174,6 @@ public class Trial {
 		public ParametrosSetupParalelismo parametrosParalelismo;
 		public JsonResourcesMetaData jsonEstimulo;
 		
-		public static void CreateTrial(JsonTrial jsonTrial, String path) {
-			Json json = new Json();
-			json.setUsePrototypes(false);
-			FileHelper.writeFile(path + "trial" + jsonTrial.Id + ".meta", json.toJson(jsonTrial));
-		}
 
 		public static JsonTrial LoadTrial(int Id) {
 			String savedData = FileHelper.readFile("experimentalsource/" + Constants.version() + "/trial" + Id + ".meta");

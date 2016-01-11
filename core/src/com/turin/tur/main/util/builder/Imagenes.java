@@ -24,8 +24,8 @@ public class Imagenes {
 	public Array<Linea> lineas = new Array<Linea>();
 	public String idVinculo; // Sirve para identificar cuando varias imagenes pertenecen a un mismo subgrupo
 	public int nivelDificultad = -1; // Define un nivel de dificultad, 1 es el mas facil. -1 implica que no esta catalogado por dificultad y 0 que es compatible con cualquier dificultad (en gral para usar en las referencias, por ej rectas paralelas con las que se compara)
-	public InfoConceptualParalelismo infoConceptualParalelismo = new Experiments().new InfoConceptualParalelismo();
-	public InfoConceptualAngulos infoConceptualAngulos = new Experiments().new InfoConceptualAngulos();
+	public InfoConceptualParalelismo infoConceptualParalelismo = new InfoConceptualParalelismo();
+	public InfoConceptualAngulos infoConceptualAngulos = new InfoConceptualAngulos();
 	String contenido = "";
 
 	public Imagenes () {
@@ -80,7 +80,7 @@ public class Imagenes {
 
 	
 	
-	public class Linea {
+	public static class Linea {
 
 		Radial radial = new Radial();
 		float x1;
@@ -88,7 +88,7 @@ public class Imagenes {
 		float y1;
 		float y2;
 
-		public class Radial {
+		public static class Radial {
 			float Xcenter;
 			float Ycenter;
 			float angulo;

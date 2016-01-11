@@ -4,7 +4,6 @@ import java.io.File;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Json;
-import com.turin.tur.main.experiments.Experiments;
 import com.turin.tur.main.experiments.Experiments.CategoriaAngulo;
 import com.turin.tur.main.experiments.Experiments.SetupUmbralAngulos;
 import com.turin.tur.main.util.FileHelper;
@@ -19,10 +18,10 @@ public class ResourcesMaker {
 	// public static int contadorDeReferenciasUmbral = 0;
 	
 	public ResourcesMaker() {
-		// this.verifyResourcesVersion();
+		this.verifyResourcesVersion();
 		Textos.crearTextos();
 		if (Builder.AppVersion == "UmbralCompletoAngulos") {
-			SetupUmbralAngulos setup = new Experiments().new SetupUmbralAngulos();
+			SetupUmbralAngulos setup = new SetupUmbralAngulos();
 			setup.nombre="SetupAngulosUmbral";
 			setup.saltoChico=1;
 			setup.saltoGrande=5;
@@ -104,7 +103,7 @@ public class ResourcesMaker {
 					// agrega la primer linea (notas de sistema de coordenadas:
 					// El SVG considera el y positivo hacia abajo, pero eso se compensa al crear el archivo. Todo el codigo considera
 					// El eje x positivo hacia la derecha y el y positivo hacia arriba
-					Linea infoLinea = imagen.new Linea();
+					Linea infoLinea = new Linea();
 					infoLinea.radial.angulo=angulo1;
 					infoLinea.radial.largo=tamano/2;
 					infoLinea.radial.Xcenter = (float) (Xcenter + tamano/4 * MathUtils.cosDeg(angulo1));
@@ -112,7 +111,7 @@ public class ResourcesMaker {
 					infoLinea.lineaFromRadial();
 					imagen.lineas.add(infoLinea);
 					// agrega la segunda linea
-					infoLinea = imagen.new Linea();
+					infoLinea = new Linea();
 					infoLinea.radial.angulo=angulo2;
 					infoLinea.radial.largo=tamano/2;
 					infoLinea.radial.Xcenter = (float) (Xcenter + tamano/4 * MathUtils.cosDeg(angulo2));

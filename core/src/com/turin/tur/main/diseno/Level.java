@@ -11,6 +11,7 @@ import com.turin.tur.main.experiments.Experiments.AnalisisUmbralAngulos;
 import com.turin.tur.main.experiments.Experiments.AnalisisUmbralParalelismo;
 import com.turin.tur.main.experiments.Experiments.SetupUmbralAngulos;
 import com.turin.tur.main.util.Constants;
+import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeLEVEL;
 import com.turin.tur.main.util.FileHelper;
 
@@ -118,26 +119,10 @@ public class Level {
 		public int aciertosPorImagenes; // Esto guarda el numero de aciertos en trials por imagenes. Al generar el level hay que incluir el numero de aciertos que vuelve significativo el resultado
 		// Informacion relacionada al procesamiento en tiempo real.
 		public TIPOdeLEVEL tipoDeLevel = TIPOdeLEVEL.UMBRALPARALELISMO;
-		public AnalisisUmbralParalelismo analisisUmbral = new Experiments().new AnalisisUmbralParalelismo();
+		public AnalisisUmbralParalelismo analisisUmbral = new AnalisisUmbralParalelismo();
 		public Object setup;
 		public int anguloReferencia;
 		public Array<Integer> angulosReferencia = new Array<Integer>();
-		
-		
-		
-		public static void CreateLevel(JsonLevel jsonLevel, String path) {
-			Json json = new Json();
-			json.setUsePrototypes(false);
-			FileHelper.writeFile(path + "level" + jsonLevel.Id + ".meta", json.toJson(jsonLevel));
-		}
-
-		public void build(String path) {
-			for (JsonTrial jsonTrial : this.jsonTrials) {
-				this.trials.add(jsonTrial.Id);
-				JsonTrial.CreateTrial(jsonTrial, path);
-			}
-			JsonLevel.CreateLevel(this, path);
-		}
 	}
 
 	public void saveLevel(int level, Array<Integer> secuenciaTrials, String levelTitle) {
