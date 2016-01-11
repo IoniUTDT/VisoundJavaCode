@@ -1,17 +1,9 @@
 package com.turin.tur.main.util.builder;
 
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Json;
-import com.turin.tur.main.diseno.ExperimentalObject.JsonResourcesMetaData;
-import com.turin.tur.main.util.FileHelper;
-import com.turin.tur.main.util.builder.LevelMaker.Dificultad;
-import com.turin.tur.main.util.builder.ResourcesSelectors.Agrupamientos;
-import com.turin.tur.main.util.Constants.Resources;
-import com.turin.tur.main.util.Constants.Resources.Categorias;
-
 
 public class ResourcesSelectors {
 
+/*
 	public static Array<JsonResourcesMetaData> listadoRecursos = new Array<JsonResourcesMetaData>();
 	public static Array<Array<Integer>> listadosId = new Array<Array<Integer>>();
 	public static Array<Agrupamientos> listadosGrupos = new Array<Agrupamientos>();
@@ -38,8 +30,7 @@ public class ResourcesSelectors {
 	 * @return
 	 * 	Lista de ids de los elementos pertenecientes al agrupamiento pedido. 
 	 */
-	
-	public static int[] rsGetAllGrupo(String agrupamientoPedido, Dificultad dificultad) {
+/*	public static int[] rsGetAllGrupo(String agrupamientoPedido, Dificultad dificultad) {
 		int[] recursos = new int[] {0,0,0,0,0,0}; //Inicializa el vector con datos nulos, total solo puede tener 6 elementos
 		for (Agrupamientos agrupamiento : listadosGrupos) {
 			if (agrupamiento.nombre.equals(agrupamientoPedido)) {
@@ -97,7 +88,7 @@ public class ResourcesSelectors {
 	 * @return
 	 * 			Devuelve el int con el id del elemento seleccionado o 0 si no se encuetra ninguno.
 	 */
-	public static int rsGet(String agrupamientoPedido, Array<Categorias> categorias, int[] omitir, Dificultad dificultad) {
+/*	public static int rsGet(String agrupamientoPedido, Array<Categorias> categorias, int[] omitir, Dificultad dificultad) {
 		int recurso;
 		recurso=0;
 		Array<Integer> listadoValido = new Array<Integer>();
@@ -158,7 +149,7 @@ public class ResourcesSelectors {
 	 * Aca van varios invocadores (o como se diga) con diferentes tipos de parametros
 	 * 
 	 */
-	public static int rsGet (String agrupamientoPedido) {
+/*	public static int rsGet (String agrupamientoPedido) {
 		Array<Categorias> categorias = new Array<Categorias>();
 		categorias.add(Categorias.Nada);
 		int [] omitir = {};
@@ -239,4 +230,6 @@ public class ResourcesSelectors {
 		}
 		return listaIds;
 	}
+	
+	*/
 }

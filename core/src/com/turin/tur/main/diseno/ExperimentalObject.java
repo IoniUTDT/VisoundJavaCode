@@ -6,14 +6,12 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.Trial.ResourceId;
+import com.turin.tur.main.experiments.Experiments.InfoConceptualAngulos;
+import com.turin.tur.main.experiments.Experiments.InfoConceptualParalelismo;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.ImagesAsset;
-import com.turin.tur.main.util.builder.ResourcesMaker.ExtremosLinea;
-import com.turin.tur.main.util.builder.ResourcesMaker.InfoConceptualAngulos;
-import com.turin.tur.main.util.builder.ResourcesMaker.InfoConceptualParalelismo;
-import com.turin.tur.main.util.builder.ResourcesMaker.InfoLinea;
-
+import com.turin.tur.main.util.builder.Imagenes.Linea;
 
 public class ExperimentalObject {
 
@@ -59,8 +57,7 @@ public class ExperimentalObject {
 		public ResourceId resourceId;
 		public Array<Constants.Resources.Categorias> categories = new Array<Constants.Resources.Categorias>();
 		public String idVinculo;
-		public Array<ExtremosLinea> parametros;
-		public Array<InfoLinea> infoLineas;
+		public Array<Linea> infoLineas;
 		public int nivelDificultad; //obsoleto!
 		public InfoConceptualParalelismo infoConceptualParalelismo;
 		public InfoConceptualAngulos infoConceptualAngulos;

@@ -5,6 +5,7 @@ import java.io.FileFilter;
 import java.util.Arrays;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -14,8 +15,6 @@ import com.turin.tur.main.diseno.Level.Significancia;
 import com.turin.tur.main.diseno.Level.TIPOdeSIGNIFICANCIA;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.diseno.Trial.ParametrosSetupParalelismo;
-import com.turin.tur.main.experiments.Experimentales.Setups.SetupUmbralAngulos;
-import com.turin.tur.main.experiments.Experimentales.Setups.SetupUmbralParalelismo;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Stadistics;
@@ -24,21 +23,45 @@ import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeLEVEL;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
 import com.turin.tur.main.util.Constants.Resources.Categorias;
-import com.turin.tur.main.util.builder.ResourcesSelectors.Agrupamientos;
 
-public class LevelMaker {
+public class LevelsConstructor {
+
+/*	
+	private static final String TAG = LevelsConstructor.class.getName();
+	private Array<Array<Integer>> listadosIdbyCategory = new Array<Array<Integer>>();
 	
-	private static final String TAG = LevelMaker.class.getName();
-	
-	static Array<JsonResourcesMetaData> listadoRecursos = ResourcesSelectors.listadoRecursos;
-	static Array<Array<Integer>> listadosId = ResourcesSelectors.listadosId;
-	static Array<Agrupamientos> listadosGrupos = ResourcesSelectors.listadosGrupos;
+	//static Array<JsonResourcesMetaData> listadoRecursos = ResourcesSelectors.listadoRecursos;
+	//static Array<Array<Integer>> listadosId = ResourcesSelectors.listadosId;
+	//static Array<Agrupamientos> listadosGrupos = ResourcesSelectors.listadosGrupos;
 
 	static int contadorLevels = 0;
 	static int contadorTrials = 0;
 	
-	public static void makeLevels () {
+	public LevelsConstructor() {
+		this.initCategoryList();
+		this.verifyLevelVersion();
+		this.verifyResources();
+		if (Builder.categorizar) {
+			//categorizeResources();// Categoriza los recursos para que despues se pueda seleccionar recursos conceptualmente
+		}
+		this.archiveOldLevels();
+		// Crea los niveles
+		if (Builder.AppVersion == "UmbralCompleto") {
+			//this.MakeLevelParalelismoUmbral();
+		}
 		
+		if (Builder.AppVersion == "UmbralCompletoAngulos") {
+			//this.MakeLevelsAngulosUmbral();
+		}
+
+	}
+
+	private void initCategoryList(){
+		for (int i=0;i<Categorias.values().length+1;i++) {
+			listadosIdbyCategory.add(new Array<Integer>());
+		}
+	}
+	private void verifyLevelVersion(){
 		// Verifica que no haya niveles ya numerados con la version marcada
 		File file = new File(Resources.Paths.fullLevelsPath + "level" + 1 + ".meta");
 		if (file.exists()) {
@@ -53,15 +76,17 @@ public class LevelMaker {
 				}
 			}
 		} 
-		
+	}
+
+	private void verifyResources(){
 		// Se fija q exista el paquete de recursos de la version actual
 		if (!new File(Resources.Paths.fullCurrentVersionPath).exists()) {
 			System.out.println("Primero debe crear los recursos version:" + Builder.ResourceVersion);
-			return;
+			System.exit(0);
 		}
-		
-		categorizeResources();// Categoriza los recursos para que despues se pueda seleccionar recursos conceptualmente
-		
+	}
+
+	private void archiveOldLevels() {
 		// Manda los levels que ya estaban creados a una carpeta nueva para archivarlos
 		File oldDir = new File(Resources.Paths.fullLevelsPath);
 		String str = Resources.Paths.fullLevelsPath.substring(0, Resources.Paths.fullLevelsPath.length()-1)+"olds/"+TimeUtils.millis()+"/";
@@ -69,44 +94,33 @@ public class LevelMaker {
 		newDir.mkdirs();
 		oldDir.renameTo(newDir);
 		new File(Resources.Paths.fullLevelsPath).mkdirs();
-
-
-		// Crea los niveles
-		if (Builder.AppVersion == "UmbralCompleto") {
-			Levels.MakeLevelParalelismoUmbral();
-		}
-		
-		if (Builder.AppVersion == "UmbralCompletoAngulos") {
-			Levels.MakeLevelsAngulosUmbral();
-		}
 	}
 	
-	
-
-
-
-	private static void categorizeResources() {
-		for (int i=0;i<Categorias.values().length+1;i++) {
-			listadosId.add(new Array<Integer>());
-		}
-		File[] archivos;
-		// Primero busca la lista de archivos de interes
+	private File[] loadFilelist () {
 		File dir = new File(Resources.Paths.fullCurrentVersionPath);
-		archivos = dir.listFiles(new MetaFileFilter());
+		return dir.listFiles(new MetaFileFilter());
+	}
+
+	private void categorizeResources(File[] archivos) {
 		// Ahora carga la info de cada archivo encontrado
 		for (File archivo: archivos) {
 			String savedData = FileHelper.readFile(archivo.getPath());
 			if (!savedData.isEmpty()) {
 				Json json = new Json();
 				json.setUsePrototypes(false);
-				listadoRecursos.add(json.fromJson(JsonResourcesMetaData.class, savedData));
+				JsonResourcesMetaData metaData = json.fromJson(JsonResourcesMetaData.class, savedData);
+
+				// Clasifica los recursos por categorias. Usa los id de las categorias para armar la lista. Tambien por grupos
+				for (Categorias categoria:metaData.categories) {
+					listadosIdbyCategory.get(categoria.ID).add(metaData.resourceId.id);
+				}
+				
+				// Clasifica los recursos por grupos
+			
+				
 			} else { Gdx.app.error(TAG,"Error leyendo el archivo de metadatos"); }
 		}
-		// Clasifica los recursos por categorias. Usa los id de las categorias para armar la lista. Tambien por grupos
-		for (JsonResourcesMetaData metadata:listadoRecursos) {
-			for (Categorias categoria:metadata.categories) {
-				listadosId.get(categoria.ID).add(metadata.resourceId.id);
-			}
+
 			if (metadata.idVinculo != null) {
 				boolean nuevo=true;
 				for (Agrupamientos agrupamiento:listadosGrupos) {
@@ -127,6 +141,7 @@ public class LevelMaker {
 		System.out.println("Recursos catalogados");
 		
 	}
+	
 
 	private static class Levels {
 			
@@ -163,7 +178,7 @@ public class LevelMaker {
 					/*
 					 * Queremos crear una lista de trials que incluya todos los trials por dificultad
 					 */
-					
+/*					
 					for (int D=0; D<=setup.cantidadDeltas; D++) {
 						String tag = "R"+R+"D"+D;
 						
@@ -206,8 +221,12 @@ public class LevelMaker {
 				// Los quita de la lista general y lo pasa a la de los que se van a incluir en el proximo nivel
 				if (angulosdeReferencia.size>=setup.numeroDeRefrenciasConjuntas) {
 					for (int i=0; i<setup.numeroDeRefrenciasConjuntas; i++) {
-						angulosElegidos.add(angulosdeReferencia.removeIndex(0));
+						angulosElegidos.add(angulosdeReferencia.removeIndex(MathUtils.random(angulosdeReferencia.size-1)));
 					}	
+					if (angulosdeReferencia.size==1) { // Agregamos el ultimo que queda al grupo anterior si queda uno solo...
+						angulosElegidos.addAll(angulosdeReferencia);
+						angulosdeReferencia.clear();
+					}
 				} else {
 					angulosElegidos.addAll(angulosdeReferencia);
 					angulosdeReferencia.clear();
@@ -218,15 +237,15 @@ public class LevelMaker {
 				level.angulosReferencia = angulosElegidos;
 				level.levelTitle = "";
 				for (int i=0; i<angulosElegidos.size; i++) {
-					level.levelTitle = level.levelTitle + "R: "+angulosElegidos.get(i);
+					level.levelTitle = level.levelTitle + " R: "+angulosElegidos.get(i);
 				}
 				level.randomTrialSort=false;
 				level.show = true;
 
 				// agregamos un trial por recurso. 
 				for (int anguloRef:angulosElegidos) {
-					Array<Integer> recursos = ResourcesSelectors.findAngles(anguloRef);
-					for (int recurso:recursos) {
+					// Array<Integer> recursos = ResourcesSelectors.findAngles(anguloRef); // Linea vieja, es muuuy lento
+					for (int recurso:setup.idsResourcesByAngle.get(setup.angulos.indexOf(anguloRef, false))) {
 						JsonTrial trial = crearTrial("Selecciones a que categoria pertenece el angulo", "", DISTRIBUCIONESenPANTALLA.LINEALx3,
 								new int[] {Constants.Resources.Categorias.Grave.ID,Constants.Resources.Categorias.Recto.ID,Constants.Resources.Categorias.Agudo.ID}, TIPOdeTRIAL.TEST, recurso, false, true, false);
 						savedData = FileHelper.readFile(Resources.Paths.fullCurrentVersionPath + recurso + ".meta");
@@ -256,7 +275,7 @@ public class LevelMaker {
 		 * Agrega al json del level la entrada que corresponde al analisis de significancia considerando todo el nivel
 		 * @param level
 		 */
-		private static void addSignificanciaTotal(JsonLevel level) {
+/*		private static void addSignificanciaTotal(JsonLevel level) {
 			Significancia significancia = new Significancia();
 			significancia.tipo=TIPOdeSIGNIFICANCIA.COMPLETO;
 			// Filtra los trials que son test para no procesar los que son "entrenamiento"
@@ -278,7 +297,7 @@ public class LevelMaker {
 		 * Agrega al json del level la entrada que corresponde al analisis de significancia considerando los trials que son seleccion de imagen
 		 * @param level
 		 */
-		private static void addSignificanciaImagen(JsonLevel level) {
+/*		private static void addSignificanciaImagen(JsonLevel level) {
 			Significancia significancia = new Significancia();
 			significancia.tipo = TIPOdeSIGNIFICANCIA.IMAGEN;
 			// Filtra los trials que son test para no procesar los que son "entrenamiento"
@@ -309,7 +328,7 @@ public class LevelMaker {
 		 * Agrega al json del level la entrada que corresponde al analisis de significancia considerando los trials que son seleccion de imagen
 		 * @param level
 		 */
-		private static void addSignificanciaCategoria(JsonLevel level) {
+/*		private static void addSignificanciaCategoria(JsonLevel level) {
 			Significancia significancia = new Significancia();
 			significancia.tipo = TIPOdeSIGNIFICANCIA.CATEGORIA;
 			// Filtra los trials que son test para no procesar los que son "entrenamiento"
@@ -341,7 +360,7 @@ public class LevelMaker {
 		 * @param significancia
 		 * @param level
 		 */
-		private static void addSignificancia (Significancia significancia, JsonLevel level) {
+/*		private static void addSignificancia (Significancia significancia, JsonLevel level) {
 			
 			significancia.histogramaTrials = trialHistograma(significancia.trialIncluidos,level);
 			significancia.distribucion = Stadistics.distribucion(significancia.histogramaTrials);
@@ -443,4 +462,5 @@ public class LevelMaker {
 			
 		}
 	}
+	*/
 }

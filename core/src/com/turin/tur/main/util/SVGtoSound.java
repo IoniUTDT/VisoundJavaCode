@@ -13,14 +13,13 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.turin.tur.main.util.Constants.Resources.Paths;
 import com.turin.tur.wave.WavFile;
 import com.turin.tur.wave.WavFileException;
 
 public class SVGtoSound {
 
 	// Define algunas constantes
-	public static File[] archivosOriginales;
-	public static ArrayList<InfoArchivo> archivos = new ArrayList<InfoArchivo>();
 	public final static boolean logScale = true;
 	public final static boolean fixScale = true;
 	public final static float maxHeigth = 100;
@@ -32,10 +31,9 @@ public class SVGtoSound {
 	public final static int fs = 44100; // hz of the sound
 	public final static float base = 10; // base of the log scale
 
-	public static void Convert(String path) {
-		loadFiles(path);
-		createSounds(path);
-		System.out.println("Finalizado con exito");
+	public static void ConvertSVGtoWav(File file) {
+		InfoArchivo info = extractInfoFromSVG(file);
+		createSounds(info);
 	}
 
 	/**
@@ -181,61 +179,57 @@ public class SVGtoSound {
 	 * 
 	 * @param path
 	 */
-	public static void createSounds(String path) {
+	public static void createSounds(InfoArchivo info) {
 
-		if (archivos != null) {
-			for (InfoArchivo archivo : archivos) {
 
-				float timefactor;
-				if (fixedTime) {
-					timefactor = time / (secByPix * archivo.ancho);
+		float timefactor;
+		if (fixedTime) {
+			timefactor = time / (secByPix * info.ancho);
+		} else {
+			timefactor = 1;
+		}
+
+		// create the base full length secuence for file
+		int N = (int) (secByPix * info.ancho * timefactor * fs);
+		double[] secuence = new double[N];
+
+		for (Linea linea : info.lineas) {
+			// TODO
+			if ((linea.xf-linea.xi)<0.01) { // En caso de que sea una recta vertical o casi verticial crea un rampa ficticia en bajada muy rapida
+				if (linea.freci>linea.frecf) {
+					linea.tf = linea.ti + 0.01; 
 				} else {
-					timefactor = 1;
-				}
-
-				// create the base full length secuence for file
-				int N = (int) (secByPix * archivo.ancho * timefactor * fs);
-				double[] secuence = new double[N];
-
-				for (Linea linea : archivo.lineas) {
-					// TODO
-					if ((linea.xf-linea.xi)<0.01) { // En caso de que sea una recta vertical o casi verticial crea un rampa ficticia en bajada muy rapida
-						if (linea.freci>linea.frecf) {
-							linea.tf = linea.ti + 0.01; 
-						} else {
-							linea.tf = linea.tf + 0.01; 
-						}
-					}
-					double[] rampa = createMusicRamp(linea.freci, linea.frecf, linea.ti, linea.tf);
-					int frameInicial = (int) (linea.ti * fs);
-					for (int i = 0; i < rampa.length; i++) { // agrega a la secuencia general
-						secuence[i + frameInicial] = secuence[i + frameInicial] + rampa[i];
-					}
-				}
-				// Normaliza
-				double max = 0;
-				for (int i = 0; i < secuence.length; i++) { // busca el maximo
-					if (Math.abs(secuence[i]) > max) {
-						max = Math.abs(secuence[i]);
-					}
-				} 
-				for (int i = 0; i < secuence.length; i++) { // busca el maximo
-					secuence[i] = secuence[i] / max;
-				}
-
-				File file = new File(path, archivo.nombre + ".wav");
-				// Create a wav file with the name specified as the first argument
-				try {
-					WavFile wavFile = WavFile.newWavFile(file, 1, secuence.length, 16, fs);
-					wavFile.writeFrames(secuence, secuence.length);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (WavFileException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					linea.tf = linea.tf + 0.01; 
 				}
 			}
+			double[] rampa = createMusicRamp(linea.freci, linea.frecf, linea.ti, linea.tf);
+			int frameInicial = (int) (linea.ti * fs);
+			for (int i = 0; i < rampa.length; i++) { // agrega a la secuencia general
+				secuence[i + frameInicial] = secuence[i + frameInicial] + rampa[i];
+			}
+		}
+		// Normaliza
+		double max = 0;
+		for (int i = 0; i < secuence.length; i++) { // busca el maximo
+			if (Math.abs(secuence[i]) > max) {
+				max = Math.abs(secuence[i]);
+			}
+		} 
+		for (int i = 0; i < secuence.length; i++) { // busca el maximo
+			secuence[i] = secuence[i] / max;
+		}
+
+		File file = new File(Paths.finalPath, info.nombre + ".wav");
+		// Create a wav file with the name specified as the first argument
+		try {
+			WavFile wavFile = WavFile.newWavFile(file, 1, secuence.length, 16, fs);
+			wavFile.writeFrames(secuence, secuence.length);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (WavFileException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -368,52 +362,45 @@ public class SVGtoSound {
 
 	}
 
-	private static void loadFiles(String path) {
+	private static InfoArchivo extractInfoFromSVG(File file) {
 
-		// Primero busca la lista de archivos de interes
-		File dir = new File(path);
-		archivosOriginales = dir.listFiles(new SvgFileFilter());
+		// Crea la entrada perteneciente al archivo
+		InfoArchivo infoArchivo = new InfoArchivo();
+		infoArchivo.nombre = file.getName().replaceFirst("[.][^.]+$", "");
 
-		for (File file : archivosOriginales) { // El loop por cada archivo
-			// Crea la entrada perteneciente al archivo
-			InfoArchivo infoArchivo = new InfoArchivo();
-			infoArchivo.nombre = file.getName().replaceFirst("[.][^.]+$", "");
+		try {
 
-			try {
+			// Esto crea la info a partir del archivo
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(file);
+			doc.getDocumentElement().normalize();
 
-				// Esto crea la info a partir del archivo
-				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-				Document doc = dBuilder.parse(file);
-				doc.getDocumentElement().normalize();
+			// Recupera el ancho y el alto
+			infoArchivo.alto = Float.parseFloat(doc.getDocumentElement().getAttribute("height"));
+			infoArchivo.ancho = Float.parseFloat(doc.getDocumentElement().getAttribute("width"));
 
-				// Recupera el ancho y el alto
-				infoArchivo.alto = Float.parseFloat(doc.getDocumentElement().getAttribute("height"));
-				infoArchivo.ancho = Float.parseFloat(doc.getDocumentElement().getAttribute("width"));
+			// Recupera la lista de elementos de una categoria (en nuestro caso lineas)
+			NodeList nList = doc.getElementsByTagName("line");
+			for (int i = 0; i < nList.getLength(); i++) { // itera sobre cada linea
+				if (nList.item(i).getNodeType() == Node.ELEMENT_NODE) { // Se fija que el nodo sea un elemento (si no entendi mal eso deferencia de los atributos, etc)
+					Linea linea = new Linea();
+					Element eElement = (Element) nList.item(i);
 
-				// Recupera la lista de elementos de una categoria (en nuestro caso lineas)
-				NodeList nList = doc.getElementsByTagName("line");
-				for (int i = 0; i < nList.getLength(); i++) { // itera sobre cada linea
-					if (nList.item(i).getNodeType() == Node.ELEMENT_NODE) { // Se fija que el nodo sea un elemento (si no entendi mal eso deferencia de los atributos, etc)
-						Linea linea = new Linea();
-						Element eElement = (Element) nList.item(i);
+					linea.xi = Float.parseFloat(eElement.getAttribute("x1"));
+					linea.xf = Float.parseFloat(eElement.getAttribute("x2"));
+					linea.yi = Float.parseFloat(eElement.getAttribute("y1"));
+					linea.yf = Float.parseFloat(eElement.getAttribute("y2"));
 
-						linea.xi = Float.parseFloat(eElement.getAttribute("x1"));
-						linea.xf = Float.parseFloat(eElement.getAttribute("x2"));
-						linea.yi = Float.parseFloat(eElement.getAttribute("y1"));
-						linea.yf = Float.parseFloat(eElement.getAttribute("y2"));
-
-						findParameters(linea, infoArchivo.ancho, infoArchivo.alto);
-						infoArchivo.lineas.add(linea);
-					}
+					findParameters(linea, infoArchivo.ancho, infoArchivo.alto);
+					infoArchivo.lineas.add(linea);
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
-
-			// Agrega la info del archivo a la lista general
-			archivos.add(infoArchivo);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+
+		return infoArchivo;
 	}
 
 	public static class SvgFileFilter implements FileFilter

@@ -3,73 +3,188 @@ package com.turin.tur.main.util.builder;
 import java.io.File;
 
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
-import com.turin.tur.main.diseno.ExperimentalObject;
-import com.turin.tur.main.diseno.ExperimentalObject.JsonResourcesMetaData;
-import com.turin.tur.main.diseno.Trial.ResourceId;
-import com.turin.tur.main.experiments.Experimentales.Setups.SetupUmbralAngulos;
-import com.turin.tur.main.experiments.Experimentales.Setups.SetupUmbralParalelismo;
-import com.turin.tur.main.util.Constants;
+import com.turin.tur.main.experiments.Experiments;
+import com.turin.tur.main.experiments.Experiments.CategoriaAngulo;
+import com.turin.tur.main.experiments.Experiments.SetupUmbralAngulos;
 import com.turin.tur.main.util.FileHelper;
+import com.turin.tur.main.util.builder.Imagenes.Linea;
 import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.main.util.Constants.Resources.Categorias;
 
 public class ResourcesMaker {
 
 	private static final String TAG = ResourcesMaker.class.getName();
+	// public static int contadorDeRecursos = Constants.Resources.Reservados;
+	// public static int contadorDeReferenciasUmbral = 0;
 	
-	public static int height = Resources.Paths.height;
-	public static int width = Resources.Paths.width;
-	public static int contadorDeRecursos = Constants.Resources.Reservados;
-	public static int contadorDeReferenciasUmbral = 0;
+	public ResourcesMaker() {
+		// this.verifyResourcesVersion();
+		Textos.crearTextos();
+		if (Builder.AppVersion == "UmbralCompletoAngulos") {
+			SetupUmbralAngulos setup = new Experiments().new SetupUmbralAngulos();
+			setup.nombre="SetupAngulosUmbral";
+			setup.saltoChico=1;
+			setup.saltoGrande=5;
+			setup.angulosCriticos.add(0);
+			setup.angulosCriticos.add(90);
+			setup.angulosCriticos.add(180);
+			setup.angulosCriticos.add(270);
+			setup.searchAngles(); // Hace que el setup busque todos los angulos
+			this.constructUmbralAngulos(setup);
+		}
+		if (Builder.AppVersion=="Prueba") {
+			Imagenes imagen = new Imagenes();
+			Linea infoLinea = imagen.new Linea();
+			infoLinea.radial.angulo=30;
+			infoLinea.radial.largo=50;
+			infoLinea.radial.Xcenter = 70;
+			infoLinea.radial.Ycenter = 70;
+			infoLinea.lineaFromRadial();
+			//infoLinea.x1=50;
+			//infoLinea.y1=50;
+			//infoLinea.x2=75;
+			//infoLinea.y2=75;
+			imagen.lineas.add(infoLinea);
+			imagen.toSVG();
+		}
+	}
 	
 	
-	public static void BuildResources() {
+	/**
+	 * Funcion que se encarga de construir todos los recursos asociados un experimento de umbral de angulos
+	 */
+	private void constructUmbralAngulos (SetupUmbralAngulos setup){
+		// buscamos el tamaño del lienzo a dibujar
+		float tamano;
+		if (Resources.Display.width>Resources.Display.height) {
+			tamano = Resources.Display.height;
+		} else {
+			tamano = Resources.Display.width;
+		}
+		// Hacemos dos indices que recorran todos los angulos de manera que el segundo indice solo llegue hasta el primero para evitar duplicar los recursos
+		for (int indice1 = 0; indice1<setup.angulos.size ; indice1++) {
+			for (int indice2 = indice1 +1; indice2<setup.angulos.size-1; indice2++) {
+				int angulo1 = setup.angulos.get(indice1);
+				int angulo2 = setup.angulos.get(indice2);
+				if (setup.cumpleCriterioDistanciaMinima(angulo1, angulo2)) {
+					int deltaAngulo = angulo2-angulo1;
+					if (deltaAngulo < 0) {deltaAngulo=-deltaAngulo;}  // Hacemos que sean todos los numeros positivos
+					if (deltaAngulo >= 180) {deltaAngulo = 360 - deltaAngulo;} // Hacemos que los angulos sean considerados siempre del lado "concavo")
+
+					// Creamos la imagen correspondiente
+					Imagenes imagen = new Imagenes();
+					
+					float Xcenter = Resources.Display.width/2;
+					float Ycenter = Resources.Display.height/2;
+					imagen.infoConceptualAngulos.direccionLado1 = angulo1;
+					imagen.infoConceptualAngulos.direccionLado2 = angulo2;
+					
+					// Agregamos al setup que el objeto creado tiene los angulos dados para facilitar la busqueda posterior
+					int indice = setup.angulos.indexOf(angulo1, false);
+					setup.idsResourcesByAngle.get(indice).add(imagen.resourceId.id);
+					indice = setup.angulos.indexOf(angulo2, false);
+					setup.idsResourcesByAngle.get(indice).add(imagen.resourceId.id);
+
+					// Clasificamos el angulo segun sea agudo recto o grave
+					imagen.infoConceptualAngulos.separacionAngular = deltaAngulo;
+					if (deltaAngulo < 90) {
+						imagen.infoConceptualAngulos.categoriaAngulo = CategoriaAngulo.Agudo;
+						imagen.categories.add(Categorias.Agudo);
+					} else {
+						if (deltaAngulo > 90) {
+							imagen.infoConceptualAngulos.categoriaAngulo = CategoriaAngulo.Grave;
+							imagen.categories.add(Categorias.Grave);
+						} else {
+							imagen.infoConceptualAngulos.categoriaAngulo = CategoriaAngulo.Recto;
+							imagen.categories.add(Categorias.Recto);
+						}
+					}
+				
+					// agrega la primer linea (notas de sistema de coordenadas:
+					// El SVG considera el y positivo hacia abajo, pero eso se compensa al crear el archivo. Todo el codigo considera
+					// El eje x positivo hacia la derecha y el y positivo hacia arriba
+					Linea infoLinea = imagen.new Linea();
+					infoLinea.radial.angulo=angulo1;
+					infoLinea.radial.largo=tamano/2;
+					infoLinea.radial.Xcenter = (float) (Xcenter + tamano/4 * MathUtils.cosDeg(angulo1));
+					infoLinea.radial.Ycenter = (float) (Ycenter + tamano/4 * MathUtils.sinDeg(angulo1));
+					infoLinea.lineaFromRadial();
+					imagen.lineas.add(infoLinea);
+					// agrega la segunda linea
+					infoLinea = imagen.new Linea();
+					infoLinea.radial.angulo=angulo2;
+					infoLinea.radial.largo=tamano/2;
+					infoLinea.radial.Xcenter = (float) (Xcenter + tamano/4 * MathUtils.cosDeg(angulo2));
+					infoLinea.radial.Ycenter = (float) (Ycenter + tamano/4 * MathUtils.sinDeg(angulo2));
+					infoLinea.lineaFromRadial();
+					imagen.lineas.addAll(infoLinea);
 		
+					// agregamos la info a la imagen
+					imagen.comments = "Imagen generada por secuencia automatica 'recursosAnguloAnalisisUmbral'.";
+					imagen.name = "Imagen de angulos generada automaticamente";
+					imagen.idVinculo = "";
+					imagen.categories.add(Categorias.Angulo);
+					
+					imagen.toSVG();
+					// objetos.add(imagen); // aca hay que hacer que cree la imagen
+				}
+			}
+		}
+		// Guardamos el setup 
+		String path = Resources.Paths.currentVersionPath+"/extras/jsonSetupUmbralAngulos.meta";
+		Json json = new Json();
+		json.setUsePrototypes(false);
+		FileHelper.writeFile(path, json.toJson(setup));
+	}
+	
+	/**
+	 * Funcion que verifica que no haya recursos creados con la misma version que la que se quiere crear
+	 */
+	private void verifyResourcesVersion() {
 		// Verifica que no haya recursos ya numerados con la version marcada
 		File file = new File(Resources.Paths.fullCurrentVersionPath);
 		if (file.exists()) {
 			System.out.println("Modifique la version de los recursos porque ya existe una carpeta con la version actual");
-			return;
+			System.exit(0);
 		}
-		
-		// Crea los objetos reservados (por ahora textos de botones y categorias)
-		
-		Array<Texto> objetosTexto = objetosTexto();
-		for (Texto text : objetosTexto) {
-			SVG.SVGtexto(text);
-		}
-
-		// Crea los objetos
-		Array<Imagen> objetos = new Array<Imagen>();
-
-		boolean geometrias = true;
-		if (geometrias) {
-			if (Builder.AppVersion == "UmbralCompleto")
-				extracted(objetos);
-			if (Builder.AppVersion == "UmbralCompletoAngulos") {
-				SetupUmbralAngulos setup = new SetupUmbralAngulos();
-				setup.nombre="SetupAngulosUmbral";
-				setup.saltoChico=1;
-				setup.saltoGrande=5;
-				setup.angulosCriticos.add(0);
-				setup.angulosCriticos.add(90);
-				setup.angulosCriticos.add(180);
-				setup.angulosCriticos.add(270);
-				setup.searchAngles();
-				objetos.addAll(recursosAnguloAnalisisUmbral(setup));
-			}
-		}
-		// Crea los archivos correspondientes
-		for (Imagen im : objetos) {
-			SVG.SVGimagen(im);
-		}
-
-		
 	}
+	
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/*
+	
+	
+	
 	private static void extracted(Array<Imagen> objetos) {
 		{
 			SetupUmbralParalelismo setup = new SetupUmbralParalelismo();
@@ -144,110 +259,7 @@ public class ResourcesMaker {
 		}
 	}
 	
-
-	private static Array<Texto> objetosTexto() {
-		Array<Texto> objetos = new Array<Texto>();
-
-		// Crea un recurso para cada categoria
-		for (Constants.Resources.Categorias categoria : Constants.Resources.Categorias.values()) {
-			Texto recurso = new Texto();
-			recurso.resourceId.id = categoria.ID;
-			recurso.comments = "Recurso experimental generado automaticamente correspondiente a la categoria: " + categoria.nombre;
-			recurso.categories.add(categoria);
-			recurso.categories.add(Categorias.Texto); // Marca que son textos
-			recurso.name = categoria.nombre;
-			recurso.texto = categoria.texto;
-			recurso.nivelDificultad = -1; // -1 indica que no tiene sentido aplicar dificultad en este caso 
-			recurso.resourceId.resourceVersion = Builder.ResourceVersion;
-			objetos.add(recurso);
-		}
-
-		return objetos;
-	}
-
 	
-	/*
-	 * Esta rutin crea los recursos de angulos necesarios segun parametros que se pasan en la clase setup
-	 */
-	private static Array<Imagen> recursosAnguloAnalisisUmbral(SetupUmbralAngulos setup) {
-		
-		float largo;
-		if (width>height) {
-			largo = height;
-		} else {
-			largo = width;
-		}
-		// Array de imagenes creadas
-		Array<Imagen> objetos = new Array<Imagen>();
-		
-	
-		for (int indice1 = 0; indice1<setup.angulos.size ; indice1++) {
-			for (int indice2 = indice1 +1; indice2<setup.angulos.size-1; indice2++) {
-				int angulo1 = setup.angulos.get(indice1);
-				int angulo2 = setup.angulos.get(indice2);
-				
-				// if (setup.angulosNoDetalle.contains(angulo1, false) || setup.angulosNoDetalle.contains(angulo2, false)) {
-				if (setup.cumpleCriterioDistanciaMinima(angulo1, angulo2)) {
-					int deltaAngulo = angulo2-angulo1;
-					if (deltaAngulo < 0) {deltaAngulo=-deltaAngulo;}  // Hacemos que sean todos los numeros positivos
-					if (deltaAngulo >= 180) {deltaAngulo = 360 - deltaAngulo;} // Hacemos que los angulos sean considerados siempre del lado "concavo")
-					
-					Imagen imagen = crearImagen();
-					float Xcenter = width/2;
-					float Ycenter = height/2;
-					imagen.infoConceptualAngulos.direccionLado1 = angulo1;
-					imagen.infoConceptualAngulos.direccionLado2 = angulo2;
-					
-					imagen.infoConceptualAngulos.separacionAngular = deltaAngulo;
-					if (deltaAngulo < 90) {
-						imagen.infoConceptualAngulos.categoriaAngulo = CategoriaAngulo.Agudo;
-						imagen.categories.add(Categorias.Agudo);
-					} else {
-						if (deltaAngulo > 90) {
-							imagen.infoConceptualAngulos.categoriaAngulo = CategoriaAngulo.Grave;
-							imagen.categories.add(Categorias.Grave);
-						} else {
-							imagen.infoConceptualAngulos.categoriaAngulo = CategoriaAngulo.Recto;
-							imagen.categories.add(Categorias.Recto);
-						}
-					}
-					// agrega la primer linea
-					InfoLinea infoLinea = new InfoLinea();
-					infoLinea.angulo=angulo1;
-					infoLinea.largo=largo/2;
-					infoLinea.Xcenter = (float) (Xcenter + largo/4 * MathUtils.cosDeg(angulo1));
-					infoLinea.Ycenter = (float) (Ycenter - largo/4 * MathUtils.sinDeg(angulo1)); //TODO: revisar q onda la notacion y los ejes!
-					imagen.parametros.addAll(ExtremosLinea.Linea(infoLinea));
-					imagen.infoLineas.add(infoLinea);
-					// agrega la segunda linea
-					infoLinea = new InfoLinea();
-					infoLinea.angulo=angulo2;
-					infoLinea.largo=largo/2;
-					infoLinea.Xcenter = (float) (Xcenter + largo/4 * MathUtils.cosDeg(angulo2));
-					infoLinea.Ycenter = (float) (Ycenter - largo/4 * MathUtils.sinDeg(angulo2));//TODO: revisar que onda la notacion y los ejes!
-					imagen.parametros.addAll(ExtremosLinea.Linea(infoLinea));
-					imagen.infoLineas.add(infoLinea);
-					
-					imagen.comments = "Imagen generada por secuencia automatica 'recursosAnguloAnalisisUmbral'.";
-					imagen.name = "Imagen de angulos generada automaticamente";
-					imagen.idVinculo = "";
-					imagen.categories.add(Categorias.Angulo);
-					imagen.nivelDificultad = -1;
-					objetos.add(imagen);
-				}
-				//}
-			}
-		}
-		
-		// Guardamos el setup 
-		String path = Resources.Paths.currentVersionPath+"/extras/jsonSetupUmbralAngulos.meta";
-		Json json = new Json();
-		json.setUsePrototypes(false);
-		FileHelper.writeFile(path, json.toJson(setup));
-		
-		return objetos;
-	}
-		
 	private static Array<Imagen> recursosParalelismoAnalisisUmbral(SetupUmbralParalelismo setup) {
 		
 		/*
@@ -257,7 +269,7 @@ public class ResourcesMaker {
 		 * Si pmin = 0 y pmax=cantidadDeltas-1, queda que  
 		 * 0 = 1/ A log (1/B * anguloMin) ==> B=angMin
 		 * Pmax = 1/A *log (1/AngMin * AngMax) ==> A = log(AngMax/AngMin)/Pmax 
-		 */
+		
 		float parametroB = setup.anguloMinimo;
 		float parametroA = (float) ((Math.log(setup.anguloMaximo/setup.anguloMinimo))/(setup.cantidadDeltas-1));
 		
@@ -489,6 +501,8 @@ public class ResourcesMaker {
 		return objetos;
 	}
 	
+	
+	
 	private static void saveSetupParalelismo(SetupUmbralParalelismo jsonSetup) {
 		String path = Resources.Paths.currentVersionPath+"/extras/jsonSetup"+contadorDeReferenciasUmbral+".meta";
 		Json json = new Json();
@@ -503,226 +517,14 @@ public class ResourcesMaker {
 		FileHelper.writeFile(path, json.toJson(jsonSetup));
 	}
 
-	private static Imagen crearImagen() {
-		contadorDeRecursos += 1;
-		Imagen imagen = new Imagen();
-		imagen.resourceId.id = contadorDeRecursos;
-		imagen.resourceId.resourceVersion = Builder.ResourceVersion;
-		imagen.infoConceptualParalelismo = new InfoConceptualParalelismo();
-		return imagen;
-	}
 	
-	public static class Imagen {
-		ResourceId resourceId = new ResourceId();
-		String name;
-		String comments;
-		Array<Constants.Resources.Categorias> categories = new Array<Constants.Resources.Categorias>();
-		Array<ExtremosLinea> parametros = new Array<ExtremosLinea>();
-		Array<InfoLinea> infoLineas = new Array<InfoLinea>();
-		String idVinculo; // Sirve para identificar cuando varias imagenes pertenecen a un mismo subgrupo
-		int nivelDificultad = -1; // Define un nivel de dificultad, 1 es el mas facil. -1 implica que no esta catalogado por dificultad y 0 que es compatible con cualquier dificultad (en gral para usar en las referencias, por ej rectas paralelas con las que se compara)
-		InfoConceptualParalelismo infoConceptualParalelismo;
-		InfoConceptualAngulos infoConceptualAngulos = new InfoConceptualAngulos();
-	}
 	
-	public static class InfoConceptualParalelismo {
-		public float direccionAnguloReferencia;
-		public float deltaAngulo;
-		public int deltaAnguloLinealizado;
-		public boolean seJuntan;
-		public float separacion; 
-		public String DescripcionDeParametros = "AnguloReferencia: direccion media entre las dos rectas; deltaAngulo: diferencia entre los angulos de ambas rectas, siempre en modulo; deltaAnguloLinealizado: el mismo parametro pero transformado de manera que una escala linea tenga mas densidad en angulos chicos; seJuntan: diferencia si las rectas se van juntando en la direccion de referencia o se van separando; separacion: deparacion en el punto medio"; 
-	}
 	
-	public static class InfoConceptualAngulos {
-		public float direccionLado1;
-		public float direccionLado2;
-		public float separacionAngular;
-		public CategoriaAngulo categoriaAngulo;
-		public boolean critico;
-		public String DescripcionParametros = "Se almacena (todo en grados) la direccion de ambos lados, el angulo formado entre ambos lados, si el angulo es agudo recto o grave, y si e critico, o sea, alguno de los lados esta sobre un eje.";
-	}
 	
-	public static class SVG {
-
-		static int version = Constants.version(); // Version de la aplicacion en la que
-		// se esta trabajando (esto
-		// determina el paquete entero de
-		// recursos
-		static String content = "";
-
-		public static void SVGimagen(Imagen imagen) {
-			content = "";
-			add("<!-- Este archivo es creado automaticamente por el generador de contenido del programa contornos version "
-					+ Constants.VERSION
-					+ ". Este elementos es el numero "
-					+ imagen.resourceId.id
-					+ " de la serie " + imagen.resourceId.resourceVersion + " -->"); // Comentario inicial
-			add("<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"" + height
-					+ "\" width=\"" + width + "\">"); // Inicializa el SVG
-			add("<rect stroke-width=\"5\" stroke=\"#ffffff\" fill=\"#ffffff\" height=\"100\" width=\"100\" y=\"0\" x=\"0\"/>"); // crea el fondo blanco
-			for (ExtremosLinea par : imagen.parametros) {
-				add("<line x1=\"" + par.x1 + "\" y1=\"" + par.y1 + "\" x2=\""
-						+ par.x2 + "\" y2=\"" + par.y2
-						+ "\" stroke-width=\"2\" stroke=\"black\" />"); // Agrega
-																		// cada
-																		// linea
-			}
-			add("</svg>"); // Finaliza el SVG
-			createFile(imagen);
-			createMetadata(imagen);
-		}
-
-		public static void SVGtexto(Texto text) {
-			content = "";
-			add("<!-- Este archivo es creado automaticamente por el generador de contenido del programa contornos version "
-					+ Constants.VERSION
-					+ ". Este elementos es el numero "
-					+ text.resourceId.id
-					+ " de la serie " + text.resourceId.resourceVersion + " de textos-->"); // Comentario inicial
-			add("<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"" + height
-					+ "\" width=\"" + width + "\">"); // Inicializa el SVG
-			add("<rect stroke-width=\"5\" stroke=\"#ffffff\" fill=\"#ffffff\" height=\"100\" width=\"100\" y=\"0\" x=\"0\"/>"); // crea el fondo blanco
-
-			add("<text text-anchor=\"middle\" x=\"" + width / 2 + "\" y=\"" + height / 2 + "\">" + text.texto + "</text>");
-			add("</svg>"); // Finaliza el SVG
-			createFileText(text);
-			createMetadataText(text);
-		}
-
-		private static void createMetadata(Imagen imagen) {
-			JsonResourcesMetaData jsonMetaData = new JsonResourcesMetaData();
-			jsonMetaData.resourceId = imagen.resourceId;
-			jsonMetaData.name = imagen.name;
-			jsonMetaData.comments = imagen.comments;
-			jsonMetaData.categories = imagen.categories;
-			jsonMetaData.noSound = false;
-			jsonMetaData.idVinculo = imagen.idVinculo;
-			jsonMetaData.infoLineas = imagen.infoLineas;
-			jsonMetaData.parametros = imagen.parametros;
-			jsonMetaData.nivelDificultad = imagen.nivelDificultad;
-			jsonMetaData.infoConceptualParalelismo = imagen.infoConceptualParalelismo;
-			jsonMetaData.infoConceptualAngulos = imagen.infoConceptualAngulos;
-			ExperimentalObject.JsonResourcesMetaData.CreateJsonMetaData(jsonMetaData, Resources.Paths.currentVersionPath);
-
-		}
-
-		private static void add(String string) {
-			content = content + string + "\r\n";
-		}
-
-		private static void createFile(Imagen imagen) {
-			FileHelper.writeFile(Resources.Paths.currentVersionPath + imagen.resourceId.id + ".svg", content);
-		}
-
-		private static void createFileText(Texto text) {
-			FileHelper.writeFile(Resources.Paths.currentVersionPath + text.resourceId.id + ".svg", content);
-		}
-
-		private static void createMetadataText(Texto text) {
-			JsonResourcesMetaData jsonMetaData = new JsonResourcesMetaData();
-			jsonMetaData.resourceId = text.resourceId;
-			jsonMetaData.name = text.name;
-			jsonMetaData.comments = text.comments;
-			jsonMetaData.categories = text.categories;
-			jsonMetaData.noSound = true;
-			jsonMetaData.nivelDificultad = text.nivelDificultad;
-			ExperimentalObject.JsonResourcesMetaData.CreateJsonMetaData(jsonMetaData, Resources.Paths.currentVersionPath);
-
-		}
-	}
 	
-	public static class Texto {
-		ResourceId resourceId = new ResourceId();
-		String name;
-		String comments;
-		Array<Categorias> categories = new Array<Constants.Resources.Categorias>();
-		int nivelDificultad = -1;
-		String texto;
-	}
-
-	public static class InfoLinea {
-		float Xcenter;
-		float Ycenter;
-		float angulo;
-		float largo;
-	}
-	public static class ExtremosLinea {
-		float x1;
-		float x2;
-		float y1;
-		float y2;
-
-		public static ExtremosLinea Linea(float xCenter, float yCenter,
-				float angle, float length) {
-			/*
-			 * Para encontrar el origen y el fin de la linea deseada utilizo las funcionalidades que tienen los Vector2. Para eso creo dos vectores en el origen
-			 * (cada uno con la mitad del largo, uno angulo 0 y otro 180) Luego los roto lo necesario y los traslado a las coordenadas del centro
-			 */
-
-			Vector2 V1 = new Vector2(1, 1);
-			Vector2 V2 = new Vector2(1, 1);
-			V1.setLength(length / 2);
-			V2.setLength(length / 2);
-			V1.setAngle(0);
-			V2.setAngle(180);
-			V1.rotate(-angle);
-			V2.rotate(-angle);
-			V1.sub(-xCenter, -yCenter); // Por alguna razon Vector2 no tiene la
-										// opcion de sumar pero side restar. Por
-										// eso le resto el negativo
-			V2.sub(-xCenter, -yCenter);
-			ExtremosLinea p = new ExtremosLinea();
-			p.x1 = V1.x;
-			p.y1 = V1.y;
-			p.x2 = V2.x;
-			p.y2 = V2.y;
-			return p;
-		}
-
-		public static ExtremosLinea Linea(InfoLinea infoLinea) {
-			return Linea(infoLinea.Xcenter, infoLinea.Ycenter, infoLinea.angulo, infoLinea.largo);
-		}
-
-		/*
-		public static Array<ExtremosLinea> Angulo(float xVertice,
-				float yVertice, float angleInicial, float angleFinal,
-				float length) {
-			/*
-			 * El angulo esta formado por dos linas, ambas del mismo largo orientado cada uno en un angulo diferente.
-			 */
-		/*
-			Array<ExtremosLinea> lineas = new Array<ExtremosLinea>();
-			Vector2 V1 = new Vector2(1, 1);
-			Vector2 V2 = new Vector2(1, 1);
-			V1.setLength(length);
-			V2.setLength(length);
-			V1.setAngle(angleInicial);
-			V2.setAngle(angleFinal);
-			V1.sub(-xVertice, -yVertice); // Por alguna razon Vector2 no tiene
-											// la
-											// opcion de sumar pero side restar.
-											// Por
-											// eso le resto el negativo
-			V2.sub(-xVertice, -yVertice);
-			ExtremosLinea p = new ExtremosLinea(); // Crea el primer lado
-			p.x1 = xVertice;
-			p.y1 = yVertice;
-			p.x2 = V1.x;
-			p.y2 = V1.y;
-			lineas.add(p);
-			ExtremosLinea p2 = new ExtremosLinea(); // Crea el segundo lado
-			p2.x1 = xVertice;
-			p2.y1 = yVertice;
-			p2.x2 = V2.x;
-			p2.y2 = V2.y;
-			lineas.add(p2);
-			return lineas;
-		}
-		*/
-	}
 	
-	public static enum CategoriaAngulo {
-		Agudo, Recto, Grave;
-	}
+	
+	*/
+	
+
 }

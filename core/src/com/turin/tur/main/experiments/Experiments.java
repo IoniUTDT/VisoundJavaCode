@@ -7,113 +7,165 @@ import com.turin.tur.main.diseno.Level;
 import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.diseno.Trial.ResourceId;
-import com.turin.tur.main.experiments.Experimentales.Setups.SetupUmbralAngulos;
-import com.turin.tur.main.util.builder.ResourcesMaker.InfoConceptualParalelismo;
 
 /**
  * Este paquete esta pensado para almacenar todo lo que tiene que ver con los diseños experimentales.
  * @author ionatan
  *
  */
-public class Experimentales {
+public class Experiments {
 	
-	private static final String TAG = Experimentales.class.getName();
+	private static final String TAG = Experiments.class.getName();
 
-	public static class Setups {
 	
-		/*
-		 * Esta es una clase para manejar el setup experimental del diseño de experimento donde se quiere medir la sensibilidad al detectar el delta tita
-		 */
-		public static class SetupUmbralParalelismo {
-			public String tag;
-			// Vamos a trabajar todas las cuentas en radianes
-			public String nombre; // Nombre del setup
-			public float titaRefInicial; // Angulo de referencia inicial
-			public int saltoTitaRefInt; // Salto del tita de referencia 
-			public float saltoTitaRef; //Salto del tita pero en formato float
-			public float anguloMinimo; //Angulo minimo del delta
-			public float anguloMaximo; //Angulo maximo del delta
-			public float largo; //Largo de los segmentos
-			public float separacionMinima; // Separacion minima de los segmentos
-			public float separacionIncremento; // Incremento de la separacion de los segmentos
-			public int cantidadReferencias; // Cantidad de angulos tita (referencia)
-			public int cantidadSeparaciones; // Cantidad de saltos en la separacion de las rectas
-			public int cantidadDeltas; // Cantidad de delta titas que se generan en cada condicion de angulo de referencia y de separacion	
-			public String tagRefPos="+"; // Guarda el tag de la ref positiva
-			public String tagRefNeg="-"; // Guarda el tag de la ref negativa
-		}
+	/**
+	 * Esta es una clase para manejar el setup experimental del diseño de experimento donde se quiere medir la sensibilidad al detectar el delta tita
+	 */
+	public class SetupUmbralParalelismo {
+		public String tag;
+		// Vamos a trabajar todas las cuentas en radianes
+		public String nombre; // Nombre del setup
+		public float titaRefInicial; // Angulo de referencia inicial
+		public int saltoTitaRefInt; // Salto del tita de referencia 
+		public float saltoTitaRef; //Salto del tita pero en formato float
+		public float anguloMinimo; //Angulo minimo del delta
+		public float anguloMaximo; //Angulo maximo del delta
+		public float largo; //Largo de los segmentos
+		public float separacionMinima; // Separacion minima de los segmentos
+		public float separacionIncremento; // Incremento de la separacion de los segmentos
+		public int cantidadReferencias; // Cantidad de angulos tita (referencia)
+		public int cantidadSeparaciones; // Cantidad de saltos en la separacion de las rectas
+		public int cantidadDeltas; // Cantidad de delta titas que se generan en cada condicion de angulo de referencia y de separacion	
+		public String tagRefPos="+"; // Guarda el tag de la ref positiva
+		public String tagRefNeg="-"; // Guarda el tag de la ref negativa
+	}		
 		
-		/*
-		 * Esta es una clase para manejar el setup experimental del diseño de experimentos para medir sensibilidad en angulos.
-		 * Todos los angulos estan en grados y todos los angulos son enteros (se asume que no hay necesidad de mayor presicion).
-		 * En el momento de generar los recursos se asume que se quiere tener un set de recursos que cubra todos los angulos posibles con dos criterios
-		 * Por un lado que haya angulos cubriendo la vuelta entera variando los lados de a un salto grande.
-		 * Por otro lado que alrededor de angulos que se consideran criticos agregue una mayor densidad de angulos equidistantes a un salto "chico" 
+	/**
+	 * Esta es una clase para manejar el setup experimental del diseño de experimentos para medir sensibilidad en angulos.
+	 * Todos los angulos estan en grados y todos los angulos son enteros (se asume que no hay necesidad de mayor presicion).
+	 * En el momento de generar los recursos se asume que se quiere tener un set de recursos que cubra todos los angulos posibles con dos criterios
+	 * Por un lado que haya angulos cubriendo la vuelta entera variando los lados de a un salto grande.
+	 * Por otro lado que alrededor de angulos que se consideran criticos agregue una mayor densidad de angulos equidistantes a un salto "chico" 
+	 */
+	public class SetupUmbralAngulos{
+		public String nombre; // Nombre del setup
+		public int saltoGrande; // Salto que hay entre angulo no critico y angulo no critico
+		public int saltoChico; // Salto que hay entre angulo dos angulos consecutivos alrededor de los angulos criticos
+		public Array<Integer> angulosCriticos = new Array<Integer>(); // Nota: tiene que estar entre los angulo pertenecientes al salto grande para que los considere
+		public Array<Integer> angulosNoDetalle = new Array<Integer>(); // Genera un array con todos los angulos en los que se debe dibujar angulos de al salto grande
+		public Array<Integer> angulosDetalle = new Array<Integer>(); // Genera un array con todos los angulos en los que se debe dibujar angulos de al salto chico
+		public Array<Integer> angulos = new Array<Integer>(); // Genera un array con todos los angulos en los que se debe dibujar angulos
+		public int numeroDeRefrenciasConjuntas = 2; // Es el numero de angulos de referencia distintos que se intercalan en un mismo nivel para evitar feedback 
+		public Array<Array<Integer>> idsResourcesByAngle = new Array<Array<Integer>>(); // Lista de arrays con los ids de los recursos que tienen cada angulo. Esto se crea en tiempo de ejecucion de creacion de recursos porque es infinitamente mas lento hacer una busqueda despues al trabajar con volumenes grandes de recursos. El tag de cada entrada es el angulo con el mismo indice de la lista de angulos 
+		
+		
+		/**
+		 * Este metodo busca todos lo angulos en los que debe haber lineas segun los parametros con que se configure el setup
 		 */
-		public static class SetupUmbralAngulos{
-			public String nombre; // Nombre del setup
-			public int saltoGrande; // Salto que hay entre angulo no critico y angulo no critico
-			public int saltoChico; // Salto que hay entre angulo dos angulos consecutivos alrededor de los angulos criticos
-			public Array<Integer> angulosCriticos = new Array<Integer>(); // Nota: tiene que estar entre los angulo pertenecientes al salto grande para que los considere
-			public Array<Integer> angulosNoDetalle = new Array<Integer>(); // Genera un array con todos los angulos en los que se debe dibujar angulos de al salto grande
-			public Array<Integer> angulosDetalle = new Array<Integer>(); // Genera un array con todos los angulos en los que se debe dibujar angulos de al salto chico
-			public Array<Integer> angulos = new Array<Integer>(); // Genera un array con todos los angulos en los que se debe dibujar angulos
-			public int numeroDeRefrenciasConjuntas = 3; // Es el numero de angulos de referencia distintos que se intercalan en un mismo nivel para evitar feedback 
+		public void searchAngles() {
 			
-			public void searchAngles() {
-				for (int i=0; i<360; i=i+this.saltoGrande) {
-					this.angulosNoDetalle.add(i);
-					if (this.angulosCriticos.contains(i,false)){ // Si es un angulo critico
-						int numeroDeAngulosExtra = this.saltoGrande/this.saltoChico;
-						for (int j=1; j<numeroDeAngulosExtra; j++) {
-							int value = j*this.saltoChico+i;
-							if (value < 0) {
-								value = 360 + value; 
-							}
-							angulosDetalle.add(value);
-							value = -j*this.saltoChico+i;
-							if (value < 0) {
-								value = 360 + value; 
-							}
-							angulosDetalle.add(value);
+			for (int i=0; i<360; i=i+this.saltoGrande) {
+				this.angulosNoDetalle.add(i);
+				if (this.angulosCriticos.contains(i,false)){ // Si es un angulo critico
+					int numeroDeAngulosExtra = this.saltoGrande/this.saltoChico;
+					for (int j=1; j<numeroDeAngulosExtra; j++) {
+						int value = j*this.saltoChico+i;
+						if (value < 0) {
+							value = 360 + value; 
 						}
+						angulosDetalle.add(value);
+						value = -j*this.saltoChico+i;
+						if (value < 0) {
+							value = 360 + value; 
+						}
+						angulosDetalle.add(value);
 					}
 				}
-				
-				this.angulos.addAll(this.angulosDetalle);
-				this.angulos.addAll(this.angulosNoDetalle);
 			}
 			
-			public boolean cumpleCriterioDistanciaMinima (int angulo1, int angulo2) {
-				int deltaAngulo = angulo2-angulo1;
-				if (deltaAngulo < 0) {deltaAngulo=-deltaAngulo;}  // Hacemos que sean todos los numeros positivos
-				if (deltaAngulo >= 180) {deltaAngulo = 360 - deltaAngulo;} // Hacemos que los angulos sean considerados siempre del lado "concavo")
-				if (this.angulosDetalle.contains(angulo1, false) && this.angulosDetalle.contains(angulo2, false)) {
-					return (deltaAngulo >= this.saltoGrande*2);
-				} else {
-					return (deltaAngulo >= this.saltoGrande);
-				}
+			this.angulos.addAll(this.angulosDetalle);
+			this.angulos.addAll(this.angulosNoDetalle);
+			for (@SuppressWarnings("unused") int i:this.angulos) {
+				this.idsResourcesByAngle.add(new Array<Integer>());
+			}
+		}
+
+		/**
+		 * Este metodo indica si dos lados estan demaciado proximos angularmente y por ende si se debe incluir el grafico en la lista de recursos a usar o no. 
+		 * @param angulo1
+		 * @param angulo2
+		 * @return
+		 */
+		public boolean cumpleCriterioDistanciaMinima (int angulo1, int angulo2) {
+			int deltaAngulo = angulo2-angulo1;
+			if (deltaAngulo < 0) {deltaAngulo=-deltaAngulo;}  // Hacemos que sean todos los numeros positivos
+			if (deltaAngulo >= 180) {deltaAngulo = 360 - deltaAngulo;} // Hacemos que los angulos sean considerados siempre del lado "concavo")
+			if (this.angulosDetalle.contains(angulo1, false) && this.angulosDetalle.contains(angulo2, false)) {
+				return (deltaAngulo >= this.saltoGrande*2);
+			} else {
+				return (deltaAngulo >= this.saltoGrande);
 			}
 		}
 
 	}
 
-	public static class Analisis {
-		public static class AnalisisUmbralParalelismo {
-			public static class DetectionObject {
-				public boolean answerTrue;
-				public InfoConceptualParalelismo infoConceptual;
-			}
-			
-			public float anguloReferencia;
-			public int indiceAnguloRefrencia;
-			public int cantidadDeNivelesDeDificultad;
-			public float trueRate; // Nivel de aciertos de deteccion de señal que se quiere medir. Sirve para el setup experimental de umbral
-			public Array<DetectionObject> historialAciertosCurvaSuperior = new Array<DetectionObject>();
-			public int saltoCurvaSuperior;
-			public int proximoNivelCurvaSuperior;  
-		}
+
+		
+	/**
+	 * Clase para alamcenar la info conceptual relacionada a los recursos de paralelismo
+	 * @author ionatan
+	 *
+	 */
+	public class InfoConceptualParalelismo {
+		public float direccionAnguloReferencia;
+		public float deltaAngulo;
+		public int deltaAnguloLinealizado;
+		public boolean seJuntan;
+		public float separacion; 
+		public String DescripcionDeParametros = "AnguloReferencia: direccion media entre las dos rectas; deltaAngulo: diferencia entre los angulos de ambas rectas, siempre en modulo; deltaAnguloLinealizado: el mismo parametro pero transformado de manera que una escala linea tenga mas densidad en angulos chicos; seJuntan: diferencia si las rectas se van juntando en la direccion de referencia o se van separando; separacion: deparacion en el punto medio"; 
 	}
+	
+	/**
+	 * Clase para almacenar la info conceptual relacionada a los recursos de angulos
+	 * @author ionatan
+	 *
+	 */
+	public class InfoConceptualAngulos {
+		public float direccionLado1;
+		public float direccionLado2;
+		public float separacionAngular;
+		public CategoriaAngulo categoriaAngulo;
+		public boolean critico;
+		public String DescripcionParametros = "Se almacena (todo en grados) la direccion de ambos lados, el angulo formado entre ambos lados, si el angulo es agudo recto o grave, y si e critico, o sea, alguno de los lados esta sobre un eje.";
+		
+	}
+	
+	public static enum CategoriaAngulo {
+		Agudo, Recto, Grave;
+	}
+	
+		
+	/**
+	 * Clase que se encarga de procesar (a medio hacer porque antes estaba fuera de esta clase los metodos) lo que tiene que ver con
+	 * el analisis em tiempo real de los experimentos de paralelismo 
+	 * @author ionatan
+	 *
+	 */
+	public class AnalisisUmbralParalelismo {
+		public class DetectionObject {
+			public boolean answerTrue;
+			public InfoConceptualParalelismo infoConceptual;
+		}
+		
+		public float anguloReferencia;
+		public int indiceAnguloRefrencia;
+		public int cantidadDeNivelesDeDificultad;
+		public float trueRate; // Nivel de aciertos de deteccion de señal que se quiere medir. Sirve para el setup experimental de umbral
+		public Array<DetectionObject> historialAciertosCurvaSuperior = new Array<DetectionObject>();
+		public int saltoCurvaSuperior;
+		public int proximoNivelCurvaSuperior;  
+	}
+
 	/**
 	 * Esta clase sirve para hacer el analisis en tiempo real del experimento de umbral de deteccion de angulos
 	 * La idea general se basa en genarar una señal que es la diferencia del angulo mostrado respecto al recto e ir disminuyendo 
@@ -127,7 +179,7 @@ public class Experimentales {
 	 * @author ionatan
 	 *
 	 */
-	public static class AnalisisUmbralAngulos {
+	public class AnalisisUmbralAngulos {
 		
 		/**
 		 * Clase armada para poder ordenar los angulos en funcion de su angulo "corregido"

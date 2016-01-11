@@ -39,27 +39,28 @@ import it.sauronsoftware.jave.InputFormatException;
 public class ResourcesExport {
 
 	private static final String TAG = ResourcesExport.class.getName();
+	private int levelId;
 	
-	public static void createStructure() {
-		seleccionarRecursos(); // Copia solo los recursos que se usan a una carpeta para su procesamiento
-		System.out.println("Recursos seleccionados");
-		convertirSVGtoPNG(Resources.Paths.fullUsedResources);
-		System.out.println("Recursos transformados a png");
-		SVGtoSound.Convert(Resources.Paths.fullUsedResources);
+	public void createStructure2() {
+		//seleccionarRecursos(); // Copia solo los recursos que se usan a una carpeta para su procesamiento
+		Gdx.app.debug(TAG,"Recursos seleccionados");
+		//SVGtoSound.Convert(Resources.Paths.fullUsedResources);
 		System.out.println("Recursos transformados a sonido");
-		WAVtoMP3(Resources.Paths.fullUsedResources);
+		//WAVtoMP3(Resources.Paths.fullUsedResources);
 		System.out.println("sonido pasado a mp3");
 		rebuildAtlasAndSource();
 	}
 		
-	private static void seleccionarRecursos() {
-		Array<Integer> listado = new Array<Integer>(); // Listado de ids de recursos utilizados
+	public void createStructure() {
+			
 		boolean seguir = true;
-		int i = 1;
+		levelId=1;
 		while (seguir) {
-			File file = new File(Resources.Paths.fullLevelsPath + "level" + i + ".meta");
+			Gdx.app.debug(TAG,"Procesando nivel "+levelId);
+			Array<Integer> listado = new Array<Integer>(); // Listado de ids de recursos utilizados
+			File file = new File(Resources.Paths.fullLevelsPath + "level" + levelId + ".meta");
 			if (file.exists()) {
-				String savedData = FileHelper.readLocalFile(Resources.Paths.levelsPath + "level" + i + ".meta");
+				String savedData = FileHelper.readLocalFile(Resources.Paths.levelsPath + "level" + levelId + ".meta");
 				if (!savedData.isEmpty()) {
 					Json json = new Json();
 					json.setUsePrototypes(false);
@@ -71,22 +72,27 @@ public class ResourcesExport {
 						listado.add(trial.rtaCorrectaId); // Agrega la que esta marcada como respuesta.
 					}
 				} else {
-					Gdx.app.error(TAG, "No se a podido encontrar la info del nivel " + i);
+					Gdx.app.error(TAG, "No se a podido encontrar la info del nivel " + levelId);
 				}
 				// Incrementa el contador para que pase al proximo level
-				i = i + 1;
+				levelId++;
 			} else {
 				seguir = false;
 			}
+			
+			Gdx.app.debug(TAG,"Recursos seleccionados");
+			// Hasta aca recopilo la lista de ids de recursos del contenido de cada level.
+			for (int id : listado) {
+				// Convertimos los SVG a PNG
+				File fileSVG = new File(Resources.Paths.fullCurrentVersionPath + id + ".svg");
+				convertirSVGtoPNG(fileSVG);
+			}
+			Gdx.app.debug(TAG,"Recursos transfomados a PNG");
+			
+			
 		}
-		// Aca ya se selecciono toda la lista de recursos.
 
-		// Se limpia el directorio de detino
-		try {
-			FileUtils.cleanDirectory(new File(Resources.Paths.fullUsedResources));
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
+		/*
 		// Se copia solo los recursos utilizados
 		for (int id : listado) {
 			File file = new File(Resources.Paths.fullCurrentVersionPath + id + ".svg");
@@ -110,46 +116,43 @@ public class ResourcesExport {
 				e.printStackTrace();
 			}
 		}
+		*/
 	}
 
-	private static void convertirSVGtoPNG(String path) {
+	/**
+	 * 
+	 * Funcion que transforma los archivos svg en png
+	 * 
+	 * @param file
+	 * @param i 
+	 */
+	private void convertirSVGtoPNG(File file) {
+		try {
+			//Step -1: We read the input SVG document into Transcoder Input
+			//We use Java NIO for this purpose
+			String svg_URI_input = Paths.get(file.getAbsolutePath()).toUri().toURL().toString();
+			TranscoderInput input_svg_image = new TranscoderInput(svg_URI_input);
+			//Step-2: Define OutputStream to PNG Image and attach to TranscoderOutput
+			OutputStream png_ostream;
+			file = new File(Resources.Paths.fullUsedResources + file.getName().substring(0, file.getName().lastIndexOf(".")) + ".png");
+			png_ostream = new FileOutputStream(file);
 
-		File[] archivos;
-		// Primero busca la lista de archivos de interes
-		File dir = new File(path);
-		archivos = dir.listFiles(new SvgFileFilter());
+			TranscoderOutput output_png_image = new TranscoderOutput(png_ostream);
+			// Step-3: Create PNGTranscoder and define hints if required
+			PNGTranscoder my_converter = new PNGTranscoder();
+			// Step-4: Convert and Write output
+			my_converter.transcode(input_svg_image, output_png_image);
+			// Step 5- close / flush Output Stream
+			png_ostream.flush();
+			png_ostream.close();
 
-		// Convertimos los SVG a PNG
-
-		for (File file : archivos) {
-			try {
-				//Step -1: We read the input SVG document into Transcoder Input
-				//We use Java NIO for this purpose
-				String svg_URI_input = Paths.get(file.getAbsolutePath()).toUri().toURL().toString();
-				TranscoderInput input_svg_image = new TranscoderInput(svg_URI_input);
-				//Step-2: Define OutputStream to PNG Image and attach to TranscoderOutput
-				OutputStream png_ostream;
-				file = new File(Resources.Paths.fullUsedResources + file.getName().substring(0, file.getName().lastIndexOf(".")) + ".png");
-				png_ostream = new FileOutputStream(file);
-
-				TranscoderOutput output_png_image = new TranscoderOutput(png_ostream);
-				// Step-3: Create PNGTranscoder and define hints if required
-				PNGTranscoder my_converter = new PNGTranscoder();
-				// Step-4: Convert and Write output
-				my_converter.transcode(input_svg_image, output_png_image);
-				// Step 5- close / flush Output Stream
-				png_ostream.flush();
-				png_ostream.close();
-
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (TranscoderException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (TranscoderException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-
 	}
 	
 	/**
@@ -158,8 +161,8 @@ public class ResourcesExport {
 	 * 
 	 * @param path
 	 */
-	private static void WAVtoMP3(String path) {
-
+	private static void WAVtoMP3(File file) {
+/*
 		File[] archivos;
 		// Primero busca la lista de archivos de interes
 		File dir = new File(path);
@@ -189,7 +192,7 @@ public class ResourcesExport {
 				e.printStackTrace();
 			}
 		}
-
+*/
 	}
 
 	private static void rebuildAtlasAndSource() {

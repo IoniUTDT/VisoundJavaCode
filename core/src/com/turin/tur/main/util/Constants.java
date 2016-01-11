@@ -134,8 +134,9 @@ public class Constants {
 		}
 	}
 
+	
+	
 	// Constantes relacionadas a IDs de cosas fijas
-
 	public static class Resources {
 
 		public enum Categorias {
@@ -181,6 +182,11 @@ public class Constants {
 				this.texto = texto;
 			}
 		}
+
+		public static class Display {
+			public static int height = 100;
+			public static int width = 100;
+		}
 		
 		public static class Paths {
 			public static String tempPath = "/temp/resourcesbuild/";
@@ -190,10 +196,7 @@ public class Constants {
 			public static String fullLevelsPath = fullTempPath + "tempLevels/";
 			public static String levelsPath = tempPath + "tempLevels/";
 			public static String fullUsedResources = fullTempPath + "selected/";
-			public static String finalPath = "../android/assets/experimentalsource/" + Constants.version() + "/";
-			public static int height = 100;
-			public static int width = 100;
-
+			public static String finalPath = "../android/assets/experimentalsource/";
 		}
 
 		public static final int Reservados = 20;

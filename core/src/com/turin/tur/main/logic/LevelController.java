@@ -22,10 +22,11 @@ import com.turin.tur.main.diseno.Boxes.Box;
 import com.turin.tur.main.diseno.RunningSound;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.diseno.Trial.TouchLog;
-import com.turin.tur.main.experiments.Experimentales.Analisis.AnalisisUmbralParalelismo;
-import com.turin.tur.main.experiments.Experimentales.Analisis.AnalisisUmbralParalelismo.DetectionObject;
-import com.turin.tur.main.experiments.Experimentales.AnalisisUmbralAngulos;
-import com.turin.tur.main.experiments.Experimentales.Setups.SetupUmbralAngulos;
+import com.turin.tur.main.experiments.Experiments;
+import com.turin.tur.main.experiments.Experiments.AnalisisUmbralAngulos;
+import com.turin.tur.main.experiments.Experiments.AnalisisUmbralParalelismo;
+import com.turin.tur.main.experiments.Experiments.AnalisisUmbralParalelismo.DetectionObject;
+import com.turin.tur.main.experiments.Experiments.SetupUmbralAngulos;
 import com.turin.tur.main.screens.ResultsScreen;
 import com.turin.tur.main.util.CameraHelper;
 import com.turin.tur.main.util.Constants;
@@ -78,7 +79,7 @@ public class LevelController implements InputProcessor {
 		if (this.level.jsonLevel.tipoDeLevel == TIPOdeLEVEL.UMBRALANGULO) {
 			this.level.levelLog.setupAngulos = (SetupUmbralAngulos) this.level.jsonLevel.setup;
 			for (int ref: this.level.jsonLevel.angulosReferencia) {
-				this.level.levelLog.analisis.add(new AnalisisUmbralAngulos(this.level.levelLog.setupAngulos,ref,this.level));
+				this.level.levelLog.analisis.add(new Experiments().new AnalisisUmbralAngulos(this.level.levelLog.setupAngulos,ref,this.level));
 			}
 			// Usamos la clase analisis para elegir el angulo q hay que mostrar
 			this.selectAnalisis();
@@ -166,7 +167,7 @@ public class LevelController implements InputProcessor {
 						AnalisisUmbralParalelismo analisis = this.level.jsonLevel.analisisUmbral;
 						
 						// Creamos la info del objeto analizado
-						DetectionObject detected = new DetectionObject();
+						DetectionObject detected = new Experiments().new AnalisisUmbralParalelismo().new DetectionObject();
 						detected.answerTrue = this.trial.log.touchLog.peek().isTrue;
 						detected.infoConceptual = this.trial.log.touchLog.peek().jsonMetaDataTouched.infoConceptualParalelismo;
 						

@@ -23,7 +23,8 @@ public class Visound extends Game {
 	public void create () {
 		
 		if ((buildResources) & (Gdx.app.getType() == ApplicationType.Desktop)) {
-			Builder.build();
+			Builder builder = new Builder();
+			builder.build();
 		}
 		
 		// Set Libgdx log level
