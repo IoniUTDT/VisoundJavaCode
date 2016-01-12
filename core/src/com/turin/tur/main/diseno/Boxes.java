@@ -283,7 +283,7 @@ public abstract class Boxes {
 			
 			this.contenido = contenido;
 			this.posicionCenter = new Vector2(0, 0);
-			this.spr = new Sprite (Assets.instance.imagenes.stimuliLogo);
+			this.spr = new Sprite (Assets.imagenes.stimuliLogo);
 			this.createSoundAnimationResources();
 		}
 

@@ -14,7 +14,7 @@ public class Builder {
 	public static final String AppVersion = "UmbralCompletoAngulos"; 
 	public static final boolean categorizar = false;
 	
-	static final Boolean makeLevels = true;
+	static final Boolean makeLevels = false;
 	static final Boolean makeResources = false;
 	
 

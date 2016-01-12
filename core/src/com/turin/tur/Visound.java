@@ -8,7 +8,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.screens.MenuScreen;
 import com.turin.tur.main.util.Assets;
-import com.turin.tur.main.util.ImagesAsset;
+import com.turin.tur.main.util.LevelAsset;
 import com.turin.tur.main.util.builder.Builder;
 
 public class Visound extends Game {
@@ -33,12 +33,6 @@ public class Visound extends Game {
 		
 
 		Gdx.app.debug(TAG, "Prueba");
-		
-		// Load assets
-		Assets.instance.init(new AssetManager());
-		ImagesAsset.instance.init(new AssetManager());
-		
-		
 		
 		// Inicializa la session y el juego
 		this.session = new Session();

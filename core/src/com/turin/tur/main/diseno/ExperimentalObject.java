@@ -10,7 +10,7 @@ import com.turin.tur.main.experiments.Experiments.InfoConceptualAngulos;
 import com.turin.tur.main.experiments.Experiments.InfoConceptualParalelismo;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.FileHelper;
-import com.turin.tur.main.util.ImagesAsset;
+import com.turin.tur.main.util.LevelAsset;
 import com.turin.tur.main.util.builder.Imagenes.Linea;
 
 public class ExperimentalObject {
@@ -32,9 +32,9 @@ public class ExperimentalObject {
 		// Carga ma metadata
 		this.loadMetaData(Id);
 		// Crea los recursos graficos y sonoros
-		this.imagen = ImagesAsset.instance.imagen(Id);
+		this.imagen = LevelAsset.instance.imagen(Id);
 		if (!this.noSound) {
-			this.sonido = ImagesAsset.instance.sonido(Id);
+			this.sonido = LevelAsset.instance.sonido(Id);
 		} else  {
 			this.sonido=null;
 		}

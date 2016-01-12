@@ -14,17 +14,11 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 public class Assets implements Disposable, AssetErrorListener {
 	
 	public static final String TAG = Assets.class.getName();
-	public static final Assets instance = new Assets();
-	
-	
 	private AssetManager assetManager;
-	// singleton: prevent instantiation from other classes
-	private Assets () {}
-	
 	
 	// Variables creadas
-	public Imagenes imagenes;	
-	public AssetFonts fonts;
+	public static Imagenes imagenes;	
+	public static AssetFonts fonts;
 	
 	public void init (AssetManager assetManager) {
 		this.assetManager = assetManager;
@@ -56,6 +50,7 @@ public class Assets implements Disposable, AssetErrorListener {
 	public void dispose () {
 		assetManager.dispose();
 		fonts.defaultFont.dispose();
+		fonts.defaultSmallFont.dispose();
 	}
 	
 	
@@ -84,7 +79,7 @@ public class Assets implements Disposable, AssetErrorListener {
 			
 			}
 		}
-	
+	 
 	public class Imagenes {
 		
 		public AtlasRegion stimuliLogo;

@@ -2,13 +2,12 @@ package com.turin.tur.main.screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.assets.AssetManager;
 import com.turin.tur.main.util.Assets;
-import com.turin.tur.main.util.ImagesAsset;
 
 public abstract class AbstractGameScreen implements Screen {
 	
 	public Game game;
+	public Assets assets= new Assets();
 	// Informacion general
 	
 	public AbstractGameScreen (Game game) {
@@ -28,13 +27,11 @@ public abstract class AbstractGameScreen implements Screen {
 	
 	@Override
 	public void resume () {
-		Assets.instance.init(new AssetManager());
-		ImagesAsset.instance.init(new AssetManager());
+		assets = new Assets();
 	}
 	
 	@Override
 	public void dispose () {
-		Assets.instance.dispose();
-		ImagesAsset.instance.dispose();
+		assets.dispose();
 	}
 }

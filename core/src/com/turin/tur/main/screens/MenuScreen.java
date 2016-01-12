@@ -74,7 +74,7 @@ public class MenuScreen extends AbstractGameScreen {
 	private void renderServerStatus() {
 		float x = cameraGUI.viewportWidth - cameraGUI.viewportWidth*1/10;
 		float y = cameraGUI.viewportHeight - cameraGUI.viewportHeight*1/20;
-		BitmapFont fpsFont = Assets.instance.fonts.defaultFont;
+		BitmapFont fpsFont = this.assets.fonts.defaultFont;
 		fpsFont.getData().setScale(Constants.factorEscala());
 		if (Internet.serverOk) {
 			// show up in green

@@ -69,7 +69,7 @@ public class ResultsScreen extends AbstractGameScreen {
 		// Muestra el contenido en funcion de la pagina
 		float x = cameraGUI.viewportWidth/10;
 		float y = cameraGUI.viewportHeight/8;
-		BitmapFont fpsFont = Assets.instance.fonts.defaultFont;
+		BitmapFont fpsFont = this.assets.fonts.defaultFont;
 		fpsFont.getData().setScale(Constants.factorEscala()/2);
 		fpsFont.draw(batch, "Ha completado el nivel.", x, y);
 		

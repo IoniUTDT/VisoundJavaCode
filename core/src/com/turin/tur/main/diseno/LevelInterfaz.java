@@ -26,7 +26,7 @@ public class LevelInterfaz {
 		float x = cameraGUI.viewportWidth - cameraGUI.viewportWidth*1/10;
 		float y = cameraGUI.viewportHeight - cameraGUI.viewportHeight*1/20;
 		int fps = Gdx.graphics.getFramesPerSecond();
-		BitmapFont fpsFont = Assets.instance.fonts.defaultFont;
+		BitmapFont fpsFont = Assets.fonts.defaultFont;
 		if (fps >= 45) {
 			// 45 or more FPS show up in green
 			fpsFont.setColor(0, 1, 0, 1);
@@ -44,11 +44,11 @@ public class LevelInterfaz {
 	}
 	
 	public void renderTitle (SpriteBatch batch, OrthographicCamera cameraGUI) {
-		BitmapFont fpsFont = Assets.instance.fonts.defaultFont;
+		BitmapFont fpsFont = Assets.fonts.defaultFont;
 		fpsFont.getData().setScale(Constants.factorEscala());
 		fpsFont.draw(batch, levelInfo.levelTitle, cameraGUI.viewportWidth*1/20 , cameraGUI.viewportHeight*1/10); 
 		fpsFont.draw(batch, trial.jsonTrial.title , cameraGUI.viewportWidth*2/5 , cameraGUI.viewportHeight*1/10);
-		Assets.instance.fonts.defaultFont.draw(batch, trial.jsonTrial.caption , cameraGUI.viewportWidth*1/5 , cameraGUI.viewportHeight*9/10);
+		Assets.fonts.defaultFont.draw(batch, trial.jsonTrial.caption , cameraGUI.viewportWidth*1/5 , cameraGUI.viewportHeight*9/10);
 		//Assets.instance.fonts.defaultFont.draw(batch, "Convergencia cuandrante 1: "+ this.levelInfo.levelLog.analisisActivo.convergencia(0), cameraGUI.viewportWidth*3/5, cameraGUI.viewportHeight*16/20);
 		//Assets.instance.fonts.defaultFont.draw(batch, "Convergencia cuandrante 2: "+ this.levelInfo.levelLog.analisisActivo.convergencia(1), cameraGUI.viewportWidth*3/5, cameraGUI.viewportHeight*17/20);
 		//Assets.instance.fonts.defaultFont.draw(batch, "Convergencia cuandrante 3: "+ this.levelInfo.levelLog.analisisActivo.convergencia(2), cameraGUI.viewportWidth*3/5, cameraGUI.viewportHeight*18/20);
@@ -59,7 +59,7 @@ public class LevelInterfaz {
 				restantes = restantes + analisis.trialsRestantes();
 			}
 		}
-		Assets.instance.fonts.defaultFont.draw(batch, "Numero de trials maximos restantes: " + restantes, cameraGUI.viewportWidth*2/5, cameraGUI.viewportHeight*15/20);
+		Assets.fonts.defaultFont.draw(batch, "Numero de trials maximos restantes: " + restantes, cameraGUI.viewportWidth*2/5, cameraGUI.viewportHeight*15/20);
 		//Assets.instance.fonts.defaultFont.draw(batch, "Angulo de referencia: " + this.levelInfo.levelLog.analisisActivo.referencia(), cameraGUI.viewportWidth*2/5, cameraGUI.viewportHeight*14/20);
 		//Assets.instance.fonts.defaultFont.draw(batch, "Trial: " + this.trial.Id, cameraGUI.viewportWidth*2/5, cameraGUI.viewportHeight*13/20);
 		//Assets.instance.fonts.defaultFont.draw(batch, "Nivel: " + this.levelInfo.levelLog.analisisActivo.next.nivel(), cameraGUI.viewportWidth*2/5, cameraGUI.viewportHeight*12/20);

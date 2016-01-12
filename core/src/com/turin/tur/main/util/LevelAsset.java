@@ -11,19 +11,13 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 
-public class ImagesAsset implements Disposable, AssetErrorListener {
+public class LevelAsset implements Disposable, AssetErrorListener {
 
-	public final String TAG = ImagesAsset.class.getName();
-	public static final ImagesAsset instance = new ImagesAsset();
+	public final String TAG = LevelAsset.class.getName();
+	public final LevelAsset instance = new LevelAsset();
 	private TextureAtlas atlas;
 
 	private AssetManager assetManager;
-
-	// singleton: prevent instantiation from other classes
-	private ImagesAsset() {
-	}
-
-	// Variables creadas
 
 	public void init(AssetManager assetManager) {
 		
