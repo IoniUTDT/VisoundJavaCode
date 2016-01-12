@@ -21,14 +21,18 @@ public class Visound extends Game {
 	
 	@Override
 	public void create () {
+
+		// Set Libgdx log level
+		Gdx.app.setLogLevel(Application.LOG_DEBUG);
+		Gdx.app.debug(TAG, "Prueba");
 		
 		if ((buildResources) & (Gdx.app.getType() == ApplicationType.Desktop)) {
 			Builder builder = new Builder();
 			builder.build();
 		}
 		
-		// Set Libgdx log level
-		Gdx.app.setLogLevel(Application.LOG_DEBUG);
+
+		Gdx.app.debug(TAG, "Prueba");
 		
 		// Load assets
 		Assets.instance.init(new AssetManager());

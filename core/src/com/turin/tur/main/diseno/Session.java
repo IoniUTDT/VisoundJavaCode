@@ -71,7 +71,7 @@ public class Session {
 		public STATUS status=STATUS.CREADO;
 		public long idEnvio;
 		public long codeVersion = Constants.CODEVERSION;
-		public int levelVersion = Builder.levelVersion;
+		public int levelVersion = Builder.levelVersionFinal;
 		public int resourcesVersion = Builder.ResourceVersion;
 
 		public SessionLog() {

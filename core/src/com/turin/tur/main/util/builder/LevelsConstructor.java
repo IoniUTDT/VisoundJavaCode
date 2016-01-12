@@ -1,13 +1,15 @@
 package com.turin.tur.main.util.builder;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.CopyOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
+import java.nio.file.StandardCopyOption;
 
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
@@ -17,32 +19,31 @@ import org.apache.commons.io.FileUtils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.tools.texturepacker.TexturePacker;
+import com.badlogic.gdx.tools.texturepacker.TexturePacker.Settings;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.turin.tur.main.diseno.ExperimentalObject.JsonResourcesMetaData;
-import com.turin.tur.main.diseno.Level;
 import com.turin.tur.main.diseno.Level.JsonLevel;
-import com.turin.tur.main.diseno.Level.Significancia;
-import com.turin.tur.main.diseno.Level.TIPOdeSIGNIFICANCIA;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.diseno.Trial.ParametrosSetupParalelismo;
 import com.turin.tur.main.experiments.Experiments.SetupUmbralAngulos;
-import com.turin.tur.main.experiments.Experiments.SetupUmbralParalelismo;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.FileHelper;
-import com.turin.tur.main.util.Stadistics;
 import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeLEVEL;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
 import com.turin.tur.main.util.Constants.Resources.Categorias;
+import com.turin.tur.main.util.builder.SVGtoMp3;;
 
 public class LevelsConstructor {
 
 
 	private static final String TAG = LevelsConstructor.class.getName();
 	private Array<Array<Integer>> listadosIdbyCategory = new Array<Array<Integer>>();
+	private String pathOldLevels = Resources.Paths.fullLevelsPath.substring(0, Resources.Paths.fullLevelsPath.length()-1)+"olds/"+TimeUtils.millis()+"/";
 	
 	//static Array<JsonResourcesMetaData> listadoRecursos = ResourcesSelectors.listadoRecursos;
 	//static Array<Array<Integer>> listadosId = ResourcesSelectors.listadosId;
@@ -55,10 +56,11 @@ public class LevelsConstructor {
 		this.initCategoryList();
 		this.verifyLevelVersion();
 		this.verifyResources();
+		this.cleanAssets();
+		// this.exportCategories();
 		if (Builder.categorizar) {
 			//categorizeResources();// Categoriza los recursos para que despues se pueda seleccionar recursos conceptualmente
 		}
-		this.moveOldLevelsToArchive();
 		// Crea los niveles
 		if (Builder.AppVersion == "UmbralCompleto") {
 			//this.MakeLevelParalelismoUmbral();
@@ -87,8 +89,10 @@ public class LevelsConstructor {
 				json.setUsePrototypes(false);
 				JsonLevel jsonLevel = json.fromJson(JsonLevel.class, savedData);
 				if (jsonLevel.levelVersion >= Builder.levelVersion) {
-					System.out.println("Cambie la version de los niveles a crear para que sean mayor a la version actual: " + Builder.levelVersion);
-					System.exit(0);
+					Gdx.app.error(TAG, "OJO! Deberia actualizar la version del level. Se modificara sola al numero: " + (jsonLevel.levelVersion+1));
+					Builder.levelVersionFinal=jsonLevel.levelVersion+1;
+				} else {
+					Builder.levelVersionFinal = Builder.levelVersion;
 				}
 			}
 		} 
@@ -101,17 +105,75 @@ public class LevelsConstructor {
 			System.exit(0);
 		}
 	}
-
-	private void moveOldLevelsToArchive() {
-		// Manda los levels que ya estaban creados a una carpeta nueva para archivarlos
-		File oldDir = new File(Resources.Paths.finalPath);
-		String str = Resources.Paths.fullLevelsPath.substring(0, Resources.Paths.fullLevelsPath.length()-1)+"olds/"+TimeUtils.millis()+"/";
-		File newDir = new File(str);
-		newDir.mkdirs();
-		oldDir.renameTo(newDir);
-		new File(Resources.Paths.finalPath).mkdirs();
+	
+	private void cleanAssets () {
+		File tempDirectory = new File(Resources.Paths.finalPath);
+		try {
+			FileUtils.cleanDirectory(tempDirectory);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
 	}
 	
+	/**
+	 * Select to export the resources of categories
+	 */
+	private void exportCategories () {
+		Array<Integer> listaIds= new Array<Integer>();
+		for (Categorias categoria : Constants.Resources.Categorias.values()){
+			listaIds.add(categoria.ID);
+		}
+		this.export(listaIds, "categories");
+	}
+	
+	/**
+	 * This method transforms SVGs of a list of ids that must be in the same folder into PNG files, join it at a ATLAS file and copy the ATLAS, and the .meta files
+	 * to a folder in android's assets 
+	 */
+	private void export(Array<Integer> ids, String folderName){
+		Gdx.app.debug(TAG, "Exportando los recursos correspondientes a " + folderName);
+		// We clean the destiny folder
+		File folder = new File(Resources.Paths.finalPath+folderName+"/");
+		if (folder.exists()) {
+			// clean the folder from old stuff
+			try {
+				FileUtils.cleanDirectory(folder);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+		} else {
+			// create folder
+			folder.mkdir();
+		}
+		// clean the temp folder
+		File tempDirectory = new File(Resources.Paths.ProcessingPath);
+		try {
+			FileUtils.cleanDirectory(tempDirectory);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		// Then we convert all files to PNG into a temp folder and copy the metadata to assets folder
+		for (int id : ids){
+			File resource = new File (Resources.Paths.fullCurrentVersionPath+id+".svg");
+			convertirSVGtoPNG(resource);
+			if (id > Resources.Reservados) { // Means that is not a category with no audio
+				SVGtoMp3 converter = new SVGtoMp3(resource, Resources.Paths.finalPath+folderName+"/");
+			}
+			moveMeta(resource,folderName);
+		}
+		
+		// Create atlas
+		Settings settings = new Settings();
+		settings.maxWidth = 1024;
+		settings.maxHeight = 1024;
+		settings.duplicatePadding = false;
+		settings.debug = false;
+		TexturePacker.process(settings, Resources.Paths.ProcessingPath, Resources.Paths.finalPath, folderName+"_");
+		Gdx.app.debug(TAG, "Recursos correctamente exportados: " + folderName+".");
+	}
 	
 	
 	private class Levels {
@@ -170,6 +232,7 @@ public class LevelsConstructor {
 					}
 				}
 				level.setup = setup;
+				// TODO
 				extract(level);
 				buildJsons(level);
 			}
@@ -180,26 +243,29 @@ public class LevelsConstructor {
 			Array<Integer> listado = new Array<Integer>(); // Listado de ids de recursos utilizados
 			for (JsonTrial jsonTrial : level.jsonTrials) {
 				for (int idResource : jsonTrial.elementosId) {
-					listado.add(idResource);
+					if (!listado.contains(idResource,false)) {
+						listado.add(idResource);
+					}
 				}
-				listado.add(jsonTrial.rtaCorrectaId);
+				if (!listado.contains(jsonTrial.rtaCorrectaId,false)) {
+					listado.add(jsonTrial.rtaCorrectaId);
+				}
 			}
-			// Limpiamos la carpeta temporal
-			
-			for (int id : listado) {
-				File fileSVG = new File(Resources.Paths.fullCurrentVersionPath + id + ".svg");
-				convertirSVGtoPNG(fileSVG);
-			}
+			// Con el listado de ids que corresponden al nivel los exportamos
+			export(listado,"level"+level.Id);
 		}
 		
 		private void buildJsons (JsonLevel level) {
-			String path = Resources.Paths.finalPath + '/' + level.Id + '/';
+			// If resources already exported, the the folder was cleaned.
+			String path = Resources.Paths.finalPath + "/level" + level.Id + "/";
 			for (JsonTrial jsonTrial : level.jsonTrials) {
 				level.trials.add(jsonTrial.Id);
 				CreateTrial(jsonTrial, path);
+				CreateTrial(jsonTrial, pathOldLevels);
 			}
 			level.jsonTrials.clear();
 			CreateLevel(level,Resources.Paths.finalPath);
+			CreateLevel(level,pathOldLevels);
 		}
 		
 		public void CreateTrial(JsonTrial jsonTrial, String path) {
@@ -241,7 +307,7 @@ public class LevelsConstructor {
 			jsonLevel.appVersion = Builder.AppVersion;
 			jsonLevel.Id = contadorLevels;
 			jsonLevel.resourceVersion = Builder.ResourceVersion;
-			jsonLevel.levelVersion = Builder.levelVersion;
+			jsonLevel.levelVersion = Builder.levelVersionFinal;
 			return jsonLevel;
 		}
 		
@@ -262,7 +328,7 @@ public class LevelsConstructor {
 			TranscoderInput input_svg_image = new TranscoderInput(svg_URI_input);
 			//Step-2: Define OutputStream to PNG Image and attach to TranscoderOutput
 			OutputStream png_ostream;
-			file = new File(Resources.Paths.fullUsedResources + file.getName().substring(0, file.getName().lastIndexOf(".")) + ".png");
+			file = new File(Resources.Paths.ProcessingPath + file.getName().substring(0, file.getName().lastIndexOf(".")) + ".png");
 			png_ostream = new FileOutputStream(file);
 
 			TranscoderOutput output_png_image = new TranscoderOutput(png_ostream);
@@ -282,5 +348,26 @@ public class LevelsConstructor {
 			e.printStackTrace();
 		}
 	}
-
+	
+	/**
+	 * This method move the file with the metadata of a resource to specified folder inside the android's assets
+	 * @param file
+	 * @param folder
+	 */
+	private void moveMeta(File file, String folder){
+		file = new File(Resources.Paths.fullCurrentVersionPath + file.getName().substring(0, file.getName().lastIndexOf(".")) + ".meta");
+		Path FROM = Paths.get(file.getAbsolutePath());
+		File out = new File(Resources.Paths.finalPath + "/" + folder + "/" + file.getName());
+		Path TO = Paths.get(out.getAbsolutePath());
+		//overwrite existing file, if exists
+		CopyOption[] options = new CopyOption[] {
+				StandardCopyOption.REPLACE_EXISTING,
+				StandardCopyOption.COPY_ATTRIBUTES
+		};
+		try {
+			Files.copy(FROM, TO, options);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

@@ -1,7 +1,6 @@
-package com.turin.tur.main.util;
+package com.turin.tur.main.util.builder;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -13,11 +12,17 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.turin.tur.main.util.Constants.Resources.Paths;
+import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.wave.WavFile;
 import com.turin.tur.wave.WavFileException;
 
-public class SVGtoSound {
+import it.sauronsoftware.jave.AudioAttributes;
+import it.sauronsoftware.jave.Encoder;
+import it.sauronsoftware.jave.EncoderException;
+import it.sauronsoftware.jave.EncodingAttributes;
+import it.sauronsoftware.jave.InputFormatException;
+
+public class SVGtoMp3 {
 
 	// Define algunas constantes
 	public final static boolean logScale = true;
@@ -30,10 +35,46 @@ public class SVGtoSound {
 	public final static float secByPix = 5 / 100f; // indicate how many sec are represented by pixel.
 	public final static int fs = 44100; // hz of the sound
 	public final static float base = 10; // base of the log scale
-
-	public static void ConvertSVGtoWav(File file) {
+	private String path;
+	
+	public SVGtoMp3 (File file, String path) {
+		this.path = path;
 		InfoArchivo info = extractInfoFromSVG(file);
-		createSounds(info);
+		File fileWAV = createSounds(info);
+		WAVtoMP3(fileWAV);
+	}
+	
+	
+	/**
+	 * Conversion de wav a mp3 que usa el paquete JAVE. Para documentacion mirar
+	 * http://www.sauronsoftware.it/projects/jave/manual.php?PHPSESSID=lgde8c08ha8mrbcn74259ap3d4
+	 * 
+	 * @param path
+	 */
+	private void WAVtoMP3(File file) {
+		
+		File out = new File(this.path + file.getName().substring(0, file.getName().lastIndexOf(".")) + ".mp3");
+
+		AudioAttributes audio = new AudioAttributes();
+		audio.setCodec("libmp3lame");
+		audio.setBitRate(new Integer(128000));
+		audio.setChannels(new Integer(1));
+		audio.setSamplingRate(new Integer(44100));
+		audio.setVolume(256);
+		EncodingAttributes attrs = new EncodingAttributes();
+		attrs.setFormat("mp3");
+		attrs.setAudioAttributes(audio);
+		Encoder encoder = new Encoder();
+		try {
+			encoder.encode(file, out, attrs);
+			//file.delete();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (InputFormatException e) {
+			e.printStackTrace();
+		} catch (EncoderException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -51,7 +92,7 @@ public class SVGtoSound {
 	 * @return
 	 * 
 	 */
-	private static double[] createMusicRamp(double freci, double frecf, double ti, double tf) {
+	private double[] createMusicRamp(double freci, double frecf, double ti, double tf) {
 		double dt = 1 / (double) fs; // es el dt que transcurre entre sample y sample
 		long N = Math.round((tf - ti) * fs); // El numero de samples que hay que crear
 		double[] frec = logspacelog(freci, frecf, N, base); // Crea una escala logaritmica en base 10 que va de la frecuencia inicial a la final
@@ -86,7 +127,7 @@ public class SVGtoSound {
 	 *            a suavizar
 	 * @return Devuelve el input suavizado
 	 */
-	private static double[] tukeywin(double[] frec, double d) {
+	private double[] tukeywin(double[] frec, double d) {
 		int framesMaximos;
 
 		if (d >= 1) { // recupera cuantos frames tiene que suavizar
@@ -123,7 +164,7 @@ public class SVGtoSound {
 	 *            The argument of log
 	 * @return
 	 */
-	public static double logOfBase(double base, double num) {
+	private double logOfBase(double base, double num) {
 		return Math.log(num) / Math.log(base);
 	}
 
@@ -141,7 +182,7 @@ public class SVGtoSound {
 	 * @return an array of lineraly space points.
 	 */
 
-	public strictfp static double[] logspacelog(double d1, double d2, long n, double base) {
+	private strictfp double[] logspacelog(double d1, double d2, long n, double base) {
 		double[] y = new double[(int) n];
 		double[] p = linspace(logOfBase(base, d1), logOfBase(base, d2), n);
 		for (int i = 0; i < y.length - 1; i++) {
@@ -162,7 +203,7 @@ public class SVGtoSound {
 	 *            The number of points to generated
 	 * @return an array of lineraly space points.
 	 */
-	public static strictfp double[] linspace(double d1, double d2, long n) {
+	private strictfp double[] linspace(double d1, double d2, long n) {
 
 		double[] y = new double[(int) n];
 		double dy = (d2 - d1) / (n - 1);
@@ -179,7 +220,7 @@ public class SVGtoSound {
 	 * 
 	 * @param path
 	 */
-	public static void createSounds(InfoArchivo info) {
+	private File createSounds(InfoArchivo info) {
 
 
 		float timefactor;
@@ -219,7 +260,7 @@ public class SVGtoSound {
 			secuence[i] = secuence[i] / max;
 		}
 
-		File file = new File(Paths.finalPath, info.nombre + ".wav");
+		File file = new File(Resources.Paths.ProcessingPath, info.nombre + ".wav");
 		// Create a wav file with the name specified as the first argument
 		try {
 			WavFile wavFile = WavFile.newWavFile(file, 1, secuence.length, 16, fs);
@@ -231,9 +272,10 @@ public class SVGtoSound {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return file;
 	}
 
-	private static void findParameters(Linea linea, float ancho, float alto) {
+	private void findParameters(Linea linea, float ancho, float alto) {
 
 		// se fija que la linea vaya de izquierda a derecha y sino lo corrige
 		if (linea.xi > linea.xf) {
@@ -340,7 +382,7 @@ public class SVGtoSound {
 		}
 	}
 
-	public static class InfoArchivo {
+	private class InfoArchivo {
 		String nombre;
 		float ancho;
 		float alto;
@@ -348,7 +390,7 @@ public class SVGtoSound {
 		ArrayList<Linea> lineas = new ArrayList<Linea>();
 	}
 
-	public static class Linea {
+	private class Linea {
 		// Parametros que se leen desde cada linea del SVG
 		double xi;
 		double xf;
@@ -362,7 +404,7 @@ public class SVGtoSound {
 
 	}
 
-	private static InfoArchivo extractInfoFromSVG(File file) {
+	private InfoArchivo extractInfoFromSVG(File file) {
 
 		// Crea la entrada perteneciente al archivo
 		InfoArchivo infoArchivo = new InfoArchivo();
@@ -402,24 +444,4 @@ public class SVGtoSound {
 
 		return infoArchivo;
 	}
-
-	public static class SvgFileFilter implements FileFilter
-	{
-		private final String[] okFileExtensions =
-				new String[] { "svg" };
-
-		@Override
-		public boolean accept(File file)
-		{
-			for (String extension : okFileExtensions)
-			{
-				if (file.getName().toLowerCase().endsWith(extension))
-				{
-					return true;
-				}
-			}
-			return false;
-		}
-	}
-
 }

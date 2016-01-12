@@ -10,6 +10,7 @@ public class Builder {
 
 	public static final int ResourceVersion = 130;
 	public static final int levelVersion = 24;
+	public static int levelVersionFinal;
 	public static final String AppVersion = "UmbralCompletoAngulos"; 
 	public static final boolean categorizar = false;
 	
@@ -32,7 +33,7 @@ public class Builder {
 			LevelsConstructor levelconstructor = new LevelsConstructor();
 			
 			//LevelMaker.makeLevels();
-			// ResourcesExport.createStructure();
+			//ResourcesExport.createStructure();
 			System.exit(0);
 		}
 

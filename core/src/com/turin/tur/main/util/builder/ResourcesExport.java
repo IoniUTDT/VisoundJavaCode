@@ -26,15 +26,9 @@ import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.Level.JsonLevel;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.util.FileHelper;
-import com.turin.tur.main.util.SVGtoSound;
 import com.turin.tur.main.util.Constants.Resources;
-import com.turin.tur.main.util.SVGtoSound.SvgFileFilter;
 
-import it.sauronsoftware.jave.AudioAttributes;
-import it.sauronsoftware.jave.Encoder;
-import it.sauronsoftware.jave.EncoderException;
-import it.sauronsoftware.jave.EncodingAttributes;
-import it.sauronsoftware.jave.InputFormatException;
+
 
 public class ResourcesExport {
 
@@ -134,7 +128,7 @@ public class ResourcesExport {
 			TranscoderInput input_svg_image = new TranscoderInput(svg_URI_input);
 			//Step-2: Define OutputStream to PNG Image and attach to TranscoderOutput
 			OutputStream png_ostream;
-			file = new File(Resources.Paths.fullUsedResources + file.getName().substring(0, file.getName().lastIndexOf(".")) + ".png");
+			file = new File(Resources.Paths.ProcessingPath + file.getName().substring(0, file.getName().lastIndexOf(".")) + ".png");
 			png_ostream = new FileOutputStream(file);
 
 			TranscoderOutput output_png_image = new TranscoderOutput(png_ostream);
@@ -210,12 +204,12 @@ public class ResourcesExport {
 		settings.maxHeight = 1024;
 		settings.duplicatePadding = false;
 		settings.debug = false;
-		TexturePacker.process(settings, Resources.Paths.fullUsedResources, Resources.Paths.finalPath, "images");
+		TexturePacker.process(settings, Resources.Paths.ProcessingPath, Resources.Paths.finalPath, "images");
 
 		// Copia los archivos meta para los recursos
 		File[] archivos;
 		// Primero busca la lista de archivos de interes
-		File dir = new File(Resources.Paths.fullUsedResources);
+		File dir = new File(Resources.Paths.ProcessingPath);
 		archivos = dir.listFiles(new MetaFileFilter());
 		for (File file : archivos) {
 			Path FROM = Paths.get(file.getAbsolutePath());
@@ -235,7 +229,7 @@ public class ResourcesExport {
 
 		// Copia los archivos mp3 para los recursos
 		// Primero busca la lista de archivos de interes
-		dir = new File(Resources.Paths.fullUsedResources);
+		dir = new File(Resources.Paths.ProcessingPath);
 		archivos = dir.listFiles(new Mp3FileFilter());
 		for (File file : archivos) {
 			Path FROM = Paths.get(file.getAbsolutePath());

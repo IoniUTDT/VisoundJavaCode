@@ -195,7 +195,7 @@ public class Constants {
 			public static String fullCurrentVersionPath = "." + currentVersionPath;
 			public static String fullLevelsPath = fullTempPath + "tempLevels/";
 			public static String levelsPath = tempPath + "tempLevels/";
-			public static String fullUsedResources = fullTempPath + "selected/";
+			public static String ProcessingPath = fullTempPath + "tempProcessing/";
 			public static String finalPath = "../android/assets/experimentalsource/";
 		}
 
