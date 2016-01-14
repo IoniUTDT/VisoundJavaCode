@@ -4,11 +4,8 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
 import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.screens.MenuScreen;
-import com.turin.tur.main.util.Assets;
-import com.turin.tur.main.util.LevelAsset;
 import com.turin.tur.main.util.builder.Builder;
 
 public class Visound extends Game {

@@ -102,7 +102,7 @@ public class RunningSound {
 		soundLog.trialId = trial.Id;
 		if (trial.jsonTrial.modo == TIPOdeTRIAL.TEST) {
 			if (trial.stimuliBox.contenido == contenido) {
-				soundLog.fromStimuli = true;
+	 			soundLog.fromStimuli = true;
 
 			} else {
 				soundLog.fromStimuli = false;

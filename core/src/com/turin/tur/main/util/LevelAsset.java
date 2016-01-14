@@ -24,7 +24,7 @@ public class LevelAsset implements Disposable, AssetErrorListener {
 		// set asset manager error handler
 		assetManager.setErrorListener(this);
 		// load texture atlas
-		String atlasFilepath = "experimentalsource/" + "level" + levelId + "_.atlas";
+		String atlasFilepath = "experimentalsource/" + "level" + levelId + "img.atlas";
 		assetManager.load(atlasFilepath, TextureAtlas.class);
 		// start loading assets and wait until finished
 		assetManager.finishLoading();

@@ -9,7 +9,7 @@ public class Builder {
 	private final String TAG = Builder.class.getName();
 
 	public static final int ResourceVersion = 131;
-	public static final int levelVersion = 24;
+	public static final int levelVersion = 26;
 	public static int levelVersionFinal;
 	public static final String AppVersion = "UmbralCompletoAngulos"; 
 	public static final boolean categorizar = false;

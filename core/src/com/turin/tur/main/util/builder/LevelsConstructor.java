@@ -57,10 +57,6 @@ public class LevelsConstructor {
 		this.verifyLevelVersion();
 		this.verifyResources();
 		this.cleanAssets();
-		// this.exportCategories();
-		if (Builder.categorizar) {
-			//categorizeResources();// Categoriza los recursos para que despues se pueda seleccionar recursos conceptualmente
-		}
 		// Crea los niveles
 		if (Builder.AppVersion == "UmbralCompleto") {
 			//this.MakeLevelParalelismoUmbral();
@@ -171,7 +167,7 @@ public class LevelsConstructor {
 		settings.maxHeight = 1024;
 		settings.duplicatePadding = false;
 		settings.debug = false;
-		TexturePacker.process(settings, Resources.Paths.ProcessingPath, Resources.Paths.finalPath, folderName+"_");
+		TexturePacker.process(settings, Resources.Paths.ProcessingPath, Resources.Paths.finalPath, folderName + "img");
 		Gdx.app.debug(TAG, "Recursos correctamente exportados: " + folderName+".");
 	}
 	
@@ -195,9 +191,10 @@ public class LevelsConstructor {
 			while (angulosdeReferencia.size>0) { // Seleccionamos angulos en forma random segun parametros del setup
 				Array<Integer> angulosElegidos = new Array<Integer>();
 				// Los quita de la lista general y lo pasa a la de los que se van a incluir en el proximo nivel
-				if (angulosdeReferencia.size>=setup.numeroDeRefrenciasConjuntas) {
+				if (angulosdeReferencia.size>=setup.numeroDeRefrenciasConjuntas) { //OJO!!! Esto solo va a funcionar bien si numeroDeRefrenciasConjuntas es 2, porque sino se puede cortar antes la lista al buscar mas adelante! 
 					for (int i=0; i<setup.numeroDeRefrenciasConjuntas; i++) {
-						angulosElegidos.add(angulosdeReferencia.removeIndex(MathUtils.random(angulosdeReferencia.size-1)));
+						angulosElegidos.add(angulosdeReferencia.removeIndex(i));
+						//angulosElegidos.add(angulosdeReferencia.removeIndex(MathUtils.random(angulosdeReferencia.size-1)));
 					}	
 					if (angulosdeReferencia.size==1) { // Agregamos el ultimo que queda al grupo anterior si queda uno solo...
 						angulosElegidos.addAll(angulosdeReferencia);
