@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.turin.tur.main.diseno.Enviables.STATUS;
 import com.turin.tur.main.util.Constants;
+import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.main.util.Internet;
 import com.turin.tur.main.util.builder.Builder;
 
@@ -33,7 +34,7 @@ public class Session {
 		boolean isFile = true;
 		int i = 0;
 		while (isFile) {
-			if (Gdx.files.internal("experimentalsource/" + Constants.version() + "/level" + (i + 1) + ".meta").exists()) {
+			if (Gdx.files.internal(Resources.Paths.finalPath + "level" + (i + 1) + ".meta").exists()) {
 				isFile = true;
 				i++;
 			} else {

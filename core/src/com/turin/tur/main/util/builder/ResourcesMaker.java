@@ -63,7 +63,7 @@ public class ResourcesMaker {
 		}
 		// Hacemos dos indices que recorran todos los angulos de manera que el segundo indice solo llegue hasta el primero para evitar duplicar los recursos
 		for (int indice1 = 0; indice1<setup.angulos.size ; indice1++) {
-			for (int indice2 = indice1 +1; indice2<setup.angulos.size-1; indice2++) {
+			for (int indice2 = indice1 +1; indice2<setup.angulos.size; indice2++) {
 				int angulo1 = setup.angulos.get(indice1);
 				int angulo2 = setup.angulos.get(indice2);
 				if (setup.cumpleCriterioDistanciaMinima(angulo1, angulo2)) {

@@ -8,7 +8,7 @@ public class Builder {
 
 	private final String TAG = Builder.class.getName();
 
-	public static final int ResourceVersion = 130;
+	public static final int ResourceVersion = 131;
 	public static final int levelVersion = 24;
 	public static int levelVersionFinal;
 	public static final String AppVersion = "UmbralCompletoAngulos"; 

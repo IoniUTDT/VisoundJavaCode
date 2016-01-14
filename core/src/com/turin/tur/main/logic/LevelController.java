@@ -20,16 +20,14 @@ import com.turin.tur.main.diseno.TouchInfo;
 import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.main.diseno.Boxes.Box;
 import com.turin.tur.main.diseno.RunningSound;
-import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.diseno.Trial.TouchLog;
 import com.turin.tur.main.experiments.Experiments;
 import com.turin.tur.main.experiments.Experiments.AnalisisUmbralAngulos;
-import com.turin.tur.main.experiments.Experiments.AnalisisUmbralParalelismo;
-import com.turin.tur.main.experiments.Experiments.AnalisisUmbralParalelismo.DetectionObject;
 import com.turin.tur.main.experiments.Experiments.SetupUmbralAngulos;
 import com.turin.tur.main.screens.ResultsScreen;
 import com.turin.tur.main.util.CameraHelper;
 import com.turin.tur.main.util.Constants;
+import com.turin.tur.main.util.LevelAsset;
 import com.turin.tur.main.util.Constants.Resources.Categorias;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeLEVEL;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
@@ -55,13 +53,15 @@ public class LevelController implements InputProcessor {
 	boolean elementoSeleccionado = false; // Sin seleccion
 	public Session session;
 	// AnalisisUmbralAngulos analisis;
+	public LevelAsset levelAssets;
 
 		
-	public LevelController(Game game, int levelNumber, int trialNumber, Session session) {
+	public LevelController(Game game, int levelNumber, int trialNumber, Session session, LevelAsset levelAssets) {
 		// Inicia los logs
 		
 		this.game = game; // Hereda la info del game (cosa de ventanas y eso)
 		this.session = session; // Hereda la info de la session. Que registra en que session esta
+		this.levelAssets = levelAssets;
 		this.level = new Level(levelNumber); // Crea el nivel
 		if (level.jsonLevel.randomTrialSort) {
 			level.secuenciaTrailsId.shuffle();
@@ -72,9 +72,12 @@ public class LevelController implements InputProcessor {
 		this.initCamera();
 		// Inicia en el trial de maxima señal si esta en modo umbral
 		if (this.level.jsonLevel.tipoDeLevel == TIPOdeLEVEL.UMBRALPARALELISMO) {
+			// Esto tiene que ser todo reecho
+			/*
 			AnalisisUmbralParalelismo analisis = this.level.jsonLevel.analisisUmbral;
 			int nextTrialPosition = findTrialId (analisis.indiceAnguloRefrencia, analisis.proximoNivelCurvaSuperior);
 			this.level.activeTrialPosition = nextTrialPosition;
+			*/
 		}
 		if (this.level.jsonLevel.tipoDeLevel == TIPOdeLEVEL.UMBRALANGULO) {
 			this.level.levelLog.setupAngulos = (SetupUmbralAngulos) this.level.jsonLevel.setup;
@@ -105,7 +108,7 @@ public class LevelController implements InputProcessor {
 	}
 	
 	private void initTrial() {
-		trial = new Trial(this.level.activeTrial);
+		trial = new Trial(this.level.activeTrial, this.level.Id, this.levelAssets);
 		trial.runningSound = new RunningSound(this.trial);
 		
 		// Carga la info general del trial al log
@@ -163,7 +166,10 @@ public class LevelController implements InputProcessor {
 				
 				
 				switch (this.level.jsonLevel.tipoDeLevel) {
-					case UMBRALPARALELISMO: 
+					case UMBRALPARALELISMO:
+						// Esto tiene que ser todo revisado!
+						
+						/*
 						AnalisisUmbralParalelismo analisis = this.level.jsonLevel.analisisUmbral;
 						
 						// Creamos la info del objeto analizado
@@ -214,7 +220,8 @@ public class LevelController implements InputProcessor {
 						this.level.activeTrialPosition = nextTrialPosition;
 						this.initTrial();
 						break;
-					
+						*/
+						
 					case UMBRALANGULO:
 						
 						this.level.levelLog.analisisActivo.answer(this.trial.log.touchLog.peek().isTrue);
@@ -239,6 +246,7 @@ public class LevelController implements InputProcessor {
 		}
 	}
 	
+	/*
 	private int findTrialId(int anguloReferencia, int nivelDificultad) {
 		Array<Integer> listaDeTrialPosibles = new Array<Integer>();
 		for (int idTrialaMirar : this.level.secuenciaTrailsId) {
@@ -256,6 +264,7 @@ public class LevelController implements InputProcessor {
 		}
 		
 	}
+	*/
 	
 	private void completeLevel() {
 		// Indica y guarda en la info del usuario que completo este nivel
@@ -422,7 +431,7 @@ public class LevelController implements InputProcessor {
 		trial.log.resourcesIdSelected.add(touchData.thisTouchBox.contenido.resourceId);
 		// Agrega la info que corresponda al log creando un TouchLog nuevo
 		TouchLog touchLog = new TouchLog();
-		touchLog.jsonMetaDataTouched = JsonResourcesMetaData.Load(touchData.thisTouchBox.contenido.resourceId.id);
+		touchLog.jsonMetaDataTouched = JsonResourcesMetaData.Load(touchData.thisTouchBox.contenido.resourceId.id, this.level.Id);
 		touchLog.touchInstance = TimeUtils.millis();
 		touchLog.trialInstance = trial.log.trialInstance;
 		touchLog.levelInstance = trial.log.levelInstance;
@@ -455,8 +464,8 @@ public class LevelController implements InputProcessor {
 		if (this.level.jsonLevel.tipoDeLevel == TIPOdeLEVEL.UMBRALPARALELISMO) {
 			
 			// Verfica si se toco la opcion correcta o no.
-			JsonResourcesMetaData JsonEstimulo = JsonResourcesMetaData.Load(trial.jsonTrial.rtaCorrectaId);
-			JsonResourcesMetaData JsonSeleccion = JsonResourcesMetaData.Load(touchData.experimentalObjectTouch.resourceId.id);
+			JsonResourcesMetaData JsonEstimulo = JsonResourcesMetaData.Load(trial.jsonTrial.rtaCorrectaId, this.level.Id);
+			JsonResourcesMetaData JsonSeleccion = JsonResourcesMetaData.Load(touchData.experimentalObjectTouch.resourceId.id, this.level.Id);
 			if (JsonEstimulo.infoConceptualParalelismo.seJuntan == JsonSeleccion.infoConceptualParalelismo.seJuntan) {
 				correcta = true;
 			}

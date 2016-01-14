@@ -20,8 +20,8 @@ public class Assets implements Disposable, AssetErrorListener {
 	public static Imagenes imagenes;	
 	public static AssetFonts fonts;
 	
-	public void init (AssetManager assetManager) {
-		this.assetManager = assetManager;
+	public Assets () {
+		this.assetManager = new AssetManager();
 		// set asset manager error handler
 		assetManager.setErrorListener(this);
 		// load texture atlas

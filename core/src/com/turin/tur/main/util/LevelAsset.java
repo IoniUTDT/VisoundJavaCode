@@ -14,18 +14,18 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 public class LevelAsset implements Disposable, AssetErrorListener {
 
 	public final String TAG = LevelAsset.class.getName();
-	public final LevelAsset instance = new LevelAsset();
-	private TextureAtlas atlas;
-
 	private AssetManager assetManager;
-
-	public void init(AssetManager assetManager) {
-		
-		this.assetManager = assetManager;
+	TextureAtlas atlas;
+	int level;
+	
+	public LevelAsset (int levelId) {
+		this.level = levelId;
+		this.assetManager = new AssetManager();
 		// set asset manager error handler
 		assetManager.setErrorListener(this);
 		// load texture atlas
-		assetManager.load("experimentalsource/" +  Constants.version() + "/images.atlas", TextureAtlas.class);
+		String atlasFilepath = "experimentalsource/" + "level" + levelId + "_.atlas";
+		assetManager.load(atlasFilepath, TextureAtlas.class);
 		// start loading assets and wait until finished
 		assetManager.finishLoading();
 		Gdx.app.debug(TAG,
@@ -33,13 +33,11 @@ public class LevelAsset implements Disposable, AssetErrorListener {
 		for (String a : assetManager.getAssetNames()) {
 			Gdx.app.debug(TAG, "asset: " + a);
 		}
-		this.atlas = assetManager.get("experimentalsource/" +  Constants.version() + "/images.atlas");
+		atlas = assetManager.get(atlasFilepath, TextureAtlas.class);
 		// enable texture filtering for pixel smoothing
 		for (Texture t : atlas.getTextures()) {
 			t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		}
-		
-		
 	}
 
 	@Override
@@ -50,23 +48,19 @@ public class LevelAsset implements Disposable, AssetErrorListener {
 	@Override
 	public void error(@SuppressWarnings("rawtypes") AssetDescriptor asset,
 			Throwable throwable) {
-		Gdx.app.error(TAG, "Couldn't load asset '" + asset.fileName + "'",
+		Gdx.app.error(TAG, "Couldn't load asset '" + asset.fileName,
 				throwable);
 	}
 
 	public Sprite imagen(int Id) {
 		return new Sprite(this.atlas.findRegion("" + Id));
-		// return new Sprite (new Texture(Gdx.files.internal("experimentalsource/"	+  Constants.version() + "/" + Id + ".png"))); // Esto hace lio con los colores!
-	}
-
-	public Texture imagenFromFile(int Id) {
-		return new Texture(Gdx.files.internal("experimentalsource/"
-				+  Constants.version() + "/" + Id + ".png"));
 	}
 	
-	public Sound sonido(int Id) {
-		Sound sonido = Gdx.audio.newSound(Gdx.files.internal("experimentalsource/"
-				+  Constants.version() + "/" + Id + ".mp3"));
-		return sonido;
+	public Sound sound(int Id) {
+		String soundpath = "experimentalsource/" + "level" + this.level + "/" + Id + ".mp3";
+		assetManager.load(soundpath, Sound.class);
+		// start loading assets and wait until finished
+		assetManager.finishLoading();
+		return assetManager.get(soundpath, Sound.class);
 	}
 }

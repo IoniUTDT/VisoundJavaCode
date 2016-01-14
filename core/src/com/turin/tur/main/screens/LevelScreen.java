@@ -3,11 +3,11 @@ package com.turin.tur.main.screens;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.turin.tur.main.diseno.Level;
 import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.diseno.RunningSound.NEXT;
 import com.turin.tur.main.logic.LevelController;
 import com.turin.tur.main.logic.LevelRenderer;
+import com.turin.tur.main.util.LevelAsset;
 
 public class LevelScreen extends AbstractGameScreen  {
 	
@@ -17,6 +17,7 @@ public class LevelScreen extends AbstractGameScreen  {
 	// Clases que se crean para manipular el contenido
 	private LevelController levelController;
 	private LevelRenderer levelRenderer;
+	private LevelAsset levelAssets;
 	
 	// Variables del level
 	private int levelNumber;
@@ -29,6 +30,7 @@ public class LevelScreen extends AbstractGameScreen  {
 		super(game);
 		this.session = session;
 		this.levelNumber=level;
+		this.levelAssets = new LevelAsset (level);
 	}
 
 	@Override
@@ -56,7 +58,8 @@ public class LevelScreen extends AbstractGameScreen  {
 
 	@Override
 	public void show () {
-	    levelController = new LevelController(game, this.levelNumber, 0, this.session); 
+		this.levelAssets = new LevelAsset (this.levelNumber);
+	    levelController = new LevelController(game, this.levelNumber, 0, this.session, this.levelAssets);
 	    levelRenderer = new LevelRenderer(levelController);
 		Gdx.input.setCatchBackKey(true);
 	}
@@ -64,11 +67,13 @@ public class LevelScreen extends AbstractGameScreen  {
 	@Override
 	public void hide () {
 		levelRenderer.dispose();
+		this.levelAssets.dispose();
 		Gdx.input.setCatchBackKey(false);
 	}
 	
 	@Override
 	public void pause () {
+		// this.levelAssets.dispose();
 		this.levelController.trial.runningSound.stop();
 		paused = true;
 	}
@@ -76,6 +81,7 @@ public class LevelScreen extends AbstractGameScreen  {
 	@Override
 	public void resume () {
 		super.resume();
+		// this.levelAssets = new LevelAsset (this.levelNumber);
 		this.levelController.trial.runningSound.action = NEXT.PLAY;
 		// Only called on Android!
 		paused = false;

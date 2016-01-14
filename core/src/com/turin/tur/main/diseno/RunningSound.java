@@ -1,11 +1,20 @@
 package com.turin.tur.main.diseno;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetDescriptor;
+import com.badlogic.gdx.assets.AssetErrorListener;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.turin.tur.main.diseno.Trial.SoundLog;
 import com.turin.tur.main.util.Constants;
+import com.turin.tur.main.util.LevelAsset;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
 import com.turin.tur.main.util.Constants.Resources.Categorias;
 
@@ -39,14 +48,15 @@ public class RunningSound {
 	public void update(float deltaTime) {
 		if (this.running) {
 			this.playTime = this.playTime + deltaTime;
-		}
+		} 
 		if (this.playTime > Constants.Box.DURACION_REPRODUCCION_PREDETERMINADA) {
+			stopReason ="tiempo terminado";
 			this.stop();
 		}
 		if (this.action == NEXT.PLAY) {
 			if (Gdx.graphics.getFramesPerSecond()>40) {
 				if (nextContenido!=null) {
-					this.play(nextContenido);
+					this.play();
 					this.playTime =0;
 					this.action = NEXT.NADA;
 				}
@@ -54,20 +64,17 @@ public class RunningSound {
 		}
 	}
 	
-	public void play(ExperimentalObject contenidoP) {
+	public void play() {
 		// Primer detiene cualquier reproduccion previa 
 		if (running) {
 			stop();
 			stopReason ="inicio";
 		}
-		this.running = false;
 		// Crea un log nuevo
 		soundLog = new SoundLog();
 		
 		// Prepara la info en la clase
-		contenido = contenidoP;
-		sound = contenido.sonido;
-		running = true;
+		contenido = nextContenido;
 		start = TimeUtils.millis();
 		ends = -1;
 		id = contenido.resourceId.id;
@@ -109,15 +116,10 @@ public class RunningSound {
 		soundLog.numberOfSoundInTrial = secuenceId.size;
 		soundLog.soundSecuenceInTrial = new Array<Integer>(secuenceId);
 
-		long idsonido;
-		// Espera a q se cargue el recurso (no se porque esto funciona pero lo saque de internet)
-		/*
-		while ((idsonido = sound.play(0)) == -1) {
-			long t = TimeUtils.nanoTime();
-			while (TimeUtils.nanoTime() - t < 50000000);
-		}
-		*/
-		sound.play();
+		// Cargamos el sonido
+		this.sound = this.trial.levelAssets.sound(this.id);
+		this.sound.play(); 
+		Gdx.app.debug(TAG, "Play!");
 		this.running = true;
 	}
 
@@ -137,7 +139,6 @@ public class RunningSound {
 			trial.log.soundLog.add(soundLog);
 			// Detiene el sonido
 			sound.stop();
-			sound.dispose();
 			running = false;
 		}
 	}

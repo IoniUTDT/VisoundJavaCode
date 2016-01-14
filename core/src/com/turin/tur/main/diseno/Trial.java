@@ -15,9 +15,10 @@ import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.Constants.Resources.Categorias;
 import com.turin.tur.main.util.builder.Builder;
 import com.turin.tur.main.util.FileHelper;
-import com.turin.tur.main.util.Constants.Resources;
+import com.turin.tur.main.util.LevelAsset;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
+import com.turin.tur.main.util.Constants.Resources;
 
 public class Trial {
 
@@ -27,14 +28,12 @@ public class Trial {
 	// objetos que se cargan en el load o al inicializar
 	public Array<ExperimentalObject> elementos = new Array<ExperimentalObject>();
 	public ExperimentalObject rtaCorrecta;
-	public Level levelActivo;
-	public User userActivo;
-	public float levelTime = 0;
 	public Array<TrainingBox> trainigBoxes = new Array<TrainingBox>();
 	public Array<AnswerBox> answerBoxes = new Array<AnswerBox>();
 	public StimuliBox stimuliBox;
 	public Array<Box> allBox = new Array<Box>();
 	public Array<Integer> orden = new Array<Integer>();
+	private int levelId;
 
 	// Variable que tiene que ver con el estado del trial
 	public boolean trialCompleted = false;
@@ -43,12 +42,15 @@ public class Trial {
 	// Variables que llevan el registro
 	public TrialLog log;
 	public RunningSound runningSound;
+	public LevelAsset levelAssets;
 	
 	// constantes
 	public static final String TAG = Trial.class.getName();
 
-	public Trial(int Id) {
+	public Trial(int Id, int levelId, LevelAsset levelAssets) {
+		this.levelId = levelId;
 		this.Id = Id;
+		this.levelAssets = levelAssets;
 		initTrial(Id);
 		createElements();
 	}
@@ -95,11 +97,11 @@ public class Trial {
 	private void initTrial(int Id) {
 		Gdx.app.log(TAG, "Cargando info del trial");
 		// Carga la info en bruto
-		JsonTrial jsonTrial = JsonTrial.LoadTrial(Id);
+		JsonTrial jsonTrial = JsonTrial.LoadTrial(Id,this.levelId); 
 		this.jsonTrial = jsonTrial;
 		// Carga la info a partir de los Ids
 		for (int elemento : this.jsonTrial.elementosId) {
-			this.elementos.add(new ExperimentalObject(elemento));
+			this.elementos.add(new ExperimentalObject(elemento, this.levelAssets, this.levelId));
 		}
 		
 		boolean rtaEntreOpciones = false;
@@ -109,13 +111,13 @@ public class Trial {
 			}
 		}
 		if ((this.jsonTrial.rtaRandom) && (rtaEntreOpciones)){ // Pone una random solo si esta seteada como random y la rta esta entre las figuras
-			this.rtaCorrecta = new ExperimentalObject(this.jsonTrial.elementosId[MathUtils.random(this.jsonTrial.elementosId.length-1)]);
+			this.rtaCorrecta = new ExperimentalObject(this.jsonTrial.elementosId[MathUtils.random(this.jsonTrial.elementosId.length-1)], this.levelAssets, this.levelId);
 		} else {
-			this.rtaCorrecta = new ExperimentalObject(this.jsonTrial.rtaCorrectaId);
+			this.rtaCorrecta = new ExperimentalObject(this.jsonTrial.rtaCorrectaId, this.levelAssets, this.levelId);
 		}
 		
-		if (new ExperimentalObject(this.jsonTrial.rtaCorrectaId).categorias.contains(Categorias.Nada, false)) { // Pone si o si una respuesta random si la rta es nada.
-			this.rtaCorrecta = new ExperimentalObject(this.jsonTrial.elementosId[MathUtils.random(this.jsonTrial.elementosId.length-1)]);
+		if (new ExperimentalObject(this.jsonTrial.rtaCorrectaId, this.levelAssets, this.levelId).categorias.contains(Categorias.Nada, false)) { // Pone si o si una respuesta random si la rta es nada.
+			this.rtaCorrecta = new ExperimentalObject(this.jsonTrial.elementosId[MathUtils.random(this.jsonTrial.elementosId.length-1)], this.levelAssets, this.levelId);
 		}
 		// Crea el log que se carga en el controller
 		this.log = new TrialLog();
@@ -175,8 +177,8 @@ public class Trial {
 		public JsonResourcesMetaData jsonEstimulo;
 		
 
-		public static JsonTrial LoadTrial(int Id) {
-			String savedData = FileHelper.readFile("experimentalsource/" + Constants.version() + "/trial" + Id + ".meta");
+		public static JsonTrial LoadTrial(int Id, int levelId) {
+			String savedData = FileHelper.readFile(Resources.Paths.finalPath + "level" + levelId + "/" + "trial" + Id + ".meta");
 
 			if (!savedData.isEmpty()) {
 				Json json = new Json();
@@ -299,7 +301,7 @@ public class Trial {
 				this.log.categoriasRta.add(categoria);
 			}
 			// Agrega el json de la rta correcta/estimulo
-			this.log.jsonMetaDataRta = JsonResourcesMetaData.Load(this.rtaCorrecta.resourceId.id);
+			this.log.jsonMetaDataRta = JsonResourcesMetaData.Load(this.rtaCorrecta.resourceId.id, this.levelId);
 		}
 		
 		// Agrega las categorias de todas las cajas
@@ -318,6 +320,6 @@ public class Trial {
 		this.log.distribucionEnPantalla = this.jsonTrial.distribucion;
 		this.log.tipoDeTrial = this.jsonTrial.modo;
 		this.log.jsonTrial = this.jsonTrial;
-		this.log.jsonMetaDataRta = JsonResourcesMetaData.Load(this.rtaCorrecta.resourceId.id);
+		this.log.jsonMetaDataRta = JsonResourcesMetaData.Load(this.rtaCorrecta.resourceId.id, this.levelId);
 	}
 }

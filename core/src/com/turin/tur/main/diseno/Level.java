@@ -6,13 +6,12 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.turin.tur.main.diseno.Enviables.STATUS;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
-import com.turin.tur.main.experiments.Experiments;
 import com.turin.tur.main.experiments.Experiments.AnalisisUmbralAngulos;
 import com.turin.tur.main.experiments.Experiments.AnalisisUmbralParalelismo;
 import com.turin.tur.main.experiments.Experiments.SetupUmbralAngulos;
 import com.turin.tur.main.util.Constants;
-import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeLEVEL;
+import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.main.util.FileHelper;
 
 
@@ -92,7 +91,7 @@ public class Level {
 	 */
 
 	private JsonLevel loadLevel(int level) {
-		String savedData = FileHelper.readFile("experimentalsource/" + Constants.version() + "/level" + level + ".meta");
+		String savedData = FileHelper.readFile(Resources.Paths.finalPath + "level" + level + ".meta");
 		if (!savedData.isEmpty()) {
 			Json json = new Json();
 			json.setUsePrototypes(false);
@@ -132,7 +131,7 @@ public class Level {
 		jsonLevel.levelTitle = levelTitle;
 		Json json = new Json();
 		json.setUsePrototypes(false);
-		FileHelper.writeFile("experimentalsource/" + Constants.version() + "/level" + level + ".meta", json.toJson(jsonLevel));
+		FileHelper.writeFile(Resources.Paths.finalPath + "/level" + level + ".meta", json.toJson(jsonLevel));
 	}
 
 	public static class LevelLog {

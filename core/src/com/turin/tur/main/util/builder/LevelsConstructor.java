@@ -220,7 +220,6 @@ public class LevelsConstructor {
 
 				// agregamos un trial por recurso. 
 				for (int anguloRef:angulosElegidos) {
-					// Array<Integer> recursos = ResourcesSelectors.findAngles(anguloRef); // Linea vieja, es muuuy lento
 					for (int recurso:setup.idsResourcesByAngle.get(setup.angulos.indexOf(anguloRef, false))) {
 						JsonTrial trial = crearTrial("Selecciones a que categoria pertenece el angulo", "", DISTRIBUCIONESenPANTALLA.LINEALx3,
 								new int[] {Constants.Resources.Categorias.Grave.ID,Constants.Resources.Categorias.Recto.ID,Constants.Resources.Categorias.Agudo.ID}, TIPOdeTRIAL.TEST, recurso, false, true, false);

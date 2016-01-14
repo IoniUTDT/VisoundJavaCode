@@ -1,7 +1,6 @@
 package com.turin.tur.main.diseno;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
@@ -9,6 +8,7 @@ import com.turin.tur.main.diseno.Trial.ResourceId;
 import com.turin.tur.main.experiments.Experiments.InfoConceptualAngulos;
 import com.turin.tur.main.experiments.Experiments.InfoConceptualParalelismo;
 import com.turin.tur.main.util.Constants;
+import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.LevelAsset;
 import com.turin.tur.main.util.builder.Imagenes.Linea;
@@ -16,7 +16,6 @@ import com.turin.tur.main.util.builder.Imagenes.Linea;
 public class ExperimentalObject {
 
 	public final Sprite imagen;
-	public final Sound sonido;
 	// public final int Id; 
 	public String name;
 	public String comments = "Aca va opcionalmente una descripcion del objeto";
@@ -27,21 +26,16 @@ public class ExperimentalObject {
 	// Constantes
 	private static final String TAG = ExperimentalObject.class.getName();
 	
-	public ExperimentalObject (int Id){ // Esto carga la info desde archivo
+	public ExperimentalObject (int Id, LevelAsset asset, int levelId){ // Esto carga la info desde archivo
 		
 		// Carga ma metadata
-		this.loadMetaData(Id);
+		this.loadMetaData(Id, levelId);
 		// Crea los recursos graficos y sonoros
-		this.imagen = LevelAsset.instance.imagen(Id);
-		if (!this.noSound) {
-			this.sonido = LevelAsset.instance.sonido(Id);
-		} else  {
-			this.sonido=null;
-		}
+		this.imagen = asset.imagen(Id); 
 	}
 
-	private void loadMetaData(int Id) {
-		JsonResourcesMetaData jsonMetaData = JsonResourcesMetaData.Load(Id);
+	private void loadMetaData(int Id, int levelId) {
+		JsonResourcesMetaData jsonMetaData = JsonResourcesMetaData.Load(Id, levelId);
 		this.comments = jsonMetaData.comments;
 		this.name = jsonMetaData.name;
 		this.categorias = jsonMetaData.categories;
@@ -75,8 +69,8 @@ public class ExperimentalObject {
 			FileHelper.writeFile("experimentalsource/" + Constants.version() + "/" + resourceId.id + ".meta", json.toJson(this));
 		}
 		
-		public static JsonResourcesMetaData Load(int Id) {
-			String savedData = FileHelper.readFile("experimentalsource/" + Constants.version() + "/" + Id + ".meta");
+		public static JsonResourcesMetaData Load(int Id, int levelId) {
+			String savedData = FileHelper.readFile(Resources.Paths.finalPath + "level"+ levelId + "/" + Id + ".meta");
 			if (!savedData.isEmpty()) {
 				Json json = new Json();
 				json.setUsePrototypes(false);

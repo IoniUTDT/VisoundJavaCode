@@ -24,16 +24,12 @@ public class Visound extends Game {
 
 		// Set Libgdx log level
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
-		Gdx.app.debug(TAG, "Prueba");
 		
 		if ((buildResources) & (Gdx.app.getType() == ApplicationType.Desktop)) {
 			Builder builder = new Builder();
 			builder.build();
 		}
-		
 
-		Gdx.app.debug(TAG, "Prueba");
-		
 		// Inicializa la session y el juego
 		this.session = new Session();
 		setScreen(new MenuScreen(this, this.session));

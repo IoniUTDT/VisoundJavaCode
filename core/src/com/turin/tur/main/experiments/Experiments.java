@@ -235,6 +235,8 @@ public class Experiments {
 			private Array<Historial> historial = new Array<Historial>(); // Se almacena la info de lo que va pasando
 			private Array<AnguloOrdenable> listaEstimulos = new Array<AnguloOrdenable>(); // Lista de estimulos ordenados de menor a mayor dificultad
 			private WindowedMean ventana = new WindowedMean(tamanoVentanaAnalisisConvergencia);
+			private String nombre;
+			private int referencia;
 		}
 		
 		private Array<CuadranteInfo> cuadrantes = new Array<CuadranteInfo>();
@@ -312,21 +314,29 @@ public class Experiments {
 			}
 			// Agregamos los datos a cada cuadrante
 			CuadranteInfo cuadrante1 = new CuadranteInfo();
+			cuadrante1.nombre = "Cuadrante1";
+			cuadrante1.referencia = anguloReferencia;
 			cuadrante1.saltosActivos = salto;
 			cuadrante1.nivelEstimulo = angulosCuadrante1.size-1;
 			cuadrante1.listaEstimulos = angulosCuadrante1;
 			this.cuadrantes.add(cuadrante1);
 			CuadranteInfo cuadrante2 = new CuadranteInfo();
+			cuadrante2.nombre = "Cuadrante2";
+			cuadrante2.referencia = anguloReferencia;
 			cuadrante2.saltosActivos = salto;
 			cuadrante2.nivelEstimulo = angulosCuadrante2.size-1;
 			cuadrante2.listaEstimulos = angulosCuadrante2;
 			this.cuadrantes.add(cuadrante2);
 			CuadranteInfo cuadrante3 = new CuadranteInfo();
+			cuadrante3.nombre = "Cuadrante3";
+			cuadrante3.referencia = anguloReferencia;
 			cuadrante3.saltosActivos = salto;
 			cuadrante3.nivelEstimulo = angulosCuadrante3.size-1;
 			cuadrante3.listaEstimulos = angulosCuadrante3;
 			this.cuadrantes.add(cuadrante3);
 			CuadranteInfo cuadrante4 = new CuadranteInfo();
+			cuadrante4.nombre = "Cuadrante4";
+			cuadrante4.referencia = anguloReferencia;
 			cuadrante4.saltosActivos = salto;
 			cuadrante4.nivelEstimulo = angulosCuadrante4.size-1;
 			cuadrante4.listaEstimulos = angulosCuadrante4;
@@ -341,8 +351,9 @@ public class Experiments {
 		public void buscarInfoTrialsIds (Level level) {
 			int numeroDeTrialsNoEncontrados=0; // Esto es para debug, porque se supone q todos tienen que ser encontrados
 			for (int idTrialaMirar : level.secuenciaTrailsId) {
-				JsonTrial jsonTrial = Trial.JsonTrial.LoadTrial(idTrialaMirar);
+				JsonTrial jsonTrial = Trial.JsonTrial.LoadTrial(idTrialaMirar, level.Id);
 				if ((jsonTrial.jsonEstimulo.infoConceptualAngulos.direccionLado1 == this.anguloDeReferencia) || (jsonTrial.jsonEstimulo.infoConceptualAngulos.direccionLado2 == this.anguloDeReferencia)) {
+					boolean encontrado = false;
 					// Seleccionamos el angulo de interes
 					int anguloNoReferencia;
 					if (jsonTrial.jsonEstimulo.infoConceptualAngulos.direccionLado1 == this.anguloDeReferencia) {
@@ -356,11 +367,14 @@ public class Experiments {
 							if (angulo.angulo == anguloNoReferencia) {
 								angulo.idTrial = jsonTrial.Id;
 								angulo.idResource = jsonTrial.jsonEstimulo.resourceId;
+								encontrado = true;
 								break; // Ojo que es importante que el loop continue en el proximo cuadrante, porque los angulos rectos aparecen en mas de un cuadrante!
 							}
 						}
 					}
-					numeroDeTrialsNoEncontrados ++;
+					if (!encontrado) {
+						Gdx.app.debug(TAG, "Trial que no se asigno a cuadrante: " + jsonTrial.Id);
+					}
 				}
 			}
 			// Mensajes de warning / error

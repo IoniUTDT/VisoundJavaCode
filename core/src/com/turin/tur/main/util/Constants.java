@@ -43,7 +43,7 @@ public class Constants {
 
 	// Archivo con imagenes del juego
 	public static final String TEXTURE_ATLAS_OBJECTS = "images/cajas.pack.atlas";
-	public static final String TEXTURE_ATLAS_IMAGES_EXP = "images/imagesexp.pack.atlas";
+	// public static final String TEXTURE_ATLAS_IMAGES_EXP = "images/imagesexp.pack.atlas";
 
 	public static final String TEXTURE_ATLAS_LIBGDX_UI = "images/uiskin.atlas";
 	// Location of description file for skins
