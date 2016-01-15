@@ -4,7 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.turin.tur.main.experiments.Experiments.AnalisisUmbralAngulos;
+import com.turin.tur.main.experiments.UmbralAngulos;
+import com.turin.tur.main.experiments.UmbralAngulos.AnalisisUmbralAngulos;
 import com.turin.tur.main.util.Assets;
 import com.turin.tur.main.util.Constants;
 
@@ -54,7 +55,7 @@ public class LevelInterfaz {
 		//Assets.instance.fonts.defaultFont.draw(batch, "Convergencia cuandrante 3: "+ this.levelInfo.levelLog.analisisActivo.convergencia(2), cameraGUI.viewportWidth*3/5, cameraGUI.viewportHeight*18/20);
 		//Assets.instance.fonts.defaultFont.draw(batch, "Convergencia cuandrante 4: "+ this.levelInfo.levelLog.analisisActivo.convergencia(3), cameraGUI.viewportWidth*3/5, cameraGUI.viewportHeight*19/20);
 		int restantes=0;
-		for (AnalisisUmbralAngulos analisis : this.levelInfo.levelLog.analisis) {
+		for (UmbralAngulos.AnalisisUmbralAngulos analisis : this.levelInfo.levelLog.analisis) {
 			if (!analisis.completed) {
 				restantes = restantes + analisis.trialsRestantes();
 			}

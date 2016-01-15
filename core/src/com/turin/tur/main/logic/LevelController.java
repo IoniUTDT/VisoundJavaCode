@@ -22,8 +22,7 @@ import com.turin.tur.main.diseno.Boxes.Box;
 import com.turin.tur.main.diseno.RunningSound;
 import com.turin.tur.main.diseno.Trial.TouchLog;
 import com.turin.tur.main.experiments.Experiments;
-import com.turin.tur.main.experiments.Experiments.AnalisisUmbralAngulos;
-import com.turin.tur.main.experiments.Experiments.SetupUmbralAngulos;
+import com.turin.tur.main.experiments.UmbralAngulos;
 import com.turin.tur.main.screens.ResultsScreen;
 import com.turin.tur.main.util.CameraHelper;
 import com.turin.tur.main.util.Constants;
@@ -82,7 +81,7 @@ public class LevelController implements InputProcessor {
 		if (this.level.jsonLevel.tipoDeLevel == TIPOdeLEVEL.UMBRALANGULO) {
 			this.level.levelLog.setupAngulos = (SetupUmbralAngulos) this.level.jsonLevel.setup;
 			for (int ref: this.level.jsonLevel.angulosReferencia) {
-				AnalisisUmbralAngulos analisis = new AnalisisUmbralAngulos();
+				UmbralAngulos.AnalisisUmbralAngulos analisis = new UmbralAngulos.AnalisisUmbralAngulos();
 				analisis.init(this.level.levelLog.setupAngulos,ref,this.level);
 				this.level.levelLog.analisis.add(analisis);
 			}
@@ -95,8 +94,8 @@ public class LevelController implements InputProcessor {
 	}
 
 	private void selectAnalisis () {
-		Array<AnalisisUmbralAngulos> listaPosibles = new Array<AnalisisUmbralAngulos>();
-		for (AnalisisUmbralAngulos analisis : this.level.levelLog.analisis){
+		Array<UmbralAngulos.AnalisisUmbralAngulos> listaPosibles = new Array<UmbralAngulos.AnalisisUmbralAngulos>();
+		for (UmbralAngulos.AnalisisUmbralAngulos analisis : this.level.levelLog.analisis){
 			if (!analisis.completed) { 
 				listaPosibles.add(analisis);
 			}

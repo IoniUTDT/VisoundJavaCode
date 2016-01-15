@@ -5,8 +5,8 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.Trial.ResourceId;
-import com.turin.tur.main.experiments.Experiments.InfoConceptualAngulos;
 import com.turin.tur.main.experiments.Experiments.InfoConceptualParalelismo;
+import com.turin.tur.main.experiments.UmbralAngulos.ResourceInfo;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.main.util.FileHelper;
@@ -54,7 +54,7 @@ public class ExperimentalObject {
 		public Array<Linea> infoLineas;
 		public int nivelDificultad; //obsoleto!
 		public InfoConceptualParalelismo infoConceptualParalelismo;
-		public InfoConceptualAngulos infoConceptualAngulos;
+		public ResourceInfo infoConceptualAngulos;
 		
 		
 		public static void CreateJsonMetaData (JsonResourcesMetaData jsonMetaData, String path) {

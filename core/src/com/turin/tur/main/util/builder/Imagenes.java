@@ -5,9 +5,8 @@ import com.badlogic.gdx.utils.Array;
 import com.turin.tur.main.diseno.ExperimentalObject;
 import com.turin.tur.main.diseno.ExperimentalObject.JsonResourcesMetaData;
 import com.turin.tur.main.diseno.Trial.ResourceId;
-import com.turin.tur.main.experiments.Experiments;
-import com.turin.tur.main.experiments.Experiments.InfoConceptualAngulos;
 import com.turin.tur.main.experiments.Experiments.InfoConceptualParalelismo;
+import com.turin.tur.main.experiments.UmbralAngulos.ResourceInfo;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Constants.Resources;
@@ -25,7 +24,7 @@ public class Imagenes {
 	public String idVinculo; // Sirve para identificar cuando varias imagenes pertenecen a un mismo subgrupo
 	public int nivelDificultad = -1; // Define un nivel de dificultad, 1 es el mas facil. -1 implica que no esta catalogado por dificultad y 0 que es compatible con cualquier dificultad (en gral para usar en las referencias, por ej rectas paralelas con las que se compara)
 	public InfoConceptualParalelismo infoConceptualParalelismo = new InfoConceptualParalelismo();
-	public InfoConceptualAngulos infoConceptualAngulos = new InfoConceptualAngulos();
+	public ResourceInfo infoConceptualAngulos = new ResourceInfo();
 	String contenido = "";
 
 	public Imagenes () {
@@ -82,17 +81,17 @@ public class Imagenes {
 	
 	public static class Linea {
 
-		Radial radial = new Radial();
+		public Radial radial = new Radial();
 		float x1;
 		float x2;
 		float y1;
 		float y2;
 
 		public static class Radial {
-			float Xcenter;
-			float Ycenter;
-			float angulo;
-			float largo;
+			public float Xcenter;
+			public float Ycenter;
+			public float angulo;
+			public float largo;
 		}
 		
 		public void lineaFromRadial () {

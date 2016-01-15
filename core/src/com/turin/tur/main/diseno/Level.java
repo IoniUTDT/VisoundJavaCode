@@ -6,9 +6,10 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.turin.tur.main.diseno.Enviables.STATUS;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
-import com.turin.tur.main.experiments.Experiments.AnalisisUmbralAngulos;
 import com.turin.tur.main.experiments.Experiments.AnalisisUmbralParalelismo;
-import com.turin.tur.main.experiments.Experiments.SetupUmbralAngulos;
+import com.turin.tur.main.experiments.UmbralAngulos;
+import com.turin.tur.main.experiments.UmbralAngulos.AnalisisUmbralAngulos;
+import com.turin.tur.main.experiments.UmbralAngulos.Info;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeLEVEL;
 import com.turin.tur.main.util.Constants.Resources;
@@ -119,9 +120,9 @@ public class Level {
 		// Informacion relacionada al procesamiento en tiempo real.
 		public TIPOdeLEVEL tipoDeLevel = TIPOdeLEVEL.UMBRALPARALELISMO;
 		public AnalisisUmbralParalelismo analisisUmbral = new AnalisisUmbralParalelismo();
-		public Object setup;
 		public int anguloReferencia;
 		public Array<Integer> angulosReferencia = new Array<Integer>();
+		public Info infoExpAngulos;
 	}
 
 	public void saveLevel(int level, Array<Integer> secuenciaTrials, String levelTitle) {
@@ -153,9 +154,8 @@ public class Level {
 		public int startTrialPosition;
 		public Array<Integer> sortOfTrials;
 		public Array<Integer> trialsVisited = new Array<Integer>();
-		public Array<AnalisisUmbralAngulos> analisis = new Array<AnalisisUmbralAngulos>();
-		public AnalisisUmbralAngulos analisisActivo;
-		public SetupUmbralAngulos setupAngulos;
+		public Array<UmbralAngulos.AnalisisUmbralAngulos> analisis = new Array<UmbralAngulos.AnalisisUmbralAngulos>();
+		public UmbralAngulos.AnalisisUmbralAngulos analisisActivo;
 
 	}
 	
