@@ -65,6 +65,6 @@ public class LevelInterfaz {
 		//Assets.instance.fonts.defaultFont.draw(batch, "Nivel: " + this.levelInfo.levelLog.analisisActivo.next.nivel(), cameraGUI.viewportWidth*2/5, cameraGUI.viewportHeight*12/20);
 		//Assets.instance.fonts.defaultFont.draw(batch, "Nivel: " + this.trial.jsonTrial.jsonEstimulo.categories.get(0), cameraGUI.viewportWidth*1/5, cameraGUI.viewportHeight*19/20);
 		// Assets.instance.fonts.defaultFont.draw(batch, String.valueOf(trial.jsonTrial.parametros.D), cameraGUI.viewportWidth*1/5, cameraGUI.viewportHeight*1/10);
-		// Assets.instance.fonts.defaultFont.draw(batch, "Trial #" + trialNumber + " Id: " + trial.Id+" de " + levelInfo.secuenciaTrailsId.size, cameraGUI.viewportWidth*7/10, cameraGUI.viewportHeight*1/10); 
+		Assets.fonts.defaultFont.draw(batch, "" + this.trial.stimuliBox.contenido.resourceId.id, cameraGUI.viewportWidth*1/10, cameraGUI.viewportHeight*9/10); 
 	}
 }

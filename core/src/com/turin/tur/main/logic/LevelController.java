@@ -82,7 +82,9 @@ public class LevelController implements InputProcessor {
 		if (this.level.jsonLevel.tipoDeLevel == TIPOdeLEVEL.UMBRALANGULO) {
 			this.level.levelLog.setupAngulos = (SetupUmbralAngulos) this.level.jsonLevel.setup;
 			for (int ref: this.level.jsonLevel.angulosReferencia) {
-				this.level.levelLog.analisis.add(new Experiments().new AnalisisUmbralAngulos(this.level.levelLog.setupAngulos,ref,this.level));
+				AnalisisUmbralAngulos analisis = new AnalisisUmbralAngulos();
+				analisis.init(this.level.levelLog.setupAngulos,ref,this.level);
+				this.level.levelLog.analisis.add(analisis);
 			}
 			// Usamos la clase analisis para elegir el angulo q hay que mostrar
 			this.selectAnalisis();

@@ -179,19 +179,23 @@ public class Experiments {
 	 * @author ionatan
 	 *
 	 */
-	public class AnalisisUmbralAngulos {
+	public static class AnalisisUmbralAngulos {
 		
 		/**
 		 * Clase armada para poder ordenar los angulos en funcion de su angulo "corregido"
 		 * @author ionatan
 		 *
 		 */
-		public class AnguloOrdenable implements Comparable<AnguloOrdenable> {
+		public static class AnguloOrdenable implements Comparable<AnguloOrdenable> {
 			public int angulo;
 			public int anguloRef;
 			public int nivel;
 			public ResourceId idResource;
 			public int idTrial;
+			
+			public AnguloOrdenable () {
+				
+			}
 			
 			public AnguloOrdenable(int angulo, int anguloRef) {
 				this.angulo = angulo;
@@ -213,7 +217,7 @@ public class Experiments {
 		 * @author ionatan
 		 *
 		 */
-		public class Historial {
+		public static class Historial {
 			AnguloOrdenable angulo;
 			boolean acertado;
 		}
@@ -228,13 +232,13 @@ public class Experiments {
 		 * @author ionatan
 		 *
 		 */
-		public class CuadranteInfo{
+		public static class CuadranteInfo{
 			private int nivelEstimulo; // nivel de señal enviada
 			private int saltosActivos; // nivel del proximo salto (en numero de niveles de señal)
 			private boolean convergenciaAlcanzada=false;
 			private Array<Historial> historial = new Array<Historial>(); // Se almacena la info de lo que va pasando
 			private Array<AnguloOrdenable> listaEstimulos = new Array<AnguloOrdenable>(); // Lista de estimulos ordenados de menor a mayor dificultad
-			private WindowedMean ventana = new WindowedMean(tamanoVentanaAnalisisConvergencia);
+			private WindowedMean ventana; //= new WindowedMean(6);
 			private String nombre;
 			private int referencia;
 		}
@@ -248,7 +252,7 @@ public class Experiments {
 		private int proporcionTotal=3;
 		private float sdEsperada = 1f;
 		private int numeroMaximoDeTrialsXLevel=60;
-		private int tamanoVentanaAnalisisConvergencia=6;
+		private static int tamanoVentanaAnalisisConvergencia=6;
 		
 		
 		// Variables que regulan en intercambio de datos con el levelcontroller.
@@ -258,13 +262,17 @@ public class Experiments {
 		public boolean completed;
 		
 		
+		public AnalisisUmbralAngulos () {	
+		}
+		
 		/**
 		 * Al incializar el analisis hace falta a partir del setup determinar la siguiente informacion:
 		 * Cuanto es el salto inicial en termino de numero de angulos en funcion de la relacion entre el salto buscado (en grados) y la densidad de angulos del setup
 		 * Armar una lista ordenada de cuales son los angulos agudos y cuales los graves para poder iterar sobre esa lista el nivel de dificultad independientemente de los valores numericos
+		 * @return 
 		 *   
 		 */
-		public AnalisisUmbralAngulos (SetupUmbralAngulos setup, int anguloReferencia, Level level) {
+		public void init (SetupUmbralAngulos setup, int anguloReferencia, Level level) {
 			this.anguloDeReferencia = anguloReferencia;
 			// Agrega 4 parametros. Cada una corresponde a la convergencia al angulo recto en cada uno de los cuadrantes. Es decir la 0 es la convergencia de angulos agudos al angulo de 90 grados en sentido antihorario y el 3 la convcergencia desde los agudos al angulo recto en sentido horario.
 			int salto = saltoInicialEnGrados/setup.saltoGrande;
