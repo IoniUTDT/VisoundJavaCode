@@ -51,8 +51,8 @@ public class LevelController implements InputProcessor {
 	public float timeInTrial = 0; // Tiempo desde que se inicalizo el ultimo trial.
 	boolean elementoSeleccionado = false; // Sin seleccion
 	public Session session;
-	// AnalisisUmbralAngulos analisis;
 	public LevelAsset levelAssets;
+	public UmbralAngulos umbralAngulos;
 
 		
 	public LevelController(Game game, int levelNumber, int trialNumber, Session session, LevelAsset levelAssets) {
@@ -79,35 +79,19 @@ public class LevelController implements InputProcessor {
 			*/
 		}
 		if (this.level.jsonLevel.tipoDeLevel == TIPOdeLEVEL.UMBRALANGULO) {
-			this.level.levelLog.setupAngulos = (SetupUmbralAngulos) this.level.jsonLevel.setup;
-			for (int ref: this.level.jsonLevel.angulosReferencia) {
-				UmbralAngulos.AnalisisUmbralAngulos analisis = new UmbralAngulos.AnalisisUmbralAngulos();
-				analisis.init(this.level.levelLog.setupAngulos,ref,this.level);
-				this.level.levelLog.analisis.add(analisis);
-			}
+			
+			// Inicializamos el control del experimento
+			this.umbralAngulos = new UmbralAngulos();
+			this.umbralAngulos.info = this.level.jsonLevel.infoExpAngulos;
+			// Asociamos la info al log del nivel
+			this.level.levelLog.infoUmbral = this.umbralAngulos.info;
 			// Usamos la clase analisis para elegir el angulo q hay que mostrar
-			this.selectAnalisis();
-			this.level.levelLog.analisisActivo.askNext();
-			this.level.activeTrial = this.level.levelLog.analisisActivo.next.idTrial;
+			this.umbralAngulos.askNext();
+			this.level.activeTrial = this.umbralAngulos.next.idTrial;
 		}
 		this.initTrial();
 	}
 
-	private void selectAnalisis () {
-		Array<UmbralAngulos.AnalisisUmbralAngulos> listaPosibles = new Array<UmbralAngulos.AnalisisUmbralAngulos>();
-		for (UmbralAngulos.AnalisisUmbralAngulos analisis : this.level.levelLog.analisis){
-			if (!analisis.completed) { 
-				listaPosibles.add(analisis);
-			}
-		}
-		if (listaPosibles.size>0) {
-			this.level.levelLog.analisisActivo = listaPosibles.random();
-		} else {
-			completeLevel();
-		}
-		
-	}
-	
 	private void initTrial() {
 		trial = new Trial(this.level.activeTrial, this.level.Id, this.levelAssets);
 		trial.runningSound = new RunningSound(this.trial);
@@ -116,7 +100,7 @@ public class LevelController implements InputProcessor {
 		trial.newLog(this.session, this.level);
 		
 		// Carga la interfaz
-		this.levelInterfaz = new LevelInterfaz(this.level, this.level.activeTrialPosition, trial);
+		this.levelInterfaz = new LevelInterfaz(this.level, this.level.activeTrialPosition, trial, this.umbralAngulos);
 		timeInTrial = 0;
 
 		// Registra el evento de la creacion del trial
@@ -225,12 +209,12 @@ public class LevelController implements InputProcessor {
 						
 					case UMBRALANGULO:
 						
-						this.level.levelLog.analisisActivo.answer(this.trial.log.touchLog.peek().isTrue);
-						this.level.levelLog.analisisActivo.chkCompleted();
-						this.selectAnalisis(); // Cambia el angulo de referencia
-						this.level.levelLog.analisisActivo.askNext();
-						// this.level.activeTrialPosition = this.level.levelLog.analisisActivo.next.idTrial;
-						this.level.activeTrial = this.level.levelLog.analisisActivo.next.idTrial;
+						this.umbralAngulos.answer(this.trial.log.touchLog.peek().isTrue);
+						if (this.umbralAngulos.levelCompleted) {
+							completeLevel();
+						}
+						this.umbralAngulos.askNext();
+						this.level.activeTrial = this.umbralAngulos.next.idTrial;
 						this.initTrial();
 						break;
 					

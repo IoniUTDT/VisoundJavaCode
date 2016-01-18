@@ -40,7 +40,7 @@ public class Builder {
 
 	private final static String TAG = Builder.class.getName();
 
-	static String pathOldLevels = Resources.Paths.fullLevelsPath.substring(0, Resources.Paths.fullLevelsPath.length()-1)+"olds/"+TimeUtils.millis()+"/";
+	static String pathLevelsBackUp = Resources.Paths.fullLevelsPath.substring(0, Resources.Paths.fullLevelsPath.length()-1)+"olds/"+TimeUtils.millis()+"/";
 
 	static int contadorTrials = 0;
 
@@ -170,7 +170,7 @@ public class Builder {
 		return jsonTrial;
 	}
 
-	public static void CreateLevel(JsonLevel jsonLevel, String path) {
+	public static void writeLevelJson(JsonLevel jsonLevel, String path) {
 		Json json = new Json();
 		json.setUsePrototypes(false);
 		FileHelper.writeFile(path + "level" + jsonLevel.Id + ".meta", json.toJson(jsonLevel));
@@ -188,11 +188,11 @@ public class Builder {
 		for (JsonTrial jsonTrial : level.jsonTrials) {
 			level.trials.add(jsonTrial.Id);
 			Builder.CreateTrial(jsonTrial, path);
-			Builder.CreateTrial(jsonTrial, Builder.pathOldLevels);
+			Builder.CreateTrial(jsonTrial, Builder.pathLevelsBackUp);
 		}
 		level.jsonTrials.clear();
-		Builder.CreateLevel(level,Resources.Paths.finalPath);
-		Builder.CreateLevel(level,Builder.pathOldLevels);
+		Builder.writeLevelJson(level,Resources.Paths.finalPath);
+		Builder.writeLevelJson(level,Builder.pathLevelsBackUp);
 	}
 
 	public static void extract(JsonLevel level) {
