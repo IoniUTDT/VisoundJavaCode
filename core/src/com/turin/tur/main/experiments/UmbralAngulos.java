@@ -6,7 +6,6 @@ import com.badlogic.gdx.math.WindowedMean;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.turin.tur.main.diseno.ExperimentalObject.JsonResourcesMetaData;
 import com.turin.tur.main.diseno.Level.JsonLevel;
@@ -62,34 +61,67 @@ public class UmbralAngulos {
 		}
 		
 		public static class Indexs {
-			public ArrayMap<String, ArrayMap<String, Integer>> idsResourcesBySides = new ArrayMap<String, ArrayMap<String, Integer>>(); // Lista de ids de los recursos para cada angulo de referencia
-			public ArrayMap<String, ArrayMap<String, ArrayMap<String, Integer>>> idsTrialByLevelBySides = new ArrayMap<String, ArrayMap<String, ArrayMap<String, Integer>>>();  // Lista de ids de los trial. El primer indice es el angulo de referencia, el segundo el angulo del lado restante
+			public ArrayMap<Integer, ArrayMap<Integer, Integer>> idsResourcesBySides = new ArrayMap<Integer, ArrayMap<Integer, Integer>>(); // Lista de ids de los recursos para cada angulo de referencia
+			public Array<Array<Integer>> resourcesContent = new Array<Array<Integer>>();
+			public Array<Array<Integer>> resourcesL2Tag = new Array<Array<Integer>>();
+			public Array<Integer> resourcesL1Tag = new Array<Integer>();
+			
+			public ArrayMap<Integer, ArrayMap<Integer, ArrayMap<Integer, Integer>>> idsTrialByLevelBySides = new ArrayMap<Integer, ArrayMap<Integer, ArrayMap<Integer, Integer>>>();  // Lista de ids de los trial. El primer indice es el angulo de referencia, el segundo el angulo del lado restante
 			public Array<Array<Array<Integer>>> trialsContent = new Array<Array<Array<Integer>>>();
-			public Array<Array<Array<String>>> trialsL3Tag = new Array<Array<Array<String>>>();
-			public Array<Array<String>> trialsL2Tag = new Array<Array<String>>();
-			public Array<String> trialsL1Tag = new Array<String>();
+			public Array<Array<Array<Integer>>> trialsL3Tag = new Array<Array<Array<Integer>>>();
+			public Array<Array<Integer>> trialsL2Tag = new Array<Array<Integer>>();
+			public Array<Integer> trialsL1Tag = new Array<Integer>();
 			
 			public void trialMaptoArray () {
 				int L1contador=0;
-				for (String L1 : this.idsTrialByLevelBySides.keys) {
-					this.trialsL1Tag.add(L1);
-					this.trialsL2Tag.add(new Array<String>());
-					this.trialsL3Tag.add(new Array<Array<String>>());
+				for (Entry<Integer, ArrayMap<Integer, ArrayMap<Integer, Integer>>> L1 : this.idsTrialByLevelBySides.entries()) {
+					this.trialsL1Tag.add(L1.key);
+					this.trialsL2Tag.add(new Array<Integer>());
+					this.trialsL3Tag.add(new Array<Array<Integer>>());
 					this.trialsContent.add(new Array<Array<Integer>>());
 					int L2contador=0;
-					for (String L2 : this.idsTrialByLevelBySides.get(L1).keys) {
-						this.trialsL2Tag.get(L1contador).add(L2);
-						this.trialsL3Tag.get(L2contador).add(new Array<String>());
+					for (Entry<Integer, ArrayMap<Integer, Integer>> L2 : this.idsTrialByLevelBySides.get(L1.key).entries()) {
+						this.trialsL2Tag.get(L1contador).add(L2.key);
+						this.trialsL3Tag.get(L2contador).add(new Array<Integer>());
 						this.trialsContent.get(L2contador).add(new Array<Integer>());
-						for (String L3 : this.idsTrialByLevelBySides.get(L1).get(L2).keys){
-							this.trialsL3Tag.get(L1contador).get(L2contador).add(L3);
-							this.trialsContent.get(L1contador).get(L2contador).add(this.idsTrialByLevelBySides.get(L1).get(L2).get(L3));
+						for (Entry<Integer, Integer> L3 : this.idsTrialByLevelBySides.get(L1.key).get(L2.key).entries()){
+							this.trialsL3Tag.get(L1contador).get(L2contador).add(L3.key);
+							this.trialsContent.get(L1contador).get(L2contador).add(this.idsTrialByLevelBySides.get(L1.key).get(L2.key).get(L3.key));
 						}
 						L2contador++;
 					}
 					L1contador++;
 				}
 				this.idsTrialByLevelBySides.clear();
+			}
+			
+			public void resourcesMaptoArray () {
+				int L1contador=0;
+				for (Entry<Integer, ArrayMap<Integer, Integer>> L1 : this.idsResourcesBySides.entries()) {
+					this.resourcesL1Tag.add(L1.key);
+					this.resourcesL2Tag.add(new Array<Integer>());
+					this.resourcesContent.add(new Array<Integer>());
+					for (Entry<Integer, Integer> L2 : this.idsResourcesBySides.get(L1.key).entries()) {
+						this.resourcesL2Tag.get(L1contador).add(L2.key);
+						this.resourcesContent.get(L1contador).add(L2.value);
+					}
+					L1contador++;
+				}
+				this.idsResourcesBySides.clear();
+			}
+			
+			public void resourcesArraytoMap () {
+				int L1contador=0;
+				for (Integer key1 : this.resourcesL1Tag) {
+					ArrayMap <Integer, Integer> L2map = new ArrayMap <Integer, Integer>();
+					int L2contador=0;
+					for (Integer key2 : this.resourcesL2Tag.get(L1contador)) {
+						L2map.put(key2, this.resourcesContent.get(L1contador).get(L2contador));
+						L2contador++;
+					}
+					this.idsResourcesBySides.put(key1, L2map);
+					L1contador++;
+				}
 			}
 		}
 
@@ -121,24 +153,26 @@ public class UmbralAngulos {
 	public class AnguloOrdenable implements Comparable<AnguloOrdenable> {
 		
 		public int angulo;
-		public int anguloRef;
+		public int anguloReferido;
 		public int nivel;
-		public ResourceId idResource;
+		public ResourceId idResource = new ResourceId();
 		public int idTrial;
 		public boolean acertado;
+		public int anguloDeReferencia;
 		
 		public AnguloOrdenable () {
 			
 		}
 		
-		public AnguloOrdenable(int angulo, int anguloRef) {
+		public AnguloOrdenable(int angulo, int anguloReferido, int anguloDeReferencia) {
 			this.angulo = angulo;
-		    this.anguloRef = anguloRef;
+		    this.anguloReferido = anguloReferido;
+		    this.anguloDeReferencia = anguloDeReferencia;
 		}
 		 
 		@Override
 		public int compareTo(AnguloOrdenable o) {
-			return Integer.valueOf(anguloRef).compareTo(o.anguloRef);
+			return Integer.valueOf(anguloReferido).compareTo(o.anguloReferido);
 		}
 
 		public int nivel() {
@@ -319,28 +353,10 @@ public class UmbralAngulos {
 		String path = Resources.Paths.currentVersionPath+"extras/jsonSetupUmbralAngulos.meta";
 		String savedData = FileHelper.readLocalFile(path);
 		Json json = new Json();
-		/*
-		json.setSerializer(ArrayMap.class, new Json.Serializer<ArrayMap>() {
-		      public void write (Json json, ArrayMap map, Class knownType) {
-		         Object[] keys = map.keys;
-		         Object[] values = map.values;
-		         json.writeObjectStart();
-		         for (int i = 0, n = map.size; i < n; i++)
-		            json.writeValue(keys[i].toString(), values[i]);
-		         json.writeObjectEnd();
-		      }
-		      public ArrayMap read(Json json, JsonValue jsonData, Class type) {
-				ArrayMap map = new ArrayMap();
-				for (int i = 0; i < jsonData.size; i++){
-					map.put(jsonData.get(i).name, jsonData.asString());
-				}
-				return map;
-		      }
-		});
-		*/
+		
 		json.setUsePrototypes(false);
 		this.info = json.fromJson(UmbralAngulos.Info.class, savedData);
-
+		this.info.indexs.resourcesArraytoMap();
 		// Hacemos tareas de revision y limpieza
 		
 		Array<Integer> angulosdeReferencia = new Array<Integer>(); 
@@ -377,12 +393,16 @@ public class UmbralAngulos {
 			level.randomTrialSort=false;
 			level.show = true;
 
+			// Agregamos la entrada del nivel en el index de trials
+			this.info.indexs.idsTrialByLevelBySides.put(level.Id, new ArrayMap<Integer, ArrayMap<Integer, Integer>>());
 			// agregamos un trial por recurso. 
 			for (int anguloRef:angulosReferenciaElegidos) {
-				for (Entry<String, Integer> recurso:this.info.indexs.idsResourcesBySides.get(String.valueOf(anguloRef))) {
+				// Agregamos la info relacionada al angulo de referencia en el index de trials
+				this.info.indexs.idsTrialByLevelBySides.get(level.Id).put(anguloRef, new ArrayMap<Integer, Integer>());
+				for (Entry<Integer, Integer> recurso:this.info.indexs.idsResourcesBySides.get(anguloRef).entries()) {
 					JsonTrial trial = Builder.crearTrial("Selecciones a que categoria pertenece el angulo", "", DISTRIBUCIONESenPANTALLA.LINEALx3,
 							new int[] {Constants.Resources.Categorias.Grave.ID,Constants.Resources.Categorias.Recto.ID,Constants.Resources.Categorias.Agudo.ID}, TIPOdeTRIAL.TEST, recurso.value, false, true, false);
-					savedData = FileHelper.readFile(Resources.Paths.fullCurrentVersionPath + recurso + ".meta");
+					savedData = FileHelper.readFile(Resources.Paths.fullCurrentVersionPath + recurso.value + ".meta");
 					json = new Json();
 					json.setUsePrototypes(false);
 					trial.jsonEstimulo =  json.fromJson(JsonResourcesMetaData.class, savedData);
@@ -395,7 +415,7 @@ public class UmbralAngulos {
 					} else {
 						anguloNOref = trial.jsonEstimulo.infoConceptualAngulos.direccionLado1;
 					}
-					this.info.indexs.idsTrialByLevelBySides.get(String.valueOf(level.Id)).get(String.valueOf(anguloRef)).put(String.valueOf(anguloNOref), trial.Id);
+					this.info.indexs.idsTrialByLevelBySides.get(level.Id).get(anguloRef).put(anguloNOref, trial.Id);
 				}
 				
 				this.loadCuadrantes(anguloRef,level.Id); // Armamos la info de los cuadrantes
@@ -403,6 +423,8 @@ public class UmbralAngulos {
 			
 			
 			level.infoExpAngulos = this.info;
+			level.infoExpAngulos.indexs.resourcesMaptoArray();
+			level.infoExpAngulos.indexs.trialMaptoArray();
 			Builder.extract(level);
 			Builder.buildJsons(level);
 		}
@@ -431,16 +453,16 @@ public class UmbralAngulos {
 				if (anguloRef < 0) {anguloRef = anguloRef + 360;} // corrige para que sean todos angulos en la primer vuelta
 				
 				if (anguloRef > 0 && anguloRef <= 90) {
-					cuadrante1.listaEstimulos.add(new AnguloOrdenable(angulo, anguloRef));
+					cuadrante1.listaEstimulos.add(new AnguloOrdenable(angulo, anguloRef, anguloReferencia));
 				}
 				if (anguloRef >= 90 && anguloRef < 180) {
-					cuadrante2.listaEstimulos.add(new AnguloOrdenable(angulo, anguloRef));
+					cuadrante2.listaEstimulos.add(new AnguloOrdenable(angulo, anguloRef, anguloReferencia));
 				}
 				if (anguloRef > 180 && anguloRef <= 270) {
-					cuadrante3.listaEstimulos.add(new AnguloOrdenable(angulo, anguloRef));
+					cuadrante3.listaEstimulos.add(new AnguloOrdenable(angulo, anguloRef, anguloReferencia));
 				}
 				if (anguloRef >= 270 && anguloRef < 360) {
-					cuadrante4.listaEstimulos.add(new AnguloOrdenable(angulo, anguloRef));
+					cuadrante4.listaEstimulos.add(new AnguloOrdenable(angulo, anguloRef, anguloReferencia));
 				}
 			}
 		}
@@ -487,8 +509,8 @@ public class UmbralAngulos {
 
 		// Completamos la info de la lista de estimulos
 		for (AnguloOrdenable angulo : cuadrante1.listaEstimulos) {
-			angulo.idTrial = this.info.indexs.idsTrialByLevelBySides.get(String.valueOf(levelId)).get(String.valueOf(angulo.anguloRef)).get(String.valueOf(angulo.angulo));
-			angulo.idResource.id = this.info.indexs.idsResourcesBySides.get(String.valueOf(angulo.anguloRef)).get(String.valueOf(angulo.angulo));
+			angulo.idTrial = this.info.indexs.idsTrialByLevelBySides.get(levelId).get(angulo.anguloDeReferencia).get(angulo.angulo);
+			angulo.idResource.id = this.info.indexs.idsResourcesBySides.get(angulo.anguloDeReferencia).get(angulo.angulo);
 		}
 	}
 	
@@ -519,7 +541,7 @@ public class UmbralAngulos {
 		this.info.setup.angulos.addAll(this.info.setup.angulosDetalle);
 		this.info.setup.angulos.addAll(this.info.setup.angulosNoDetalle);
 		for (int i:this.info.setup.angulos) {
-			this.info.indexs.idsResourcesBySides.put(String.valueOf(i), new ArrayMap<String, Integer>());
+			this.info.indexs.idsResourcesBySides.put(i, new ArrayMap<Integer, Integer>());
 		}
 	}
 
@@ -591,8 +613,8 @@ public class UmbralAngulos {
 					imagen.infoConceptualAngulos.direccionLado2 = angulo2;
 					
 					// Agregamos al setup que el objeto creado tiene los angulos dados para facilitar la busqueda posterior
-					this.info.indexs.idsResourcesBySides.get(String.valueOf(angulo1)).put(String.valueOf(angulo2), imagen.resourceId.id);
-					this.info.indexs.idsResourcesBySides.get(String.valueOf(angulo2)).put(String.valueOf(angulo1), imagen.resourceId.id);
+					this.info.indexs.idsResourcesBySides.get(angulo1).put(angulo2, imagen.resourceId.id);
+					this.info.indexs.idsResourcesBySides.get(angulo2).put(angulo1, imagen.resourceId.id);
 					
 					// Clasificamos el angulo segun sea agudo recto o grave
 					imagen.infoConceptualAngulos.separacionAngular = deltaAngulo;
@@ -661,6 +683,7 @@ public class UmbralAngulos {
 		      }
 		});
 		*/
+		this.info.indexs.resourcesMaptoArray();
 		this.info.indexs.trialMaptoArray();
 		json.setUsePrototypes(false);
 		FileHelper.writeFile(path, json.toJson(this.info));
