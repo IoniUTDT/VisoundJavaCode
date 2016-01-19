@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.WindowedMean;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.turin.tur.main.diseno.ExperimentalObject.JsonResourcesMetaData;
 import com.turin.tur.main.diseno.Level.JsonLevel;
@@ -27,14 +28,14 @@ public class UmbralAngulos {
 
 	private static final String TAG = UmbralAngulos.class.getName();
 	
-	public class Info {
+	public static class Info {
 		
 		public Setup setup = new Setup();
 		public Indexs indexs = new Indexs();
 		public LevelAdvance advance = new LevelAdvance();
 		public String nombre;
 		
-		public class Setup {
+		public static class Setup {
 			
 			// Cosas relacionadas con la generacion de recursos
 			public int saltoGrande; // Salto que hay entre angulo no critico y angulo no critico
@@ -60,14 +61,42 @@ public class UmbralAngulos {
 
 		}
 		
-		public class Indexs {
-			public ArrayMap<Integer, ArrayMap<Integer, Integer>> idsResourcesBySides = new ArrayMap<Integer, ArrayMap<Integer, Integer>>(); // Lista de ids de los recursos para cada angulo de referencia
-			public ArrayMap<Integer, ArrayMap<Integer, ArrayMap<Integer, Integer>>> idsTrialByLevelBySides = new ArrayMap<Integer, ArrayMap<Integer, ArrayMap<Integer, Integer>>>();  // Lista de ids de los trial. El primer indice es el angulo de referencia, el segundo el angulo del lado restante
+		public static class Indexs {
+			public ArrayMap<String, ArrayMap<String, Integer>> idsResourcesBySides = new ArrayMap<String, ArrayMap<String, Integer>>(); // Lista de ids de los recursos para cada angulo de referencia
+			public ArrayMap<String, ArrayMap<String, ArrayMap<String, Integer>>> idsTrialByLevelBySides = new ArrayMap<String, ArrayMap<String, ArrayMap<String, Integer>>>();  // Lista de ids de los trial. El primer indice es el angulo de referencia, el segundo el angulo del lado restante
+			public Array<Array<Array<Integer>>> trialsContent = new Array<Array<Array<Integer>>>();
+			public Array<Array<Array<String>>> trialsL3Tag = new Array<Array<Array<String>>>();
+			public Array<Array<String>> trialsL2Tag = new Array<Array<String>>();
+			public Array<String> trialsL1Tag = new Array<String>();
+			
+			public void trialMaptoArray () {
+				int L1contador=0;
+				for (String L1 : this.idsTrialByLevelBySides.keys) {
+					this.trialsL1Tag.add(L1);
+					this.trialsL2Tag.add(new Array<String>());
+					this.trialsL3Tag.add(new Array<Array<String>>());
+					this.trialsContent.add(new Array<Array<Integer>>());
+					int L2contador=0;
+					for (String L2 : this.idsTrialByLevelBySides.get(L1).keys) {
+						this.trialsL2Tag.get(L1contador).add(L2);
+						this.trialsL3Tag.get(L2contador).add(new Array<String>());
+						this.trialsContent.get(L2contador).add(new Array<Integer>());
+						for (String L3 : this.idsTrialByLevelBySides.get(L1).get(L2).keys){
+							this.trialsL3Tag.get(L1contador).get(L2contador).add(L3);
+							this.trialsContent.get(L1contador).get(L2contador).add(this.idsTrialByLevelBySides.get(L1).get(L2).get(L3));
+						}
+						L2contador++;
+					}
+					L1contador++;
+				}
+				this.idsTrialByLevelBySides.clear();
+			}
 		}
 
-		public class LevelAdvance {
+		public static class LevelAdvance {
 			public Array<ConvergenciaInfo> convergencias = new Array<ConvergenciaInfo>();
 		}
+		
 
 	}
 
@@ -278,6 +307,7 @@ public class UmbralAngulos {
 		return false;
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public void makeLevels() {
 		// Hacemos tareas de revision y limpieza
 		
@@ -289,6 +319,25 @@ public class UmbralAngulos {
 		String path = Resources.Paths.currentVersionPath+"extras/jsonSetupUmbralAngulos.meta";
 		String savedData = FileHelper.readLocalFile(path);
 		Json json = new Json();
+		/*
+		json.setSerializer(ArrayMap.class, new Json.Serializer<ArrayMap>() {
+		      public void write (Json json, ArrayMap map, Class knownType) {
+		         Object[] keys = map.keys;
+		         Object[] values = map.values;
+		         json.writeObjectStart();
+		         for (int i = 0, n = map.size; i < n; i++)
+		            json.writeValue(keys[i].toString(), values[i]);
+		         json.writeObjectEnd();
+		      }
+		      public ArrayMap read(Json json, JsonValue jsonData, Class type) {
+				ArrayMap map = new ArrayMap();
+				for (int i = 0; i < jsonData.size; i++){
+					map.put(jsonData.get(i).name, jsonData.asString());
+				}
+				return map;
+		      }
+		});
+		*/
 		json.setUsePrototypes(false);
 		this.info = json.fromJson(UmbralAngulos.Info.class, savedData);
 
@@ -330,7 +379,7 @@ public class UmbralAngulos {
 
 			// agregamos un trial por recurso. 
 			for (int anguloRef:angulosReferenciaElegidos) {
-				for (Entry<Integer, Integer> recurso:this.info.indexs.idsResourcesBySides.get(anguloRef)) {
+				for (Entry<String, Integer> recurso:this.info.indexs.idsResourcesBySides.get(String.valueOf(anguloRef))) {
 					JsonTrial trial = Builder.crearTrial("Selecciones a que categoria pertenece el angulo", "", DISTRIBUCIONESenPANTALLA.LINEALx3,
 							new int[] {Constants.Resources.Categorias.Grave.ID,Constants.Resources.Categorias.Recto.ID,Constants.Resources.Categorias.Agudo.ID}, TIPOdeTRIAL.TEST, recurso.value, false, true, false);
 					savedData = FileHelper.readFile(Resources.Paths.fullCurrentVersionPath + recurso + ".meta");
@@ -346,7 +395,7 @@ public class UmbralAngulos {
 					} else {
 						anguloNOref = trial.jsonEstimulo.infoConceptualAngulos.direccionLado1;
 					}
-					this.info.indexs.idsTrialByLevelBySides.get(level.Id).get(anguloRef).put(anguloNOref, trial.Id);
+					this.info.indexs.idsTrialByLevelBySides.get(String.valueOf(level.Id)).get(String.valueOf(anguloRef)).put(String.valueOf(anguloNOref), trial.Id);
 				}
 				
 				this.loadCuadrantes(anguloRef,level.Id); // Armamos la info de los cuadrantes
@@ -438,8 +487,8 @@ public class UmbralAngulos {
 
 		// Completamos la info de la lista de estimulos
 		for (AnguloOrdenable angulo : cuadrante1.listaEstimulos) {
-			angulo.idTrial = this.info.indexs.idsTrialByLevelBySides.get(levelId).get(angulo.anguloRef).get(angulo.angulo);
-			angulo.idResource.id = this.info.indexs.idsResourcesBySides.get(angulo.anguloRef).get(angulo.angulo);
+			angulo.idTrial = this.info.indexs.idsTrialByLevelBySides.get(String.valueOf(levelId)).get(String.valueOf(angulo.anguloRef)).get(String.valueOf(angulo.angulo));
+			angulo.idResource.id = this.info.indexs.idsResourcesBySides.get(String.valueOf(angulo.anguloRef)).get(String.valueOf(angulo.angulo));
 		}
 	}
 	
@@ -470,7 +519,7 @@ public class UmbralAngulos {
 		this.info.setup.angulos.addAll(this.info.setup.angulosDetalle);
 		this.info.setup.angulos.addAll(this.info.setup.angulosNoDetalle);
 		for (int i:this.info.setup.angulos) {
-			this.info.indexs.idsResourcesBySides.put(i, new ArrayMap<Integer, Integer>());
+			this.info.indexs.idsResourcesBySides.put(String.valueOf(i), new ArrayMap<String, Integer>());
 		}
 	}
 
@@ -542,8 +591,8 @@ public class UmbralAngulos {
 					imagen.infoConceptualAngulos.direccionLado2 = angulo2;
 					
 					// Agregamos al setup que el objeto creado tiene los angulos dados para facilitar la busqueda posterior
-					this.info.indexs.idsResourcesBySides.get(angulo1).put(angulo2, imagen.resourceId.id);
-					this.info.indexs.idsResourcesBySides.get(angulo2).put(angulo1, imagen.resourceId.id);
+					this.info.indexs.idsResourcesBySides.get(String.valueOf(angulo1)).put(String.valueOf(angulo2), imagen.resourceId.id);
+					this.info.indexs.idsResourcesBySides.get(String.valueOf(angulo2)).put(String.valueOf(angulo1), imagen.resourceId.id);
 					
 					// Clasificamos el angulo segun sea agudo recto o grave
 					imagen.infoConceptualAngulos.separacionAngular = deltaAngulo;
@@ -593,6 +642,26 @@ public class UmbralAngulos {
 		// Guardamos el setup 
 		String path = Resources.Paths.currentVersionPath+"/extras/jsonSetupUmbralAngulos.meta";
 		Json json = new Json();
+		/*
+		json.setSerializer(ArrayMap.class, new Json.Serializer<ArrayMap>() {
+		      public void write (Json json, ArrayMap map, Class knownType) {
+		         Object[] keys = map.keys;
+		         Object[] values = map.values;
+		         json.writeObjectStart();
+		         for (int i = 0, n = map.size; i < n; i++)
+		            json.writeValue(keys[i].toString(), values[i]);
+		         json.writeObjectEnd();
+		      }
+		      public ArrayMap read(Json json, JsonValue jsonData, Class type) {
+				ArrayMap map = new ArrayMap();
+				for (int i = 0; i < jsonData.size; i++){
+					map.put(jsonData.get(i).name, jsonData.get(i));
+				}
+				return null;
+		      }
+		});
+		*/
+		this.info.indexs.trialMaptoArray();
 		json.setUsePrototypes(false);
 		FileHelper.writeFile(path, json.toJson(this.info));
 	}

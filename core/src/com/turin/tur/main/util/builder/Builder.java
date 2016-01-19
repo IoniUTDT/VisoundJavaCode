@@ -52,8 +52,8 @@ public class Builder {
 	public static final String AppVersion = "UmbralCompletoAngulos"; 
 	public static final boolean categorizar = false;
 	
-	static final Boolean makeLevels = true;
-	static final Boolean makeResources = false;
+	static final Boolean makeLevels = false;
+	static final Boolean makeResources = true;
 	
 
 	public Builder (){
@@ -71,11 +71,6 @@ public class Builder {
 			UmbralAngulos experimento = new UmbralAngulos();
 			experimento.makeLevels();
 			System.exit(0);
-			// LevelsConstructor levelconstructor = new LevelsConstructor();
-			
-			//LevelMaker.makeLevels();
-			//ResourcesExport.createStructure();
-			//System.exit(0);
 		}
 
 	}
