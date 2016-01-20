@@ -63,64 +63,71 @@ public class UmbralAngulos {
 		public static class Indexs {
 			public ArrayMap<Integer, ArrayMap<Integer, Integer>> idsResourcesBySides = new ArrayMap<Integer, ArrayMap<Integer, Integer>>(); // Lista de ids de los recursos para cada angulo de referencia
 			public Array<Array<Integer>> resourcesContent = new Array<Array<Integer>>();
-			public Array<Array<Integer>> resourcesL2Tag = new Array<Array<Integer>>();
-			public Array<Integer> resourcesL1Tag = new Array<Integer>();
+			public Array<Array<Integer>> resourcesSide2Tag = new Array<Array<Integer>>();
+			public Array<Integer> resourcesSide1Tag = new Array<Integer>();
 			
 			public ArrayMap<Integer, ArrayMap<Integer, ArrayMap<Integer, Integer>>> idsTrialByLevelBySides = new ArrayMap<Integer, ArrayMap<Integer, ArrayMap<Integer, Integer>>>();  // Lista de ids de los trial. El primer indice es el angulo de referencia, el segundo el angulo del lado restante
 			public Array<Array<Array<Integer>>> trialsContent = new Array<Array<Array<Integer>>>();
-			public Array<Array<Array<Integer>>> trialsL3Tag = new Array<Array<Array<Integer>>>();
-			public Array<Array<Integer>> trialsL2Tag = new Array<Array<Integer>>();
-			public Array<Integer> trialsL1Tag = new Array<Integer>();
+			public Array<Array<Array<Integer>>> trialsSide2Tag = new Array<Array<Array<Integer>>>();
+			public Array<Array<Integer>> trialsSide1Tag = new Array<Array<Integer>>();
+			public Array<Integer> trialsLevelTag = new Array<Integer>();
 			
 			public void trialMaptoArray () {
-				int L1contador=0;
-				for (Entry<Integer, ArrayMap<Integer, ArrayMap<Integer, Integer>>> L1 : this.idsTrialByLevelBySides.entries()) {
-					this.trialsL1Tag.add(L1.key);
-					this.trialsL2Tag.add(new Array<Integer>());
-					this.trialsL3Tag.add(new Array<Array<Integer>>());
+				int levelContador=0;
+				for (Entry<Integer, ArrayMap<Integer, ArrayMap<Integer, Integer>>> levelKeyEntry : this.idsTrialByLevelBySides.entries()) {
+					this.trialsLevelTag.add(levelKeyEntry.key);
+					this.trialsSide1Tag.add(new Array<Integer>());
+					this.trialsSide2Tag.add(new Array<Array<Integer>>());
 					this.trialsContent.add(new Array<Array<Integer>>());
-					int L2contador=0;
-					for (Entry<Integer, ArrayMap<Integer, Integer>> L2 : this.idsTrialByLevelBySides.get(L1.key).entries()) {
-						this.trialsL2Tag.get(L1contador).add(L2.key);
-						this.trialsL3Tag.get(L2contador).add(new Array<Integer>());
-						this.trialsContent.get(L2contador).add(new Array<Integer>());
-						for (Entry<Integer, Integer> L3 : this.idsTrialByLevelBySides.get(L1.key).get(L2.key).entries()){
-							this.trialsL3Tag.get(L1contador).get(L2contador).add(L3.key);
-							this.trialsContent.get(L1contador).get(L2contador).add(this.idsTrialByLevelBySides.get(L1.key).get(L2.key).get(L3.key));
+					int side1Contador=0;
+					for (Entry<Integer, ArrayMap<Integer, Integer>> side1KeyEntry : this.idsTrialByLevelBySides.get(levelKeyEntry.key).entries()) {
+						this.trialsSide1Tag.get(levelContador).add(side1KeyEntry.key);
+						this.trialsSide2Tag.get(levelContador).add(new Array<Integer>());
+						this.trialsContent.get(levelContador).add(new Array<Integer>());
+						for (Entry<Integer, Integer> side2KeyEntry : this.idsTrialByLevelBySides.get(levelKeyEntry.key).get(side1KeyEntry.key).entries()){
+							this.trialsSide2Tag.get(levelContador).get(side1Contador).add(side2KeyEntry.key);
+							this.trialsContent.get(levelContador).get(side1Contador).add(this.idsTrialByLevelBySides.get(levelKeyEntry.key).get(side1KeyEntry.key).get(side2KeyEntry.key));
 						}
-						L2contador++;
+						side1Contador++;
 					}
-					L1contador++;
+					levelContador++;
 				}
 				this.idsTrialByLevelBySides.clear();
 			}
 			
 			public void resourcesMaptoArray () {
-				int L1contador=0;
-				for (Entry<Integer, ArrayMap<Integer, Integer>> L1 : this.idsResourcesBySides.entries()) {
-					this.resourcesL1Tag.add(L1.key);
-					this.resourcesL2Tag.add(new Array<Integer>());
+				int side1Contador=0;
+				for (Entry<Integer, ArrayMap<Integer, Integer>> side1KeyEntry : this.idsResourcesBySides.entries()) {
+					this.resourcesSide1Tag.add(side1KeyEntry.key);
+					this.resourcesSide2Tag.add(new Array<Integer>());
 					this.resourcesContent.add(new Array<Integer>());
-					for (Entry<Integer, Integer> L2 : this.idsResourcesBySides.get(L1.key).entries()) {
-						this.resourcesL2Tag.get(L1contador).add(L2.key);
-						this.resourcesContent.get(L1contador).add(L2.value);
+					for (Entry<Integer, Integer> side2KeyEntry : this.idsResourcesBySides.get(side1KeyEntry.key).entries()) {
+						this.resourcesSide2Tag.get(side1Contador).add(side2KeyEntry.key);
+						this.resourcesContent.get(side1Contador).add(side2KeyEntry.value);
 					}
-					L1contador++;
+					side1Contador++;
 				}
 				this.idsResourcesBySides.clear();
 			}
 			
 			public void resourcesArraytoMap () {
-				int L1contador=0;
-				for (Integer key1 : this.resourcesL1Tag) {
-					ArrayMap <Integer, Integer> L2map = new ArrayMap <Integer, Integer>();
-					int L2contador=0;
-					for (Integer key2 : this.resourcesL2Tag.get(L1contador)) {
-						L2map.put(key2, this.resourcesContent.get(L1contador).get(L2contador));
-						L2contador++;
+				for (int side1Contador = 0; side1Contador < this.resourcesSide1Tag.size; side1Contador++) {
+					this.idsResourcesBySides.put(this.resourcesSide1Tag.get(side1Contador), new ArrayMap<Integer, Integer>());
+					for (int side2Contador = 0; side2Contador < this.resourcesSide2Tag.get(side1Contador).size; side2Contador++) {
+						this.idsResourcesBySides.get(resourcesSide1Tag.get(side1Contador)).put(resourcesSide2Tag.get(side2Contador).get(side2Contador),resourcesContent.get(side1Contador).get(side2Contador));
 					}
-					this.idsResourcesBySides.put(key1, L2map);
-					L1contador++;
+				}
+			}
+			
+			public void trialArraytoMap () {
+				for (Integer levelContador = 0; levelContador < this.trialsLevelTag.size; levelContador++) {
+					this.idsTrialByLevelBySides.put(this.trialsLevelTag.get(levelContador), new ArrayMap <Integer, ArrayMap <Integer, Integer>>());
+					for (Integer side1Contador = 0; side1Contador < this.trialsSide1Tag.get(levelContador).size; side1Contador++) {
+						this.idsTrialByLevelBySides.get(this.trialsLevelTag.get(levelContador)).put(this.trialsSide1Tag.get(levelContador).get(side1Contador), new ArrayMap <Integer, Integer>());
+						for (Integer side2Contador = 0; side2Contador < this.trialsSide2Tag.get(levelContador).get(side1Contador).size; side2Contador++) {
+							this.idsTrialByLevelBySides.get(this.trialsLevelTag.get(levelContador)).get(this.trialsSide1Tag.get(levelContador).get(side1Contador)).put(this.trialsSide2Tag.get(levelContador).get(side1Contador).get(side2Contador), this.trialsContent.get(levelContador).get(side1Contador).get(side2Contador));
+						}
+					}
 				}
 			}
 		}
@@ -150,7 +157,7 @@ public class UmbralAngulos {
 		Agudo, Recto, Grave;
 	}
 
-	public class AnguloOrdenable implements Comparable<AnguloOrdenable> {
+	public static class AnguloOrdenable implements Comparable<AnguloOrdenable> {
 		
 		public int angulo;
 		public int anguloReferido;
@@ -162,12 +169,6 @@ public class UmbralAngulos {
 		
 		public AnguloOrdenable () {
 			
-		}
-		
-		public AnguloOrdenable(int angulo, int anguloReferido, int anguloDeReferencia) {
-			this.angulo = angulo;
-		    this.anguloReferido = anguloReferido;
-		    this.anguloDeReferencia = anguloDeReferencia;
 		}
 		 
 		@Override
@@ -192,7 +193,7 @@ public class UmbralAngulos {
 	 * @author ionatan
 	 *
 	 */
-	public class ConvergenciaInfo {
+	public static class ConvergenciaInfo {
 		public int nivelEstimulo; // nivel de señal enviada
 		public int saltosActivos; // nivel del proximo salto (en numero de niveles de señal)
 		public boolean convergenciaAlcanzada=false;
@@ -396,124 +397,126 @@ public class UmbralAngulos {
 			// Agregamos la entrada del nivel en el index de trials
 			this.info.indexs.idsTrialByLevelBySides.put(level.Id, new ArrayMap<Integer, ArrayMap<Integer, Integer>>());
 			// agregamos un trial por recurso. 
-			for (int anguloRef:angulosReferenciaElegidos) {
+			for (int anguloReferencia:angulosReferenciaElegidos) {
 				// Agregamos la info relacionada al angulo de referencia en el index de trials
-				this.info.indexs.idsTrialByLevelBySides.get(level.Id).put(anguloRef, new ArrayMap<Integer, Integer>());
-				for (Entry<Integer, Integer> recurso:this.info.indexs.idsResourcesBySides.get(anguloRef).entries()) {
-					JsonTrial trial = Builder.crearTrial("Selecciones a que categoria pertenece el angulo", "", DISTRIBUCIONESenPANTALLA.LINEALx3,
-							new int[] {Constants.Resources.Categorias.Grave.ID,Constants.Resources.Categorias.Recto.ID,Constants.Resources.Categorias.Agudo.ID}, TIPOdeTRIAL.TEST, recurso.value, false, true, false);
-					savedData = FileHelper.readFile(Resources.Paths.fullCurrentVersionPath + recurso.value + ".meta");
-					json = new Json();
-					json.setUsePrototypes(false);
-					trial.jsonEstimulo =  json.fromJson(JsonResourcesMetaData.class, savedData);
-					level.jsonTrials.add(trial); 
+				this.info.indexs.idsTrialByLevelBySides.get(level.Id).put(anguloReferencia, new ArrayMap<Integer, Integer>());
+				// Creamos las convergencias correspondientes a los 4 cuadrantes de esta refrencia
+				ConvergenciaInfo cuadrante1 = new ConvergenciaInfo();
+				ConvergenciaInfo cuadrante2 = new ConvergenciaInfo();
+				ConvergenciaInfo cuadrante3 = new ConvergenciaInfo();
+				ConvergenciaInfo cuadrante4 = new ConvergenciaInfo();
+				
+				
+				for (Entry<Integer, Integer> recurso:this.info.indexs.idsResourcesBySides.get(anguloReferencia).entries()) {
 					
-					// agregamos el trial creado al index
-					int anguloNOref;
-					if (trial.jsonEstimulo.infoConceptualAngulos.direccionLado1 == anguloRef) {
-						anguloNOref = trial.jsonEstimulo.infoConceptualAngulos.direccionLado2;
-					} else {
-						anguloNOref = trial.jsonEstimulo.infoConceptualAngulos.direccionLado1;
+					// Nos fijamos si cumple con el criterio de sitancia minimo
+					if (this.cumpleCriterioDistanciaMinima(anguloReferencia, recurso.key)) {
+					
+						// Creamos el trial
+						JsonTrial trial = Builder.crearTrial("Selecciones a que categoria pertenece el angulo", "", DISTRIBUCIONESenPANTALLA.LINEALx3,
+								new int[] {Constants.Resources.Categorias.Grave.ID,Constants.Resources.Categorias.Recto.ID,Constants.Resources.Categorias.Agudo.ID}, TIPOdeTRIAL.TEST, recurso.value, false, true, false);
+
+						// agregamos el trial creado al index
+						this.info.indexs.idsTrialByLevelBySides.get(level.Id).get(anguloReferencia).put(recurso.key, trial.Id);
+
+						// Creamos el angulo correspondiente y lo agregamos al cuadrante que toque
+						int anguloReferido = recurso.key - anguloReferencia;
+						if (anguloReferido < 0) {anguloReferido = anguloReferido + 360;} // corrige para que sean todos angulos en la primer vuelta
+						AnguloOrdenable anguloOrdenable = new AnguloOrdenable();
+						anguloOrdenable.angulo = recurso.key;
+						anguloOrdenable.anguloDeReferencia = anguloReferencia;
+						anguloOrdenable.anguloReferido = anguloReferido;
+						anguloOrdenable.idTrial = trial.Id;
+						anguloOrdenable.idResource.id = recurso.value;
+						
+						
+						if (anguloReferencia > 0 && anguloReferencia <= 90) {
+							cuadrante1.listaEstimulos.add(anguloOrdenable);
+						}
+						if (anguloReferencia >= 90 && anguloReferencia < 180) {
+							cuadrante2.listaEstimulos.add(anguloOrdenable);
+						}
+						if (anguloReferencia > 180 && anguloReferencia <= 270) {
+							cuadrante3.listaEstimulos.add(anguloOrdenable);
+						}
+						if (anguloReferencia >= 270 && anguloReferencia < 360) {
+							cuadrante4.listaEstimulos.add(anguloOrdenable);
+						}
+						
+						/*
+						// Le cargamos la info del recurso estimulo
+						savedData = FileHelper.readFile(Resources.Paths.fullCurrentVersionPath + recurso.value + ".meta");
+						json = new Json();
+						json.setUsePrototypes(false);
+						trial.jsonEstimulo =  json.fromJson(JsonResourcesMetaData.class, savedData);
+						
+						level.jsonTrials.add(trial); 
+						*/
 					}
-					this.info.indexs.idsTrialByLevelBySides.get(level.Id).get(anguloRef).put(anguloNOref, trial.Id);
+					
+					 
 				}
 				
-				this.loadCuadrantes(anguloRef,level.Id); // Armamos la info de los cuadrantes
+				// Agregamos info restante y general a los cuadrantes
+				int saltoInicial = this.info.setup.saltoInicialEnGrados / this.info.setup.saltoGrande;
+				// Ordenamos los cuadrantes segun nivel de deificultad y agregamos el datos a la info del angulo
+				cuadrante1.listaEstimulos.sort();
+				cuadrante1.listaEstimulos.reverse();
+				for (AnguloOrdenable angulo :cuadrante1.listaEstimulos) {
+					angulo.nivel = cuadrante1.listaEstimulos.indexOf(angulo, true);
+				}
+				cuadrante2.listaEstimulos.sort();
+				for (AnguloOrdenable angulo :cuadrante2.listaEstimulos) {
+					angulo.nivel = cuadrante2.listaEstimulos.indexOf(angulo, true);
+				}
+				cuadrante3.listaEstimulos.sort();
+				cuadrante3.listaEstimulos.reverse();
+				for (AnguloOrdenable angulo :cuadrante3.listaEstimulos) {
+					angulo.nivel = cuadrante3.listaEstimulos.indexOf(angulo, true);
+				}
+				cuadrante4.listaEstimulos.sort();
+				for (AnguloOrdenable angulo :cuadrante4.listaEstimulos) {
+					angulo.nivel = cuadrante4.listaEstimulos.indexOf(angulo, true);
+				}
+				// Agregamos la info general a cada cuadrante
+				cuadrante1.nombreDelCuadrante = "Cuadrante 1" + " R: " + anguloReferencia;
+				cuadrante1.anguloDeReferencia = anguloReferencia;
+				cuadrante1.saltosActivos = saltoInicial;
+				cuadrante1.nivelEstimulo = cuadrante1.listaEstimulos.size - 1;
+				
+				cuadrante2.nombreDelCuadrante = "Cuadrante 2" + " R: " + anguloReferencia;
+				cuadrante2.anguloDeReferencia = anguloReferencia;
+				cuadrante2.saltosActivos = saltoInicial;
+				cuadrante2.nivelEstimulo = cuadrante2.listaEstimulos.size - 1;
+				
+				cuadrante3.nombreDelCuadrante = "Cuadrante 3" + " R: " + anguloReferencia;
+				cuadrante3.anguloDeReferencia = anguloReferencia;
+				cuadrante3.saltosActivos = saltoInicial;
+				cuadrante3.nivelEstimulo = cuadrante3.listaEstimulos.size - 1;
+				
+				cuadrante4.nombreDelCuadrante = "Cuadrante 4" + " R: " + anguloReferencia;
+				cuadrante4.anguloDeReferencia = anguloReferencia;
+				cuadrante4.saltosActivos = saltoInicial;
+				cuadrante4.nivelEstimulo = cuadrante4.listaEstimulos.size - 1;
+
+				// Agregamos los cuadrantes a la lista de cuadrantes que de guarda en el info del nivel
+				this.info.advance.convergencias.add(cuadrante1);
+				this.info.advance.convergencias.add(cuadrante2);
+				this.info.advance.convergencias.add(cuadrante3);
+				this.info.advance.convergencias.add(cuadrante4);
 			}
 			
-			
+			this.info.indexs.resourcesMaptoArray();
+			this.info.indexs.trialMaptoArray();
 			level.infoExpAngulos = this.info;
-			level.infoExpAngulos.indexs.resourcesMaptoArray();
-			level.infoExpAngulos.indexs.trialMaptoArray();
 			Builder.extract(level);
 			Builder.buildJsons(level);
+			this.info.indexs.resourcesArraytoMap();
+			this.info.indexs.trialArraytoMap();
 		}
 	}
 
-	
-	/**
-	 * Este metodo se encarga de armar la info de cada cuadrante para el angulo de referencia que corresponda 
-	 */
-	public void loadCuadrantes (int anguloReferencia, int levelId) {
-		// Definimos algunas cosas generales
-		int saltoInicial = this.info.setup.saltoInicialEnGrados / this.info.setup.saltoGrande;
 		
-		
-		// Creamos las convergencias correspondientes a los 4 cuadrantes
-		ConvergenciaInfo cuadrante1 = new ConvergenciaInfo();
-		ConvergenciaInfo cuadrante2 = new ConvergenciaInfo();
-		ConvergenciaInfo cuadrante3 = new ConvergenciaInfo();
-		ConvergenciaInfo cuadrante4 = new ConvergenciaInfo();
-		
-		
-		// Agrega cada angulo segun corresponda a un cuadrante.
-		for (int angulo: this.info.setup.angulos) {
-			if (this.cumpleCriterioDistanciaMinima(angulo, anguloReferencia)) {
-				int anguloRef = angulo - anguloReferencia;
-				if (anguloRef < 0) {anguloRef = anguloRef + 360;} // corrige para que sean todos angulos en la primer vuelta
-				
-				if (anguloRef > 0 && anguloRef <= 90) {
-					cuadrante1.listaEstimulos.add(new AnguloOrdenable(angulo, anguloRef, anguloReferencia));
-				}
-				if (anguloRef >= 90 && anguloRef < 180) {
-					cuadrante2.listaEstimulos.add(new AnguloOrdenable(angulo, anguloRef, anguloReferencia));
-				}
-				if (anguloRef > 180 && anguloRef <= 270) {
-					cuadrante3.listaEstimulos.add(new AnguloOrdenable(angulo, anguloRef, anguloReferencia));
-				}
-				if (anguloRef >= 270 && anguloRef < 360) {
-					cuadrante4.listaEstimulos.add(new AnguloOrdenable(angulo, anguloRef, anguloReferencia));
-				}
-			}
-		}
-		
-		// Ordenamos los cuadrantes segun nivel de deificultad y agregamos el datos a la info del angulo
-		cuadrante1.listaEstimulos.sort();
-		cuadrante1.listaEstimulos.reverse();
-		for (AnguloOrdenable angulo :cuadrante1.listaEstimulos) {
-			angulo.nivel = cuadrante1.listaEstimulos.indexOf(angulo, true);
-		}
-		cuadrante2.listaEstimulos.sort();
-		for (AnguloOrdenable angulo :cuadrante2.listaEstimulos) {
-			angulo.nivel = cuadrante2.listaEstimulos.indexOf(angulo, true);
-		}
-		cuadrante3.listaEstimulos.sort();
-		cuadrante3.listaEstimulos.reverse();
-		for (AnguloOrdenable angulo :cuadrante3.listaEstimulos) {
-			angulo.nivel = cuadrante3.listaEstimulos.indexOf(angulo, true);
-		}
-		cuadrante4.listaEstimulos.sort();
-		for (AnguloOrdenable angulo :cuadrante4.listaEstimulos) {
-			angulo.nivel = cuadrante4.listaEstimulos.indexOf(angulo, true);
-		}
-		// Agregamos la info general a cada cuadrante
-		cuadrante1.nombreDelCuadrante = "Cuadrante 1" + " R: " + anguloReferencia;
-		cuadrante1.anguloDeReferencia = anguloReferencia;
-		cuadrante1.saltosActivos = saltoInicial;
-		cuadrante1.nivelEstimulo = cuadrante1.listaEstimulos.size - 1;
-		
-		cuadrante2.nombreDelCuadrante = "Cuadrante 2" + " R: " + anguloReferencia;
-		cuadrante2.anguloDeReferencia = anguloReferencia;
-		cuadrante2.saltosActivos = saltoInicial;
-		cuadrante2.nivelEstimulo = cuadrante2.listaEstimulos.size - 1;
-		
-		cuadrante3.nombreDelCuadrante = "Cuadrante 3" + " R: " + anguloReferencia;
-		cuadrante3.anguloDeReferencia = anguloReferencia;
-		cuadrante3.saltosActivos = saltoInicial;
-		cuadrante3.nivelEstimulo = cuadrante3.listaEstimulos.size - 1;
-		
-		cuadrante4.nombreDelCuadrante = "Cuadrante 4" + " R: " + anguloReferencia;
-		cuadrante4.anguloDeReferencia = anguloReferencia;
-		cuadrante4.saltosActivos = saltoInicial;
-		cuadrante4.nivelEstimulo = cuadrante4.listaEstimulos.size - 1;
-
-		// Completamos la info de la lista de estimulos
-		for (AnguloOrdenable angulo : cuadrante1.listaEstimulos) {
-			angulo.idTrial = this.info.indexs.idsTrialByLevelBySides.get(levelId).get(angulo.anguloDeReferencia).get(angulo.angulo);
-			angulo.idResource.id = this.info.indexs.idsResourcesBySides.get(angulo.anguloDeReferencia).get(angulo.angulo);
-		}
-	}
-	
 	/**
 	 * Este metodo busca todos lo angulos en los que debe haber lineas segun los parametros con que se configure el setup
 	 */
