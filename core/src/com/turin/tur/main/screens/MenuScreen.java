@@ -18,7 +18,6 @@ import com.badlogic.gdx.utils.Array;
 import com.turin.tur.main.diseno.Level;
 import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.diseno.User;
-import com.turin.tur.main.util.Assets;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.Internet;
 

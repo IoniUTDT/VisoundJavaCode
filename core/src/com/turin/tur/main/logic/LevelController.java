@@ -21,7 +21,6 @@ import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.main.diseno.Boxes.Box;
 import com.turin.tur.main.diseno.RunningSound;
 import com.turin.tur.main.diseno.Trial.TouchLog;
-import com.turin.tur.main.experiments.Experiments;
 import com.turin.tur.main.experiments.UmbralAngulos;
 import com.turin.tur.main.screens.ResultsScreen;
 import com.turin.tur.main.util.CameraHelper;

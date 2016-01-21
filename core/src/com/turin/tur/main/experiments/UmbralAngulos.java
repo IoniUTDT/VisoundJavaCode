@@ -7,7 +7,6 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
-import com.turin.tur.main.diseno.ExperimentalObject.JsonResourcesMetaData;
 import com.turin.tur.main.diseno.Level.JsonLevel;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.diseno.Trial.ResourceId;
@@ -66,12 +65,14 @@ public class UmbralAngulos {
 			public Array<Array<Integer>> resourcesSide2Tag = new Array<Array<Integer>>();
 			public Array<Integer> resourcesSide1Tag = new Array<Integer>();
 			
+			/*
 			public ArrayMap<Integer, ArrayMap<Integer, ArrayMap<Integer, Integer>>> idsTrialByLevelBySides = new ArrayMap<Integer, ArrayMap<Integer, ArrayMap<Integer, Integer>>>();  // Lista de ids de los trial. El primer indice es el angulo de referencia, el segundo el angulo del lado restante
 			public Array<Array<Array<Integer>>> trialsContent = new Array<Array<Array<Integer>>>();
 			public Array<Array<Array<Integer>>> trialsSide2Tag = new Array<Array<Array<Integer>>>();
 			public Array<Array<Integer>> trialsSide1Tag = new Array<Array<Integer>>();
 			public Array<Integer> trialsLevelTag = new Array<Integer>();
-			
+			*/
+			/*
 			public void trialMaptoArray () {
 				int levelContador=0;
 				for (Entry<Integer, ArrayMap<Integer, ArrayMap<Integer, Integer>>> levelKeyEntry : this.idsTrialByLevelBySides.entries()) {
@@ -94,7 +95,7 @@ public class UmbralAngulos {
 				}
 				this.idsTrialByLevelBySides.clear();
 			}
-			
+			*/
 			public void resourcesMaptoArray () {
 				int side1Contador=0;
 				for (Entry<Integer, ArrayMap<Integer, Integer>> side1KeyEntry : this.idsResourcesBySides.entries()) {
@@ -114,11 +115,14 @@ public class UmbralAngulos {
 				for (int side1Contador = 0; side1Contador < this.resourcesSide1Tag.size; side1Contador++) {
 					this.idsResourcesBySides.put(this.resourcesSide1Tag.get(side1Contador), new ArrayMap<Integer, Integer>());
 					for (int side2Contador = 0; side2Contador < this.resourcesSide2Tag.get(side1Contador).size; side2Contador++) {
-						this.idsResourcesBySides.get(resourcesSide1Tag.get(side1Contador)).put(resourcesSide2Tag.get(side2Contador).get(side2Contador),resourcesContent.get(side1Contador).get(side2Contador));
+						this.idsResourcesBySides.get(resourcesSide1Tag.get(side1Contador)).put(resourcesSide2Tag.get(side1Contador).get(side2Contador),resourcesContent.get(side1Contador).get(side2Contador));
 					}
 				}
+				this.resourcesContent.clear();
+				this.resourcesSide1Tag.clear();
+				this.resourcesSide2Tag.clear();
 			}
-			
+			/*
 			public void trialArraytoMap () {
 				for (Integer levelContador = 0; levelContador < this.trialsLevelTag.size; levelContador++) {
 					this.idsTrialByLevelBySides.put(this.trialsLevelTag.get(levelContador), new ArrayMap <Integer, ArrayMap <Integer, Integer>>());
@@ -130,6 +134,7 @@ public class UmbralAngulos {
 					}
 				}
 			}
+			*/
 		}
 
 		public static class LevelAdvance {
@@ -255,6 +260,7 @@ public class UmbralAngulos {
 			// Agregamos la info del ultimo toque.
 			this.next.acertado=acierto;
 			this.cuadranteActivo.historial.add(this.next);
+			this.numeroDeTrialsRealizados ++;
 			
 			// Elije si hay que incrementar la dificultad, disminuirla o no hacer nada.
 			boolean incrementarDificultad=false;
@@ -316,6 +322,7 @@ public class UmbralAngulos {
 					Gdx.app.debug(TAG, this.cuadranteActivo.nombreDelCuadrante + " ha alcanzado la convergencia con valor " + this.cuadranteActivo.ultimoMEAN);
 				}
 			}
+			this.levelCompleted();
 		}
 	}
 	
@@ -324,16 +331,13 @@ public class UmbralAngulos {
 	 * @return
 	 */
 	public boolean levelCompleted() {
-		int numeroDeTrialsRealizados = 0;
 		boolean todosCompletados = true;
 		for (ConvergenciaInfo cuadrante : this.info.advance.convergencias) {
-			numeroDeTrialsRealizados = numeroDeTrialsRealizados + cuadrante.historial.size;
 			if (!cuadrante.convergenciaAlcanzada) {
 				todosCompletados = false;
 			}
 		}
-		this.numeroDeTrialsRealizados = numeroDeTrialsRealizados;
-		if (numeroDeTrialsRealizados >= this.info.advance.convergencias.size * this.info.setup.numeroMaximoDeTrialsXCuadrante) {
+		if (this.numeroDeTrialsRealizados >= this.info.advance.convergencias.size * this.info.setup.numeroMaximoDeTrialsXCuadrante) {
 			return true;
 		}
 		if (todosCompletados) {
@@ -342,7 +346,6 @@ public class UmbralAngulos {
 		return false;
 	}
 	
-	@SuppressWarnings("rawtypes")
 	public void makeLevels() {
 		// Hacemos tareas de revision y limpieza
 		
@@ -395,11 +398,11 @@ public class UmbralAngulos {
 			level.show = true;
 
 			// Agregamos la entrada del nivel en el index de trials
-			this.info.indexs.idsTrialByLevelBySides.put(level.Id, new ArrayMap<Integer, ArrayMap<Integer, Integer>>());
+			//this.info.indexs.idsTrialByLevelBySides.put(level.Id, new ArrayMap<Integer, ArrayMap<Integer, Integer>>());
 			// agregamos un trial por recurso. 
 			for (int anguloReferencia:angulosReferenciaElegidos) {
 				// Agregamos la info relacionada al angulo de referencia en el index de trials
-				this.info.indexs.idsTrialByLevelBySides.get(level.Id).put(anguloReferencia, new ArrayMap<Integer, Integer>());
+				// this.info.indexs.idsTrialByLevelBySides.get(level.Id).put(anguloReferencia, new ArrayMap<Integer, Integer>());
 				// Creamos las convergencias correspondientes a los 4 cuadrantes de esta refrencia
 				ConvergenciaInfo cuadrante1 = new ConvergenciaInfo();
 				ConvergenciaInfo cuadrante2 = new ConvergenciaInfo();
@@ -417,7 +420,7 @@ public class UmbralAngulos {
 								new int[] {Constants.Resources.Categorias.Grave.ID,Constants.Resources.Categorias.Recto.ID,Constants.Resources.Categorias.Agudo.ID}, TIPOdeTRIAL.TEST, recurso.value, false, true, false);
 
 						// agregamos el trial creado al index
-						this.info.indexs.idsTrialByLevelBySides.get(level.Id).get(anguloReferencia).put(recurso.key, trial.Id);
+						// this.info.indexs.idsTrialByLevelBySides.get(level.Id).get(anguloReferencia).put(recurso.key, trial.Id);
 
 						// Creamos el angulo correspondiente y lo agregamos al cuadrante que toque
 						int anguloReferido = recurso.key - anguloReferencia;
@@ -430,16 +433,16 @@ public class UmbralAngulos {
 						anguloOrdenable.idResource.id = recurso.value;
 						
 						
-						if (anguloReferencia > 0 && anguloReferencia <= 90) {
+						if (anguloOrdenable.anguloReferido > 0 && anguloOrdenable.anguloReferido <= 90) {
 							cuadrante1.listaEstimulos.add(anguloOrdenable);
 						}
-						if (anguloReferencia >= 90 && anguloReferencia < 180) {
+						if (anguloOrdenable.anguloReferido >= 90 && anguloOrdenable.anguloReferido < 180) {
 							cuadrante2.listaEstimulos.add(anguloOrdenable);
 						}
-						if (anguloReferencia > 180 && anguloReferencia <= 270) {
+						if (anguloOrdenable.anguloReferido > 180 && anguloOrdenable.anguloReferido <= 270) {
 							cuadrante3.listaEstimulos.add(anguloOrdenable);
 						}
-						if (anguloReferencia >= 270 && anguloReferencia < 360) {
+						if (anguloOrdenable.anguloReferido >= 270 && anguloOrdenable.anguloReferido < 360) {
 							cuadrante4.listaEstimulos.add(anguloOrdenable);
 						}
 						
@@ -449,9 +452,9 @@ public class UmbralAngulos {
 						json = new Json();
 						json.setUsePrototypes(false);
 						trial.jsonEstimulo =  json.fromJson(JsonResourcesMetaData.class, savedData);
-						
-						level.jsonTrials.add(trial); 
 						*/
+						level.jsonTrials.add(trial); 
+						
 					}
 					
 					 
@@ -507,12 +510,12 @@ public class UmbralAngulos {
 			}
 			
 			this.info.indexs.resourcesMaptoArray();
-			this.info.indexs.trialMaptoArray();
+			//this.info.indexs.trialMaptoArray();
 			level.infoExpAngulos = this.info;
 			Builder.extract(level);
 			Builder.buildJsons(level);
 			this.info.indexs.resourcesArraytoMap();
-			this.info.indexs.trialArraytoMap();
+			//this.info.indexs.trialArraytoMap();
 		}
 	}
 
@@ -687,7 +690,7 @@ public class UmbralAngulos {
 		});
 		*/
 		this.info.indexs.resourcesMaptoArray();
-		this.info.indexs.trialMaptoArray();
+		// this.info.indexs.trialMaptoArray();
 		json.setUsePrototypes(false);
 		FileHelper.writeFile(path, json.toJson(this.info));
 	}

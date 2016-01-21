@@ -52,7 +52,7 @@ public class Builder {
 	public static final String AppVersion = "UmbralCompletoAngulos"; 
 	public static final boolean categorizar = false;
 	
-	static final Boolean makeLevels = true;
+	static final Boolean makeLevels = false;
 	static final Boolean makeResources = false;
 	
 
@@ -203,6 +203,7 @@ public class Builder {
 				listado.add(jsonTrial.rtaCorrectaId);
 			}
 		}
+		Gdx.app.debug(TAG, "Lista de recursos a procesar creada");
 		// Con el listado de ids que corresponden al nivel los exportamos
 		export(listado,"level"+level.Id);
 	}
