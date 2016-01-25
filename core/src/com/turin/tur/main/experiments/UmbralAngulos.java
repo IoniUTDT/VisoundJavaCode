@@ -330,7 +330,8 @@ public class UmbralAngulos {
 	 * Esta funcion se fija se se termino el level o no
 	 * @return
 	 */
-	public boolean levelCompleted() {
+	
+	public void levelCompleted() {
 		boolean todosCompletados = true;
 		for (ConvergenciaInfo cuadrante : this.info.advance.convergencias) {
 			if (!cuadrante.convergenciaAlcanzada) {
@@ -338,13 +339,13 @@ public class UmbralAngulos {
 			}
 		}
 		if (this.numeroDeTrialsRealizados >= this.info.advance.convergencias.size * this.info.setup.numeroMaximoDeTrialsXCuadrante) {
-			return true;
+			this.levelCompleted=true;
 		}
 		if (todosCompletados) {
-			return true;
+			this.levelCompleted=true;
 		}
-		return false;
 	}
+	
 	
 	public void makeLevels() {
 		// Hacemos tareas de revision y limpieza
