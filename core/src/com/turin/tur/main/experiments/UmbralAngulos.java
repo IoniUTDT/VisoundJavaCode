@@ -208,6 +208,7 @@ public class UmbralAngulos {
 		public int anguloDeReferencia;
 		public float ultimaSD;
 		public float ultimoMEAN;
+		public int numeroCuadrante;
 	}
 	
 
@@ -487,21 +488,26 @@ public class UmbralAngulos {
 				cuadrante1.anguloDeReferencia = anguloReferencia;
 				cuadrante1.saltosActivos = saltoInicial;
 				cuadrante1.nivelEstimulo = cuadrante1.listaEstimulos.size - 1;
+				cuadrante1.numeroCuadrante=1;
+
 				
 				cuadrante2.nombreDelCuadrante = "Cuadrante 2" + " R: " + anguloReferencia;
 				cuadrante2.anguloDeReferencia = anguloReferencia;
 				cuadrante2.saltosActivos = saltoInicial;
 				cuadrante2.nivelEstimulo = cuadrante2.listaEstimulos.size - 1;
+				cuadrante2.numeroCuadrante=2;
 				
 				cuadrante3.nombreDelCuadrante = "Cuadrante 3" + " R: " + anguloReferencia;
 				cuadrante3.anguloDeReferencia = anguloReferencia;
 				cuadrante3.saltosActivos = saltoInicial;
 				cuadrante3.nivelEstimulo = cuadrante3.listaEstimulos.size - 1;
+				cuadrante3.numeroCuadrante=3;
 				
 				cuadrante4.nombreDelCuadrante = "Cuadrante 4" + " R: " + anguloReferencia;
 				cuadrante4.anguloDeReferencia = anguloReferencia;
 				cuadrante4.saltosActivos = saltoInicial;
 				cuadrante4.nivelEstimulo = cuadrante4.listaEstimulos.size - 1;
+				cuadrante4.numeroCuadrante=4;
 
 				// Agregamos los cuadrantes a la lista de cuadrantes que de guarda en el info del nivel
 				this.info.advance.convergencias.add(cuadrante1);

@@ -232,7 +232,6 @@ public class Builder {
 			try {
 				FileUtils.cleanDirectory(folder);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} 
 		} else {
@@ -244,7 +243,6 @@ public class Builder {
 		try {
 			FileUtils.cleanDirectory(tempDirectory);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
 		// Then we convert all files to PNG into a temp folder and copy the metadata to assets folder
@@ -272,7 +270,6 @@ public class Builder {
 		try {
 			FileUtils.cleanDirectory(tempDirectory);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
 	}

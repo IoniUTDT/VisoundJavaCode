@@ -83,7 +83,9 @@ public class LevelController implements InputProcessor {
 			this.umbralAngulos = new UmbralAngulos();
 			this.umbralAngulos.info = this.level.jsonLevel.infoExpAngulos;
 			// Asociamos la info al log del nivel
-			this.level.levelLog.infoUmbral = this.umbralAngulos.info;
+			this.level.levelLog.advance = this.umbralAngulos.info.advance;
+			this.level.levelLog.setup = this.umbralAngulos.info.setup;
+			this.level.levelLog.nombre = this.umbralAngulos.info.nombre;
 			// Usamos la clase analisis para elegir el angulo q hay que mostrar
 			this.umbralAngulos.askNext();
 			this.level.activeTrial = this.umbralAngulos.next.idTrial;
@@ -501,7 +503,9 @@ public class LevelController implements InputProcessor {
 		trial.runningSound.stopReason="exit";
 		trial.runningSound.stop();
 		// Intenta enviar la info del trial y sino la guarda
-		session.trialLogHistory.append(trial.log);
+		if (!(this.level.jsonLevel.tipoDeLevel==TIPOdeLEVEL.UMBRALANGULO)) {
+			session.trialLogHistory.append(trial.log);
+		}
 	}
 
 	private void cargarInfoDelTouch(Box box, TouchInfo thisTouch) {

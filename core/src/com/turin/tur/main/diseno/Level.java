@@ -9,6 +9,8 @@ import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.experiments.Experiments.AnalisisUmbralParalelismo;
 import com.turin.tur.main.experiments.UmbralAngulos;
 import com.turin.tur.main.experiments.UmbralAngulos.Info;
+import com.turin.tur.main.experiments.UmbralAngulos.Info.LevelAdvance;
+import com.turin.tur.main.experiments.UmbralAngulos.Info.Setup;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeLEVEL;
 import com.turin.tur.main.util.Constants.Resources;
@@ -153,7 +155,10 @@ public class Level {
 		public int startTrialPosition;
 		public Array<Integer> sortOfTrials;
 		public Array<Integer> trialsVisited = new Array<Integer>();
-		public Info infoUmbral;
+		public Setup setup;
+		public LevelAdvance advance;
+		public String nombre; 
+		//public Info infoUmbral;
 
 	}
 	
