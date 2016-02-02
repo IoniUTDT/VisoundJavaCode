@@ -18,7 +18,7 @@ public class TrialLogHistory {
 	public static final String TAG = TrialLogHistory.class.getName();
 
 		
-	public String path = "logs/" + Constants.version() + "/TrialLogHistory.info";
+	public String path = "logs/TrialLogHistory.info";
 	public String pathUploaded = path + ".uploaded";
 	public Array<TrialLog> historyPending = new Array<TrialLog>();
 	public Array<TrialLog> historySended = new Array<TrialLog>();

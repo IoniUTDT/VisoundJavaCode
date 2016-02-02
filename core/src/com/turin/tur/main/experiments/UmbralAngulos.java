@@ -209,6 +209,7 @@ public class UmbralAngulos {
 		public float ultimaSD;
 		public float ultimoMEAN;
 		public int numeroCuadrante;
+		public float ultimoMEANAngulo;
 	}
 	
 
@@ -221,7 +222,8 @@ public class UmbralAngulos {
 	public ConvergenciaInfo cuadranteActivo; // En cual de los cuadrantes esta la señal que se va a medir
 	public boolean waitingAnswer=false; //Si se esta esperando la rta.
 	public boolean levelCompleted;
-	public ArrayMap <String, WindowedMean> ventanas = new ArrayMap <String, WindowedMean>();
+	public ArrayMap <String, WindowedMean> ventanasNivel = new ArrayMap <String, WindowedMean>();
+	public ArrayMap <String, WindowedMean> ventanasAnguloReferenciado = new ArrayMap <String, WindowedMean>();
 	public int numeroDeTrialsRealizados;
 	
 	public UmbralAngulos () {
@@ -311,13 +313,19 @@ public class UmbralAngulos {
 			}
 			
 			// Nos fijamos si se alcanzo la convergencia
-			if (!this.ventanas.containsKey(this.cuadranteActivo.nombreDelCuadrante)) { // Primero nos fijamos si existe una ventana para el cuadrante activo
-				this.ventanas.put(this.cuadranteActivo.nombreDelCuadrante, new WindowedMean(this.info.setup.tamanoVentanaAnalisisConvergencia));
+			if (!this.ventanasNivel.containsKey(this.cuadranteActivo.nombreDelCuadrante)) { // Primero nos fijamos si existe una ventana para el cuadrante activo
+				this.ventanasNivel.put(this.cuadranteActivo.nombreDelCuadrante, new WindowedMean(this.info.setup.tamanoVentanaAnalisisConvergencia));
 			} 
-			this.ventanas.get(this.cuadranteActivo.nombreDelCuadrante).addValue(this.next.nivel);
-			if (this.ventanas.get(this.cuadranteActivo.nombreDelCuadrante).hasEnoughData()) {
-				this.cuadranteActivo.ultimaSD = this.ventanas.get(this.cuadranteActivo.nombreDelCuadrante).standardDeviation();
-				this.cuadranteActivo.ultimoMEAN = this.ventanas.get(this.cuadranteActivo.nombreDelCuadrante).getMean();
+			if (!this.ventanasAnguloReferenciado.containsKey(this.cuadranteActivo.nombreDelCuadrante)) { // Primero nos fijamos si existe una ventana para el cuadrante activo
+				this.ventanasAnguloReferenciado.put(this.cuadranteActivo.nombreDelCuadrante, new WindowedMean(this.info.setup.tamanoVentanaAnalisisConvergencia));
+			} 
+			
+			this.ventanasNivel.get(this.cuadranteActivo.nombreDelCuadrante).addValue(this.next.nivel);
+			this.ventanasAnguloReferenciado.get(this.cuadranteActivo.nombreDelCuadrante).addValue(this.next.anguloReferido);
+			if (this.ventanasNivel.get(this.cuadranteActivo.nombreDelCuadrante).hasEnoughData()) {
+				this.cuadranteActivo.ultimaSD = this.ventanasNivel.get(this.cuadranteActivo.nombreDelCuadrante).standardDeviation();
+				this.cuadranteActivo.ultimoMEAN = this.ventanasNivel.get(this.cuadranteActivo.nombreDelCuadrante).getMean();
+				this.cuadranteActivo.ultimoMEANAngulo = this.ventanasAnguloReferenciado.get(this.cuadranteActivo.nombreDelCuadrante).getMean();
 				if (this.cuadranteActivo.ultimaSD < this.info.setup.sdEsperada) {
 					this.cuadranteActivo.convergenciaAlcanzada = true;
 					Gdx.app.debug(TAG, this.cuadranteActivo.nombreDelCuadrante + " ha alcanzado la convergencia con valor " + this.cuadranteActivo.ultimoMEAN);
@@ -522,6 +530,7 @@ public class UmbralAngulos {
 			Builder.extract(level);
 			Builder.buildJsons(level);
 			this.info.indexs.resourcesArraytoMap();
+			this.info.advance.convergencias.clear();
 			//this.info.indexs.trialArraytoMap();
 		}
 	}

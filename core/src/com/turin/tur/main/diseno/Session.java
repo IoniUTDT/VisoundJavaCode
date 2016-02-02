@@ -34,7 +34,8 @@ public class Session {
 		boolean isFile = true;
 		int i = 0;
 		while (isFile) {
-			if (Gdx.files.internal(Resources.Paths.finalPath + "level" + (i + 1) + ".meta").exists()) {
+			Gdx.app.debug(TAG, Gdx.files.internal(Resources.Paths.resources + "level" + (i + 1) + ".meta").path());
+			if (Gdx.files.internal(Resources.Paths.resources + "level" + (i + 1) + ".meta").exists()) {
 				isFile = true;
 				i++;
 			} else {

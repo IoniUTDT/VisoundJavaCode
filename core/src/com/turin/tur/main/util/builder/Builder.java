@@ -18,6 +18,7 @@ import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.commons.io.FileUtils;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker.Settings;
 import com.badlogic.gdx.utils.Array;
@@ -47,7 +48,7 @@ public class Builder {
 	static int contadorLevels = 0;
 
 	public static final int ResourceVersion = 132;
-	public static final int levelVersion = 26;
+	public static final int levelVersion = 28;
 	public static int levelVersionFinal;
 	public static final String AppVersion = "UmbralCompletoAngulos"; 
 	public static final boolean categorizar = false;
@@ -62,13 +63,12 @@ public class Builder {
 	
 	public void build() {
 
+		UmbralAngulos experimento = new UmbralAngulos();
 		if (makeResources) {
-			UmbralAngulos experimento = new UmbralAngulos();
 			experimento.generalBuilding();
 			System.exit(0);
 		}	
 		if (makeLevels) {
-			UmbralAngulos experimento = new UmbralAngulos();
 			experimento.makeLevels();
 			System.exit(0);
 		}
@@ -284,9 +284,9 @@ public class Builder {
 
 	public static void verifyLevelVersion(){
 		// Verifica que no haya niveles ya numerados con la version marcada
-		File file = new File(Resources.Paths.finalPath + "level" + 1 + ".meta");
+		FileHandle file = Gdx.files.local(Resources.Paths.finalPath + "level" + 1 + ".meta");
 		if (file.exists()) {
-			String savedData = FileHelper.readLocalFile(Resources.Paths.finalPath + "level" + 1 + ".meta");
+			String savedData = file.readString();
 			if (!savedData.isEmpty()) {
 				Json json = new Json();
 				json.setUsePrototypes(false);

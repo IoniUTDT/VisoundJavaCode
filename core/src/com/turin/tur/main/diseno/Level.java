@@ -93,7 +93,7 @@ public class Level {
 	 */
 
 	private JsonLevel loadLevel(int level) {
-		String savedData = FileHelper.readFile(Resources.Paths.finalPath + "level" + level + ".meta");
+		String savedData = FileHelper.readFile(Resources.Paths.resources + "level" + level + ".meta");
 		if (!savedData.isEmpty()) {
 			Json json = new Json();
 			json.setUsePrototypes(false);
@@ -133,7 +133,7 @@ public class Level {
 		jsonLevel.levelTitle = levelTitle;
 		Json json = new Json();
 		json.setUsePrototypes(false);
-		FileHelper.writeFile(Resources.Paths.finalPath + "/level" + level + ".meta", json.toJson(jsonLevel));
+		FileHelper.writeFile(Resources.Paths.resources + "/level" + level + ".meta", json.toJson(jsonLevel));
 	}
 
 	public static class LevelLog {

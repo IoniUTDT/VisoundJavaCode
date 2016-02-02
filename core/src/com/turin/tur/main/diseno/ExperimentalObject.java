@@ -70,7 +70,7 @@ public class ExperimentalObject {
 		}
 		
 		public static JsonResourcesMetaData Load(int Id, int levelId) {
-			String savedData = FileHelper.readFile(Resources.Paths.finalPath + "level"+ levelId + "/" + Id + ".meta");
+			String savedData = FileHelper.readFile(Resources.Paths.resources + "level"+ levelId + "/" + Id + ".meta");
 			if (!savedData.isEmpty()) {
 				Json json = new Json();
 				json.setUsePrototypes(false);

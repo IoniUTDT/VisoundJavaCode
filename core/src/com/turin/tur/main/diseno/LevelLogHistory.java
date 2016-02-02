@@ -5,7 +5,6 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.turin.tur.main.diseno.Enviables.STATUS;
 import com.turin.tur.main.diseno.Level.LevelLog;
-import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Internet;
 
@@ -14,7 +13,7 @@ public class LevelLogHistory {
 	// constantes
 	public static final String TAG = LevelLogHistory.class.getName();
 
-	public String path = "logs/" + Constants.version() + "/LevelLogHistory.info";
+	public String path = "logs/LevelLogHistory.info";
 	public String pathUploaded = path + ".uploaded";
 	public Array<LevelLog> historyPending = new Array<LevelLog>();
 	public Array<LevelLog> historySended = new Array<LevelLog>();

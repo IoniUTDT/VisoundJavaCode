@@ -5,7 +5,6 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.turin.tur.main.diseno.Enviables.STATUS;
 import com.turin.tur.main.diseno.Session.SessionLog;
-import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Internet;
 
@@ -15,7 +14,7 @@ public class SessionLogHistory {
 	// constantes
 	public static final String TAG = SessionLogHistory.class.getName();
 	
-	public static String path = "logs/" + Constants.version() + "/sessionHistory.info";
+	public static String path = "logs/sessionHistory.info";
 	public static String pathUploaded = path + ".uploaded";
 	public Array<SessionLog> historyPending = new Array<SessionLog>();
 	public Array<SessionLog> historySended = new Array<SessionLog>();

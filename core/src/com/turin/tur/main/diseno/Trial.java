@@ -178,7 +178,7 @@ public class Trial {
 		
 
 		public static JsonTrial LoadTrial(int Id, int levelId) {
-			String savedData = FileHelper.readFile(Resources.Paths.finalPath + "level" + levelId + "/" + "trial" + Id + ".meta");
+			String savedData = FileHelper.readFile(Resources.Paths.resources + "level" + levelId + "/" + "trial" + Id + ".meta");
 
 			if (!savedData.isEmpty()) {
 				Json json = new Json();

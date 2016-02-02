@@ -96,6 +96,7 @@ public class MenuScreen extends AbstractGameScreen {
 		cameraGUI.update();
 	}
 
+
 	@Override
 	public void resize(int width, int height) {
 		stage.getViewport().update(width, height, true);
@@ -103,7 +104,7 @@ public class MenuScreen extends AbstractGameScreen {
 
 	@Override
 	public void show() {
-
+		guiRenderInit();
 		// Crea las cosas que tienen que ver con los graficos.
 		stage = new Stage();
 		Gdx.input.setInputProcessor(stage);
@@ -115,11 +116,12 @@ public class MenuScreen extends AbstractGameScreen {
 		skin = new Skin(Gdx.files.internal(Constants.SKIN_LIBGDX_UI));
 		
 		// Crea los botones de los niveles
-		
 		Array<Integer> levelIteration = new Array<Integer>();
 		for (int i=1; i < this.session.numberOfLevels+1; i++) {
 			levelIteration.add(i);
 		}
+		Gdx.app.debug(TAG, "NL:"+this.session.numberOfLevels + "");
+		Gdx.app.debug(TAG, ""+levelIteration.size);
 		for (final int levelIterator : levelIteration) {
 			Level level = new Level(levelIterator);
 			if (level.jsonLevel.show) { 
@@ -146,7 +148,6 @@ public class MenuScreen extends AbstractGameScreen {
 				}
 				levelButtons.add(button);
 				Gdx.app.debug(TAG, "agregado boton" + button.getText());
-				guiRenderInit();
 			}
 		}
 		

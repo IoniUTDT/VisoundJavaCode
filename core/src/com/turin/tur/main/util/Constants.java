@@ -197,6 +197,7 @@ public class Constants {
 			public static String levelsPath = tempPath + "tempLevels/";
 			public static String ProcessingPath = fullTempPath + "tempProcessing/";
 			public static String finalPath = "../android/assets/experimentalsource/";
+			public static String resources = "experimentalsource/";
 		}
 
 		public static final int Reservados = 20;
