@@ -95,7 +95,6 @@ public class Trial {
 	}
 
 	private void initTrial(int Id) {
-		Gdx.app.log(TAG, "Cargando info del trial");
 		// Carga la info en bruto
 		JsonTrial jsonTrial = JsonTrial.LoadTrial(Id,this.levelId); 
 		this.jsonTrial = jsonTrial;

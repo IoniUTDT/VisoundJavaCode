@@ -119,7 +119,6 @@ public class RunningSound {
 		// Cargamos el sonido
 		this.sound = this.trial.levelAssets.sound(this.id);
 		this.sound.play(); 
-		Gdx.app.debug(TAG, "Play!");
 		this.running = true;
 	}
 
@@ -130,7 +129,6 @@ public class RunningSound {
 			ends = TimeUtils.millis();
 			// Completa el log y lo agrega a la lista
 			soundLog.stopTime = TimeUtils.millis();
-			Gdx.app.debug(TAG, stopReason);
 			
 			soundLog.stopByUnselect = (stopReason=="unselect");
 			soundLog.stopByExit = (stopReason=="exit");
