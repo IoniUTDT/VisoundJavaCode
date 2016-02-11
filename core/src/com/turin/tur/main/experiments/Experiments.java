@@ -8,6 +8,15 @@ import com.badlogic.gdx.utils.Array;
  *
  */
 public class Experiments {
+
+	public interface Experiment {
+	
+		public void makeLevel();
+		public void makeResources();
+		public void exportLevels();
+		public int askNextTrial();
+		public void returnAnwer(boolean answer);
+	}
 	
 	static final String TAG = Experiments.class.getName();
 
@@ -29,7 +38,7 @@ public class Experiments {
 		public float separacionIncremento; // Incremento de la separacion de los segmentos
 		public int cantidadReferencias; // Cantidad de angulos tita (referencia)
 		public int cantidadSeparaciones; // Cantidad de saltos en la separacion de las rectas
-		public int cantidadDeltas; // Cantidad de delta titas que se generan en cada condicion de angulo de referencia y de separacion	
+		public int cantidadDeltas; // Cantidad de delta titas que se generan en cada condicion de angulo de referencia y de separacion	;
 		public String tagRefPos="+"; // Guarda el tag de la ref positiva
 		public String tagRefNeg="-"; // Guarda el tag de la ref negativa
 	}		
