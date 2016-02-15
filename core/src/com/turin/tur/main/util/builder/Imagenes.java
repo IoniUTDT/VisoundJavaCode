@@ -21,12 +21,17 @@ public class Imagenes {
 	public String comments;
 	public Array<Constants.Resources.Categorias> categories = new Array<Constants.Resources.Categorias>();
 	public Array<Linea> lineas = new Array<Linea>();
+	// Obsoleto?
 	public String idVinculo; // Sirve para identificar cuando varias imagenes pertenecen a un mismo subgrupo
+	// Obsoleto?
 	public int nivelDificultad = -1; // Define un nivel de dificultad, 1 es el mas facil. -1 implica que no esta catalogado por dificultad y 0 que es compatible con cualquier dificultad (en gral para usar en las referencias, por ej rectas paralelas con las que se compara)
-	public InfoConceptualParalelismo infoConceptualParalelismo = new InfoConceptualParalelismo();
+	// Obsoleto?
+	public InfoConceptualParalelismo infoConceptualParalelismo = new InfoConceptualParalelismo(); // Esto deberia estar obsoleto
+	
 	public ResourceInfo infoConceptualAngulos = new ResourceInfo();
+	public Object infoConceptual; 
 	String contenido = "";
-
+	
 	public Imagenes () {
 		contadorDeRecursos += 1;
 		this.resourceId.id = contadorDeRecursos;

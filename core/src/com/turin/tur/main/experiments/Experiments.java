@@ -9,13 +9,10 @@ import com.badlogic.gdx.utils.Array;
  */
 public class Experiments {
 
-	public interface Experiment {
-	
-		public void makeLevel();
-		public void makeResources();
-		public void exportLevels();
-		public int askNextTrial();
-		public void returnAnwer(boolean answer);
+	public static class LevelStatus {
+		String name;
+		int id;
+		boolean enable;
 	}
 	
 	static final String TAG = Experiments.class.getName();
