@@ -75,6 +75,7 @@ public class ResultsScreen extends AbstractGameScreen {
 		
 		boolean levelPass = true;
 		
+		/*
 		for (Significancia significancia:level.jsonLevel.significancias) {
 			
 			if (significancia.tipo==TIPOdeSIGNIFICANCIA.COMPLETO) {
@@ -129,6 +130,7 @@ public class ResultsScreen extends AbstractGameScreen {
 
 			fpsFont.setColor(1, 1, 1, 1); // white
 		}
+		*/
 		
 		x = cameraGUI.viewportWidth/2 - cameraGUI.viewportWidth/8;
 		y = cameraGUI.viewportHeight- cameraGUI.viewportHeight/8;

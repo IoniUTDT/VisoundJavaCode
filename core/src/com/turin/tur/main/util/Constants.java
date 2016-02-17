@@ -160,7 +160,9 @@ public class Constants {
 			Cuadrado(17),
 			Rombo(18),
 			Rotado(19),
-			SinRotar(20)
+			SinRotar(20),
+			Converge (21),
+			Diverge (22)
 			;
 
 			/*
@@ -200,6 +202,6 @@ public class Constants {
 			public static String resources = "experimentalsource/";
 		}
 
-		public static final int Reservados = 20;
+		public static final int Reservados = Resources.Categorias.values().length;
 	}
 }

@@ -399,13 +399,13 @@ public class UmbralAngulos {
 			// Ahora creamos el nivel
 			JsonLevel level = Builder.crearLevel();
 			level.tipoDeLevel = TIPOdeLEVEL.UMBRALANGULO;
-			level.angulosReferencia = angulosReferenciaElegidos;
+			// level.angulosReferencia = angulosReferenciaElegidos;
 			level.levelTitle = "";
 			for (int i=0; i<angulosReferenciaElegidos.size; i++) {
 				level.levelTitle = level.levelTitle + " R: "+angulosReferenciaElegidos.get(i);
 			}
-			level.randomTrialSort=false;
-			level.show = true;
+			// level.randomTrialSort=false;
+			// level.show = true;
 
 			// Agregamos la entrada del nivel en el index de trials
 			//this.info.indexs.idsTrialByLevelBySides.put(level.Id, new ArrayMap<Integer, ArrayMap<Integer, Integer>>());
@@ -456,13 +456,6 @@ public class UmbralAngulos {
 							cuadrante4.listaEstimulos.add(anguloOrdenable);
 						}
 						
-						/*
-						// Le cargamos la info del recurso estimulo
-						savedData = FileHelper.readFile(Resources.Paths.fullCurrentVersionPath + recurso.value + ".meta");
-						json = new Json();
-						json.setUsePrototypes(false);
-						trial.jsonEstimulo =  json.fromJson(JsonResourcesMetaData.class, savedData);
-						*/
 						level.jsonTrials.add(trial); 
 						
 					}
@@ -526,7 +519,7 @@ public class UmbralAngulos {
 			
 			this.info.indexs.resourcesMaptoArray();
 			//this.info.indexs.trialMaptoArray();
-			level.infoExpAngulos = this.info;
+			level.infoDinamica = this.info;
 			Builder.extract(level);
 			Builder.buildJsons(level);
 			this.info.indexs.resourcesArraytoMap();
@@ -631,24 +624,25 @@ public class UmbralAngulos {
 					
 					float Xcenter = Resources.Display.width/2;
 					float Ycenter = Resources.Display.height/2;
-					imagen.infoConceptualAngulos.direccionLado1 = angulo1;
-					imagen.infoConceptualAngulos.direccionLado2 = angulo2;
+					ResourceInfo infoConceptualAngulos = new ResourceInfo(); 
+					infoConceptualAngulos.direccionLado1 = angulo1;
+					infoConceptualAngulos.direccionLado2 = angulo2;
 					
 					// Agregamos al setup que el objeto creado tiene los angulos dados para facilitar la busqueda posterior
 					this.info.indexs.idsResourcesBySides.get(angulo1).put(angulo2, imagen.resourceId.id);
 					this.info.indexs.idsResourcesBySides.get(angulo2).put(angulo1, imagen.resourceId.id);
 					
 					// Clasificamos el angulo segun sea agudo recto o grave
-					imagen.infoConceptualAngulos.separacionAngular = deltaAngulo;
+					infoConceptualAngulos.separacionAngular = deltaAngulo;
 					if (deltaAngulo < 90) {
-						imagen.infoConceptualAngulos.categoriaAngulo = CategoriaAngulo.Agudo;
+						infoConceptualAngulos.categoriaAngulo = CategoriaAngulo.Agudo;
 						imagen.categories.add(Categorias.Agudo);
 					} else {
 						if (deltaAngulo > 90) {
-							imagen.infoConceptualAngulos.categoriaAngulo = CategoriaAngulo.Grave;
+							infoConceptualAngulos.categoriaAngulo = CategoriaAngulo.Grave;
 							imagen.categories.add(Categorias.Grave);
 						} else {
-							imagen.infoConceptualAngulos.categoriaAngulo = CategoriaAngulo.Recto;
+							infoConceptualAngulos.categoriaAngulo = CategoriaAngulo.Recto;
 							imagen.categories.add(Categorias.Recto);
 						}
 					}
@@ -675,36 +669,17 @@ public class UmbralAngulos {
 					// agregamos la info a la imagen
 					imagen.comments = "Imagen generada por secuencia automatica 'recursosAnguloAnalisisUmbral'.";
 					imagen.name = "Imagen de angulos generada automaticamente";
-					imagen.idVinculo = "";
+					// imagen.idVinculo = "";
 					imagen.categories.add(Categorias.Angulo);
+					imagen.infoConceptual = infoConceptualAngulos;
 					
 					imagen.toSVG();
-					// objetos.add(imagen); // aca hay que hacer que cree la imagen
 				}
 			}
 		}
 		// Guardamos el setup 
 		String path = Resources.Paths.currentVersionPath+"/extras/jsonSetupUmbralAngulos.meta";
 		Json json = new Json();
-		/*
-		json.setSerializer(ArrayMap.class, new Json.Serializer<ArrayMap>() {
-		      public void write (Json json, ArrayMap map, Class knownType) {
-		         Object[] keys = map.keys;
-		         Object[] values = map.values;
-		         json.writeObjectStart();
-		         for (int i = 0, n = map.size; i < n; i++)
-		            json.writeValue(keys[i].toString(), values[i]);
-		         json.writeObjectEnd();
-		      }
-		      public ArrayMap read(Json json, JsonValue jsonData, Class type) {
-				ArrayMap map = new ArrayMap();
-				for (int i = 0; i < jsonData.size; i++){
-					map.put(jsonData.get(i).name, jsonData.get(i));
-				}
-				return null;
-		      }
-		});
-		*/
 		this.info.indexs.resourcesMaptoArray();
 		// this.info.indexs.trialMaptoArray();
 		json.setUsePrototypes(false);

@@ -21,14 +21,8 @@ public class Imagenes {
 	public String comments;
 	public Array<Constants.Resources.Categorias> categories = new Array<Constants.Resources.Categorias>();
 	public Array<Linea> lineas = new Array<Linea>();
-	// Obsoleto?
-	public String idVinculo; // Sirve para identificar cuando varias imagenes pertenecen a un mismo subgrupo
-	// Obsoleto?
-	public int nivelDificultad = -1; // Define un nivel de dificultad, 1 es el mas facil. -1 implica que no esta catalogado por dificultad y 0 que es compatible con cualquier dificultad (en gral para usar en las referencias, por ej rectas paralelas con las que se compara)
-	// Obsoleto?
-	public InfoConceptualParalelismo infoConceptualParalelismo = new InfoConceptualParalelismo(); // Esto deberia estar obsoleto
-	
-	public ResourceInfo infoConceptualAngulos = new ResourceInfo();
+		
+	// public ResourceInfo infoConceptualAngulos = new ResourceInfo();
 	public Object infoConceptual; 
 	String contenido = "";
 	
@@ -75,10 +69,9 @@ public class Imagenes {
 		jsonMetaData.comments = this.comments;
 		jsonMetaData.categories = this.categories;
 		jsonMetaData.noSound = false;
-		jsonMetaData.idVinculo = this.idVinculo;
 		jsonMetaData.infoLineas = this.lineas;
-		jsonMetaData.infoConceptualParalelismo = this.infoConceptualParalelismo;
-		jsonMetaData.infoConceptualAngulos = this.infoConceptualAngulos;
+		jsonMetaData.infoConceptual = this.infoConceptual;
+		// jsonMetaData.infoConceptualAngulos = this.infoConceptualAngulos;
 		ExperimentalObject.JsonResourcesMetaData.CreateJsonMetaData(jsonMetaData, Resources.Paths.currentVersionPath);
 	}
 
@@ -93,10 +86,10 @@ public class Imagenes {
 		float y2;
 
 		public static class Radial {
-			public float Xcenter;
-			public float Ycenter;
-			public float angulo;
-			public float largo;
+			public double Xcenter;
+			public double Ycenter;
+			public double angulo;
+			public double largo;
 		}
 		
 		public void lineaFromRadial () {
@@ -107,16 +100,16 @@ public class Imagenes {
 
 			Vector2 V1 = new Vector2(1, 1);
 			Vector2 V2 = new Vector2(1, 1);
-			V1.setLength(radial.largo / 2);
-			V2.setLength(radial.largo / 2);
+			V1.setLength((float) (radial.largo / 2));
+			V2.setLength((float) (radial.largo / 2));
 			V1.setAngle(0);
 			V2.setAngle(180);
-			V1.rotate(radial.angulo);
-			V2.rotate(radial.angulo);
-			V1.sub(-radial.Xcenter, -radial.Ycenter); // Por alguna razon Vector2 no tiene la
+			V1.rotate((float) radial.angulo);
+			V2.rotate((float) radial.angulo);
+			V1.sub((float)-radial.Xcenter, (float)-radial.Ycenter); // Por alguna razon Vector2 no tiene la
 										// opcion de sumar pero side restar. Por
 										// eso le resto el negativo del punto del centro
-			V2.sub(-radial.Xcenter, -radial.Ycenter);
+			V2.sub((float)-radial.Xcenter, (float)-radial.Ycenter);
 			this.x1 = V1.x;
 			this.y1 = V1.y;
 			this.x2 = V2.x;

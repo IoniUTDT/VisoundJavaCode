@@ -27,7 +27,9 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.turin.tur.main.diseno.Level.JsonLevel;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.diseno.Trial.ParametrosSetupParalelismo;
+import com.turin.tur.main.experiments.Experiment;
 import com.turin.tur.main.experiments.UmbralAngulos;
+import com.turin.tur.main.experiments.UmbralParalelismo;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
 import com.turin.tur.main.util.Constants.Resources;
@@ -47,13 +49,13 @@ public class Builder {
 
 	static int contadorLevels = 0;
 
-	public static final int ResourceVersion = 132;
+	public static final int ResourceVersion = 136;
 	public static final int levelVersion = 28;
 	public static int levelVersionFinal;
-	public static final String AppVersion = "UmbralCompletoAngulos"; 
+	// public static final String AppVersion = "UmbralCompletoAngulos"; 
 	public static final boolean categorizar = false;
 	
-	static final Boolean makeLevels = false;
+	static final Boolean makeLevels = true;
 	static final Boolean makeResources = false;
 	
 
@@ -63,18 +65,23 @@ public class Builder {
 	
 	public void build() {
 
+		
 		UmbralAngulos experimento = new UmbralAngulos();
+		Experiment exp = new UmbralParalelismo();
+		
 		if (makeResources) {
-			experimento.generalBuilding();
+			//experimento.generalBuilding();
+			exp.makeResources();
 			System.exit(0);
 		}	
 		if (makeLevels) {
-			experimento.makeLevels();
+			//experimento.makeLevels();
+			exp.makeLevels();
 			System.exit(0);
 		}
-
+		
 	}
-
+ 
 	/**
 	 * Funcion que verifica que no haya recursos creados con la misma version que la que se quiere crear
 	 */
@@ -181,7 +188,7 @@ public class Builder {
 		// If resources already exported, the the folder was cleaned.
 		String path = Resources.Paths.finalPath + "/level" + level.Id + "/";
 		for (JsonTrial jsonTrial : level.jsonTrials) {
-			level.trials.add(jsonTrial.Id);
+			// level.trials.add(jsonTrial.Id);
 			Builder.CreateTrial(jsonTrial, path);
 			Builder.CreateTrial(jsonTrial, Builder.pathLevelsBackUp);
 		}
@@ -212,7 +219,7 @@ public class Builder {
 		// Crea un JsonLevel y aumenta en 1 el contador de niveles
 		contadorLevels += 1;
 		JsonLevel jsonLevel = new JsonLevel();
-		jsonLevel.appVersion = AppVersion;
+		// jsonLevel.appVersion = AppVersion;
 		jsonLevel.Id = contadorLevels;
 		jsonLevel.resourceVersion = ResourceVersion;
 		jsonLevel.levelVersion = levelVersionFinal;

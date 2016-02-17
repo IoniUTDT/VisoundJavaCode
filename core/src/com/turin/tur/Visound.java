@@ -25,8 +25,8 @@ public class Visound extends Game {
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 		
 		if ((buildResources) & (Gdx.app.getType() == ApplicationType.Desktop)) {
-			Experiment exp = new UmbralParalelismo();
-			exp.makeResources();
+			//Experiment exp = new UmbralParalelismo();
+			//exp.makeResources();
 			Builder builder = new Builder();
 			builder.build();
 		}

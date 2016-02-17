@@ -124,31 +124,31 @@ public class MenuScreen extends AbstractGameScreen {
 		Gdx.app.debug(TAG, ""+levelIteration.size);
 		for (final int levelIterator : levelIteration) {
 			Level level = new Level(levelIterator);
-			if (level.jsonLevel.show) { 
-				TextButton button = new TextButton(""+ level.levelTitle, skin, "default");
-				button.addListener(new ClickListener() {
-					@Override
-					public void clicked(InputEvent event, float x, float y) {
-						/*
-						if ((session.user.levelsCompleted.contains(levelIterator-1, false)) || (levelIterator==1)) {
-							game.setScreen(new LevelScreen(game,levelIterator, session));
-						}
-						*/
+			//if (level.jsonLevel.show) { 
+			TextButton button = new TextButton(""+ level.levelTitle, skin, "default");
+			button.addListener(new ClickListener() {
+				@Override
+				public void clicked(InputEvent event, float x, float y) {
+					/*
+					if ((session.user.levelsCompleted.contains(levelIterator-1, false)) || (levelIterator==1)) {
 						game.setScreen(new LevelScreen(game,levelIterator, session));
 					}
-				});
-				if (session.user.levelsCompleted.contains(levelIterator, false)) {
-					button.setColor(0, 1, 0, 1); // Green
-				} else {
-					if ((session.user.levelsCompleted.contains(levelIterator-1, false)) || (levelIterator==1)) {
-						button.setColor(1, 1, 0, 1); //Yellow
-					} else {
-						button.setColor(1, 0, 0, 1); //Red
-					}
+					*/
+					game.setScreen(new LevelScreen(game,levelIterator, session));
 				}
-				levelButtons.add(button);
-				Gdx.app.debug(TAG, "agregado boton" + button.getText());
+			});
+			if (session.user.levelsCompleted.contains(levelIterator, false)) {
+				button.setColor(0, 1, 0, 1); // Green
+			} else {
+				if ((session.user.levelsCompleted.contains(levelIterator-1, false)) || (levelIterator==1)) {
+					button.setColor(1, 1, 0, 1); //Yellow
+				} else {
+					button.setColor(1, 0, 0, 1); //Red
+				}
 			}
+			levelButtons.add(button);
+			Gdx.app.debug(TAG, "agregado boton" + button.getText());
+			//}
 		}
 		
 
