@@ -72,7 +72,8 @@ public class Constants {
 		 * diferentes opciones, que pueden ser imagenes especificas o imagenes que representen una categoria
 		 */
 		public enum TIPOdeTRIAL {
-			EJEMPLOS, TEST
+			ENTRENAMIENTO, // Este tipo de trial sirve para mostrar imagenes y cual es su sonido 
+			TEST // Este tipo de test sirve para mostrar un estimulo y pedir al usuario que elija (con o sin feedback)
 		}
 
 		public enum TIPOdeLEVEL {

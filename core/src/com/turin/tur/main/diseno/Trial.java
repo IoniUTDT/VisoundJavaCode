@@ -1,61 +1,43 @@
 package com.turin.tur.main.diseno;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
-import com.turin.tur.main.diseno.Boxes.AnswerBox;
+import com.turin.tur.main.diseno.Boxes.TestBox;
 import com.turin.tur.main.diseno.Boxes.Box;
 import com.turin.tur.main.diseno.Boxes.StimuliBox;
 import com.turin.tur.main.diseno.Boxes.TrainingBox;
-import com.turin.tur.main.diseno.Enviables.STATUS;
-import com.turin.tur.main.diseno.ExperimentalObject.JsonResourcesMetaData;
 import com.turin.tur.main.util.Constants;
-import com.turin.tur.main.util.Constants.Resources.Categorias;
-import com.turin.tur.main.util.builder.Builder;
-import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.LevelAsset;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
-import com.turin.tur.main.util.Constants.Resources;
 
 public class Trial {
 
-	public int Id; // Id q identifica al trial
-	public JsonTrial jsonTrial;
-
-	// objetos que se cargan en el load o al inicializar
-	public Array<ExperimentalObject> elementos = new Array<ExperimentalObject>();
-	public ExperimentalObject rtaCorrecta;
-	public Array<TrainingBox> trainigBoxes = new Array<TrainingBox>();
-	public Array<AnswerBox> answerBoxes = new Array<AnswerBox>();
-	public StimuliBox stimuliBox;
-	public Array<Box> allBox = new Array<Box>();
-	public Array<Integer> orden = new Array<Integer>();
-	private int levelId;
-
-	// Variable que tiene que ver con el estado del trial
-	public boolean trialCompleted = false;
-	public boolean alreadySelected = false; // indica si ya se elecciono algo o no
-	
-	// Variables que llevan el registro
-	public TrialLog log;
-	public RunningSound runningSound;
-	public LevelAsset levelAssets;
-	
-	// constantes
 	public static final String TAG = Trial.class.getName();
 
-	public Trial(int Id, int levelId, LevelAsset levelAssets) {
-		this.levelId = levelId;
-		this.Id = Id;
-		this.levelAssets = levelAssets;
-		initTrial(Id);
-		createElements();
+	public JsonTrial jsonTrial; // Toda la info del json del trial
+	private Array<ExperimentalObject> elementos = new Array<ExperimentalObject>(); // Esto debe ser cargado antes de ejecutarse la creacion de los elementos
+	public RunningSound runningSound; // Maneja el sonido
+	private int Id; // Id q identifica al trial 
+	private ExperimentalObject rtaCorrecta;
+	public Array<TrainingBox> trainigBoxes = new Array<TrainingBox>();
+	public Array<TestBox> testBoxes = new Array<TestBox>();
+	public StimuliBox stimuliBox;
+	public Array<Box> allBox = new Array<Box>();
+	private boolean alreadyAsked = false; // almacena si ya se respondio el trial o no 
+	private boolean lastAnswer; // Guarda si se marco la opcion correcta en un trial en caso de que corresponda
+	
+	public Trial (Array<ExperimentalObject> elementos, JsonTrial jsonTrial, LevelAsset asset) {
+		this.elementos = elementos;
+		this.jsonTrial = jsonTrial;
+		this.runningSound = new RunningSound(asset);
+		this.configureElements();
 	}
-
-	private void createElements() {
+	
+	public void configureElements () {
+		Array<Integer> orden = new Array<Integer>();
 		// Crea un orden random o no segun corresponda
 		for (int i = 0; i < this.jsonTrial.distribucion.distribucion.length; i++) {
 			orden.add(i);
@@ -63,9 +45,8 @@ public class Trial {
 		if (this.jsonTrial.randomSort) {
 			orden.shuffle();
 		}
-
 		// Crea las cajas segun corresponda a su tipo
-		if (this.jsonTrial.modo == Constants.Diseno.TIPOdeTRIAL.EJEMPLOS) {
+		if (this.jsonTrial.modo == Constants.Diseno.TIPOdeTRIAL.ENTRENAMIENTO) {
 			for (ExperimentalObject elemento : this.elementos) {
 				TrainingBox box = new TrainingBox(elemento);
 				box.SetPosition(jsonTrial.distribucion.X(orden.get(this.elementos.indexOf(elemento, true))),
@@ -75,62 +56,54 @@ public class Trial {
 		}
 		if (this.jsonTrial.modo == Constants.Diseno.TIPOdeTRIAL.TEST){
 			for (ExperimentalObject elemento : this.elementos) {
-				AnswerBox box = new AnswerBox(elemento,this.jsonTrial.feedback);
+				TestBox box = new TestBox(elemento,this.jsonTrial.feedback);
 				box.SetPosition(jsonTrial.distribucion.X(orden.get(this.elementos.indexOf(elemento, true))) + Constants.Box.SHIFT_MODO_SELECCIONAR,
 						jsonTrial.distribucion.Y(orden.get(this.elementos.indexOf(elemento, true))));
-				this.answerBoxes.add(box);
+				this.testBoxes.add(box);
 			}
+			// Crea el box de estimulo
 			stimuliBox = new StimuliBox(rtaCorrecta);
 			stimuliBox.SetPosition(0 + Constants.Box.SHIFT_ESTIMULO_MODO_SELECCIONAR, 0);
 			allBox.add(stimuliBox);
 		}
 		// Junta todas las cajas en una unica lista para que funcionen los
 		// update, etc.
-		for (Box box : answerBoxes) {
+		for (Box box : testBoxes) {
 			allBox.add(box);
 		}
 		for (Box box : trainigBoxes) {
 			allBox.add(box);
 		}
 	}
-
-	private void initTrial(int Id) {
-		// Carga la info en bruto
-		JsonTrial jsonTrial = JsonTrial.LoadTrial(Id,this.levelId); 
-		this.jsonTrial = jsonTrial;
-		// Carga la info a partir de los Ids
-		for (int elemento : this.jsonTrial.elementosId) {
-			this.elementos.add(new ExperimentalObject(elemento, this.levelAssets, this.levelId));
-		}
-		
-		boolean rtaEntreOpciones = false;
-		for (int i: this.jsonTrial.elementosId) {
-			if (this.jsonTrial.rtaCorrectaId == i){
-				rtaEntreOpciones = true;
-			}
-		}
-		if ((this.jsonTrial.rtaRandom) && (rtaEntreOpciones)){ // Pone una random solo si esta seteada como random y la rta esta entre las figuras
-			this.rtaCorrecta = new ExperimentalObject(this.jsonTrial.elementosId[MathUtils.random(this.jsonTrial.elementosId.length-1)], this.levelAssets, this.levelId);
-		} else {
-			this.rtaCorrecta = new ExperimentalObject(this.jsonTrial.rtaCorrectaId, this.levelAssets, this.levelId);
-		}
-		
-		if (new ExperimentalObject(this.jsonTrial.rtaCorrectaId, this.levelAssets, this.levelId).categorias.contains(Categorias.Nada, false)) { // Pone si o si una respuesta random si la rta es nada.
-			this.rtaCorrecta = new ExperimentalObject(this.jsonTrial.elementosId[MathUtils.random(this.jsonTrial.elementosId.length-1)], this.levelAssets, this.levelId);
-		}
-		// Crea el log que se carga en el controller
-		this.log = new TrialLog();
-	}
-
+	
 	public void update(float deltaTime) {
 		// Actualiza las boxes
 		for (Box box : allBox) {
 			box.update(deltaTime, this);
 		}
 	}
-
+	
+	/**
+	 * Esta funcion devuelve si el trial esta completo o no. En caso de ser un trial de entrenamiento se asume que esta completo cuando todos los boxes se tocaron.
+	 * Si no es un trial de entrenamiento simplemente se fija si la marca del trial completo
+	 * @return
+	 */
 	public boolean checkTrialCompleted() { // Se encarga de ver si ya se completo trial o no
-		if (this.jsonTrial.modo == TIPOdeTRIAL.EJEMPLOS) {
+		// nos fijamos si hay feedback actuando
+		if (this.jsonTrial.modo == TIPOdeTRIAL.ENTRENAMIENTO) {
+			if (this.runningSound.running) {
+				return false;
+			}
+		}
+		if (this.jsonTrial.modo == TIPOdeTRIAL.TEST) {
+			for (TestBox box: this.testBoxes) {
+				if (box.givinFeedback) {
+					return false;
+				}
+			}
+		}
+		// En caso de que no haya feedback nos fijamos si se cumplio el objetivo del trial.
+		if (this.jsonTrial.modo == TIPOdeTRIAL.ENTRENAMIENTO) {
 			boolean allCheck = true;
 			for (TrainingBox box : trainigBoxes) {
 				if (box.alreadySelected == false) {
@@ -138,24 +111,22 @@ public class Trial {
 				}
 			}
 			if (allCheck) {
-				trialCompleted = true;
+				return true;
 			} else {
-				trialCompleted = false;
+				return false;
+			}
+		} 
+		if (this.jsonTrial.modo == TIPOdeTRIAL.TEST) {
+			if (this.alreadyAsked) {
+				return true;
+			} else {
+				return false;
 			}
 		}
-		//Agrega al log el estado de trial
-		this.log.trialCompleted=trialCompleted;
-		return trialCompleted;
+		// By default return false
+		return false;
 	}
 
-	// Seccion encargada de guardar y cargar info de trials
-
-	// devuelve la info de la metadata
-
-	public static class ParametrosSetupParalelismo {
-		public int R;
-		public int D;
-	}
 	
 	public static class JsonTrial {
 		public String caption; // Texto que se muestra debajo
@@ -172,24 +143,211 @@ public class Trial {
 		public boolean randomSort;
 		public int resourceVersion;
 		public String identificador;
-		public ParametrosSetupParalelismo parametrosParalelismo;
-		public JsonResourcesMetaData jsonEstimulo;
+		// public ParametrosSetupParalelismo parametrosParalelismo;
+		// public JsonResourcesMetaData jsonEstimulo;
 		
-
-		public static JsonTrial LoadTrial(int Id, int levelId) {
-			String savedData = FileHelper.readFile(Resources.Paths.resources + "level" + levelId + "/" + "trial" + Id + ".meta");
-
-			if (!savedData.isEmpty()) {
-				Json json = new Json();
-				json.setUsePrototypes(false);
-				return json.fromJson(JsonTrial.class, savedData);
-			}
-			Gdx.app.error(TAG, "No se a podido encontrar la info del objeto experimental " + Id);
-			return null;
-		}
 	}
 
 	
+	public static class RunningSound {
+		
+		private static final String TAG = RunningSound.class.getName();
+		
+		public ExperimentalObject contenido; // Todo el objeto que se esta reproduciendo
+		public Sound sound; // Elemento de sonido
+		public boolean running = false; // Si se esta reproduciendo o no
+		//public float start = -1; // Cuando comienza la reproduccion del ultimo sonido. Un "-1" equivale a no tener datos.
+		//public float ends = -1; // Cuando termina la reproduccion del ultimo sonido. Un "-1" equivale a no tener datos.
+		public int id; // El id que identifica el recurso del ultimo sonido
+		public long instance; // instancia que identifica cada reproduccion unequivocamente
+		// public Array<Integer> secuenceId = new Array<Integer>(); // secuencia de los sonidos reproducidos.
+		// public SoundLog soundLog = new SoundLog();
+		// public String stopReason = "";
+		private LevelAsset assets;
+		
+		// Info para el update
+		public NEXT action = NEXT.NADA;
+		public float playTime; 
+		public ExperimentalObject nextContenido;
+		
+
+		public RunningSound (LevelAsset assets) {
+			this.assets = assets;
+		}
+		
+		public void update(float deltaTime) {
+			if (this.running) {
+				this.playTime = this.playTime + deltaTime;
+			} 
+			if (this.playTime > Constants.Box.DURACION_REPRODUCCION_PREDETERMINADA) {
+				this.stop();
+			}
+			if (this.action == NEXT.PLAY) {
+				if (Gdx.graphics.getFramesPerSecond()>40) {
+					if (nextContenido!=null) {
+						this.play();
+						this.playTime =0;
+						this.action = NEXT.NADA;
+					}
+				}
+			}
+		}
+		
+		public void play() {
+			// Primer detiene cualquier reproduccion previa 
+			if (running) {
+				stop();
+			}
+			// Prepara la info en la clase
+			contenido = nextContenido;
+			id = contenido.resourceId.id;
+			instance = TimeUtils.millis();
+
+			// Cargamos el sonido
+			this.sound = this.assets.sound(this.id);
+			this.sound.play(); 
+			this.running = true;
+		}
+
+		public void stop() {
+			if (running) {
+				
+				// Detiene el sonido
+				sound.stop();
+				running = false;
+			}
+		}
+		
+		public enum NEXT {
+			PLAY,STOP,NADA;
+		}
+	}
+	
+	
+	// Info heredada
+	// private LevelAsset levelAssets;
+	// private int levelId;
+	
+	// Info del sonido
+	
+	// objetos que se cargan en el load o al inicializar
+	// public Array<ExperimentalObject> elementos = new Array<ExperimentalObject>();
+	// public Array<Integer> orden = new Array<Integer>();
+
+
+	// Variable que tiene que ver con el estado del trial
+	// public boolean alreadySelected = false; // indica si ya se elecciono algo o no
+	
+	// Variables que llevan el registro
+	// public TrialLog log;
+	
+	
+	// constantes
+	
+	/*
+	public void loadTrialElements() {
+		
+		// Carga la info a partir de los Ids
+		for (int elemento : this.jsonTrial.elementosId) {
+			this.elementos.add(new ExperimentalObject(elemento, this.levelAssets, this.levelId));
+		}
+		
+		boolean rtaEntreOpciones = false;
+		for (int i: this.jsonTrial.elementosId) {
+			if (this.jsonTrial.rtaCorrectaId == i){
+				rtaEntreOpciones = true;
+			}
+		}
+		if ((this.jsonTrial.rtaRandom) && (rtaEntreOpciones)){ // Pone una random solo si esta seteada como random y la rta esta entre las figuras
+			this.rtaCorrecta = new ExperimentalObject(this.jsonTrial.elementosId[MathUtils.random(this.jsonTrial.elementosId.length-1)], this.levelAssets, level);
+		} else {
+			this.rtaCorrecta = new ExperimentalObject(this.jsonTrial.rtaCorrectaId, this.levelAssets, level);
+		}
+		
+		if (new ExperimentalObject(this.jsonTrial.rtaCorrectaId, this.levelAssets, level).categorias.contains(Categorias.Nada, false)) { // Pone si o si una respuesta random si la rta es nada.
+			this.rtaCorrecta = new ExperimentalObject(this.jsonTrial.elementosId[MathUtils.random(this.jsonTrial.elementosId.length-1)], this.levelAssets, level);
+		}
+		// Crea el log que se carga en el controller
+		// this.log = new TrialLog();
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/*
+	public Trial(int Id, int levelId, LevelAsset levelAssets) {
+		// this.levelId = levelId;
+		// this.Id = Id;
+		// this.levelAssets = levelAssets;
+		initTrial(Id);
+		createElements();
+	}
+	*/
+
+		// Seccion encargada de guardar y cargar info de trials
+
+	// devuelve la info de la metadata
+
+	/*
+	public static class ParametrosSetupParalelismo {
+		public int R;
+		public int D;
+	}
+	*/
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/*
 	// Seccion de logs
 	public static class TouchLog {
 		// Todas las cosas se deberian generar al mismo tiempo
@@ -212,7 +370,8 @@ public class Trial {
 		public long sessionInstance; // Registra la session en que se toco
 		public JsonResourcesMetaData jsonMetaDataTouched; // Guarda la info completa de la meta data del objeto tocado
 	}
-
+	*/
+	/*
 	public static class SoundLog {
 		// Variables que se crean con el evento
 		public long soundInstance; // identificador de la instancia de sonido en particular
@@ -234,7 +393,9 @@ public class Trial {
 		public long sessionInstance; // Indica la instancia de session en que se reproduce este sonido
 		public long levelInstance; // Indica la instancia de level en que se reproduce este sonido
 	}
-
+	*/
+	
+	/*
 	public static class TrialLog {
 		// Info del envio
 		public STATUS status=STATUS.CREADO;
@@ -279,12 +440,33 @@ public class Trial {
 			this.trialInstance = TimeUtils.millis();
 		}		
 	}
+	*/
 	
 	public static class ResourceId {
 		public int id;
 		public int resourceVersion;
 	}
+
+
+	public boolean lastAnswer() {
+		return this.lastAnswer;
+	}
+
+	/*
+	 * Metodo que se ejecuta al tocar un box (ya sea Entrenamiento o Test)
+	 */
+	public void boxSelected(Box boxTocada) {
+		if (boxTocada.getClass() == TestBox.class) {
+			
+		}
+		
+		if (boxTocada.getClass() == TrainingBox.class) {
+			
+		}
+		 
+	}
 	
+	/*
 	public void newLog(Session session, Level levelInfo) {
 		// Carga la info general del contexto
 		this.log.levelInstance = levelInfo.levelLog.levelInstance;
@@ -321,4 +503,5 @@ public class Trial {
 		this.log.jsonTrial = this.jsonTrial;
 		this.log.jsonMetaDataRta = JsonResourcesMetaData.Load(this.rtaCorrecta.resourceId.id, this.levelId);
 	}
+	*/
 }

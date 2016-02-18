@@ -15,34 +15,34 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.turin.tur.main.diseno.Level;
-import com.turin.tur.main.diseno.Level.Significancia;
-import com.turin.tur.main.diseno.Level.TIPOdeSIGNIFICANCIA;
 import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.diseno.User;
-import com.turin.tur.main.util.Assets;
+import com.turin.tur.main.experiments.Experiment;
 import com.turin.tur.main.util.Constants;
 
 public class ResultsScreen extends AbstractGameScreen {
 
 	private static final String TAG = ResultsScreen.class.getName();
 
-	public User user;
-	public Session session;
-	public Level level;
+	private User user;
+	private Session session;
+	private Level level;
+	private Experiment exp;
 	
-	public SpriteBatch batch;
-	public OrthographicCamera cameraGUI;
+	private SpriteBatch batch;
+	private OrthographicCamera cameraGUI;
 	
-	int page=1; // Maneja el numero de pagina que se muestra
+	private int page=1; // Maneja el numero de pagina que se muestra
 	
 	// Elementos graficos
 	private Skin skin;
 	private Stage stage;
 	private Table table;
 		
-	public ResultsScreen(Game game, Session session, Level level) {
+	public ResultsScreen(Game game, Session session, Level level, Experiment exp) {
 		super(game);
-		this.session=session;
+		this.exp = exp;
+		this.session = session;
 		this.user = this.session.user;
 		this.level = level;
 	}
@@ -54,14 +54,14 @@ public class ResultsScreen extends AbstractGameScreen {
 		stage.act(deltaTime);
 		stage.draw();
 
-		guiRender();
+		// guiRender();
 		
 	}
 
 	private void guiRender() {
 		batch.setProjectionMatrix(cameraGUI.combined);
 		batch.begin();
-		renderPage();
+		// renderPage();
 		batch.end();
 	}
 
@@ -73,7 +73,7 @@ public class ResultsScreen extends AbstractGameScreen {
 		fpsFont.getData().setScale(Constants.factorEscala()/2);
 		fpsFont.draw(batch, "Ha completado el nivel.", x, y);
 		
-		boolean levelPass = true;
+		// boolean levelPass = true;
 		
 		/*
 		for (Significancia significancia:level.jsonLevel.significancias) {
@@ -132,17 +132,17 @@ public class ResultsScreen extends AbstractGameScreen {
 		}
 		*/
 		
-		x = cameraGUI.viewportWidth/2 - cameraGUI.viewportWidth/8;
-		y = cameraGUI.viewportHeight- cameraGUI.viewportHeight/8;
-		if (levelPass) {
-			fpsFont.setColor(0, 1, 0, 1); // green
-			fpsFont.draw(batch, "Nivel superado", x, y);
-			
-		} else {
-			fpsFont.setColor(1, 0, 0, 1); // red
-			fpsFont.draw(batch, "Nivel no superado", x, y);
-		}
-		fpsFont.setColor(1, 1, 1, 1); // white	
+		//x = cameraGUI.viewportWidth/2 - cameraGUI.viewportWidth/8;
+		//y = cameraGUI.viewportHeight- cameraGUI.viewportHeight/8;
+		// if (levelPass) {
+		//	fpsFont.setColor(0, 1, 0, 1); // green
+		//	fpsFont.draw(batch, "Nivel superado", x, y);
+		//	
+		// } else {
+		//	fpsFont.setColor(1, 0, 0, 1); // red
+		//	fpsFont.draw(batch, "Nivel no superado", x, y);
+		//}
+		// fpsFont.setColor(1, 1, 1, 1); // white	
 
 	}
 
@@ -175,7 +175,7 @@ public class ResultsScreen extends AbstractGameScreen {
 		button.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				game.setScreen(new MenuScreen(game, session));
+				game.setScreen(new MenuScreen(game, session, exp));
 			}
 		});
 		

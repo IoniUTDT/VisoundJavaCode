@@ -1,11 +1,11 @@
 package com.turin.tur.main.diseno;
-
+/*
 import com.badlogic.gdx.Gdx;
 import com.turin.tur.main.diseno.Trial.TrialLog;
+/*
+public class TrialEnviablesOld extends Enviables {
 
-public class TrialEnviables extends Enviables {
-
-
+/*
 	// constantes
 	public static final String TAG = TrialEnviables.class.getName();
 	
@@ -34,3 +34,5 @@ public class TrialEnviables extends Enviables {
 		}
 	}
 }
+	
+	*/

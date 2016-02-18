@@ -1,18 +1,17 @@
 package com.turin.tur.main.diseno;
-
+/*
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.turin.tur.main.diseno.Enviables.STATUS;
-import com.turin.tur.main.diseno.Trial.TrialLog;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Internet;
 
 
 
-public class TrialLogHistory {
-
+public class TrialLogHistoryOld {
+/*
 	
 	// constantes
 	public static final String TAG = TrialLogHistory.class.getName();
@@ -93,3 +92,4 @@ public class TrialLogHistory {
 	}
 
 }
+*/

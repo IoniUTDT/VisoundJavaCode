@@ -8,19 +8,17 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
-import com.turin.tur.main.diseno.Boxes.AnswerBox;
+import com.turin.tur.main.diseno.Boxes.TestBox;
 import com.turin.tur.main.diseno.Boxes.StimuliBox;
 import com.turin.tur.main.diseno.ExperimentalObject.JsonResourcesMetaData;
 import com.turin.tur.main.diseno.Level;
-import com.turin.tur.main.diseno.Level.Significancia;
-import com.turin.tur.main.diseno.Level.TIPOdeSIGNIFICANCIA;
 import com.turin.tur.main.diseno.LevelInterfaz;
 import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.diseno.TouchInfo;
 import com.turin.tur.main.diseno.Trial;
+import com.turin.tur.main.diseno.Trial.RunningSound;
 import com.turin.tur.main.diseno.Boxes.Box;
-import com.turin.tur.main.diseno.RunningSound;
-import com.turin.tur.main.diseno.Trial.TouchLog;
+import com.turin.tur.main.experiments.Experiment;
 import com.turin.tur.main.experiments.UmbralAngulos;
 import com.turin.tur.main.screens.ResultsScreen;
 import com.turin.tur.main.util.CameraHelper;
@@ -28,86 +26,95 @@ import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.LevelAsset;
 import com.turin.tur.main.util.Constants.Resources.Categorias;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeLEVEL;
-import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
 
 public class LevelController implements InputProcessor {
 
+	private static final String TAG = LevelController.class.getName();
+	
 	// Cosas relacionadas con la interfaz grafica
 	public OrthographicCamera camera;
-	public static final String TAG = LevelController.class.getName();
 	public CameraHelper cameraHelper;
 
-	// Cosas relacionadas con los elementos del juego
-	public Array<TouchInfo> touchSecuence = new Array<TouchInfo>();
-	public Trial trial;
+	// Copia de variables globales
 	public LevelInterfaz levelInterfaz;
 	private Game game;
 	private Level level; //Informacion del nivel cargado
-
-	// Variables que manejan la dinamica de flujo de informacion en el control del nivel
-	public boolean nextTrialPending = false; // Genera la señal de que hay que cambiar de trial (para esperar a que finalicen cuestiones de animacion) 
-	public float timeInLevel = 0; // Tiempo general dentro del nivel.
-	public float timeInTrial = 0; // Tiempo desde que se inicalizo el ultimo trial.
-	boolean elementoSeleccionado = false; // Sin seleccion
+	private Experiment exp;
 	public Session session;
 	public LevelAsset levelAssets;
-	public UmbralAngulos umbralAngulos;
+
+	
+	// Cosas relacionadas con los elementos del juego
+	public Array<TouchInfo> touchSecuence = new Array<TouchInfo>();
+	public Trial trial;
+	public boolean nextTrialPending = false; // Genera la señal de que hay que cambiar de trial (para esperar a que finalicen cuestiones de animacion) 
+	// boolean elementoSeleccionado = false; // Sin seleccion
+	
+	// Variables que manejan la dinamica de flujo de informacion en el control del nivel
+	// public float timeInLevel = 0; // Tiempo general dentro del nivel.
+	// public float timeInTrial = 0; // Tiempo desde que se inicalizo el ultimo trial.
+	// public UmbralAngulos umbralAngulos;
+
+
 
 		
-	public LevelController(Game game, int levelNumber, int trialNumber, Session session, LevelAsset levelAssets) {
-		// Inicia los logs
-		
+	public LevelController(Game game, Level level, Session session, LevelAsset levelAssets, Experiment exp) {
+	
 		this.game = game; // Hereda la info del game (cosa de ventanas y eso)
 		this.session = session; // Hereda la info de la session. Que registra en que session esta
 		this.levelAssets = levelAssets;
-		this.level = new Level(levelNumber); // Crea el nivel
-		//if (level.jsonLevel.randomTrialSort) {
-		//	level.secuenciaTrailsId.shuffle();
-		//}
+		this.exp = exp;
+		this.level = level; 
 		// Agrega la info del log del level asociada a la creacion
-		this.level.levelLog.sessionId = this.session.sessionLog.id;
-		this.level.levelLog.idUser = this.session.user.id;
+		//this.level.levelLog.sessionId = this.session.sessionLog.id; //TODO revisar logs!
+		//this.level.levelLog.idUser = this.session.user.id;
 		this.initCamera();
+		
+		// Selecciona el trial que corresponda
+		this.trial = this.exp.askTrial();
+		// this.initTrial();
+		
 		// Inicia en el trial de maxima señal si esta en modo umbral
-		if (this.level.jsonLevel.tipoDeLevel == TIPOdeLEVEL.UMBRALPARALELISMO) {
+		// if (this.level.jsonLevel.tipoDeLevel == TIPOdeLEVEL.UMBRALPARALELISMO) {
 			// Esto tiene que ser todo reecho
 			/*
 			AnalisisUmbralParalelismo analisis = this.level.jsonLevel.analisisUmbral;
 			int nextTrialPosition = findTrialId (analisis.indiceAnguloRefrencia, analisis.proximoNivelCurvaSuperior);
 			this.level.activeTrialPosition = nextTrialPosition;
 			*/
-		}
-		if (this.level.jsonLevel.tipoDeLevel == TIPOdeLEVEL.UMBRALANGULO) {
+		// }
+		// if (this.level.jsonLevel.tipoDeLevel == TIPOdeLEVEL.UMBRALANGULO) {
 			
 			// Inicializamos el control del experimento
-			this.umbralAngulos = new UmbralAngulos();
-			this.umbralAngulos.info = (UmbralAngulos.Info) this.level.jsonLevel.infoDinamica;
+		//	this.umbralAngulos = new UmbralAngulos();
+		//	this.umbralAngulos.info = (UmbralAngulos.Info) this.level.jsonLevel.infoDinamica;
 			// Asociamos la info al log del nivel
-			this.level.levelLog.advance = this.umbralAngulos.info.advance;
-			this.level.levelLog.setup = this.umbralAngulos.info.setup;
-			this.level.levelLog.nombre = this.umbralAngulos.info.nombre;
+		//	this.level.levelLog.advance = this.umbralAngulos.info.advance;
+		//	this.level.levelLog.setup = this.umbralAngulos.info.setup;
+		//	this.level.levelLog.nombre = this.umbralAngulos.info.nombre;
 			// Usamos la clase analisis para elegir el angulo q hay que mostrar
-			this.umbralAngulos.askNext();
-			this.level.activeTrial = this.umbralAngulos.next.idTrial;
-		}
-		this.initTrial();
+		//	this.umbralAngulos.askNext();
+		//	this.level.activeTrial = this.umbralAngulos.next.idTrial;
+		//}
 	}
 
+	/*
 	private void initTrial() {
-		trial = new Trial(this.level.activeTrial, this.level.Id, this.levelAssets);
-		trial.runningSound = new RunningSound(this.trial);
+		// trial = new Trial(this.level.activeTrial, this.level.Id, this.levelAssets);
+		// trial.runningSound = new RunningSound(this.trial);
 		
 		// Carga la info general del trial al log
-		trial.newLog(this.session, this.level);
+		// trial.newLog(this.session, this.level);
 		
 		// Carga la interfaz
-		this.levelInterfaz = new LevelInterfaz(this.level, this.level.activeTrialPosition, trial, this.umbralAngulos);
-		timeInTrial = 0;
+		// this.levelInterfaz = new LevelInterfaz(this.level, this.trial, this.exp);
+		// timeInTrial = 0;
 
 		// Registra el evento de la creacion del trial
-		this.level.levelLog.trialsVisited.add(trial.Id);
+		// this.level.levelLog.trialsVisited.add(trial.Id);
 	}
-
+	*/
+	
 	private void initCamera() {
 		Gdx.input.setInputProcessor(this);
 		camera = new OrthographicCamera(Constants.VIEWPORT_WIDTH,
@@ -116,23 +123,28 @@ public class LevelController implements InputProcessor {
 	}
 
 	public void update(float deltaTime) {
-
-		
 		// Actualiza el trial
 		trial.update(deltaTime);
 
 		// actualiza cosas generales
 		cameraHelper.update(deltaTime);
-		timeInLevel = timeInLevel + deltaTime;
-		timeInTrial = timeInTrial + deltaTime;
+		//timeInLevel = timeInLevel + deltaTime;
+		//timeInTrial = timeInTrial + deltaTime;
 
 		// Procesa cambios de trial si los hay pendientes
-		if (trial.trialCompleted) {
-			this.nextTrialPending = true;
+		if (trial.checkTrialCompleted()) {
+			this.exp.returnAnswer(this.trial.lastAnswer());
+			if (this.exp.askCompleted()) {
+				this.goToResults();
+			}
+			this.trial = this.exp.askTrial();
+			//this.initTrial();
+			//this.nextTrialPending = true;
 		}
-		this.tryChangeTrial();
+		//this.tryChangeTrial();
 	}
-
+	
+	/*
 	private void tryChangeTrial() {
 		if (this.nextTrialPending) {
 			boolean wait = false;
@@ -208,29 +220,30 @@ public class LevelController implements InputProcessor {
 						break;
 						*/
 						
-					case UMBRALANGULO:
+					//case UMBRALANGULO:
 						
-						this.umbralAngulos.answer(this.trial.log.touchLog.peek().isTrue);
-						if (this.umbralAngulos.levelCompleted) {
-							completeLevel();
-						}
-						this.umbralAngulos.askNext();
-						this.level.activeTrial = this.umbralAngulos.next.idTrial;
-						this.initTrial();
-						break;
+						//this.umbralAngulos.answer(this.trial.log.touchLog.peek().isTrue);
+						//if (this.umbralAngulos.levelCompleted) {
+						//	completeLevel();
+						//}
+						//this.umbralAngulos.askNext();
+						//this.level.activeTrial = this.umbralAngulos.next.idTrial;
+						//this.initTrial();
+						//break;
 					
-					default:
-						if (isLastTrial()) {
-							completeLevel();
-						} else {
-							this.level.activeTrialPosition += 1;
-							this.initTrial();
-						}
-						break;
-				}
-			}
-		}
-	}
+					//default:
+						//if (isLastTrial()) {
+							//completeLevel();
+						//} else {
+							//this.level.activeTrialPosition += 1;
+							//this.initTrial();
+						//}
+						//break;
+				//}
+			//}
+		//}
+	//}
+	
 	
 	/*
 	private int findTrialId(int anguloReferencia, int nivelDificultad) {
@@ -252,10 +265,10 @@ public class LevelController implements InputProcessor {
 	}
 	*/
 	
-	private void completeLevel() {
+	//private void completeLevel() {
 		// Indica y guarda en la info del usuario que completo este nivel
 		// Se fija si le fue bien
-		boolean pass = true;
+		//boolean pass = true;
 		/*
 		for (Significancia significancia: level.jsonLevel.significancias) {
 			if (significancia.tipo == TIPOdeSIGNIFICANCIA.COMPLETO) {
@@ -281,23 +294,25 @@ public class LevelController implements InputProcessor {
 			}
 		}
 		*/
-		if (pass) {
-			this.session.user.levelsCompleted.add(level.Id);
-		}
+		//if (pass) {
+			//this.session.user.levelsCompleted.add(level.Id);
+		//}
 		
 		
-		this.session.user.save();
+		//this.session.user.save();
 		// Indica en el log del level que se completo
-		this.level.levelLog.levelCompleted = true;
-		this.goToResults();
-	}
+		//this.level.levelLog.levelCompleted = true;
+		//this.goToResults();
+	//}
 
+	/*
 	private boolean isLastTrial() {
 		if (level.activeTrialPosition + 1 == level.secuenciaTrailsId.size) {
 			return true;
 		}
 		return false;
 	}
+	*/
 
 	@Override
 	public boolean keyDown(int keycode) {
@@ -310,8 +325,9 @@ public class LevelController implements InputProcessor {
 		// Back to Menu
 		if (keycode == Keys.ESCAPE || keycode == Keys.BACK) {
 			// Indica en el log del level que se completo
-			this.level.levelLog.levelCompleted = false;
-			this.logExitTrial();
+			// this.level.levelLog.levelCompleted = false;
+			// this.logExitTrial();
+			this.exp.interrupt();
 			goToResults();
 		}
 		return false;
@@ -320,22 +336,22 @@ public class LevelController implements InputProcessor {
 	
 	private void goToResults() {
 		// Registra que se sale al menu principal en los logs
-		this.level.levelLog.exitTrialId = trial.Id;
-		this.level.levelLog.exitTrialPosition = this.level.activeTrialPosition;
-		this.level.levelLog.timeExit = TimeUtils.millis();
+		//this.level.levelLog.exitTrialId = trial.Id;
+		//this.level.levelLog.exitTrialPosition = this.level.activeTrialPosition;
+		//this.level.levelLog.timeExit = TimeUtils.millis();
 
 		// Guarda en el registro general de log de levels el log de esta instanciacion del nivel e intenta enviarlo por internet.
-		Gdx.app.debug(TAG, "Enviando log del trial");
+		// Gdx.app.debug(TAG, "Enviando log del trial");
 		
-		session.levelLogHistory.append(this.level.levelLog);
+		//session.levelLogHistory.append(this.level.levelLog);
 		//session.trialLogHistory.append(this.trial.log);
 
 		// Marca en el sonido que se salio
-		trial.runningSound.stopReason="exit";
+		//trial.runningSound.stopReason="exit";
 		trial.runningSound.stop();
 		
 		//Aca reemplazamos esta linea por ir al menu de resultados
-		game.setScreen(new ResultsScreen(game,this.session, this.level));
+		game.setScreen(new ResultsScreen(game, this.session, this.level, this.exp));
 		//game.setScreen(new MenuScreen(game, this.session));
 	}
 	
@@ -354,66 +370,92 @@ public class LevelController implements InputProcessor {
 			touch.coordScreen = new Vector3(screenX, screenY, 0);
 			// calcula el toque en el juego 
 			touch.coordGame = camera.unproject(touch.coordScreen.cpy()); // PREGUNTA: si no le pongo el copy, toma como el mismo vector y sobreescribe el coordScreen. RARO
+			
 			// procesa la info del toque en funcion de otros elementos del juego
-			procesarToque(touch);
+			
+			boolean elementoTocado = false;
+			Box boxTocada = null;
+			// se fija si se toco alguna imagen training
+			for (Box box : this.trial.trainigBoxes) {
+				if (box.spr.getBoundingRectangle().contains(touch.coordGame.x, touch.coordGame.y)) {
+					elementoTocado = true;
+					boxTocada = box;
+				}
+			}
+			// se fija si se toco alguna imagen answer
+			for (Box box : this.trial.testBoxes) {
+				if (box.spr.getBoundingRectangle().contains(touch.coordGame.x, touch.coordGame.y)) {
+					elementoTocado = true;
+					boxTocada = box;
+				}
+			}
+			
+			if (elementoTocado) {
+				this.trial.boxSelected(boxTocada);
+			}
+			
+			// procesarToque(touch);
 			// agrega el toque a la secuencia de toques acumulados
-			touchSecuence.add(touch);
+			// touchSecuence.add(touch);
 		}
 		return false;
 	}
 
-	private void procesarToque(TouchInfo touchData) {
+	//private void procesarToque(TouchInfo touchData) {
 
-		elementoSeleccionado = false; // Sin seleccion
+		//boolean elementoTocado = false; // Sin seleccion
 		// Carga el ultimo elemento seleccionado
+		/*
 		if (touchSecuence.size > 0) {
 			touchData.lastTouchBox = touchSecuence.peek().thisTouchBox;
 		}
-
+		*/
+		
 		// se fija si se toco alguna imagen training
-		for (Box box : trial.trainigBoxes) {
-			if (box.spr.getBoundingRectangle().contains(touchData.coordGame.x, touchData.coordGame.y)) {
-				cargarInfoDelTouch(box, touchData);
-				elementoSeleccionado = true;
-			}
-		}
+		//for (Box box : this.trial.trainigBoxes) {
+			//if (box.spr.getBoundingRectangle().contains(touchData.coordGame.x, touchData.coordGame.y)) {
+				// cargarInfoDelTouch(box, touchData);
+				//elementoTocado = true;
+			//}
+		//}
 
 		// se fija si se toco alguna imagen answer
-		for (Box box : trial.answerBoxes) {
-			if (box.spr.getBoundingRectangle().contains(touchData.coordGame.x, touchData.coordGame.y)) {
-				cargarInfoDelTouch(box, touchData);
-				elementoSeleccionado = true;
-			}
-		}
+		//for (Box box : this.trial.answerBoxes) {
+			//if (box.spr.getBoundingRectangle().contains(touchData.coordGame.x, touchData.coordGame.y)) {
+				// cargarInfoDelTouch(box, touchData);
+				//elementoTocado = true;
+			//}
+		//}
 
 		// Actua si no se toco nada
-		if (!elementoSeleccionado) {
-			touchData.elementTouched = false;
-		}
+		//if (!elementoTocado) {
+			//touchData.elementTouched = false;
+		//}
 
 		// genera los eventos correspondientes al toque
 
 		// anula la seleccion del evento previo
-		if (touchData.lastTouchBox != null) {
-			touchData.lastTouchBox.unSelect(trial);
-		}
+		//if (touchData.lastTouchBox != null) {
+			//touchData.lastTouchBox.unSelect(trial);
+		//}
 
 		// Actua si hay elemento tocado
-		if (touchData.elementTouched) {
+		//if (touchData.elementTouched) {
 			// Se fija si es la respuesta correcta y actua en consecuencia
-			this.verifyAnswer(touchData);
+			//this.verifyAnswer(touchData);
 			// Crea el log del toque
-			this.logTouch(touchData);
+			// this.logTouch(touchData);
 			// Activa el elemento tocado
-			touchData.thisTouchBox.select(touchData,trial);
+			//touchData.thisTouchBox.select(touchData,trial);
 			// Se fija si se completo el nivel
-			trial.checkTrialCompleted();
-		}
+			//trial.checkTrialCompleted();
+		//}
 
 
 
-	}
+	//}
 
+	/*
 	private void logTouch(TouchInfo touchData) {
 		// Agrega al log el elemento tocado
 		trial.log.resourcesIdSelected.add(touchData.thisTouchBox.contenido.resourceId);
@@ -436,7 +478,7 @@ public class LevelController implements InputProcessor {
 		} else {
 			touchLog.isStimuli = false;
 		}
-		touchLog.timeSinceTrialStarts = timeInTrial;
+		// touchLog.timeSinceTrialStarts = timeInTrial;
 		// Carga la info relacionada al sonido que esta en ejecucion
 		touchLog.soundInstance = trial.runningSound.instance;
 		touchLog.soundRunning = trial.runningSound.running;
@@ -446,10 +488,11 @@ public class LevelController implements InputProcessor {
 		touchLog.soundIdSecuenceInTrial = new Array<Integer>(trial.runningSound.secuenceId);
 		trial.log.touchLog.add(touchLog);
 	}
-
-	private void verifyAnswer(TouchInfo touchData) {
-		Boolean correcta = false;
-		if (this.level.jsonLevel.tipoDeLevel == TIPOdeLEVEL.UMBRALPARALELISMO) {
+	*/
+	
+	//private void verifyAnswer(TouchInfo touchData) {
+		//Boolean correcta = false;
+		//if (this.level.jsonLevel.tipoDeLevel == TIPOdeLEVEL.UMBRALPARALELISMO) {
 			
 			/*
 			// Verfica si se toco la opcion correcta o no.
@@ -460,7 +503,7 @@ public class LevelController implements InputProcessor {
 			}
 			*/
 			
-		} else {
+		//} else {
 			
 			// revisa si se acerto a la respuesta o no en caso de ser un test trial. 
 			//if (trial.jsonTrial.modo == TIPOdeTRIAL.TEST) {
@@ -482,23 +525,24 @@ public class LevelController implements InputProcessor {
 			//			}
 			//		}
 			//	}
-		}
-		if (this.trial.jsonTrial.feedback) { // Evita que se pase de nivel si esta activado el feedback
-			if (correcta) { // Significa q se selecciono la opcion correcta
-				touchData.thisTouchBox.answer = true;
-				this.nextTrialPending = true;
-			}
-		} else {
-			if (correcta) { // Significa q se selecciono la opcion correcta
-				touchData.thisTouchBox.answer = true;
-			}
-			this.nextTrialPending = true;
-		}
-		if (!this.trial.alreadySelected) { // Marca como que ya se selecciono algo despues de haber contado las cosas correctas y demas
-			this.trial.alreadySelected=true;		
-		}
-	}
+		//}
+		//if (this.trial.jsonTrial.feedback) { // Evita que se pase de nivel si esta activado el feedback
+			//if (correcta) { // Significa q se selecciono la opcion correcta
+				//touchData.thisTouchBox.answer = true;
+				//this.nextTrialPending = true;
+			//}
+		//} else {
+			//if (correcta) { // Significa q se selecciono la opcion correcta
+				//touchData.thisTouchBox.answer = true;
+			//}
+			//this.nextTrialPending = true;
+		//}
+		//if (!this.trial.alreadySelected) { // Marca como que ya se selecciono algo despues de haber contado las cosas correctas y demas
+			//this.trial.alreadySelected=true;		
+		//}
+	//}
 
+	/*
 	private void logExitTrial() {
 		// Agrega al log que termino el trial
 		trial.log.timeExitTrial = TimeUtils.millis();
@@ -510,13 +554,16 @@ public class LevelController implements InputProcessor {
 			session.trialLogHistory.append(trial.log);
 		}
 	}
-
+	*/
+	
+	/*
 	private void cargarInfoDelTouch(Box box, TouchInfo thisTouch) {
 		// carga la info en el touch
 		thisTouch.elementTouched = true;
 		thisTouch.thisTouchBox = box;
 		thisTouch.experimentalObjectTouch = box.contenido;
 	}
+	*/
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {

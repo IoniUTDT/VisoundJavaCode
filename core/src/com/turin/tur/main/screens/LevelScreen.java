@@ -4,7 +4,9 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.turin.tur.main.diseno.Session;
-import com.turin.tur.main.diseno.RunningSound.NEXT;
+import com.turin.tur.main.diseno.Trial.RunningSound.NEXT;
+import com.turin.tur.main.experiments.Experiment;
+import com.turin.tur.main.diseno.Level;
 import com.turin.tur.main.logic.LevelController;
 import com.turin.tur.main.logic.LevelRenderer;
 import com.turin.tur.main.util.LevelAsset;
@@ -18,19 +20,20 @@ public class LevelScreen extends AbstractGameScreen  {
 	private LevelController levelController;
 	private LevelRenderer levelRenderer;
 	private LevelAsset levelAssets;
+	private Experiment exp;
 	
 	// Variables del level
 	private int levelNumber;
-	
 	private boolean paused;
-
-	public Session session;
+	private Session session;
 	
-	public LevelScreen (Game game, int level, Session session) {
+	
+	public LevelScreen (Game game, int level, Session session, Experiment exp) {
 		super(game);
+		this.exp = exp;
 		this.session = session;
 		this.levelNumber=level;
-		this.levelAssets = new LevelAsset (level);
+		// this.levelAssets = new LevelAsset (level);
 	}
 
 	@Override
@@ -59,8 +62,9 @@ public class LevelScreen extends AbstractGameScreen  {
 	@Override
 	public void show () {
 		this.levelAssets = new LevelAsset (this.levelNumber);
-	    levelController = new LevelController(game, this.levelNumber, 0, this.session, this.levelAssets);
-	    levelRenderer = new LevelRenderer(levelController);
+		Level level = new Level(levelNumber);
+	    this.levelController = new LevelController(game, level, this.session, this.levelAssets, exp);
+	    this.levelRenderer = new LevelRenderer(levelController);
 		Gdx.input.setCatchBackKey(true);
 	}
 
@@ -81,7 +85,6 @@ public class LevelScreen extends AbstractGameScreen  {
 	@Override
 	public void resume () {
 		super.resume();
-		// this.levelAssets = new LevelAsset (this.levelNumber);
 		this.levelController.trial.runningSound.action = NEXT.PLAY;
 		// Only called on Android!
 		paused = false;

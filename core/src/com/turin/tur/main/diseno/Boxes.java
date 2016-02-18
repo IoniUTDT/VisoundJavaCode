@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.turin.tur.main.diseno.RunningSound.NEXT;
+import com.turin.tur.main.diseno.Trial.RunningSound.NEXT;
 import com.turin.tur.main.util.Assets;
 import com.turin.tur.main.util.Constants;
 
@@ -30,7 +30,7 @@ public abstract class Boxes {
 		
 	
 		// Variables especificas de cada tipo pero que estan en la clase general porque se llaman desde afuera
-		public boolean answer=false; // Resultado de la respuesta
+		// public boolean answer=false; // Resultado de la respuesta
 		
 		public void render(SpriteBatch batch, Trial trial) {
 			// Render the main content of the box
@@ -47,7 +47,7 @@ public abstract class Boxes {
 			
 		protected abstract void specificRender (SpriteBatch batch, Trial trial);
 		protected abstract void update(float deltaTime, Trial trial);
-		public abstract void select(TouchInfo touchData, Trial trial);
+		public abstract void select(Trial trial);
 		public abstract void unSelect(Trial trial);
 		
 		public void SetPosition(float xCenter, float yCenter) {
@@ -57,6 +57,11 @@ public abstract class Boxes {
 
 	}
 	
+	/**
+	 * Boxes pensados para realizar entrenamiento. La idea es que el usuario las toque y se reproduzca el sonido asociado.
+	 * @author ionatan
+	 *
+	 */
 	public static class TrainingBox extends Box {
 	
 		// Variables utiles para las cajas que son reproducibles
@@ -93,12 +98,14 @@ public abstract class Boxes {
 		protected void specificRender (SpriteBatch batch, Trial trial) {
 			// Render the animation of the box
 			if (trial.runningSound.running) {
-				soundAnimationSpr.setSize(Constants.Box.TAMANO_CONTORNO_X,Constants.Box.TAMANO_CONTORNO_Y);
-				float x = posicionCenter.x - Constants.Box.TAMANO/2 - Constants.Box.TAMANO_CONTORNO_X /2;
-				float y = posicionCenter.y - Constants.Box.TAMANO/2 - Constants.Box.TAMANO_CONTORNO_Y;
-				float xShift = Constants.Box.TAMANO * trial.runningSound.playTime / soundDuracionReproduccion;
-				soundAnimationSpr.setPosition(x + xShift, y);
-				soundAnimationSpr.draw(batch);
+				if (trial.runningSound.contenido == this.contenido) { // Esto funciona bien si el objeto cargado en el running proviene exactamente del mismo lugar que el cargado en el box. Hay que tener cuidado que si se repite contenido en dos boxes, sean instancias diferentes.
+					soundAnimationSpr.setSize(Constants.Box.TAMANO_CONTORNO_X,Constants.Box.TAMANO_CONTORNO_Y);
+					float x = posicionCenter.x - Constants.Box.TAMANO/2 - Constants.Box.TAMANO_CONTORNO_X /2;
+					float y = posicionCenter.y - Constants.Box.TAMANO/2 - Constants.Box.TAMANO_CONTORNO_Y;
+					float xShift = Constants.Box.TAMANO * trial.runningSound.playTime / soundDuracionReproduccion;
+					soundAnimationSpr.setPosition(x + xShift, y);
+					soundAnimationSpr.draw(batch);
+				}
 			}
 		}
 
@@ -106,7 +113,7 @@ public abstract class Boxes {
 		public void update(float deltaTime, Trial trial) {
 			if (trial.runningSound.running) {
 				if (trial.runningSound.playTime > this.soundDuracionReproduccion) {
-					trial.runningSound.stopReason = "end";
+					// trial.runningSound.stopReason = "end";
 					this.unSelect(trial);
 				}
 			}
@@ -122,7 +129,7 @@ public abstract class Boxes {
 		}
 		
 		@Override
-		public void select(TouchInfo touchData, Trial trial) {
+		public void select(Trial trial) {
 //			Gdx.app.debug(TAG, "Ha seleccionado la imagen " + this.contenido.resourceId.id);
 			this.alreadySelected = true;
 			if (!this.contenido.noSound) {
@@ -133,18 +140,19 @@ public abstract class Boxes {
 		}
 	}
 		
-	public static class AnswerBox extends Box {
+	public static class TestBox extends Box {
 
-		private float answerAnimationAdvance = 0; // Avance el la animacion de respuesta
+		private float answerAnimationTime = 0; // Avance el la animacion de respuesta
 		private Sprite answerUsedSprite; // Imagen con que se muestra la respuesta 
 		private Sprite answerSprTrue; // Imagen para respuestas verdaderas
 		private Sprite answerSprFalse; // Imagen para respuestas falsas
-		public boolean answerActive;
-		public boolean feedback;
+		public boolean givinFeedback;
+		public boolean giveFeedback;
+		public boolean answerCorrect;
 		
-		public AnswerBox (ExperimentalObject contenido,boolean feedback){
+		public TestBox (ExperimentalObject contenido,boolean feedback){
 			// Carga cosas relacionadas al contenido
-			this.feedback = feedback;
+			this.giveFeedback = feedback;
 			this.contenido = contenido;
 			this.posicionCenter = new Vector2(0, 0);
 			this.spr = this.contenido.imagen;
@@ -156,9 +164,9 @@ public abstract class Boxes {
 
 		@Override
 		public void update(float deltaTime, Trial trial) {
-			this.answerAnimationAdvance += deltaTime;
-			if (answerAnimationAdvance > Constants.Box.ANIMATION_ANSWER_TIME) {
-				this.answerActive = false;
+			this.answerAnimationTime += deltaTime;
+			if (answerAnimationTime > Constants.Box.ANIMATION_ANSWER_TIME) {
+				this.givinFeedback = false;
 			}
 		}
 		
@@ -184,30 +192,29 @@ public abstract class Boxes {
 		}
 
 		@Override
-		public void select(TouchInfo touchData, Trial trial){
+		public void select(Trial trial){
 //			Gdx.app.debug(TAG, "Ha seleccionado la imagen " + this.contenido.resourceId.id);
-			if (this.feedback) {
-				this.answerActive = true;
-				this.answerAnimationAdvance = 0;
+			if (this.giveFeedback) {
+				this.givinFeedback = true;
+				this.answerAnimationTime = 0;
 			}
 		}
 		
 		@Override
 		public void unSelect(Trial trial) {
 //			Gdx.app.debug(TAG, "Ha deseleccionado la imagen " + this.contenido.resourceId.id);
-			this.answerActive = false;
-			this.answerAnimationAdvance = 0;
+			this.givinFeedback = false;
 		}
 		
 		@Override
 		protected void specificRender(SpriteBatch batch, Trial trial) {
-			if (this.answerActive) {this.contourRender(batch);}
+			if (this.givinFeedback) {this.contourRender(batch);}
 		}
 		
 		private void contourRender(SpriteBatch batch) {
 			float x;
 			float y;
-			if (this.answer) {
+			if (this.answerCorrect) {
 				answerUsedSprite = answerSprTrue;
 			} else {
 				answerUsedSprite = answerSprFalse;
@@ -274,20 +281,15 @@ public abstract class Boxes {
 	public static class StimuliBox extends Box {
 		
 		private float delayAutoreproducir = Constants.Box.DELAY_ESTIMULO_MODO_SELECCIONAR;
-		// private float stimuliAvanceReproduccion; // Avance en la reproduccion del estimulo (incluye el tiempo entre loops)
-		// private float stimuliDuracionReproduccion; // Tiempo total que se supone que dura el sonido
 		private Sprite stimuliAnimationSpr; // Sprite para la animacion del sonido 
-		// private boolean drawStimuli; // Variable que determina si se debe dibujar o no (cuando llega al fin del sonido deba de dibujar)
-
-		public StimuliBox (ExperimentalObject contenido) {
-			
+		
+		public StimuliBox (ExperimentalObject contenido) {	
 			this.contenido = contenido;
 			this.posicionCenter = new Vector2(0, 0);
 			this.spr = new Sprite (Assets.imagenes.stimuliLogo);
 			this.createSoundAnimationResources();
 		}
 
-		
 		@Override
 		protected void specificRender(SpriteBatch batch, Trial trial) {
 			if (trial.runningSound.running) {
@@ -300,14 +302,13 @@ public abstract class Boxes {
 			}
 		}
 
-		
 		@Override
 		protected void update(float deltaTime, Trial trial) {
 			if (!this.contenido.noSound) {
 				if (!trial.runningSound.running) {
 					this.delayAutoreproducir = this.delayAutoreproducir + deltaTime;
 				}
-				if (this.delayAutoreproducir > Constants.Box.DELAY_ESTIMULO_MODO_SELECCIONAR) {
+				if (this.delayAutoreproducir > Constants.Box.DELAY_ESTIMULO_MODO_SELECCIONAR) { //TODO cambiar nombre a esta constante
 					trial.runningSound.action = NEXT.PLAY;
 					trial.runningSound.nextContenido = this.contenido;
 					this.delayAutoreproducir = 0;
@@ -316,7 +317,7 @@ public abstract class Boxes {
 		}
 
 		@Override
-		public void select(TouchInfo touchData, Trial trial) {} // No hace nada
+		public void select(Trial trial) {} // No hace nada
 
 		@Override
 		public void unSelect(Trial trial) {} // No hace nada

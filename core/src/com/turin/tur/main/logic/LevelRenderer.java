@@ -37,10 +37,12 @@ public class LevelRenderer implements Disposable {
 		
 	}
 
+	/*
 	private void renderInterfaz(SpriteBatch batch) {
 		//levelController.levelInterfaz.render(batch);
 	}
-
+	*/
+	
 	private void renderGui(SpriteBatch batch) { 
 		batch.setProjectionMatrix(cameraGUI.combined);
 		batch.begin();
@@ -59,7 +61,7 @@ public class LevelRenderer implements Disposable {
 			box.render(batch, levelController.trial);
 		}
 		
-		renderInterfaz(batch);
+		// renderInterfaz(batch);
 		
 		batch.end();
 		

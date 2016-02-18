@@ -14,15 +14,15 @@ public class Session {
 	public User user;
 	public int numberOfLevels;
 	public int nextLevel;
-	public SessionLog sessionLog;
-	public SessionLogHistory sessionLogHistory;
-	public LevelLogHistory levelLogHistory;
-	public TrialLogHistory trialLogHistory;
+	// public SessionLog sessionLog;
+	// public SessionLogHistory sessionLogHistory;
+	// public LevelLogHistory levelLogHistory;
+	// public TrialLogHistory trialLogHistory;
 	
 
 	public Session() {
-		levelLogHistory = new LevelLogHistory();
-		trialLogHistory = new TrialLogHistory();
+		// levelLogHistory = new LevelLogHistory();
+		// trialLogHistory = new TrialLogHistory();
 		Internet.Check();
 		loadUser();
 		initSession();
@@ -49,10 +49,10 @@ public class Session {
 
 	private void initSession() {
 		// Crea la session
-		this.sessionLog = new SessionLog();
-		this.sessionLog.userID = this.user.id;
-		sessionLogHistory = new SessionLogHistory();
-		sessionLogHistory.append(this.sessionLog);
+		// this.sessionLog = new SessionLog();
+		// this.sessionLog.userID = this.user.id;
+		// sessionLogHistory = new SessionLogHistory();
+		// sessionLogHistory.append(this.sessionLog);
 	}
 
 	private void loadUser() {

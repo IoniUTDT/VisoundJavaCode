@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.turin.tur.main.experiments.Experiment;
 import com.turin.tur.main.experiments.UmbralAngulos;
 import com.turin.tur.main.util.Assets;
 import com.turin.tur.main.util.Constants;
@@ -14,12 +15,11 @@ public class LevelInterfaz {
 	
 	// private static final String TAG = LevelInterfaz.class.getName();
 	private Level levelInfo;   
-	// private int trialNumber; // Numero de trial que esta activo
 	private Trial trial;
-	private UmbralAngulos umbralAngulos;
+	private Experiment exp;
 	
-	public LevelInterfaz (Level levelInfo, int trialNumber, Trial trial, UmbralAngulos umbralAngulos){
-		this.umbralAngulos = umbralAngulos;
+	public LevelInterfaz (Level levelInfo, Trial trial, Experiment exp){
+		this.exp = exp;
 		this.trial = trial;
 		this.levelInfo = levelInfo;		
 	}
@@ -56,7 +56,7 @@ public class LevelInterfaz {
 		//Assets.instance.fonts.defaultFont.draw(batch, "Convergencia cuandrante 3: "+ this.levelInfo.levelLog.analisisActivo.convergencia(2), cameraGUI.viewportWidth*3/5, cameraGUI.viewportHeight*18/20);
 		//Assets.instance.fonts.defaultFont.draw(batch, "Convergencia cuandrante 4: "+ this.levelInfo.levelLog.analisisActivo.convergencia(3), cameraGUI.viewportWidth*3/5, cameraGUI.viewportHeight*19/20);
 		
-		Assets.fonts.defaultFont.draw(batch, "Numero de trials maximos restantes: " + ((umbralAngulos.info.advance.convergencias.size * umbralAngulos.info.setup.numeroMaximoDeTrialsXCuadrante) - umbralAngulos.numeroDeTrialsRealizados), cameraGUI.viewportWidth*2/5, cameraGUI.viewportHeight*15/20);
+		//Assets.fonts.defaultFont.draw(batch, "Numero de trials maximos restantes: " + ((umbralAngulos.info.advance.convergencias.size * umbralAngulos.info.setup.numeroMaximoDeTrialsXCuadrante) - umbralAngulos.numeroDeTrialsRealizados), cameraGUI.viewportWidth*2/5, cameraGUI.viewportHeight*15/20);
 		//Assets.instance.fonts.defaultFont.draw(batch, "Angulo de referencia: " + this.levelInfo.levelLog.analisisActivo.referencia(), cameraGUI.viewportWidth*2/5, cameraGUI.viewportHeight*14/20);
 		//Assets.instance.fonts.defaultFont.draw(batch, "Trial: " + this.trial.Id, cameraGUI.viewportWidth*2/5, cameraGUI.viewportHeight*13/20);
 		//Assets.instance.fonts.defaultFont.draw(batch, "Nivel: " + this.levelInfo.levelLog.analisisActivo.next.nivel(), cameraGUI.viewportWidth*2/5, cameraGUI.viewportHeight*12/20);

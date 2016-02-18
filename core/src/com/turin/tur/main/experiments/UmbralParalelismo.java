@@ -7,9 +7,9 @@ import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.main.diseno.Level.JsonLevel;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
+import com.turin.tur.main.experiments.Experiments.ExpSettings;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
-import com.turin.tur.main.experiments.UmbralAngulos.AnguloOrdenable;
-import com.turin.tur.main.util.Constants;
+import com.turin.tur.main.experiments.Experiments.TIPOdeEXPERIMENTO;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeLEVEL;
@@ -27,6 +27,7 @@ public class UmbralParalelismo implements Experiment {
 	
 	private Setup setup;
 	private String expName = "UmbralParalelismo";
+	private ExpSettings expSettings;
 	
 	private void makeSetup () {
 		// Creamos el setup
@@ -68,7 +69,7 @@ public class UmbralParalelismo implements Experiment {
 	private static class Setup {
 		Array<Double> angulosReferencia = new Array<Double>();
 		Array<Double> desviacionesAngulares = new Array<Double>();
-		Array<Estimulo> index = new Array<Estimulo>();
+		Array<Estimulo> estimulos = new Array<Estimulo>();
 	}
 	
 	private static class Estimulo implements Comparable<Estimulo> {
@@ -80,7 +81,7 @@ public class UmbralParalelismo implements Experiment {
 		
 		@Override
 		public int compareTo(Estimulo o) {
-			return Double.valueOf(desviacion).compareTo(o.desviacion);
+			return Integer.valueOf(nivelSenal).compareTo(o.nivelSenal);
 		}
 	}
 	
@@ -151,7 +152,7 @@ public class UmbralParalelismo implements Experiment {
 		estimulo.idResource = imagen.resourceId.id;
 		estimulo.desviacion = info.desviacion;
 		estimulo.referencia = info.referencia;
-		this.setup.index.add(estimulo);
+		this.setup.estimulos.add(estimulo);
 	}
 	
 	private class ImageInfo {
@@ -166,7 +167,7 @@ public class UmbralParalelismo implements Experiment {
 	@Override
 	public void makeResources() {
 		// Verificamos la version
-		// Builder.verifyResourcesVersion();
+		Builder.verifyResourcesVersion();
 		// Inicializamos el setup segun parametros
 		this.makeSetup();
 		// Creamos los textos
@@ -186,17 +187,18 @@ public class UmbralParalelismo implements Experiment {
 
 	private ArrayMap<Double, ArrayMap<Double, Estimulo>> indexToMap () {
 		ArrayMap<Double, ArrayMap<Double, Estimulo>> map = new ArrayMap<Double, ArrayMap<Double, Estimulo>>();
-		for (Estimulo index : this.setup.index) {
-			if (!map.containsKey(index.referencia)) {
-				map.put(index.referencia, new ArrayMap<Double, Estimulo>());
+		for (Estimulo estimulo : this.setup.estimulos) {
+			if (!map.containsKey(estimulo.referencia)) {
+				map.put(estimulo.referencia, new ArrayMap<Double, Estimulo>());
 			}
-			map.get(index.referencia).put(index.desviacion, index);
+			map.get(estimulo.referencia).put(estimulo.desviacion, estimulo);
 		}
 		return map;
 	}
 	
 	@Override
 	public void makeLevels() {
+		
 		// Hacemos tareas de revision y limpieza
 		Builder.verifyLevelVersion();
 		Builder.verifyResources();
@@ -209,6 +211,9 @@ public class UmbralParalelismo implements Experiment {
 		json.setUsePrototypes(false);
 		this.setup = json.fromJson(UmbralParalelismo.Setup.class, savedData);
 
+		// Creamos el setting del experimento
+		this.expSettings = new ExpSettings();
+		this.expSettings.tipoDeExperimento = TIPOdeEXPERIMENTO.UmbralParalelismo;
 		
 		// Categorizamos los recursos en un mapa
 		ArrayMap<Double, ArrayMap<Double, Estimulo>> map = this.indexToMap();
@@ -218,7 +223,7 @@ public class UmbralParalelismo implements Experiment {
 			// Creamos el nivel
 			JsonLevel level = Builder.crearLevel();
 			level.tipoDeLevel = TIPOdeLEVEL.UMBRALPARALELISMO;
-			level.levelTitle = "Umbral Angulos R: " + referencia; 
+			level.levelTitle = "R: " + referencia; 
 			
 			// Buscamos la inclinacion minima para la referencia que sea visible (porque la sensibilidad auditiva puede ser superior a la visual!). A ojo una desviacion de 2.5 grados se percibe.
 			// Es probable que esto se pueda hacer mas eficiente
@@ -234,6 +239,8 @@ public class UmbralParalelismo implements Experiment {
 			// Creamos el elemento de la info dinamica que corresponde al nivel
 			DinamicaExperimento dinamicaPos = new DinamicaExperimento();
 			DinamicaExperimento dinamicaNeg = new DinamicaExperimento();
+			dinamicaPos.identificador = "Acercamiento Positivo";
+			dinamicaNeg.identificador = "Acercamiento Negativo";
 			
 			// Creamos los trials (uno para cada desviacion)
 			for (double desviacion : this.setup.desviacionesAngulares) {
@@ -249,17 +256,55 @@ public class UmbralParalelismo implements Experiment {
 				}
 				// agregamos el trial al index
 				map.get(referencia).get(desviacion).idTrial = trial.Id;
-				dinamica.listaEstimulos.add(map.get(referencia).get(desviacion));
+				if (desviacion > 0) {
+					dinamicaPos.listaEstimulos.add(map.get(referencia).get(desviacion));
+				}
+				if (desviacion < 0) {
+					dinamicaNeg.listaEstimulos.add(map.get(referencia).get(desviacion));
+				}
+				level.jsonTrials.add(trial); 
+			}
+			// Ordenamos las listas de estimulos segun dificultad decreciente y la numeramos 
+			dinamicaPos.listaEstimulos.sort();
+			dinamicaNeg.listaEstimulos.sort();
+			dinamicaNeg.listaEstimulos.reverse();
+			for (int i=0; i<dinamicaPos.listaEstimulos.size; i++) {
+				dinamicaPos.listaEstimulos.get(i).nivelSenal=i;
+			}
+			for (int i=0; i<dinamicaNeg.listaEstimulos.size; i++) {
+				dinamicaNeg.listaEstimulos.get(i).nivelSenal=i;
 			}
 			
 			// Retocamos la info dinamica 
-			dinamica.anguloDeReferencia = referencia;
-			dinamica.convergenciaAlcanzada = false;
-			dinamica.nivelEstimulo = dinamica.listaEstimulos.size - 1;
-			dinamica.saltosActivos = dinamica.listaEstimulos.size / 5;
-			// Ordenamos los estimulos por nivel de señal y cargamos la señal.
-			dinamica.listaEstimulos.sort();
+			dinamicaPos.anguloDeReferencia = referencia;
+			dinamicaPos.anguloDeReferencia = referencia;
+			dinamicaPos.convergenciaAlcanzada = false;
+			dinamicaPos.convergenciaAlcanzada = false;
+			dinamicaPos.nivelEstimulo = dinamicaPos.listaEstimulos.size - 1;
+			dinamicaPos.nivelEstimulo = dinamicaPos.listaEstimulos.size - 1;
+			dinamicaPos.saltosActivos = dinamicaPos.listaEstimulos.size / 5;
+			dinamicaPos.saltosActivos = dinamicaPos.listaEstimulos.size / 5;
+			
+			// Agrupamos todas las convergencias del nivel en un array y lo mandamos a la variable object del level
+			Array<DinamicaExperimento> convergencias = new Array<DinamicaExperimento>();
+			level.infoDinamica = convergencias;
+			// Extraemos los niveles y los recursos a la carpeta que corresponda 
+			Builder.extract(level);
+			Builder.buildJsons(level);
+			
+			// Agregamos el nivel al setting
+			LevelStatus levelStatus = new LevelStatus();
+			levelStatus.enabled = true;
+			levelStatus.id = level.Id;
+			levelStatus.name = level.levelTitle;
+			levelStatus.alreadyPlayed = false;
+			this.expSettings.levels.add(levelStatus);
 		}
+		// Creamos un archivo con la info del experimento
+		String path2 = Resources.Paths.finalPath + "/" + this.getClass().getSimpleName() + ".settings/";
+		Json json2 = new Json();
+		json2.setUsePrototypes(false);
+		FileHelper.writeFile(path2, json.toJson(this.expSettings));
 	}
 
 	/**
@@ -268,22 +313,17 @@ public class UmbralParalelismo implements Experiment {
 	 *
 	 */
 	private static class DinamicaExperimento {
-		public int nivelEstimulo; // nivel de señal enviada
-		public int saltosActivos; // nivel del proximo salto (en numero de niveles de señal)
-		public boolean convergenciaAlcanzada=false;
-		public Array<Estimulo> historial = new Array<Estimulo>(); // Se almacena la info de lo que va pasando
-		public Array<Estimulo> listaEstimulos = new Array<Estimulo>(); // Lista de estimulos ordenados de menor a mayor dificultad
-		public double anguloDeReferencia;
-		public float ultimaSD;
-		public float ultimoMEAN;		
+		private String identificador; // Algo para indentificar cual convergencia es cual. 
+		private int nivelEstimulo; // nivel de señal enviada
+		private int saltosActivos; // nivel del proximo salto (en numero de niveles de señal)
+		private boolean convergenciaAlcanzada=false;
+		private Array<Estimulo> historial = new Array<Estimulo>(); // Se almacena la info de lo que va pasando
+		private Array<Estimulo> listaEstimulos = new Array<Estimulo>(); // Lista de estimulos ordenados de menor a mayor dificultad
+		private double anguloDeReferencia;
+		private float ultimaSD;
+		private float ultimoMEAN;		
 	}
 	
-	@Override
-	public void exportLevels() {
-		// TODO Auto-generated method stub
-		
-	}
-
 	@Override
 	public Trial askTrial() {
 		// TODO Auto-generated method stub
@@ -298,8 +338,11 @@ public class UmbralParalelismo implements Experiment {
 
 	@Override
 	public void initGame() {
-		// TODO Auto-generated method stub
-		
+		// Cargamos la info del experimento
+		String path = Resources.Paths.finalPath + "/" + this.getClass().getSimpleName() + ".settings/";
+		String savedData = FileHelper.readLocalFile(path);
+		Json json = new Json();
+		this.expSettings = json.fromJson(Experiments.ExpSettings.class, savedData);
 	}
 
 	@Override
@@ -316,8 +359,19 @@ public class UmbralParalelismo implements Experiment {
 
 	@Override
 	public Array<LevelStatus> levelsStatus() {
+		return this.expSettings.levels;
+	}
+
+	@Override
+	public boolean askCompleted() {
 		// TODO Auto-generated method stub
-		return null;
+		return false;
+	}
+
+	@Override
+	public void interrupt() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -8,7 +8,6 @@ public interface Experiment {
 	// Cosas offline
 	void makeResources(); // Se encarga de crear los recuros
 	void makeLevels(); // Se encarga de armar la estructura de niveles
-	void exportLevels(); // Se encarga de procesar los recursos y mandarlos al lugar correspondiente en la carpeta assets
 	// Cosas online de control de flujo de informacion
 	Trial askTrial(); // Devuelve el proximo trial a usar
 	void returnAnswer (boolean answer); // Le indica al experimento como salio el trial
@@ -17,4 +16,7 @@ public interface Experiment {
 	void stopLevel(); // Se ejecuta cuando se detiene un nivel (la idea es que aca se generen todos los logs y se envien al servidor)
 	// Cosas de interfaz general
 	Array<LevelStatus> levelsStatus(); // Pasa la info para que la pantalla menu pueda armarse como corresponde
+	boolean askCompleted(); // Indica si se completo el nivel o no.
+	void interrupt(); // Sirve para ejecutar acciones cuando se interrumpe el experimento porque el usuario decide salir del nivel
+	
 }

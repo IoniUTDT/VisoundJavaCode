@@ -26,7 +26,7 @@ public class Level {
 	public int activeTrialPosition; // Posicion del trial activo
 	public int activeTrial; // Hay que revisar porque la linea anterior cumple una funcion parecida
 	public String levelTitle;
-	public LevelLog levelLog;
+	// public LevelLog levelLog;
 	public JsonLevel jsonLevel;
 
 	public Level(int level) {
@@ -47,9 +47,10 @@ public class Level {
 		// this.secuenciaTrailsId = jsonLevel.trials;
 		this.levelTitle = jsonLevel.levelTitle;
 		// this.setActiveTrialId(this.activeTrialPosition);
-		this.initLog();
+		// this.initLog();
 	}
 
+	/*
 	private void initLog() {
 		this.levelLog = new LevelLog();
 		this.levelLog.timeStarts = TimeUtils.millis();
@@ -61,6 +62,7 @@ public class Level {
 		this.levelLog.sortOfTrials = this.secuenciaTrailsId;
 		this.levelLog.levelCompleted = false;
 	}
+	*/
 
 	/*
 	private void setActiveTrialId(int activeTrialPosition) {

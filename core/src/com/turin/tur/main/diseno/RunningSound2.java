@@ -1,5 +1,5 @@
 package com.turin.tur.main.diseno;
-
+/*
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetErrorListener;
@@ -12,13 +12,12 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.TimeUtils;
-import com.turin.tur.main.diseno.Trial.SoundLog;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.LevelAsset;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
 import com.turin.tur.main.util.Constants.Resources.Categorias;
 
-public class RunningSound {
+public class RunningSound2 {
 	
 	private static final String TAG = RunningSound.class.getName();
 	
@@ -31,7 +30,7 @@ public class RunningSound {
 	public int loopsNumber; // Numero de veces que re reproduce el mismo sonido en forma seguida 
 	public long instance; // instancia que identifica cada reproduccion unequivocamente
 	public Array<Integer> secuenceId = new Array<Integer>(); // secuencia de los sonidos reproducidos.
-	public SoundLog soundLog = new SoundLog();
+	// public SoundLog soundLog = new SoundLog();
 	public String stopReason = "";
 	private Trial trial;
 	
@@ -145,3 +144,4 @@ public class RunningSound {
 		PLAY,STOP,NADA;
 	}
 }
+*/

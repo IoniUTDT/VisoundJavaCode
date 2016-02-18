@@ -26,10 +26,7 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.turin.tur.main.diseno.Level.JsonLevel;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
-import com.turin.tur.main.diseno.Trial.ParametrosSetupParalelismo;
 import com.turin.tur.main.experiments.Experiment;
-import com.turin.tur.main.experiments.UmbralAngulos;
-import com.turin.tur.main.experiments.UmbralParalelismo;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
 import com.turin.tur.main.util.Constants.Resources;
@@ -55,7 +52,7 @@ public class Builder {
 	// public static final String AppVersion = "UmbralCompletoAngulos"; 
 	public static final boolean categorizar = false;
 	
-	static final Boolean makeLevels = true;
+	static final Boolean makeLevels = false;
 	static final Boolean makeResources = false;
 	
 
@@ -63,11 +60,8 @@ public class Builder {
 		
 	}
 	
-	public void build() {
+	public void build(Experiment exp) {
 
-		
-		UmbralAngulos experimento = new UmbralAngulos();
-		Experiment exp = new UmbralParalelismo();
 		
 		if (makeResources) {
 			//experimento.generalBuilding();
@@ -168,7 +162,7 @@ public class Builder {
 		jsonTrial.title = title;
 		jsonTrial.resourceVersion = ResourceVersion;
 		jsonTrial.feedback = feedback;
-		jsonTrial.parametrosParalelismo = new ParametrosSetupParalelismo();
+		// jsonTrial.parametrosParalelismo = new ParametrosSetupParalelismo();
 		return jsonTrial;
 	}
 
