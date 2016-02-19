@@ -119,7 +119,7 @@ public class Level {
 		// public int aciertosPorCategorias; // Esto guarda el numero de aciertos en trials por categoria. Al generar el level hay que inlcuir un numero de aciertos que vuelve significativo el resultado y comparar con eso.
 		// public int aciertosPorImagenes; // Esto guarda el numero de aciertos en trials por imagenes. Al generar el level hay que incluir el numero de aciertos que vuelve significativo el resultado
 		// Informacion relacionada al procesamiento en tiempo real.
-		public TIPOdeLEVEL tipoDeLevel;
+		// public TIPOdeLEVEL tipoDeLevel;
 		public Object infoDinamica;
 		// public AnalisisUmbralParalelismo analisisUmbral = new AnalisisUmbralParalelismo();
 		// public int anguloReferencia;
@@ -137,6 +137,7 @@ public class Level {
 		FileHelper.writeFile(Resources.Paths.resources + "/level" + level + ".meta", json.toJson(jsonLevel));
 	}
 
+	/*
 	public static class LevelLog {
 		// Info del envio
 		public STATUS status=STATUS.CREADO;

@@ -319,7 +319,6 @@ public class UmbralAngulos {
 			if (!this.ventanasAnguloReferenciado.containsKey(this.cuadranteActivo.nombreDelCuadrante)) { // Primero nos fijamos si existe una ventana para el cuadrante activo
 				this.ventanasAnguloReferenciado.put(this.cuadranteActivo.nombreDelCuadrante, new WindowedMean(this.info.setup.tamanoVentanaAnalisisConvergencia));
 			} 
-			
 			this.ventanasNivel.get(this.cuadranteActivo.nombreDelCuadrante).addValue(this.next.nivel);
 			this.ventanasAnguloReferenciado.get(this.cuadranteActivo.nombreDelCuadrante).addValue(this.next.anguloReferido);
 			if (this.ventanasNivel.get(this.cuadranteActivo.nombreDelCuadrante).hasEnoughData()) {
@@ -398,7 +397,7 @@ public class UmbralAngulos {
 			}
 			// Ahora creamos el nivel
 			JsonLevel level = Builder.crearLevel();
-			level.tipoDeLevel = TIPOdeLEVEL.UMBRALANGULO;
+			// level.tipoDeLevel = TIPOdeLEVEL.UMBRALANGULO;
 			// level.angulosReferencia = angulosReferenciaElegidos;
 			level.levelTitle = "";
 			for (int i=0; i<angulosReferenciaElegidos.size; i++) {

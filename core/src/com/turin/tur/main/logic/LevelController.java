@@ -7,25 +7,17 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.TimeUtils;
-import com.turin.tur.main.diseno.Boxes.TestBox;
-import com.turin.tur.main.diseno.Boxes.StimuliBox;
-import com.turin.tur.main.diseno.ExperimentalObject.JsonResourcesMetaData;
 import com.turin.tur.main.diseno.Level;
 import com.turin.tur.main.diseno.LevelInterfaz;
 import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.diseno.TouchInfo;
 import com.turin.tur.main.diseno.Trial;
-import com.turin.tur.main.diseno.Trial.RunningSound;
 import com.turin.tur.main.diseno.Boxes.Box;
 import com.turin.tur.main.experiments.Experiment;
-import com.turin.tur.main.experiments.UmbralAngulos;
 import com.turin.tur.main.screens.ResultsScreen;
 import com.turin.tur.main.util.CameraHelper;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.LevelAsset;
-import com.turin.tur.main.util.Constants.Resources.Categorias;
-import com.turin.tur.main.util.Constants.Diseno.TIPOdeLEVEL;
 
 public class LevelController implements InputProcessor {
 
@@ -69,10 +61,14 @@ public class LevelController implements InputProcessor {
 		//this.level.levelLog.sessionId = this.session.sessionLog.id; //TODO revisar logs!
 		//this.level.levelLog.idUser = this.session.user.id;
 		this.initCamera();
+		this.exp.initLevel(this.level);
 		
 		// Selecciona el trial que corresponda
-		this.trial = this.exp.askTrial();
+		this.exp.askNext();
+		this.trial = this.exp.getTrial();
 		// this.initTrial();
+		this.levelInterfaz = new LevelInterfaz(this.level, this.trial, this.exp);
+
 		
 		// Inicia en el trial de maxima señal si esta en modo umbral
 		// if (this.level.jsonLevel.tipoDeLevel == TIPOdeLEVEL.UMBRALPARALELISMO) {
@@ -124,7 +120,7 @@ public class LevelController implements InputProcessor {
 
 	public void update(float deltaTime) {
 		// Actualiza el trial
-		trial.update(deltaTime);
+		this.trial.update(deltaTime);
 
 		// actualiza cosas generales
 		cameraHelper.update(deltaTime);
@@ -136,8 +132,11 @@ public class LevelController implements InputProcessor {
 			this.exp.returnAnswer(this.trial.lastAnswer());
 			if (this.exp.askCompleted()) {
 				this.goToResults();
+			} else {
+				this.exp.askNext();
+				this.trial = this.exp.getTrial();
+					
 			}
-			this.trial = this.exp.askTrial();
 			//this.initTrial();
 			//this.nextTrialPending = true;
 		}

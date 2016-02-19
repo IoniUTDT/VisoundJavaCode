@@ -4,10 +4,11 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.turin.tur.main.diseno.Enviables.STATUS;
-import com.turin.tur.main.diseno.Level.LevelLog;
+
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Internet;
 
+/*
 public class LevelLogHistory {
 
 	// constantes
@@ -15,8 +16,8 @@ public class LevelLogHistory {
 
 	public String path = "logs/LevelLogHistory.info";
 	public String pathUploaded = path + ".uploaded";
-	public Array<LevelLog> historyPending = new Array<LevelLog>();
-	public Array<LevelLog> historySended = new Array<LevelLog>();
+	//public Array<LevelLog> historyPending = new Array<LevelLog>();
+	//public Array<LevelLog> historySended = new Array<LevelLog>();
 
 	public LevelLogHistory () {
 		this.load(); // Carga los archivos guardados localmente
@@ -92,3 +93,4 @@ public class LevelLogHistory {
 		}
 	}
 }
+*/

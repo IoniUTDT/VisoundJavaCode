@@ -83,9 +83,11 @@ public class Internet {
 		urls.add("http://turintur.dynu.com/" + objetoEnviado.getClass().getSimpleName());
 		//urls.add("http://181.169.225.117:3000/" + objetoEnviado.getClass().getSimpleName());
 
+		/*
 		if (objetoEnviado.contenidoLevel.size>0) {
 			Gdx.app.debug(TAG, "Tamañan de datos level" + objetoEnviado.contenidoLevel.size);
 		}
+		*/
 		
 		for (final String url : urls) {
 
@@ -107,10 +109,13 @@ public class Internet {
 					request.setUrl(url);
 
 					
+					/*
 					if (objetoEnviado.contenidoLevel.size>0) {
 						Gdx.app.debug(TAG, "Contexto: " + objetoEnviado.levelLogHistory);
 						Gdx.app.debug(TAG, "Json:" + requestJson);
 					}
+					*/
+					
 					Gdx.net.sendHttpRequest(request, new Net.HttpResponseListener() {
 
 						@Override

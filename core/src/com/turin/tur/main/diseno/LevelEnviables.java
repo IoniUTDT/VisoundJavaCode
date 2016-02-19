@@ -1,6 +1,8 @@
 package com.turin.tur.main.diseno;
 
+/*
 import com.badlogic.gdx.Gdx;
+
 import com.turin.tur.main.diseno.Level.LevelLog;
 
 
@@ -36,3 +38,4 @@ public class LevelEnviables extends Enviables {
 		}
 	}
 }
+*/

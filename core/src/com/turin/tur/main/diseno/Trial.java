@@ -12,6 +12,7 @@ import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.LevelAsset;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
+import com.turin.tur.main.util.Constants.Resources.Categorias;
 
 public class Trial {
 
@@ -21,18 +22,19 @@ public class Trial {
 	private Array<ExperimentalObject> elementos = new Array<ExperimentalObject>(); // Esto debe ser cargado antes de ejecutarse la creacion de los elementos
 	public RunningSound runningSound; // Maneja el sonido
 	private int Id; // Id q identifica al trial 
-	private ExperimentalObject rtaCorrecta;
+	private ExperimentalObject estimulo;
 	public Array<TrainingBox> trainigBoxes = new Array<TrainingBox>();
 	public Array<TestBox> testBoxes = new Array<TestBox>();
 	public StimuliBox stimuliBox;
 	public Array<Box> allBox = new Array<Box>();
 	private boolean alreadyAsked = false; // almacena si ya se respondio el trial o no 
-	private boolean lastAnswer; // Guarda si se marco la opcion correcta en un trial en caso de que corresponda
+	private boolean lastAnswerCorrect; // Guarda si se marco la opcion correcta en un trial en caso de que corresponda
 	
-	public Trial (Array<ExperimentalObject> elementos, JsonTrial jsonTrial, LevelAsset asset) {
+	public Trial (Array<ExperimentalObject> elementos, JsonTrial jsonTrial, LevelAsset asset, ExperimentalObject estimulo) {
 		this.elementos = elementos;
 		this.jsonTrial = jsonTrial;
 		this.runningSound = new RunningSound(asset);
+		this.estimulo = estimulo;
 		this.configureElements();
 	}
 	
@@ -62,7 +64,7 @@ public class Trial {
 				this.testBoxes.add(box);
 			}
 			// Crea el box de estimulo
-			stimuliBox = new StimuliBox(rtaCorrecta);
+			stimuliBox = new StimuliBox(estimulo);
 			stimuliBox.SetPosition(0 + Constants.Box.SHIFT_ESTIMULO_MODO_SELECCIONAR, 0);
 			allBox.add(stimuliBox);
 		}
@@ -449,7 +451,7 @@ public class Trial {
 
 
 	public boolean lastAnswer() {
-		return this.lastAnswer;
+		return this.lastAnswerCorrect;
 	}
 
 	/*
@@ -457,13 +459,29 @@ public class Trial {
 	 */
 	public void boxSelected(Box boxTocada) {
 		if (boxTocada.getClass() == TestBox.class) {
-			
+			// Revisamos que onda si se acerto o no. Acertar significa que el elemento tocado y el estimulo compartan al menos una categoria.
+			boolean answerCorrect = false;
+			for (Categorias categoria : boxTocada.contenido.categorias) {
+				if (this.estimulo.categorias.contains(categoria, false)) {
+					answerCorrect = true;
+				}
+			}
+			boxTocada.select(this);
+			this.lastAnswerCorrect = answerCorrect;
+			this.alreadyAsked = true;
 		}
 		
 		if (boxTocada.getClass() == TrainingBox.class) {
-			
+			for (TrainingBox box : this.trainigBoxes) {
+				box.unSelect(this);
+			}
+			boxTocada.select(this);
 		}
 		 
+	}
+
+	public void exit() {
+		this.runningSound.stop();
 	}
 	
 	/*
