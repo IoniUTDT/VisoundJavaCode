@@ -131,6 +131,7 @@ public class LevelController implements InputProcessor {
 		if (trial.checkTrialCompleted()) {
 			this.exp.returnAnswer(this.trial.lastAnswer());
 			if (this.exp.askCompleted()) {
+				this.exp.stopLevel();
 				this.goToResults();
 			} else {
 				this.exp.askNext();

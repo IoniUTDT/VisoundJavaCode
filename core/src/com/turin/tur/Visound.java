@@ -39,8 +39,7 @@ public class Visound extends Game {
 
 		// Inicializa la session y el juego
 		this.session = new Session();
-		this.exp.initGame();
-		this.exp.event_initGame(this.session);
+		this.exp.initGame(this.session);
 		setScreen(new MenuScreen(this, this.session, exp));
 	}
 	

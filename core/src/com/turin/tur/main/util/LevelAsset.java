@@ -29,11 +29,13 @@ public class LevelAsset implements Disposable, AssetErrorListener {
 		assetManager.load(atlasFilepath, TextureAtlas.class);
 		// start loading assets and wait until finished
 		assetManager.finishLoading();
+		/*
 		Gdx.app.debug(TAG,
 				"# of assets loaded: " + assetManager.getAssetNames().size);
 		for (String a : assetManager.getAssetNames()) {
 			Gdx.app.debug(TAG, "asset: " + a);
 		}
+		*/
 		atlas = assetManager.get(atlasFilepath, TextureAtlas.class);
 		// enable texture filtering for pixel smoothing
 		for (Texture t : atlas.getTextures()) {

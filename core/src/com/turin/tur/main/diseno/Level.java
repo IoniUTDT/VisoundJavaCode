@@ -120,6 +120,7 @@ public class Level {
 		// public int anguloReferencia;
 		// public Array<Integer> angulosReferencia = new Array<Integer>();
 		// public Info infoExpAngulos;
+		public int numberOfMaxTrials;
 	}
 
 	public void saveLevel(int level, Array<Integer> secuenciaTrials, String levelTitle) {
@@ -162,6 +163,8 @@ public class Level {
 	/*
 	 * Esta clase sirve para cargar info de analisis de significancias en la info de levels. La idea es que se cree la info complicada de calcular cuando se crea el nivel (y se puede hacer calculos largos y con instrucciones que no son LibGDX) y que luego se verifique el desempeño durante el juego
 	 */
+	
+	/*
 	public static class Significancia {
 		public TIPOdeSIGNIFICANCIA tipo; // Categoriza el tipo de significancia
 		public Float[] distribucion; // Distribucion de probabilidad del conjunto seleccionado
@@ -185,5 +188,6 @@ public class Level {
 			this.pValue=pValue;
 		}
 	}
+	*/
 	
 }

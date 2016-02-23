@@ -1,9 +1,354 @@
 package com.turin.tur.obsoleto;
 
-
-public class Deadcode {
-	
+class Deadcode {
+	Deadcode () {
+		
+	}
 }
+/*
+import com.badlogic.gdx.Gdx;
+
+
+// import com.badlogic.gdx.Gdx;
+// import com.turin.tur.main.diseno.Session.SessionLog;
+
+
+public class SessionEnviables extends Enviables {
+
+
+	// constantes
+	public static final String TAG = SessionEnviables.class.getName();
+	
+	@Override
+	public void enviado() {
+		Gdx.app.debug(TAG, "Historial enviado correctamente");
+		// Procesa los datos del log general para mover los que se enviaron correctamente
+		/*
+		for (SessionLog sessionLogEnviado: this.contenidoSession){
+			 for (SessionLog sessionLogEnviable: this.sessionLogHistory.historyPending){
+				 if (sessionLogEnviado==sessionLogEnviable) {
+					 // Cambia de lugar los logs
+					 this.sessionLogHistory.historySended.add(sessionLogEnviable);
+					 this.sessionLogHistory.historyPending.removeValue(sessionLogEnviable, true);
+					 sessionLogEnviable.status = STATUS.ENVIADO;
+				 }
+			 }
+		}
+		this.sessionLogHistory.save();
+	*/
+/*
+	}
+
+	@Override
+	public void noEnviado() {
+		Gdx.app.debug(TAG, "Historial no enviado correctamente");
+		/*
+		for (SessionLog sessionLogEnviado: this.contenidoSession){
+			sessionLogEnviado.status = STATUS.ENVIOFALLIDO;
+		}
+		*/ /*
+	}
+}
+*/
+/*
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetDescriptor;
+import com.badlogic.gdx.assets.AssetErrorListener;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.TimeUtils;
+import com.turin.tur.main.util.Constants;
+import com.turin.tur.main.util.LevelAsset;
+import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
+import com.turin.tur.main.util.Constants.Resources.Categorias;
+
+public class RunningSound2 {
+	
+	private static final String TAG = RunningSound.class.getName();
+	
+	public ExperimentalObject contenido; // Todo el objeto que se esta reproduciendo
+	public Sound sound; // Elemento de sonido
+	public boolean running = false; // Si se esta reproduciendo o no
+	public float start = -1; // Cuando comienza la reproduccion del ultimo sonido. Un "-1" equivale a no tener datos.
+	public float ends = -1; // Cuando termina la reproduccion del ultimo sonido. Un "-1" equivale a no tener datos.
+	public int id; // El id que identifica el recurso del ultimo sonido
+	public int loopsNumber; // Numero de veces que re reproduce el mismo sonido en forma seguida 
+	public long instance; // instancia que identifica cada reproduccion unequivocamente
+	public Array<Integer> secuenceId = new Array<Integer>(); // secuencia de los sonidos reproducidos.
+	// public SoundLog soundLog = new SoundLog();
+	public String stopReason = "";
+	private Trial trial;
+	
+	// Info para el update
+	public NEXT action = NEXT.NADA;
+	public float playTime; 
+	public ExperimentalObject nextContenido;
+	
+
+	public RunningSound (Trial trial) {
+		this.trial = trial;
+	}
+	
+	public void update(float deltaTime) {
+		if (this.running) {
+			this.playTime = this.playTime + deltaTime;
+		} 
+		if (this.playTime > Constants.Box.DURACION_REPRODUCCION_PREDETERMINADA) {
+			stopReason ="tiempo terminado";
+			this.stop();
+		}
+		if (this.action == NEXT.PLAY) {
+			if (Gdx.graphics.getFramesPerSecond()>40) {
+				if (nextContenido!=null) {
+					this.play();
+					this.playTime =0;
+					this.action = NEXT.NADA;
+				}
+			}
+		}
+	}
+	
+	public void play() {
+		// Primer detiene cualquier reproduccion previa 
+		if (running) {
+			stop();
+			stopReason ="inicio";
+		}
+		// Crea un log nuevo
+		soundLog = new SoundLog();
+		
+		// Prepara la info en la clase
+		contenido = nextContenido;
+		start = TimeUtils.millis();
+		ends = -1;
+		id = contenido.resourceId.id;
+		if (secuenceId.size > 0) {
+			if (secuenceId.peek() == id) {
+				loopsNumber++;
+			} else {
+				loopsNumber = 1;
+			}
+		} else {
+			loopsNumber = 1;
+		}
+		secuenceId.add(id);
+		instance = TimeUtils.millis();
+
+		// Crea el log
+		soundLog.soundInstance = instance;
+		soundLog.soundId = contenido.resourceId;
+		for (Categorias categoria : contenido.categorias) {
+			soundLog.categorias.add(categoria);
+		}
+		soundLog.trialInstance = trial.log.trialInstance;
+		soundLog.levelInstance = trial.log.levelInstance;
+		soundLog.sessionInstance = trial.log.sessionId;
+		soundLog.trialId = trial.Id;
+		if (trial.jsonTrial.modo == TIPOdeTRIAL.TEST) {
+			if (trial.stimuliBox.contenido == contenido) {
+	 			soundLog.fromStimuli = true;
+
+			} else {
+				soundLog.fromStimuli = false;
+			}
+		} else {
+			soundLog.fromStimuli = false;
+		}
+		soundLog.tipoDeTrial = trial.jsonTrial.modo;
+		soundLog.numberOfLoop = loopsNumber;
+		//soundLog.startTimeSinceTrial = timeInTrial;
+		soundLog.numberOfSoundInTrial = secuenceId.size;
+		soundLog.soundSecuenceInTrial = new Array<Integer>(secuenceId);
+
+		// Cargamos el sonido
+		this.sound = this.trial.levelAssets.sound(this.id);
+		this.sound.play(); 
+		this.running = true;
+	}
+
+	
+	public void stop() {
+		if (running) {
+			
+			ends = TimeUtils.millis();
+			// Completa el log y lo agrega a la lista
+			soundLog.stopTime = TimeUtils.millis();
+			
+			soundLog.stopByUnselect = (stopReason=="unselect");
+			soundLog.stopByExit = (stopReason=="exit");
+			soundLog.stopByEnd = (stopReason=="end");
+			stopReason = "";
+			trial.log.soundLog.add(soundLog);
+			// Detiene el sonido
+			sound.stop();
+			running = false;
+		}
+	}
+	
+	public enum NEXT {
+		PLAY,STOP,NADA;
+	}
+}
+*/
+/*
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.TimeUtils;
+//import com.turin.tur.main.diseno.Enviables.STATUS;
+
+import com.turin.tur.main.util.FileHelper;
+import com.turin.tur.main.util.Internet;
+
+/*
+public class LevelLogHistory {
+
+	// constantes
+	public static final String TAG = LevelLogHistory.class.getName();
+
+	public String path = "logs/LevelLogHistory.info";
+	public String pathUploaded = path + ".uploaded";
+	//public Array<LevelLog> historyPending = new Array<LevelLog>();
+	//public Array<LevelLog> historySended = new Array<LevelLog>();
+
+	public LevelLogHistory () {
+		this.load(); // Carga los archivos guardados localmente
+		this.restart(); // Corrije el estatus de lo que esta como ENVIANDO a ENVIOFALLIDO porque no tiene sentido que cuando se inicia haya datos enviandose. Si esto sucede es porque se aborto el programa en medio de un envio previo a recibir el ok o el fallido del server
+	}
+	
+	private void restart() {
+		for (LevelLog levelLog:this.historyPending) {
+			if (levelLog.status == STATUS.ENVIANDO) {
+				levelLog.status = STATUS.ENVIOFALLIDO;
+			}
+		}
+
+	}
+
+	public void append(LevelLog log) {
+		// Crea un id de este envio
+		long idEnvio = TimeUtils.millis();
+		// Indica que el log agregado se configra para enviar cuando se pueda
+		log.status=STATUS.PENDIENTEDEENVIO;
+		// Agrega el log a la lista de pendientes de envio
+		this.historyPending.add(log);
+		
+		LevelEnviables levelEnviable = new LevelEnviables();
+		levelEnviable.levelLogHistory = this; 
+		// Revisa cuales estan pendientes de envio
+		for (LevelLog levelLog:this.historyPending) {
+			if ((levelLog.status == STATUS.PENDIENTEDEENVIO) || (levelLog.status == STATUS.ENVIOFALLIDO)) {
+				levelLog.status = STATUS.ENVIANDO;
+				levelLog.idEnvio = idEnvio;
+				levelEnviable.contenido.add(levelLog);
+				levelEnviable.contenidoLevel.add(levelLog);
+			}
+		}
+		
+		// Envia solo los que corresponde (y que quedan marcados como "enviando")
+		
+		Internet.PUT(levelEnviable);
+		this.save();
+	}
+	
+	public void save() {
+		Json json = new Json();
+		json.setUsePrototypes(false);
+		FileHelper.writeFile(path, json.toJson(this.historyPending)); // Guarda lo que no se envio
+		FileHelper.writeFile(pathUploaded, json.toJson(this.historySended)); // Guarda lo que si se envio
+	}
+	
+	private void load() {
+		// Lee los datos que no se enviaron
+		String savedData = FileHelper.readLocalFile(path);
+		if (!savedData.isEmpty()) {
+			Json json = new Json();
+			json.setUsePrototypes(false);
+			this.historyPending = json.fromJson(this.historyPending.getClass(),savedData);
+		} else {
+			this.historyPending = new Array<LevelLog>();
+		}
+		// Lee los datos que si se enviaron
+		savedData = FileHelper.readLocalFile(pathUploaded);
+		if (!savedData.isEmpty()) {
+			Json json = new Json();
+			json.setUsePrototypes(false);
+			try {
+				this.historySended = json.fromJson(this.historySended.getClass(),savedData);
+			}
+			catch (Exception e) { // Hubo un problema al cargar el json. Esto pasa cuando se modifica la estructura de datos y no coincide con el json
+				this.historySended = new Array<LevelLog>(); 
+			}
+			
+		} else {
+			this.historySended = new Array<LevelLog>();
+		}
+	}
+}
+*/
+
+/*
+import com.badlogic.gdx.Gdx;
+
+import com.turin.tur.main.diseno.Level.LevelLog;
+
+
+
+public class LevelEnviables extends Enviables {
+
+
+	// constantes
+	public static final String TAG = LevelEnviables.class.getName();
+	
+	@Override
+	public void enviado() {
+		Gdx.app.debug(TAG, "Historial enviado correctamente");
+		// Procesa los datos del log general para mover los que se enviaron correctamente
+		for (LevelLog levelLogEnviado: this.contenidoLevel){
+			 for (LevelLog levelLogEnviable: this.levelLogHistory.historyPending){
+				 if (levelLogEnviable==levelLogEnviado) {
+					 // Cambia de lugar los logs
+					 this.levelLogHistory.historySended.add(levelLogEnviable);
+					 this.levelLogHistory.historyPending.removeValue(levelLogEnviable, true);
+					 levelLogEnviable.status = STATUS.ENVIADO;
+				 }
+			 }
+		}
+		this.levelLogHistory.save();
+	}
+
+	@Override
+	public void noEnviado() {
+		Gdx.app.debug(TAG, "Historial no enviado correctamente");
+		for (LevelLog levelLogEnviado: this.contenidoLevel){
+			levelLogEnviado.status = STATUS.ENVIOFALLIDO;
+		}
+	}
+}
+*/
+//import com.badlogic.gdx.utils.Array;
+//import com.turin.tur.main.diseno.Level.LevelLog;
+//import com.turin.tur.main.diseno.Session.SessionLog;
+/*
+public abstract class Enviables {
+	// public Array<TrialLog> contenidoTrial = new Array<TrialLog>();
+	// public Array<SessionLog> contenidoSession = new Array<SessionLog>();
+	// public Array<LevelLog> contenidoLevel = new Array<LevelLog>();
+	public Object contenido;
+	public abstract void enviado();
+	public abstract void noEnviado();
+	// public TrialLogHistory trialLogHistory;
+	// public SessionLogHistory sessionLogHistory;
+	// public LevelLogHistory levelLogHistory;
+	 
+}
+
+*/
 	/*		
 	
 	/**

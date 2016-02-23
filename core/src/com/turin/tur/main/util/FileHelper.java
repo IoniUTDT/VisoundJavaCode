@@ -28,7 +28,7 @@ public class FileHelper {
 				return s;
 			}
 		}
-		Gdx.app.error(TAG,"Archivo: "+fileName+". No se lo ha encontrado o esta vacio");
+		Gdx.app.error(TAG,"Archivo: "+fileName+" No se lo ha encontrado o esta vacio");
 		return "";
 	}
 	

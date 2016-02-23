@@ -6,38 +6,40 @@ import com.badlogic.gdx.math.WindowedMean;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Json;
-import com.turin.tur.main.diseno.Trial;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.turin.tur.main.diseno.ExperimentalObject;
 import com.turin.tur.main.diseno.Level;
 import com.turin.tur.main.diseno.Level.JsonLevel;
 import com.turin.tur.main.diseno.Session;
+import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.experiments.Experiments.ExpSettings;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
 import com.turin.tur.main.experiments.Experiments.TIPOdeEXPERIMENTO;
-import com.turin.tur.main.util.FileHelper;
-import com.turin.tur.main.util.Internet;
-import com.turin.tur.main.util.Internet.Enviable;
-import com.turin.tur.main.util.Internet.TIPO_ENVIO;
-import com.turin.tur.main.util.LevelAsset;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
 import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.main.util.Constants.Resources.Categorias;
+import com.turin.tur.main.util.FileHelper;
+import com.turin.tur.main.util.Internet;
+import com.turin.tur.main.util.Internet.TIPO_ENVIO;
+import com.turin.tur.main.util.LevelAsset;
 import com.turin.tur.main.util.builder.Builder;
 import com.turin.tur.main.util.builder.Imagenes;
-import com.turin.tur.main.util.builder.Textos;
 import com.turin.tur.main.util.builder.Imagenes.Linea;
+import com.turin.tur.main.util.builder.Textos;
 
 public class UmbralParalelismo implements Experiment {
 
 	private static class SessionLog {
-		private long userId;
-		private long sessionInstance;
+		private Session session;
+		private long levelInstance;
 		private String expName;
-		private int levelVersion;
-		private int resourcesVersion;
-		private int codeVersion;
+	}
+	
+	private static class LogConvergencia {
+		private SessionLog session;
+		private DinamicaExperimento dinamica; 
 	}
 	
 	/**
@@ -53,6 +55,7 @@ public class UmbralParalelismo implements Experiment {
 		private int nivelEstimulo; // nivel de señal enviada
 		private int saltosActivos; // nivel del proximo salto (en numero de niveles de señal)
 		private boolean convergenciaAlcanzada = false;
+		private boolean convergenciaFinalizada = false;
 		private Array<Respuesta> historial = new Array<Respuesta>(); // Se almacena la info de lo que va pasando
 		private Array<Estimulo> listaEstimulos = new Array<Estimulo>(); // Lista de estimulos ordenados de menor a mayor dificultad
 		private double anguloDeReferencia;
@@ -100,6 +103,7 @@ public class UmbralParalelismo implements Experiment {
 		Array<Double> angulosReferencia = new Array<Double>();
 		Array<Double> desviacionesAngulares = new Array<Double>();
 		Array<Estimulo> estimulos = new Array<Estimulo>();
+		public int numeroDeTrailsMaximosxNivel;
 	}
 
 	static final String TAG = UmbralParalelismo.class.getName();
@@ -109,6 +113,7 @@ public class UmbralParalelismo implements Experiment {
 	private ExpSettings expSettings;
 	// Cosas que manejan la dinamica en cada ejecucion
 	private Level level;
+	private Session session;
 	private Array<DinamicaExperimento> dinamicas;
 	private DinamicaExperimento dinamicaActiva;
 	private Trial trial;
@@ -120,14 +125,34 @@ public class UmbralParalelismo implements Experiment {
 	// Logs
 	SessionLog sessionLog;
 
+
 	@Override
 	public boolean askCompleted() {
+		if (this.trialsLeft() == 0) {
+			this.levelCompleted();
+			return true;
+		}
+		
 		for (DinamicaExperimento dinamica : this.dinamicas) {
 			if (!dinamica.convergenciaAlcanzada) {
 				return false;
 			}
 		}
+		this.levelCompleted();
 		return true;
+	}
+
+	private void levelCompleted() {
+		for (DinamicaExperimento dinamica : this.dinamicas) {
+			dinamica.convergenciaFinalizada = true;
+		}
+		for (LevelStatus levelStatus : this.expSettings.levels) {
+			if (levelStatus.id == this.level.Id) {
+				levelStatus.alreadyPlayed = true;
+			}
+		}
+		Json json = new Json();
+		FileHelper.writeFile(Resources.Paths.resources + this.getClass().getSimpleName() + ".settings", json.toJson(this.expSettings));
 	}
 
 	@Override
@@ -146,8 +171,10 @@ public class UmbralParalelismo implements Experiment {
 			// answer)
 			this.estimuloActivo = this.dinamicaActiva.listaEstimulos.get(this.dinamicaActiva.nivelEstimulo);
 			// leemos el json del trial
-			String path = Resources.Paths.finalPath + "/level" + level.Id + "/trial" + this.estimuloActivo.idTrial + ".meta";
-			String savedData = FileHelper.readLocalFile(path);
+			String savedData = FileHelper.readFile(Resources.Paths.resources + "level" + level.Id + "/trial" + this.estimuloActivo.idTrial + ".meta");
+			
+			//String path = Resources.Paths.finalPath + "level" + level.Id + "/trial" + this.estimuloActivo.idTrial + ".meta";
+			//String savedData = FileHelper.readFile(path);
 			Json json = new Json();
 			JsonTrial jsonTrial = json.fromJson(JsonTrial.class, savedData);
 			// Cargamos la lista de objetos experimentales
@@ -167,6 +194,7 @@ public class UmbralParalelismo implements Experiment {
 		}
 	}
 
+	@Override
 	public Trial getTrial() {
 		return this.trial;
 	}
@@ -183,12 +211,16 @@ public class UmbralParalelismo implements Experiment {
 	}
 
 	@Override
-	public void initGame() {
+	public void initGame(Session session) {
 		// Cargamos la info del experimento
-		String path = Resources.Paths.finalPath + "/" + this.getClass().getSimpleName() + ".settings/";
-		String savedData = FileHelper.readLocalFile(path);
+		// String path = Resources.Paths.resources + "level" + levelId + "img.atlas";
+		//String path = Resources.Paths.resources + this.getClass().getSimpleName() + ".settings";
+		//String savedData = FileHelper.readLocalFile(path);
+		String savedData = FileHelper.readFile(Resources.Paths.resources + this.getClass().getSimpleName() + ".settings");
 		Json json = new Json();
 		this.expSettings = json.fromJson(Experiments.ExpSettings.class, savedData);
+		this.session = session;
+		this.event_initGame();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -199,11 +231,13 @@ public class UmbralParalelismo implements Experiment {
 		this.dinamicas = (Array<DinamicaExperimento>) level.jsonLevel.infoDinamica;
 		this.assets = new LevelAsset(level.Id);
 		this.ventanasNivel.clear();
+		this.event_initLevel();
 	}
 
 	@Override
 	public void interrupt() {
 		this.waitingAnswer = false;
+		this.event_stopLevel();
 	}
 
 	@Override
@@ -237,6 +271,7 @@ public class UmbralParalelismo implements Experiment {
 		for (double referencia : this.setup.angulosReferencia) {
 			// Creamos el nivel
 			JsonLevel level = Builder.crearLevel();
+			level.numberOfMaxTrials = this.setup.numeroDeTrailsMaximosxNivel;
 			// level.tipoDeLevel = TIPOdeLEVEL.UMBRALPARALELISMO;
 			level.levelTitle = "R: " + referencia;
 
@@ -434,6 +469,7 @@ public class UmbralParalelismo implements Experiment {
 	private void makeSetup() {
 		// Creamos el setup
 		Setup setup = new Setup();
+		setup.numeroDeTrailsMaximosxNivel = 40;
 		// Definimos los angulos de referencia
 		setup.angulosReferencia = new Array<Double>();
 		setup.angulosReferencia.add(0d);
@@ -533,57 +569,49 @@ public class UmbralParalelismo implements Experiment {
 				Gdx.app.debug(TAG, this.dinamicaActiva.identificador + " ha alcanzado la convergencia con valor " + this.dinamicaActiva.ultimoMEAN);
 			}
 		}
-		Gdx.app.debug(TAG, this.dinamicaActiva.identificador + " SD: " + this.dinamicaActiva.ultimaSD);
-		Gdx.app.debug(TAG, this.dinamicaActiva.identificador + " Nivel: " + this.dinamicaActiva.nivelEstimulo);
-		Gdx.app.debug(TAG, this.dinamicaActiva.identificador + " Rta correcta: " + answer);
+		//Gdx.app.debug(TAG, this.dinamicaActiva.identificador + " SD: " + this.dinamicaActiva.ultimaSD);
+		//Gdx.app.debug(TAG, this.dinamicaActiva.identificador + " Nivel: " + this.dinamicaActiva.nivelEstimulo);
+		//Gdx.app.debug(TAG, this.dinamicaActiva.identificador + " Rta correcta: " + answer);
 	}
 
 	@Override
 	public void stopLevel() {
 		this.waitingAnswer = false;
+		this.event_stopLevel();
 	}
 
-
-	@Override
-	public void event_newAnswer(ExperimentalObject estimulo, boolean rtaCorrecta) {
-		// TODO 
+	private void event_stopLevel () {
+		for (DinamicaExperimento dinamica : this.dinamicas) {
+			LogConvergencia log = new LogConvergencia();
+			log.session = this.sessionLog;
+			log.dinamica = dinamica;
+			log.dinamica.listaEstimulos.clear();
+			// Creamos el enviable
+			Internet.sendData(log, TIPO_ENVIO.CONVERGENCIAPARALELISMO);
+		}
 	}
 
-	@Override
-	public void event_sendReport() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void event_initGame(Session session) {
+	private void event_initGame() {
 		// Creamos el log
 		this.sessionLog = new SessionLog();
+		this.sessionLog.session = this.session;
 		this.sessionLog.expName = this.expName;
-		this.sessionLog.levelVersion = session.levelVersion;
-		this.sessionLog.resourcesVersion = session.resourcesVersion;
-		this.sessionLog.sessionInstance = session.sessionInstance;
-		this.sessionLog.userId = session.userID;
-		this.sessionLog.codeVersion = session.codeVersion;
 		// Creamos el enviable
-		Json json = new Json();
-		json.setUsePrototypes(false);
-		String string = json.toJson(this.sessionLog);
-		Enviable envio = new Enviable (string, TIPO_ENVIO.SESION);
-		Internet.addData(envio);
-		Internet.tryToSend();
+		Internet.sendData(this.sessionLog, TIPO_ENVIO.NEWSESION);
+	}
+
+	private void event_initLevel() {
+		this.sessionLog.levelInstance = TimeUtils.millis();
+		// Creamos el enviable
+		Internet.sendData(this.sessionLog, TIPO_ENVIO.NEWLEVEL);
 	}
 
 	@Override
-	public void event_initLevel(Level level) {
-		// TODO Auto-generated method stub
-		
+	public int trialsLeft() {
+		int realizados = 0;
+		for (DinamicaExperimento dinamica : this.dinamicas) {
+			realizados = realizados + dinamica.historial.size;
+		}
+		return this.level.jsonLevel.numberOfMaxTrials - realizados;
 	}
-
-	@Override
-	public void event_initTrial(Trial trial) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

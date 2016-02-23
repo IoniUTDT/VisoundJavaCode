@@ -2,7 +2,6 @@ package com.turin.tur.obsoleto;
 
 import java.math.BigInteger;
 
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 
 public class Stadistics {

@@ -30,12 +30,13 @@ public class Assets implements Disposable, AssetErrorListener {
 		
 		// start loading assets and wait until finished
 		assetManager.finishLoading();
+		/*
 		Gdx.app.debug(TAG, "# of assets loaded: "
 				+ assetManager.getAssetNames().size);
 		for (String a : assetManager.getAssetNames()){
 			Gdx.app.debug(TAG, "asset: " + a);
 		}
-		
+		*/
 		TextureAtlas atlas = assetManager.get(Constants.TEXTURE_ATLAS_OBJECTS);
 		// enable texture filtering for pixel smoothing
 		for (Texture t : atlas.getTextures()) {

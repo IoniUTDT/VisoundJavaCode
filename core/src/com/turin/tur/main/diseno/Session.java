@@ -29,7 +29,6 @@ public class Session {
 		// levelLogHistory = new LevelLogHistory();
 		// trialLogHistory = new TrialLogHistory();
 		Internet.Check();
-		Internet.checkLogs();
 		loadUser();
 		
 		// initSession();

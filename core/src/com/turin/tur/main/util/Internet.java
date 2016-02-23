@@ -24,6 +24,7 @@ public class Internet {
 	public static String pathSent = "logSent";
 	
 	public static void Check() {
+		checkLogs();
 		serverOnline = false; // Reinicia el status del server
 		serverOk = false;
 		internetChecked=true; // Indica que comenzo a chaequear
@@ -79,7 +80,7 @@ public class Internet {
 		
 	}
 	
-	public static void PUT(final Enviable envio) {
+	private static void PUT(final Enviable envio) {
 
 		Array<String> urls = new Array<String>();
 		urls.add("http://turintur.dynu.com/Envio");
@@ -89,7 +90,6 @@ public class Internet {
 
 		for (final String url : urls) {
 
-			Gdx.app.debug(TAG, url);
 			new Thread(new Runnable() {
 
 				@Override
@@ -142,22 +142,29 @@ public class Internet {
 	}
 	
 	public static enum TIPO_ENVIO {
-		SESION
+		NEWSESION, NEWLEVEL, CONVERGENCIAPARALELISMO
 	}
 	
-	public static class Enviable {
+	private static class Enviable {
 		public long instance;
 		public String contenido;
 		public TIPO_ENVIO tipoDeEnvio;
 		
-		public void enviado() {
-			Gdx.app.debug(TAG, "EHA!");
+		private void enviado() {
+			// Gdx.app.debug(TAG, "Paquete de datos enviado: " + this.instance + ", tipo: " + this.tipoDeEnvio);
+			// Mueve el archivo a la carpeta de datos enviados
+			String pathFrom = pathToSend + "/" + this.instance + "." + this.tipoDeEnvio;
+			String pathTo = pathSent + "/" + this.instance + "." + this.tipoDeEnvio;
+			Gdx.files.local(pathFrom).moveTo(Gdx.files.local(pathTo));
+			//Gdx.app.debug(TAG, "EHA!");
 		}
 		
-		public void noEnviado() {
+		private void noEnviado() {
+			Gdx.app.error(TAG, "Verifique conectividad con el servidor!");
+			Gdx.app.error(TAG, "Paquete de datos: " + this.instance);
 		}
 		
-		public Enviable (String data, TIPO_ENVIO tipoDeEnvio) {
+		private Enviable (String data, TIPO_ENVIO tipoDeEnvio) {
 			this.instance = TimeUtils.millis();
 			this.contenido = data;
 			this.tipoDeEnvio = tipoDeEnvio;
@@ -170,15 +177,19 @@ public class Internet {
 		}
 	}
 
-	public static void addData(Enviable enviable) {
-		Gdx.app.debug(TAG, "Creando log");
-		checkLogs();
-		String path = pathToSend + "/" + enviable.instance + "." + enviable.tipoDeEnvio;
+	public static void sendData(Object objeto, TIPO_ENVIO tipo) {
+		// Transformamos el objeto en un enviable
+		Json json = new Json();
+		json.setUsePrototypes(false);
+		String string = json.toJson(objeto);
+		Enviable envio = new Enviable (string, tipo);	
+		String path = pathToSend + "/" + envio.instance + "." + envio.tipoDeEnvio;
 		FileHandle file = Gdx.files.local(path);
-		file.writeString(enviable.contenido, false);
+		file.writeString(envio.contenido, false);
+		Internet.tryToSend(file);
 	}
 	
-	public static void checkLogs() {
+	private static void checkLogs() {
 		if (!Gdx.files.local(pathToSend).exists()){
 			FileHandle dir = Gdx.files.local(pathToSend);
 			dir.mkdirs();
@@ -187,13 +198,20 @@ public class Internet {
 			FileHandle dir = Gdx.files.local(pathSent);
 			dir.mkdirs();
 		}
+		Internet.tryToSendAll();
 	}
 	
-	public static void tryToSend () {
+	private static void tryToSendAll () {
 		for(FileHandle file: Gdx.files.local(pathToSend).list()) {
 			String data = file.readString();
 			Enviable envio = new Enviable (Long.valueOf(file.nameWithoutExtension()), data, TIPO_ENVIO.valueOf(file.extension()));
 			Internet.PUT(envio);
 		}
+	}
+	
+	private static void tryToSend (FileHandle file) {
+		String data = file.readString();
+		Enviable envio = new Enviable (Long.valueOf(file.nameWithoutExtension()), data, TIPO_ENVIO.valueOf(file.extension()));
+		Internet.PUT(envio);
 	}
 }
