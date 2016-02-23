@@ -1,8 +1,10 @@
-package com.turin.tur.main.diseno;
+package com.turin.tur.obsoleto;
 
 import com.badlogic.gdx.Gdx;
-import com.turin.tur.main.diseno.Session.SessionLog;
 
+
+// import com.badlogic.gdx.Gdx;
+// import com.turin.tur.main.diseno.Session.SessionLog;
 
 
 public class SessionEnviables extends Enviables {
@@ -15,6 +17,7 @@ public class SessionEnviables extends Enviables {
 	public void enviado() {
 		Gdx.app.debug(TAG, "Historial enviado correctamente");
 		// Procesa los datos del log general para mover los que se enviaron correctamente
+		/*
 		for (SessionLog sessionLogEnviado: this.contenidoSession){
 			 for (SessionLog sessionLogEnviable: this.sessionLogHistory.historyPending){
 				 if (sessionLogEnviado==sessionLogEnviable) {
@@ -26,14 +29,16 @@ public class SessionEnviables extends Enviables {
 			 }
 		}
 		this.sessionLogHistory.save();
-
+	*/
 	}
 
 	@Override
 	public void noEnviado() {
 		Gdx.app.debug(TAG, "Historial no enviado correctamente");
+		/*
 		for (SessionLog sessionLogEnviado: this.contenidoSession){
 			sessionLogEnviado.status = STATUS.ENVIOFALLIDO;
 		}
+		*/
 	}
 }

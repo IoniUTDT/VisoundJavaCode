@@ -1,5 +1,5 @@
-package com.turin.tur.main.diseno;
-
+package com.turin.tur.obsoleto;
+/*
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -91,3 +91,4 @@ public class SessionLogHistory {
 
 
 }
+*/

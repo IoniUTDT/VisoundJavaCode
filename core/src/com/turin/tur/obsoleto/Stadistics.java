@@ -1,4 +1,4 @@
-package com.turin.tur.main.util;
+package com.turin.tur.obsoleto;
 
 import java.math.BigInteger;
 

@@ -3,12 +3,7 @@ package com.turin.tur.main.diseno;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.TimeUtils;
-import com.turin.tur.main.diseno.Enviables.STATUS;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
-import com.turin.tur.main.experiments.UmbralAngulos.Info.LevelAdvance;
-import com.turin.tur.main.experiments.UmbralAngulos.Info.Setup;
-import com.turin.tur.main.util.Constants.Diseno.TIPOdeLEVEL;
 import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.main.util.FileHelper;
 

@@ -1,9 +1,9 @@
-package com.turin.tur.main.diseno;
-
+package com.turin.tur.obsoleto;
+/*
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
-import com.turin.tur.main.diseno.Enviables.STATUS;
+//import com.turin.tur.main.diseno.Enviables.STATUS;
 
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Internet;

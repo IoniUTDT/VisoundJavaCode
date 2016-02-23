@@ -1,4 +1,4 @@
-package com.turin.tur.main.diseno;
+package com.turin.tur.obsoleto;
 /*
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetDescriptor;

@@ -10,11 +10,15 @@ import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.main.diseno.ExperimentalObject;
 import com.turin.tur.main.diseno.Level;
 import com.turin.tur.main.diseno.Level.JsonLevel;
+import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.experiments.Experiments.ExpSettings;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
 import com.turin.tur.main.experiments.Experiments.TIPOdeEXPERIMENTO;
 import com.turin.tur.main.util.FileHelper;
+import com.turin.tur.main.util.Internet;
+import com.turin.tur.main.util.Internet.Enviable;
+import com.turin.tur.main.util.Internet.TIPO_ENVIO;
 import com.turin.tur.main.util.LevelAsset;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
@@ -27,6 +31,15 @@ import com.turin.tur.main.util.builder.Imagenes.Linea;
 
 public class UmbralParalelismo implements Experiment {
 
+	private static class SessionLog {
+		private long userId;
+		private long sessionInstance;
+		private String expName;
+		private int levelVersion;
+		private int resourcesVersion;
+		private int codeVersion;
+	}
+	
 	/**
 	 * Esta clase regula la dinamica del experimento y guarda toda la info
 	 * necesaria para tomar desiciones acerca de que trial seleccionar o si
@@ -69,7 +82,6 @@ public class UmbralParalelismo implements Experiment {
 	private static class Respuesta {
 		private Estimulo estimulo;
 		private boolean acertado;
-		
 		Respuesta (Estimulo estimulo, Boolean rta) {
 			this.estimulo = estimulo;
 			this.acertado = rta;
@@ -104,7 +116,9 @@ public class UmbralParalelismo implements Experiment {
 	private LevelAsset assets;
 	private Estimulo estimuloActivo;
 	private ArrayMap <String, WindowedMean> ventanasNivel = new ArrayMap <String, WindowedMean>(); // Esto esta aca porque la clase WindowedMean no es facil guardarla en un json, entonces se guarada en la clase principal un conjunto de windows asociados al nombre de cada convergencia
-	
+
+	// Logs
+	SessionLog sessionLog;
 
 	@Override
 	public boolean askCompleted() {
@@ -527,6 +541,49 @@ public class UmbralParalelismo implements Experiment {
 	@Override
 	public void stopLevel() {
 		this.waitingAnswer = false;
+	}
+
+
+	@Override
+	public void event_newAnswer(ExperimentalObject estimulo, boolean rtaCorrecta) {
+		// TODO 
+	}
+
+	@Override
+	public void event_sendReport() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void event_initGame(Session session) {
+		// Creamos el log
+		this.sessionLog = new SessionLog();
+		this.sessionLog.expName = this.expName;
+		this.sessionLog.levelVersion = session.levelVersion;
+		this.sessionLog.resourcesVersion = session.resourcesVersion;
+		this.sessionLog.sessionInstance = session.sessionInstance;
+		this.sessionLog.userId = session.userID;
+		this.sessionLog.codeVersion = session.codeVersion;
+		// Creamos el enviable
+		Json json = new Json();
+		json.setUsePrototypes(false);
+		String string = json.toJson(this.sessionLog);
+		Enviable envio = new Enviable (string, TIPO_ENVIO.SESION);
+		Internet.addData(envio);
+		Internet.tryToSend();
+	}
+
+	@Override
+	public void event_initLevel(Level level) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void event_initTrial(Trial trial) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

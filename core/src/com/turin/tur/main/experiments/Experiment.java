@@ -1,7 +1,9 @@
 package com.turin.tur.main.experiments;
 
 import com.badlogic.gdx.utils.Array;
+import com.turin.tur.main.diseno.ExperimentalObject;
 import com.turin.tur.main.diseno.Level;
+import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
 
@@ -20,5 +22,9 @@ public interface Experiment {
 	Array<LevelStatus> levelsStatus(); // Pasa la info para que la pantalla menu pueda armarse como corresponde
 	boolean askCompleted(); // Indica si se completo el nivel o no.
 	void interrupt(); // Sirve para ejecutar acciones cuando se interrumpe el experimento porque el usuario decide salir del nivel
-	
+	void event_newAnswer (ExperimentalObject estimulo, boolean rtaCorrecta);
+	void event_sendReport ();
+	void event_initGame (Session session);
+	void event_initLevel (Level level);
+	void event_initTrial (Trial trial);
 }

@@ -2,9 +2,7 @@ package com.turin.tur.main.diseno;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.TimeUtils;
-import com.turin.tur.main.diseno.Enviables.STATUS;
 import com.turin.tur.main.util.Constants;
-import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.main.util.Internet;
 import com.turin.tur.main.util.builder.Builder;
 
@@ -12,8 +10,15 @@ public class Session {
 
 	private static final String TAG = Session.class.getName();
 	public User user;
-	public int numberOfLevels;
-	public int nextLevel;
+	public long userID;
+	public long sessionInstance = TimeUtils.millis();
+	public int codeVersion = Constants.CODEVERSION;
+	public int levelVersion = Builder.levelVersionFinal;
+	public int resourcesVersion = Builder.ResourceVersion;
+
+	// this.id = TimeUtils.millis();
+	// public int numberOfLevels;
+	// public int nextLevel;
 	// public SessionLog sessionLog;
 	// public SessionLogHistory sessionLogHistory;
 	// public LevelLogHistory levelLogHistory;
@@ -24,11 +29,14 @@ public class Session {
 		// levelLogHistory = new LevelLogHistory();
 		// trialLogHistory = new TrialLogHistory();
 		Internet.Check();
+		Internet.checkLogs();
 		loadUser();
-		initSession();
-		loadLevels();
+		
+		// initSession();
+		// loadLevels();
 	}
 
+	/*
 	private void loadLevels() {
 		// Chequea la cantidad de niveles que hay disponibles. Se asume que estan numerados y empiezan en 1.
 		boolean isFile = true;
@@ -46,7 +54,9 @@ public class Session {
 		this.nextLevel = 0;
 
 	}
-
+	*/
+	
+	/*
 	private void initSession() {
 		// Crea la session
 		// this.sessionLog = new SessionLog();
@@ -54,7 +64,8 @@ public class Session {
 		// sessionLogHistory = new SessionLogHistory();
 		// sessionLogHistory.append(this.sessionLog);
 	}
-
+	*/
+	
 	private void loadUser() {
 		// Chequea si el usuario ya existe o si es la primera vez
 		if (!Gdx.files.local(Constants.USERFILE).exists()) {
@@ -65,20 +76,20 @@ public class Session {
 	}
 
 	
-
+	/*
 	public static class SessionLog { //Nota: tiene que ser static porque sino colapsa el JsonLoad al quere crear instancias
-		public long userID;
-		public long id;
+		// public long userID;
+		// public long id;
 		// public String appVersion = Builder.AppVersion;
 		public STATUS status=STATUS.CREADO;
 		public long idEnvio;
-		public long codeVersion = Constants.CODEVERSION;
-		public int levelVersion = Builder.levelVersionFinal;
-		public int resourcesVersion = Builder.ResourceVersion;
+		// public long codeVersion = Constants.CODEVERSION;
+		// public int levelVersion = Builder.levelVersionFinal;
+		// public int resourcesVersion = Builder.ResourceVersion;
 
 		public SessionLog() {
 			this.id = TimeUtils.millis();
 		}
 	}
-	
+	*/
 }
