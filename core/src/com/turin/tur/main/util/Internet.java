@@ -9,9 +9,6 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import com.badlogic.gdx.utils.TimeUtils;
-import com.turin.tur.obsoleto.Enviables;
-import com.turin.tur.obsoleto.SessionEnviables;
-
 
 
 public class Internet {
@@ -82,21 +79,17 @@ public class Internet {
 		
 	}
 	
-	
-	public static void PUT(final Enviables objetoEnviado) {
+	public static void PUT(final Enviable envio) {
 
 		Array<String> urls = new Array<String>();
-		urls.add("http://turintur.dynu.com/" + objetoEnviado.getClass().getSimpleName());
+		urls.add("http://turintur.dynu.com/Envio");
+		//urls.add("http://turintur.dynu.com/" + objetoEnviado.getClass().getSimpleName());
+		
 		//urls.add("http://181.169.225.117:3000/" + objetoEnviado.getClass().getSimpleName());
 
-		/*
-		if (objetoEnviado.contenidoLevel.size>0) {
-			Gdx.app.debug(TAG, "Tamañan de datos level" + objetoEnviado.contenidoLevel.size);
-		}
-		*/
-		
 		for (final String url : urls) {
 
+			Gdx.app.debug(TAG, url);
 			new Thread(new Runnable() {
 
 				@Override
@@ -105,22 +98,15 @@ public class Internet {
 					Json json = new Json();
 					json.setOutputType(OutputType.json);
 				    json.setUsePrototypes(false);
-					String requestJson = json.toJson(objetoEnviado.contenido);
+					String requestJson = json.toJson(envio);
+					
 					
 					Net.HttpRequest request = new Net.HttpRequest(HttpMethods.POST);
 					request.setContent(requestJson);
-
 					request.setHeader("Content-Type", "application/json");
 					request.setHeader("Accept", "application/json");
 					request.setUrl(url);
 
-					
-					/*
-					if (objetoEnviado.contenidoLevel.size>0) {
-						Gdx.app.debug(TAG, "Contexto: " + objetoEnviado.levelLogHistory);
-						Gdx.app.debug(TAG, "Json:" + requestJson);
-					}
-					*/
 					
 					Gdx.net.sendHttpRequest(request, new Net.HttpResponseListener() {
 
@@ -129,22 +115,22 @@ public class Internet {
 							int statusCode = httpResponse.getStatus().getStatusCode();
 							if (statusCode != HttpStatus.SC_CREATED) {
 								Gdx.app.debug(TAG, "" + httpResponse.getStatus().getStatusCode());
-								objetoEnviado.noEnviado();
+								envio.noEnviado();
 								Gdx.app.debug(TAG, "Request Failed");
 							} else {
-								objetoEnviado.enviado();
+								envio.enviado();
 							}
 						}
 
 						@Override
 						public void failed(Throwable t) {
-							objetoEnviado.noEnviado();
+							envio.noEnviado();
 							Gdx.app.debug(TAG, "Request Failed Completely");
 						}
 
 						@Override
 						public void cancelled() {
-							objetoEnviado.noEnviado();
+							envio.noEnviado();
 							Gdx.app.debug(TAG, "request cancelled");
 						}
 
@@ -155,84 +141,6 @@ public class Internet {
 		}
 	}
 	
-	public static void PUT2(final Enviable objetoEnviado) {
-
-		Array<String> urls = new Array<String>();
-		urls.add("http://turintur.dynu.com/" + objetoEnviado.tipoDeEnvio + "/");
-		
-		//urls.add("http://181.169.225.117:3000/" + objetoEnviado.getClass().getSimpleName());
-
-		/*
-		if (objetoEnviado.contenidoLevel.size>0) {
-			Gdx.app.debug(TAG, "Tamañan de datos level" + objetoEnviado.contenidoLevel.size);
-		}
-		*/
-		
-		for (final String url : urls) {
-
-			Gdx.app.debug(TAG, url);
-			new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-
-					//Json json = new Json();
-					//json.setOutputType(OutputType.json);
-				    //json.setUsePrototypes(false);
-					String requestJson = objetoEnviado.contenido;
-					
-					Net.HttpRequest request = new Net.HttpRequest(HttpMethods.POST);
-					request.setContent(requestJson);
-
-					request.setHeader("Content-Type", "application/json");
-					request.setHeader("Accept", "application/json");
-					
-					
-					request.setUrl(url);
-					//request.setUrl(server+"status/");
-					// Gdx.app.debug(TAG, server+"status/");
-
-					
-					/*
-					if (objetoEnviado.contenidoLevel.size>0) {
-						Gdx.app.debug(TAG, "Contexto: " + objetoEnviado.levelLogHistory);
-						Gdx.app.debug(TAG, "Json:" + requestJson);
-					}
-					*/
-					
-					Gdx.net.sendHttpRequest(request, new Net.HttpResponseListener() {
-
-						@Override
-						public void handleHttpResponse(Net.HttpResponse httpResponse) {
-							int statusCode = httpResponse.getStatus().getStatusCode();
-							if (statusCode != HttpStatus.SC_CREATED) {
-								Gdx.app.debug(TAG, "" + httpResponse.getStatus().getStatusCode());
-								objetoEnviado.noEnviado();
-								Gdx.app.debug(TAG, "Request Failed");
-							} else {
-								objetoEnviado.enviado();
-							}
-						}
-
-						@Override
-						public void failed(Throwable t) {
-							objetoEnviado.noEnviado();
-							Gdx.app.debug(TAG, "Request Failed Completely");
-						}
-
-						@Override
-						public void cancelled() {
-							objetoEnviado.noEnviado();
-							Gdx.app.debug(TAG, "request cancelled");
-						}
-
-					});
-
-				}
-			}).start();
-		}
-	} 
-
 	public static enum TIPO_ENVIO {
 		SESION
 	}
@@ -285,9 +193,7 @@ public class Internet {
 		for(FileHandle file: Gdx.files.local(pathToSend).list()) {
 			String data = file.readString();
 			Enviable envio = new Enviable (Long.valueOf(file.nameWithoutExtension()), data, TIPO_ENVIO.valueOf(file.extension()));
-			SessionEnviables prueba = new SessionEnviables();
-			prueba.contenido = "{'hola':'chau'}";
-			Internet.PUT(prueba);
+			Internet.PUT(envio);
 		}
 	}
 }
