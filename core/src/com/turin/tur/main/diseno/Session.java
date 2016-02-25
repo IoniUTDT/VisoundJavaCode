@@ -10,7 +10,6 @@ public class Session {
 
 	private static final String TAG = Session.class.getName();
 	public User user;
-	public long userID;
 	public long sessionInstance = TimeUtils.millis();
 	public int codeVersion = Constants.CODEVERSION;
 	public int levelVersion = Builder.levelVersionFinal;
@@ -33,6 +32,12 @@ public class Session {
 		
 		// initSession();
 		// loadLevels();
+	}
+	
+	public static class SessionLog {
+		public Session session;
+		public long levelInstance;
+		public String expName;
 	}
 
 	/*

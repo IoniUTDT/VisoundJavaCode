@@ -181,7 +181,9 @@ public class Internet {
 		// Transformamos el objeto en un enviable
 		Json json = new Json();
 		json.setUsePrototypes(false);
+		json.setOutputType(OutputType.json);
 		String string = json.toJson(objeto);
+		// Gdx.app.debug(TAG, string);
 		Enviable envio = new Enviable (string, tipo);	
 		String path = pathToSend + "/" + envio.instance + "." + envio.tipoDeEnvio;
 		FileHandle file = Gdx.files.local(path);

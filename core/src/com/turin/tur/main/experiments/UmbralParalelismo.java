@@ -11,6 +11,7 @@ import com.turin.tur.main.diseno.ExperimentalObject;
 import com.turin.tur.main.diseno.Level;
 import com.turin.tur.main.diseno.Level.JsonLevel;
 import com.turin.tur.main.diseno.Session;
+import com.turin.tur.main.diseno.Session.SessionLog;
 import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.experiments.Experiments.ExpSettings;
@@ -31,12 +32,6 @@ import com.turin.tur.main.util.builder.Textos;
 
 public class UmbralParalelismo implements Experiment {
 
-	private static class SessionLog {
-		private Session session;
-		private long levelInstance;
-		private String expName;
-	}
-	
 	private static class LogConvergencia {
 		private SessionLog session;
 		private DinamicaExperimento dinamica; 
@@ -64,7 +59,7 @@ public class UmbralParalelismo implements Experiment {
 		private int proporcionAciertos = 2; // Es la cantidad de aciertos que tiene que haber en el numero total de ultimas respuestas para que aumente la dificultad
 		private int proporcionTotal = 3; // Es el numero de elementos a revisar en el historial en busca de la cantidad de acierto para definir si se aumenta la dificultad o no
 		private int tamanoVentanaAnalisisConvergencia = 6;
-		private float sdEsperada = 1;
+		private float sdEsperada = 0.5f;
 	}
 
 	private static class Estimulo implements Comparable<Estimulo> {
