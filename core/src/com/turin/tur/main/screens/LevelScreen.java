@@ -1,11 +1,10 @@
 package com.turin.tur.main.screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.diseno.Trial.RunningSound.NEXT;
 import com.turin.tur.main.experiments.Experiment;
+import com.turin.tur.Visound;
 import com.turin.tur.main.diseno.Level;
 import com.turin.tur.main.logic.LevelController;
 import com.turin.tur.main.logic.LevelRenderer;
@@ -19,19 +18,19 @@ public class LevelScreen extends AbstractGameScreen  {
 	// Clases que se crean para manipular el contenido
 	private LevelController levelController;
 	private LevelRenderer levelRenderer;
-	private LevelAsset levelAssets;
-	private Experiment exp;
+	private Level level;
 	
 	// Variables del level
 	private int levelNumber;
 	private boolean paused;
-	private Session session;
 	
-	
-	public LevelScreen (Game game, int level, Session session, Experiment exp) {
+	public LevelScreen (Visound game, int level, String expName) {
 		super(game);
-		this.exp = exp;
-		this.session = session;
+		for (Experiment exp : this.game.exps) {
+			if (exp.getName().equals(expName)) {
+				this.game.expActivo = exp;
+			}
+		}
 		this.levelNumber=level;
 		// this.levelAssets = new LevelAsset (level);
 	}
@@ -61,9 +60,9 @@ public class LevelScreen extends AbstractGameScreen  {
 
 	@Override
 	public void show () {
-		this.levelAssets = new LevelAsset (this.levelNumber);
-		Level level = new Level(levelNumber);
-	    this.levelController = new LevelController(game, level, this.session, this.levelAssets, exp);
+		this.level = new Level(levelNumber);
+		level.levelAssets = new LevelAsset (this.levelNumber);
+	    this.levelController = new LevelController(game, level);
 	    this.levelRenderer = new LevelRenderer(levelController);
 		Gdx.input.setCatchBackKey(true);
 	}
@@ -71,7 +70,7 @@ public class LevelScreen extends AbstractGameScreen  {
 	@Override
 	public void hide () {
 		levelRenderer.dispose();
-		this.levelAssets.dispose();
+		this.level.levelAssets.dispose();
 		Gdx.input.setCatchBackKey(false);
 	}
 	

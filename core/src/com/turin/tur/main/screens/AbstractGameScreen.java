@@ -1,16 +1,16 @@
 package com.turin.tur.main.screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
+import com.turin.tur.Visound;
 import com.turin.tur.main.util.Assets;
 
 public abstract class AbstractGameScreen implements Screen {
 	
-	public Game game;
+	public Visound game;
 	public Assets assets= new Assets();
 	// Informacion general
 	
-	public AbstractGameScreen (Game game) {
+	public AbstractGameScreen (Visound game) {
 		this.game = game;
 	}
 	

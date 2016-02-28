@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.main.util.FileHelper;
+import com.turin.tur.main.util.LevelAsset;
 
 
 public class Level {
@@ -15,27 +16,30 @@ public class Level {
 	public int Id;
 
 	// Cosas que se cargan de archivo
-	public Array<Integer> secuenciaTrailsId = new Array<Integer>();
+	// public Array<Integer> secuenciaTrailsId = new Array<Integer>();
 
 	// variable del nivel
-	public int activeTrialPosition; // Posicion del trial activo
-	public int activeTrial; // Hay que revisar porque la linea anterior cumple una funcion parecida
+	// public int activeTrialPosition; // Posicion del trial activo
+	// public int activeTrial; // Hay que revisar porque la linea anterior cumple una funcion parecida
 	public String levelTitle;
 	// public LevelLog levelLog;
 	public JsonLevel jsonLevel;
+	public LevelAsset levelAssets;
 
 	public Level(int level) {
-		this.activeTrialPosition = 0;
+		// this.activeTrialPosition = 0;
 		Gdx.app.debug(TAG, "Cargando informacion del nivel " + level);
 		this.initlevel(level);
 	}
 
+	/*
 	public Level(int level, int activeTrialPosition) {
 		Gdx.app.debug(TAG, "Cargando informacion del nivel " + level);
 		this.activeTrialPosition = activeTrialPosition;
 		this.initlevel(level);
 	}
-
+	*/
+	
 	private void initlevel(int level) {
 		this.jsonLevel = loadLevel(level);
 		this.Id = jsonLevel.Id;
@@ -45,6 +49,9 @@ public class Level {
 		// this.initLog();
 	}
 
+	public void levelDispose() {
+		this.levelAssets.dispose();
+	}
 	/*
 	private void initLog() {
 		this.levelLog = new LevelLog();
@@ -123,6 +130,7 @@ public class Level {
 		public int numberOfMaxTrials;
 	}
 
+	/*
 	public void saveLevel(int level, Array<Integer> secuenciaTrials, String levelTitle) {
 		JsonLevel jsonLevel = new JsonLevel();
 		jsonLevel.Id = level;
@@ -132,7 +140,7 @@ public class Level {
 		json.setUsePrototypes(false);
 		FileHelper.writeFile(Resources.Paths.resources + "/level" + level + ".meta", json.toJson(jsonLevel));
 	}
-
+	*/
 	/*
 	public static class LevelLog {
 		// Info del envio

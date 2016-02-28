@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.turin.tur.Visound;
 import com.turin.tur.main.diseno.Level;
 import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.diseno.User;
@@ -24,26 +25,18 @@ public class ResultsScreen extends AbstractGameScreen {
 
 	private static final String TAG = ResultsScreen.class.getName();
 
-	private User user;
-	private Session session;
 	private Level level;
-	private Experiment exp;
 	
 	private SpriteBatch batch;
 	private OrthographicCamera cameraGUI;
-	
-	private int page=1; // Maneja el numero de pagina que se muestra
 	
 	// Elementos graficos
 	private Skin skin;
 	private Stage stage;
 	private Table table;
 		
-	public ResultsScreen(Game game, Session session, Level level, Experiment exp) {
+	public ResultsScreen(Visound game, Level level) {
 		super(game);
-		this.exp = exp;
-		this.session = session;
-		this.user = this.session.user;
 		this.level = level;
 	}
 
@@ -175,7 +168,7 @@ public class ResultsScreen extends AbstractGameScreen {
 		button.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				game.setScreen(new MenuScreen(game, session, exp));
+				game.setScreen(new MenuScreen(game));
 			}
 		});
 		

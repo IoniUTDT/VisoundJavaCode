@@ -1,1 +1,1 @@
-{tipoDeExperimento:UmbralParalelismo,levels:[{name:R: 0.0,id:1,enabled:true,alreadyPlayed:true},{name:R: 30.0,id:2,enabled:true},{name:R: 90.0,id:3,enabled:true,alreadyPlayed:true}]}
+{tipoDeExperimento:UmbralParalelismo,levels:[{publicName:R: 0.0,internalName:UmbralParalelismo1,expName:UmbralParalelismo,id:1,enabled:true,alreadyPlayed:true},{publicName:R: 30.0,internalName:UmbralParalelismo2,expName:UmbralParalelismo,id:2,enabled:true},{publicName:R: 90.0,internalName:UmbralParalelismo3,expName:UmbralParalelismo,id:3,enabled:true}]}

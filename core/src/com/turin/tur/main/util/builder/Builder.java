@@ -46,11 +46,9 @@ public class Builder {
 
 	static int contadorLevels = 0;
 
-	public static final int ResourceVersion = 136;
+	public static final int ResourceVersion = 137;
 	public static final int levelVersion = 28;
 	public static int levelVersionFinal;
-	// public static final String AppVersion = "UmbralCompletoAngulos"; 
-	public static final boolean categorizar = false;
 	
 	static final Boolean makeLevels = false;
 	static final Boolean makeResources = false;
@@ -60,22 +58,33 @@ public class Builder {
 		
 	}
 	
-	public void build(Experiment exp) {
+	public void build(Array<Experiment> exps) {
 
 		
 		if (makeResources) {
-			//experimento.generalBuilding();
-			exp.makeResources();
+			Builder.verifyResourcesVersion();
+			for (Experiment exp : exps) {
+				exp.makeResources();
+			}
 			System.exit(0);
 		}	
 		if (makeLevels) {
-			//experimento.makeLevels();
-			exp.makeLevels();
+			Builder.makeLevels();
+			for (Experiment exp : exps) {
+				exp.makeLevels();
+			}
 			System.exit(0);
 		}
 		
 	}
  
+	private static void makeLevels() {
+		// Hacemos tareas de revision y limpieza
+		Builder.verifyLevelVersion();
+		Builder.verifyResources();
+		Builder.cleanAssets();
+	}
+
 	/**
 	 * Funcion que verifica que no haya recursos creados con la misma version que la que se quiere crear
 	 */

@@ -7,14 +7,14 @@ import com.turin.tur.main.diseno.Trial.ResourceId;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Constants.Resources;
-import com.turin.tur.main.util.Constants.Resources.Categorias;
+import com.turin.tur.main.util.Constants.Resources.CategoriasImagenes;
 
 public class Textos {
 	
 	ResourceId resourceId = new ResourceId();
 	String name;
 	String comments;
-	Array<Categorias> categories = new Array<Resources.Categorias>();
+	Array<CategoriasImagenes> categories = new Array<Resources.CategoriasImagenes>();
 	String texto;
 	String contenido="";
 	
@@ -57,12 +57,12 @@ public class Textos {
 	 */
 	public static void crearTextos() {
 		// Crea un recurso para cada categoria
-		for (Constants.Resources.Categorias categoria : Constants.Resources.Categorias.values()) {
+		for (Constants.Resources.CategoriasImagenes categoria : Constants.Resources.CategoriasImagenes.values()) {
 			Textos texto = new Textos();
 			texto.resourceId.id = categoria.ID;
 			texto.comments = "Texto correspondiente a la categoria: " + categoria.nombre;
 			texto.categories.add(categoria);
-			texto.categories.add(Categorias.Texto); // Marca que son textos
+			texto.categories.add(CategoriasImagenes.Texto); // Marca que son textos
 			texto.name = categoria.nombre;
 			texto.texto = categoria.texto;
 			texto.resourceId.resourceVersion = Builder.ResourceVersion;

@@ -142,7 +142,7 @@ public class Internet {
 	}
 	
 	public static enum TIPO_ENVIO {
-		NEWSESION, NEWLEVEL, CONVERGENCIAPARALELISMO
+		NEWSESION, NEWLEVEL, CONVERGENCIAPARALELISMOV1
 	}
 	
 	private static class Enviable {

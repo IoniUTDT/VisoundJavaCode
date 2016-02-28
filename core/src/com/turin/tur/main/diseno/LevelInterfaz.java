@@ -5,9 +5,9 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.turin.tur.main.experiments.Experiment;
-import com.turin.tur.main.experiments.UmbralAngulos;
 import com.turin.tur.main.util.Assets;
 import com.turin.tur.main.util.Constants;
+import com.turin.tur.obsoleto.UmbralAngulosObsoleto;
 
 
 

@@ -8,6 +8,7 @@ import com.turin.tur.main.experiments.Experiments.LevelStatus;
 
 public interface Experiment {
 	// Cosas offline
+	String getName();
 	void makeResources(); // Se encarga de crear los recuros
 	void makeLevels(); // Se encarga de armar la estructura de niveles
 	// Cosas online de control de flujo de informacion

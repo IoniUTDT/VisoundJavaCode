@@ -14,7 +14,9 @@ public class Experiments {
 	static final String TAG = Experiments.class.getName();
 
 	public static class LevelStatus {
-		public String name;
+		public String publicName;
+		public String internalName;
+		public String expName;
 		public int id;
 		public boolean enabled;
 		public boolean alreadyPlayed;
@@ -27,7 +29,8 @@ public class Experiments {
 	
 	public enum TIPOdeEXPERIMENTO {
 		UmbralAngulos,
-		UmbralParalelismo
+		UmbralParalelismo,
+		UmbralAngulosV2
 	}
 	
 }

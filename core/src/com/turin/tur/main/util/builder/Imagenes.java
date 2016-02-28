@@ -17,7 +17,7 @@ public class Imagenes {
 	public ResourceId resourceId = new ResourceId();
 	public String name;
 	public String comments;
-	public Array<Constants.Resources.Categorias> categories = new Array<Constants.Resources.Categorias>();
+	public Array<Constants.Resources.CategoriasImagenes> categories = new Array<Constants.Resources.CategoriasImagenes>();
 	public Array<Linea> lineas = new Array<Linea>();
 		
 	// public ResourceInfo infoConceptualAngulos = new ResourceInfo();

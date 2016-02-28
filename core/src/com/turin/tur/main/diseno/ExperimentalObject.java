@@ -17,7 +17,7 @@ public class ExperimentalObject {
 	// public final int Id; 
 	public String name;
 	public String comments = "Aca va opcionalmente una descripcion del objeto";
-	public Array<Constants.Resources.Categorias> categorias = new Array<Constants.Resources.Categorias>();
+	public Array<Constants.Resources.CategoriasImagenes> categorias = new Array<Constants.Resources.CategoriasImagenes>();
 	public ResourceId resourceId;
 	public boolean noSound;
 	
@@ -47,7 +47,7 @@ public class ExperimentalObject {
 		public String name;
 		public String comments;
 		public ResourceId resourceId;
-		public Array<Constants.Resources.Categorias> categories = new Array<Constants.Resources.Categorias>();
+		public Array<Constants.Resources.CategoriasImagenes> categories = new Array<Constants.Resources.CategoriasImagenes>();
 		public Array<Linea> infoLineas;
 		public Object infoConceptual;
 		

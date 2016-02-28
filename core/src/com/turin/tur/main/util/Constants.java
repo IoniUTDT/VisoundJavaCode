@@ -140,7 +140,7 @@ public class Constants {
 	// Constantes relacionadas a IDs de cosas fijas
 	public static class Resources {
 
-		public enum Categorias {
+		public enum CategoriasImagenes {
 			Nada(0,""), 
 			Texto(1), 
 			Imagen(2),
@@ -173,13 +173,13 @@ public class Constants {
 			public String nombre; // Nombre de la categoria (igual a su nombre, pero incluido para que sea explicito en los Jsons)
 			public String texto; // Texto que se muestra en el cuadro. A priori es igual al nombre salvo que se especifique otra cosa
 
-			private Categorias(int Id) {
+			private CategoriasImagenes(int Id) {
 				this.ID = Id;
 				this.nombre = this.name();
 				this.texto = this.name();
 			}
 			
-			private Categorias(int Id, String texto) {
+			private CategoriasImagenes(int Id, String texto) {
 				this.ID = Id;
 				this.nombre = this.name();
 				this.texto = texto;
@@ -203,6 +203,6 @@ public class Constants {
 			public static String resources = "experimentalsource/";
 		}
 
-		public static final int Reservados = Resources.Categorias.values().length;
+		public static final int Reservados = Resources.CategoriasImagenes.values().length;
 	}
 }

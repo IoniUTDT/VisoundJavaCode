@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
+import com.turin.tur.Visound;
 import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.diseno.User;
 import com.turin.tur.main.experiments.Experiment;
@@ -36,23 +37,15 @@ public class MenuScreen extends AbstractGameScreen {
 	private Table table;
 	private Array<TextButton> levelButtons = new Array<TextButton>();
 
-	public User user;
-	public Session session;
-	
 	// Variables para funcionamiento interno
 	int levelIterator;
 
 	public SpriteBatch batch;
 	public OrthographicCamera cameraGUI;
 
-	private Experiment exp;
-	
-	
-	public MenuScreen(Game game, Session session, Experiment exp) {
+
+	public MenuScreen(Visound game) {
 		super(game);
-		this.exp = exp;
-		this.session=session;
-		this.user = this.session.user;
 	}
 
 	@Override
@@ -120,14 +113,17 @@ public class MenuScreen extends AbstractGameScreen {
 		skin = new Skin(Gdx.files.internal(Constants.SKIN_LIBGDX_UI));
 		
 		// Crea los botones de los niveles
-		Array<LevelStatus> levels = exp.levelsStatus();
+		Array<LevelStatus> levels = new Array<LevelStatus>();
+		for (Experiment exp : this.game.exps) {
+			levels.addAll(exp.levelsStatus());
+		}
 
 		for (final LevelStatus level : levels) {
-			TextButton button = new TextButton(level.name, skin, "default");
+			TextButton button = new TextButton(level.publicName, skin, "default");
 			button.addListener(new ClickListener() {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
-					game.setScreen(new LevelScreen(game,level.id, session, exp));
+					game.setScreen(new LevelScreen(game,level.id, level.expName));
 				}
 			});
 			if (level.alreadyPlayed) {

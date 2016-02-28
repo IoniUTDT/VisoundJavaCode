@@ -12,7 +12,7 @@ import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.LevelAsset;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
-import com.turin.tur.main.util.Constants.Resources.Categorias;
+import com.turin.tur.main.util.Constants.Resources.CategoriasImagenes;
 
 public class Trial {
 
@@ -144,7 +144,7 @@ public class Trial {
 		public boolean feedback=false; // Sirve para configurar que en algunos test no haya feedback
 		public boolean randomSort;
 		public int resourceVersion;
-		public String identificador;
+		// public String identificador;
 		// public ParametrosSetupParalelismo parametrosParalelismo;
 		// public JsonResourcesMetaData jsonEstimulo;
 		
@@ -461,7 +461,7 @@ public class Trial {
 		if (boxTocada.getClass() == TestBox.class) {
 			// Revisamos que onda si se acerto o no. Acertar significa que el elemento tocado y el estimulo compartan al menos una categoria.
 			boolean answerCorrect = false;
-			for (Categorias categoria : boxTocada.contenido.categorias) {
+			for (CategoriasImagenes categoria : boxTocada.contenido.categorias) {
 				if (this.estimulo.categorias.contains(categoria, false)) {
 					answerCorrect = true;
 				}

@@ -1,6 +1,5 @@
 package com.turin.tur.main.logic;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Input.Keys;
@@ -12,6 +11,7 @@ import com.turin.tur.main.diseno.LevelInterfaz;
 import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.diseno.TouchInfo;
 import com.turin.tur.main.diseno.Trial;
+import com.turin.tur.Visound;
 import com.turin.tur.main.diseno.Boxes.Box;
 import com.turin.tur.main.experiments.Experiment;
 import com.turin.tur.main.screens.ResultsScreen;
@@ -29,12 +29,8 @@ public class LevelController implements InputProcessor {
 
 	// Copia de variables globales
 	public LevelInterfaz levelInterfaz;
-	private Game game;
+	private Visound game;
 	private Level level; //Informacion del nivel cargado
-	private Experiment exp;
-	public Session session;
-	public LevelAsset levelAssets;
-
 	
 	// Cosas relacionadas con los elementos del juego
 	public Array<TouchInfo> touchSecuence = new Array<TouchInfo>();
@@ -50,24 +46,21 @@ public class LevelController implements InputProcessor {
 
 
 		
-	public LevelController(Game game, Level level, Session session, LevelAsset levelAssets, Experiment exp) {
+	public LevelController(Visound game, Level level) {
 	
 		this.game = game; // Hereda la info del game (cosa de ventanas y eso)
-		this.session = session; // Hereda la info de la session. Que registra en que session esta
-		this.levelAssets = levelAssets;
-		this.exp = exp;
 		this.level = level; 
 		// Agrega la info del log del level asociada a la creacion
 		//this.level.levelLog.sessionId = this.session.sessionLog.id; //TODO revisar logs!
 		//this.level.levelLog.idUser = this.session.user.id;
 		this.initCamera();
-		this.exp.initLevel(this.level);
+		this.game.expActivo.initLevel(this.level);
 		
 		// Selecciona el trial que corresponda
-		this.exp.askNext();
-		this.trial = this.exp.getTrial();
+		this.game.expActivo.askNext();
+		this.trial = this.game.expActivo.getTrial();
 		// this.initTrial();
-		this.levelInterfaz = new LevelInterfaz(this.level, this.trial, this.exp);
+		this.levelInterfaz = new LevelInterfaz(this.level, this.trial, this.game.expActivo);
 
 		
 		// Inicia en el trial de maxima señal si esta en modo umbral
@@ -129,13 +122,13 @@ public class LevelController implements InputProcessor {
 
 		// Procesa cambios de trial si los hay pendientes
 		if (trial.checkTrialCompleted()) {
-			this.exp.returnAnswer(this.trial.lastAnswer());
-			if (this.exp.askCompleted()) {
-				this.exp.stopLevel();
+			this.game.expActivo.returnAnswer(this.trial.lastAnswer());
+			if (this.game.expActivo.askCompleted()) {
+				this.game.expActivo.stopLevel();
 				this.goToResults();
 			} else {
-				this.exp.askNext();
-				this.trial = this.exp.getTrial();
+				this.game.expActivo.askNext();
+				this.trial = this.game.expActivo.getTrial();
 					
 			}
 			//this.initTrial();
@@ -327,7 +320,7 @@ public class LevelController implements InputProcessor {
 			// Indica en el log del level que se completo
 			// this.level.levelLog.levelCompleted = false;
 			// this.logExitTrial();
-			this.exp.interrupt();
+			this.game.expActivo.interrupt();
 			goToResults();
 		}
 		return false;
@@ -351,7 +344,7 @@ public class LevelController implements InputProcessor {
 		trial.runningSound.stop();
 		
 		//Aca reemplazamos esta linea por ir al menu de resultados
-		game.setScreen(new ResultsScreen(game, this.session, this.level, this.exp));
+		game.setScreen(new ResultsScreen(game, this.level));
 		//game.setScreen(new MenuScreen(game, this.session));
 	}
 	
