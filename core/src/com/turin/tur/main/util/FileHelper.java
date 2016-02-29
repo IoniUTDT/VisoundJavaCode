@@ -10,6 +10,7 @@ public class FileHelper {
 	
 	public static String readFile(String fileName) {
 		FileHandle file = Gdx.files.internal(fileName);
+		//Gdx.app.debug(TAG, file.file().getAbsolutePath());
 		if (file != null && file.exists()) {
 			String s = file.readString();
 			if (!s.isEmpty()) {

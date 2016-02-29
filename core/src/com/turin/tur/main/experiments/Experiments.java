@@ -30,7 +30,8 @@ public class Experiments {
 	public enum TIPOdeEXPERIMENTO {
 		UmbralAngulos,
 		UmbralParalelismo,
-		UmbralAngulosV2
+		TutorialBasico,
+		TutorialAvanzadoUmbral
 	}
 	
 }

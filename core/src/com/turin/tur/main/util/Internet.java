@@ -20,8 +20,8 @@ public class Internet {
 	public static HttpStatus serverStatusCode;
 	public static boolean serverOk;
 	public static final String server = "http://turintur.dynu.com/";
-	public static String pathToSend = "logToSend";
-	public static String pathSent = "logSent";
+	public static String pathToSend = "logs/logToSend";
+	public static String pathSent = "logs/logSent";
 	
 	public static void Check() {
 		checkLogs();
@@ -142,13 +142,14 @@ public class Internet {
 	}
 	
 	public static enum TIPO_ENVIO {
-		NEWSESION, NEWLEVEL, CONVERGENCIAPARALELISMOV1
+		NEWSESION, NEWLEVEL, CONVERGENCIAPARALELISMOV1, CONVERGENCIA, CONVERGENCIAANGULOSV1, NEWLEVELANGULOS, NEWLEVELPARALELISMO
 	}
 	
 	private static class Enviable {
 		public long instance;
 		public String contenido;
 		public TIPO_ENVIO tipoDeEnvio;
+		public String tag;
 		
 		private void enviado() {
 			// Gdx.app.debug(TAG, "Paquete de datos enviado: " + this.instance + ", tipo: " + this.tipoDeEnvio);
@@ -156,39 +157,51 @@ public class Internet {
 			String pathFrom = pathToSend + "/" + this.instance + "." + this.tipoDeEnvio;
 			String pathTo = pathSent + "/" + this.instance + "." + this.tipoDeEnvio;
 			Gdx.files.local(pathFrom).moveTo(Gdx.files.local(pathTo));
+			// Mueves los tags
+			String pathFromTag = pathToSend + "/tags/" + this.instance + "." + this.tipoDeEnvio;
+			String pathToTag = pathSent + "/tags/" + this.instance + "." + this.tipoDeEnvio;
+			Gdx.files.local(pathFromTag).moveTo(Gdx.files.local(pathToTag));
+			
 			//Gdx.app.debug(TAG, "EHA!");
 		}
 		
 		private void noEnviado() {
 			Gdx.app.error(TAG, "Verifique conectividad con el servidor!");
 			Gdx.app.error(TAG, "Paquete de datos: " + this.instance);
+			Gdx.app.error(TAG, "Tag: " + this.tag);
 		}
 		
-		private Enviable (String data, TIPO_ENVIO tipoDeEnvio) {
+		private Enviable (String data, TIPO_ENVIO tipoDeEnvio, String tag) {
 			this.instance = TimeUtils.millis();
 			this.contenido = data;
 			this.tipoDeEnvio = tipoDeEnvio;
+			this.tag = tag;
 		}
 		
-		public Enviable (long id, String data, TIPO_ENVIO tipoDeEnvio) {
+		public Enviable (long id, String data, TIPO_ENVIO tipoDeEnvio, String tag) {
+			this.tag = tag;
 			this.instance = id;
 			this.contenido = data;
 			this.tipoDeEnvio = tipoDeEnvio;
 		}
 	}
 
-	public static void sendData(Object objeto, TIPO_ENVIO tipo) {
+	public static void sendData(Object objeto, TIPO_ENVIO tipo, String tag) {
 		// Transformamos el objeto en un enviable
 		Json json = new Json();
 		json.setUsePrototypes(false);
 		json.setOutputType(OutputType.json);
 		String string = json.toJson(objeto);
 		// Gdx.app.debug(TAG, string);
-		Enviable envio = new Enviable (string, tipo);	
+		Enviable envio = new Enviable (string, tipo, tag);	
 		String path = pathToSend + "/" + envio.instance + "." + envio.tipoDeEnvio;
 		FileHandle file = Gdx.files.local(path);
 		file.writeString(envio.contenido, false);
+		String path2 = pathToSend + "/tags/" + envio.instance + "." + envio.tipoDeEnvio;
+		FileHandle file2 = Gdx.files.local(path2);
+		file2.writeString(envio.tag, false);
 		Internet.tryToSend(file);
+		
 	}
 	
 	private static void checkLogs() {
@@ -205,15 +218,20 @@ public class Internet {
 	
 	private static void tryToSendAll () {
 		for(FileHandle file: Gdx.files.local(pathToSend).list()) {
-			String data = file.readString();
-			Enviable envio = new Enviable (Long.valueOf(file.nameWithoutExtension()), data, TIPO_ENVIO.valueOf(file.extension()));
-			Internet.PUT(envio);
+			if (!file.isDirectory()) {
+				tryToSend(file);
+			}
 		}
 	}
 	
 	private static void tryToSend (FileHandle file) {
 		String data = file.readString();
-		Enviable envio = new Enviable (Long.valueOf(file.nameWithoutExtension()), data, TIPO_ENVIO.valueOf(file.extension()));
+		long id = Long.valueOf(file.nameWithoutExtension());
+		String pathTag = file.parent() + "/tags/" + file.name();
+		FileHandle fileTag = Gdx.files.local(pathTag);
+		String tag = fileTag.readString();
+		TIPO_ENVIO tipo = TIPO_ENVIO.valueOf(file.extension());
+		Enviable envio = new Enviable (id, data, tipo, tag);
 		Internet.PUT(envio);
 	}
 }

@@ -11,7 +11,7 @@ public class Constants {
 	// al cambiar la version no se cargan los datos viejo ni las estructuras
 	// viejas
 	public static final float VERSION = 1.1f;
-	public static final int CODEVERSION = 16;
+	public static final int CODEVERSION = 17;
 
 	// Version of game for internal use
 	public static int version() {
@@ -86,7 +86,8 @@ public class Constants {
 			BILINEALx6(new float[][] { { -1.5f, 1 }, { 0, 1 }, { 1.5f, 1 }, { -1.5f, -1 }, { 0, -1 }, { 1.5f, -1 } }),
 			BILINEALx4(new float[][] { { -1, 1 }, { 1, 1 }, { -1, -1 }, { 1, -1 } }),
 			BILINEALx2(new float[][] { { 0f, 1f }, { 0f, -1f } }),
-			LINEALx1(new float[][] { { 0, 0 } });
+			LINEALx1(new float[][] { { 0, 0 } }),
+			BILINEALx7(new float[][]{ { -1.5f, 1 }, { 0, 1 }, { 1.5f, 1 }, { -1.5f, -1 }, { 0, -1 }, { 1.5f, -1 }, {3f, 0f} });
 
 			public float[][] distribucion;
 

@@ -8,16 +8,13 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.turin.tur.main.diseno.Level;
 import com.turin.tur.main.diseno.LevelInterfaz;
-import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.diseno.TouchInfo;
 import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.Visound;
 import com.turin.tur.main.diseno.Boxes.Box;
-import com.turin.tur.main.experiments.Experiment;
 import com.turin.tur.main.screens.ResultsScreen;
 import com.turin.tur.main.util.CameraHelper;
 import com.turin.tur.main.util.Constants;
-import com.turin.tur.main.util.LevelAsset;
 
 public class LevelController implements InputProcessor {
 

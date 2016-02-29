@@ -14,6 +14,8 @@ import com.turin.tur.main.diseno.Session.SessionLog;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.experiments.Experiments.ExpSettings;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
+import com.turin.tur.main.experiments.Umbral.DinamicaExperimento;
+import com.turin.tur.main.experiments.Umbral.LogConvergencia;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Internet;
 import com.turin.tur.main.util.LevelAsset;
@@ -51,7 +53,8 @@ public abstract class Umbral {
 		int proporcionAciertos = 2; // Es la cantidad de aciertos que tiene que haber en el numero total de ultimas respuestas para que aumente la dificultad
 		// private int proporcionTotal = 3; // Es el numero de elementos a revisar en el historial en busca de la cantidad de acierto para definir si se aumenta la dificultad o no
 		int tamanoVentanaAnalisisConvergencia = 6;
-		float sdEsperada = 1f;
+		float sdEsperada = 0.5f;
+		double referencia;
 	}
 
 	static class Estimulo implements Comparable<Estimulo> {
@@ -157,6 +160,7 @@ public abstract class Umbral {
 	
 	public void initGame(Session session) {
 		// Cargamos la info del experimento
+		Gdx.app.debug(TAG, Resources.Paths.resources + this.getClass().getSimpleName() + ".settings");
 		String savedData = FileHelper.readFile(Resources.Paths.resources + this.getClass().getSimpleName() + ".settings");
 		Json json = new Json();
 		this.expSettings = json.fromJson(Experiments.ExpSettings.class, savedData);
@@ -168,16 +172,11 @@ public abstract class Umbral {
 		// Creamos el log
 		this.sessionLog = new SessionLog();
 		this.sessionLog.session = this.session;
-		this.sessionLog.expName = this.expName;
+		this.sessionLog.expName = this.getName();
 		// Creamos el enviable
-		Internet.sendData(this.sessionLog, TIPO_ENVIO.NEWSESION);
+		Internet.sendData(this.sessionLog, TIPO_ENVIO.NEWSESION, this.getNameTag());
 	}
 	
-	protected void event_initLevel() {
-		this.sessionLog.levelInstance = TimeUtils.millis();
-		// Creamos el enviable
-		Internet.sendData(this.sessionLog, TIPO_ENVIO.NEWLEVEL);
-	}
 	
 	protected void event_stopLevel () {
 		for (DinamicaExperimento dinamica : this.dinamicas) {
@@ -186,9 +185,16 @@ public abstract class Umbral {
 			log.dinamica = dinamica;
 			log.dinamica.listaEstimulos.clear();
 			// Creamos el enviable
-			Internet.sendData(log, TIPO_ENVIO.CONVERGENCIAPARALELISMOV1);
+			Internet.sendData(log, TIPO_ENVIO.CONVERGENCIA, this.getNameTag());
 		}
 	}
+	
+	protected void event_initLevel() {
+		this.sessionLog.levelInstance = TimeUtils.millis();
+		// Creamos el enviable
+		Internet.sendData(this.sessionLog, TIPO_ENVIO.NEWLEVEL, this.getNameTag());
+	}
+	
 
 	public void interrupt() {
 		this.waitingAnswer = false;
@@ -319,4 +325,6 @@ public abstract class Umbral {
 		//Gdx.app.debug(TAG, this.dinamicaActiva.identificador + " Nivel: " + this.dinamicaActiva.nivelEstimulo);
 		//Gdx.app.debug(TAG, this.dinamicaActiva.identificador + " Rta correcta: " + answer);
 	}
+	
+	protected abstract String getNameTag();
 }

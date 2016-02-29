@@ -7,6 +7,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.experiments.Experiment;
+import com.turin.tur.main.experiments.Tutorial;
 import com.turin.tur.main.experiments.UmbralAngulos;
 import com.turin.tur.main.experiments.UmbralParalelismo;
 import com.turin.tur.main.screens.MenuScreen;
@@ -32,6 +33,7 @@ public class Visound extends Game {
 		// Create the experiment class
 		exps.add(new UmbralParalelismo());
 		exps.add(new UmbralAngulos());
+		exps.add(new Tutorial());
 		
 		if ((buildResources) & (Gdx.app.getType() == ApplicationType.Desktop)) {
 			

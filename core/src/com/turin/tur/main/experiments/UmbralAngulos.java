@@ -4,16 +4,21 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.turin.tur.main.diseno.Level.JsonLevel;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.experiments.Experiments.ExpSettings;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
 import com.turin.tur.main.experiments.Experiments.TIPOdeEXPERIMENTO;
+import com.turin.tur.main.experiments.Umbral.DinamicaExperimento;
+import com.turin.tur.main.experiments.Umbral.LogConvergencia;
 import com.turin.tur.main.util.FileHelper;
+import com.turin.tur.main.util.Internet;
 import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
 import com.turin.tur.main.util.Constants.Resources.CategoriasImagenes;
+import com.turin.tur.main.util.Internet.TIPO_ENVIO;
 import com.turin.tur.main.util.builder.Builder;
 import com.turin.tur.main.util.builder.Imagenes;
 import com.turin.tur.main.util.builder.Textos;
@@ -300,7 +305,9 @@ public class UmbralAngulos extends Umbral implements Experiment {
 			dinamicaGave.nivelEstimulo = dinamicaGave.listaEstimulos.size - 1;
 			dinamicaAguda.saltosActivos = dinamicaAguda.listaEstimulos.size / 10;
 			dinamicaGave.saltosActivos = dinamicaGave.listaEstimulos.size / 10;
-
+			dinamicaGave.referencia = ladoFijo;
+			dinamicaAguda.referencia = ladoFijo;
+			
 			// Agrupamos todas las convergencias del nivel en un array y lo
 			// mandamos a la variable object del level
 			Array<DinamicaExperimento> convergencias = new Array<DinamicaExperimento>();
@@ -335,4 +342,10 @@ public class UmbralAngulos extends Umbral implements Experiment {
 		return this.expName;
 	}
 
+	@Override
+	protected String getNameTag() {
+		return "expAngulosPiloto";
+	}
+
+	
 }

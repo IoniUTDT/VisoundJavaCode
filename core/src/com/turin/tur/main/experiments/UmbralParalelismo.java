@@ -1,14 +1,10 @@
 package com.turin.tur.main.experiments;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.WindowedMean;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Json;
-import com.turin.tur.main.diseno.ExperimentalObject;
 import com.turin.tur.main.diseno.Level.JsonLevel;
-import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.experiments.Experiments.ExpSettings;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
@@ -136,6 +132,8 @@ public class UmbralParalelismo extends Umbral implements Experiment {
 			// dinamicaNeg.anguloDeReferencia = referencia;
 			dinamicaPos.convergenciaAlcanzada = false;
 			dinamicaNeg.convergenciaAlcanzada = false;
+			dinamicaPos.referencia = referencia;
+			dinamicaNeg.referencia = referencia;
 			dinamicaPos.nivelEstimulo = dinamicaPos.listaEstimulos.size - 1;
 			dinamicaNeg.nivelEstimulo = dinamicaNeg.listaEstimulos.size - 1;
 			dinamicaPos.saltosActivos = dinamicaPos.listaEstimulos.size / 10;
@@ -181,7 +179,7 @@ public class UmbralParalelismo extends Umbral implements Experiment {
 		ImageInfoParalelismo info = new ImageInfoParalelismo();
 
 		float largo = tamano * 0.8f;
-		float separacion = tamano * 0.2f;
+		float separacion = tamano * 0.4f;
 
 		float Xcenter = Resources.Display.width / 2;
 		float Ycenter = Resources.Display.height / 2;
@@ -242,8 +240,6 @@ public class UmbralParalelismo extends Umbral implements Experiment {
 	// anteriores son privadas del funcionamiento interno
 	@Override
 	public void makeResources() {
-		// Verificamos la version
-		Builder.verifyResourcesVersion();
 		// Inicializamos el setup segun parametros
 		this.makeSetup();
 		// Creamos los textos
@@ -271,8 +267,8 @@ public class UmbralParalelismo extends Umbral implements Experiment {
 		setup.angulosReferencia.add(30d);
 		setup.angulosReferencia.add(90d);
 		// Generamos las desviaciones
-		float desvMin = 0.01f;
-		float desvMax = 30f;
+		float desvMin = 0.1f;
+		float desvMax = 25f;
 		double desvMinLog = Math.log(desvMin);
 		double desvMaxLog = Math.log(desvMax);
 		int numeroDeDesviaciones = 40;
@@ -304,4 +300,10 @@ public class UmbralParalelismo extends Umbral implements Experiment {
 	public String getName() {
 		return this.expName;
 	}
+
+	@Override
+	protected String getNameTag() {
+		return "expParalelismoPiloto";
+	}
+
 }
