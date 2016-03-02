@@ -12,13 +12,10 @@ public class User {
 	private static final String TAG = User.class.getName();
 	
 	public long id;
-	// public int lastLevelCompletedId;
 	
 	public void save() {
 		JsonUser jsonUser = new JsonUser();
-		// Tranfiere los datos del usuario al Json
 		jsonUser.Id = this.id;
-		// Graba el json
 		jsonUser.save();
 	}
 

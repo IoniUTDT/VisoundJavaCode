@@ -1,7 +1,6 @@
 package com.turin.tur.main.screens;
 
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -10,14 +9,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.turin.tur.Visound;
-import com.turin.tur.main.diseno.Session;
-import com.turin.tur.main.diseno.User;
 import com.turin.tur.main.experiments.Experiment;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
 import com.turin.tur.main.util.Constants;
@@ -113,11 +111,26 @@ public class MenuScreen extends AbstractGameScreen {
 		skin = new Skin(Gdx.files.internal(Constants.SKIN_LIBGDX_UI));
 		
 		// Crea los botones de los niveles
+		
+		// Cargamos los niveles
 		Array<LevelStatus> levels = new Array<LevelStatus>();
 		for (Experiment exp : this.game.exps) {
 			levels.addAll(exp.levelsStatus());
 		}
-
+		
+		// Los ordenamos segun prioridad
+		levels.sort();
+		
+		// Seleccionamos solo los no jugados
+		Array<LevelStatus> levelsPlayed = new Array<LevelStatus>();
+		for (LevelStatus level : levels) {
+			if (!level.alreadyPlayed) {levelsPlayed.add(level);}
+		}
+		levelsPlayed.sort();
+		
+		// Buscamos que nivel de prioridad es la primera no jugada
+		int priorityGoal = levelsPlayed.first().priority;
+		
 		for (final LevelStatus level : levels) {
 			TextButton button = new TextButton(level.publicName, skin, "default");
 			button.addListener(new ClickListener() {
@@ -127,10 +140,20 @@ public class MenuScreen extends AbstractGameScreen {
 				}
 			});
 			if (level.alreadyPlayed) {
-				button.setColor(0, 1, 0, 1); // Green
+				button.setColor(0, 1, 0, 0.8f); // Green
 			} else {
 				//	button.setColor(1, 1, 0, 1); //Yellow
-				button.setColor(1, 0, 0, 1); //Red
+				button.setColor(1, 0, 0, 0.8f); //Red
+			}
+			
+			if (level.priority == priorityGoal) { // Significa que esta en el nivel de opciones a jugar
+				if (level.alreadyPlayed) {
+					button.setColor(0, 1, 0, 1); // Green
+				} else {
+					button.setColor(1, 0, 0, 1); //Red
+				}	
+			} else {
+				button.setTouchable(Touchable.disabled);
 			}
 			levelButtons.add(button);
 			//Gdx.app.debug(TAG, "agregado boton" + button.getText());

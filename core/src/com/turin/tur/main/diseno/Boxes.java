@@ -30,7 +30,6 @@ public abstract class Boxes {
 		
 	
 		// Variables especificas de cada tipo pero que estan en la clase general porque se llaman desde afuera
-		// public boolean answer=false; // Resultado de la respuesta
 		
 		public void render(SpriteBatch batch, Trial trial) {
 			// Render the main content of the box
@@ -65,8 +64,6 @@ public abstract class Boxes {
 	public static class TrainingBox extends Box {
 	
 		// Variables utiles para las cajas que son reproducibles
-		// public boolean runningSound; // Determina si se esta reproduciendo un sonido (para activar o no la animacion correspondiente)
-		// private float soundAvanceReproduccion; //Avance la reproduccion
 		private float soundDuracionReproduccion; //Tiempo total establecido para el sonido (ojo que no es necesariamente el tiempo total del sonido, pero se trabaja con sonidos a priori de longitud fija 
 		private Sprite soundAnimationSpr; // imagen para mostrar la animacion de reproduccion del sonido 
 		public boolean alreadySelected;
@@ -113,7 +110,6 @@ public abstract class Boxes {
 		public void update(float deltaTime, Trial trial) {
 			if (trial.runningSound.running) {
 				if (trial.runningSound.playTime > this.soundDuracionReproduccion) {
-					// trial.runningSound.stopReason = "end";
 					this.unSelect(trial);
 				}
 			}
@@ -122,7 +118,6 @@ public abstract class Boxes {
 
 		@Override
 		public void unSelect(Trial trial) {
-//			Gdx.app.debug(TAG, "Ha deseleccionado la imagen " + this.contenido.resourceId.id);
 			if (!this.contenido.noSound) {
 				trial.runningSound.stop();
 			}
@@ -130,12 +125,12 @@ public abstract class Boxes {
 		
 		@Override
 		public void select(Trial trial) {
-//			Gdx.app.debug(TAG, "Ha seleccionado la imagen " + this.contenido.resourceId.id);
 			this.alreadySelected = true;
 			if (!this.contenido.noSound) {
-				// trial.runningSound.play(this.contenido);
 				trial.runningSound.action = NEXT.PLAY;
 				trial.runningSound.nextContenido = this.contenido;
+			} else {
+				trial.runningSound.stop();
 			}
 		}
 	}
@@ -193,7 +188,6 @@ public abstract class Boxes {
 
 		@Override
 		public void select(Trial trial){
-//			Gdx.app.debug(TAG, "Ha seleccionado la imagen " + this.contenido.resourceId.id);
 			if (this.giveFeedback) {
 				this.givinFeedback = true;
 				this.answerAnimationTime = 0;
@@ -202,7 +196,6 @@ public abstract class Boxes {
 		
 		@Override
 		public void unSelect(Trial trial) {
-//			Gdx.app.debug(TAG, "Ha deseleccionado la imagen " + this.contenido.resourceId.id);
 			this.givinFeedback = false;
 		}
 		

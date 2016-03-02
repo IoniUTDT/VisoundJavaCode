@@ -1,5 +1,6 @@
 package com.turin.tur.main.experiments;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Json;
@@ -242,7 +243,250 @@ public class Tutorial extends GenericExp implements Experiment {
 		linea.lineaFromRadial();
 		dibujo.lineas.add(linea);
 		dibujos.add(dibujo);
+
+		// Para el tercer trial, el de mas de una linea
 		
+		// Lineas paralelas 1
+		dibujo = new Dibujo();
+		dibujo.tag = "Paralelas1";
+		linea = new Linea();
+		linea.radial.Xcenter = tamano/2;
+		linea.radial.Ycenter = tamano/3;
+		linea.radial.angulo = 10;
+		linea.radial.largo = tamano*0.8;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		linea = new Linea();
+		linea.radial.Xcenter = tamano/2;
+		linea.radial.Ycenter = tamano/3*2;
+		linea.radial.angulo = 10;
+		linea.radial.largo = tamano*0.8;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		dibujos.add(dibujo);
+		
+		// Lineas paralelas 2
+		dibujo = new Dibujo();
+		dibujo.tag = "Paralelas2";
+		linea = new Linea();
+		linea.radial.Xcenter = tamano/3;
+		linea.radial.Ycenter = tamano/2;
+		linea.radial.angulo = 60;
+		linea.radial.largo = tamano*0.8;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		linea = new Linea();
+		linea.radial.Xcenter = tamano/3*2;
+		linea.radial.Ycenter = tamano/2;
+		linea.radial.angulo = 60;
+		linea.radial.largo = tamano*0.8;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		dibujos.add(dibujo);
+
+		// Lineas paralelas 3
+		dibujo = new Dibujo();
+		dibujo.tag = "Paralelas3";
+		linea = new Linea();
+		linea.radial.Xcenter = tamano/2;
+		linea.radial.Ycenter = tamano/3;
+		linea.radial.angulo = 0;
+		linea.radial.largo = tamano*0.8;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		linea = new Linea();
+		linea.radial.Xcenter = tamano/2;
+		linea.radial.Ycenter = tamano/3*2;
+		linea.radial.angulo = 0;
+		linea.radial.largo = tamano*0.8;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		dibujos.add(dibujo);
+		
+		// Lineas paralelas 4
+		dibujo = new Dibujo();
+		dibujo.tag = "Paralelas4";
+		linea = new Linea();
+		linea.radial.Xcenter = tamano/3;
+		linea.radial.Ycenter = tamano/2;
+		linea.radial.angulo = 90;
+		linea.radial.largo = tamano*0.8;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		linea = new Linea();
+		linea.radial.Xcenter = tamano/3*2;
+		linea.radial.Ycenter = tamano/2;
+		linea.radial.angulo = 90;
+		linea.radial.largo = tamano*0.8;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		dibujos.add(dibujo);
+		
+		// Lineas NO paralelas 1
+		dibujo = new Dibujo();
+		dibujo.tag = "NoParalelas1";
+		linea = new Linea();
+		linea.radial.Xcenter = tamano/3;
+		linea.radial.Ycenter = tamano/2;
+		linea.radial.angulo = 70;
+		linea.radial.largo = tamano*0.8;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		linea = new Linea();
+		linea.radial.Xcenter = tamano/2;
+		linea.radial.Ycenter = tamano/2;
+		linea.radial.angulo = 30;
+		linea.radial.largo = tamano*0.8;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		dibujos.add(dibujo);
+
+		// Lineas No paralelas 2
+		dibujo = new Dibujo();
+		dibujo.tag = "NoParalelas2";
+		linea = new Linea();
+		linea.radial.Xcenter = tamano/5*2;
+		linea.radial.Ycenter = tamano/2;
+		linea.radial.angulo = -20;
+		linea.radial.largo = tamano*0.8;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		linea = new Linea();
+		linea.radial.Xcenter = tamano/5*3;
+		linea.radial.Ycenter = tamano/2;
+		linea.radial.angulo = 20;
+		linea.radial.largo = tamano*0.8;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		dibujos.add(dibujo);
+		
+		// Figuras para el tutorial de angulos
+		
+		// Lineas Agudo facil
+		dibujo = new Dibujo();
+		dibujo.tag = "AgudoFacil";
+		double angulo = 30;
+		linea = new Linea();
+		linea.radial.Xcenter = tamano/2 + largo / 4 * MathUtils.cosDeg((float) angulo);
+		linea.radial.Ycenter = tamano/2 + largo / 4 * MathUtils.sinDeg((float) angulo);
+		linea.radial.angulo = angulo;
+		linea.radial.largo = largo/2;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		linea = new Linea();
+		angulo = 60;
+		linea.radial.Xcenter = tamano/2 + largo / 4 * MathUtils.cosDeg((float) angulo);
+		linea.radial.Ycenter = tamano/2 + largo / 4 * MathUtils.sinDeg((float) angulo);
+		linea.radial.angulo = angulo;
+		linea.radial.largo = largo/2;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		dibujos.add(dibujo);
+
+		// Lineas Agudo dificil
+		dibujo = new Dibujo();
+		dibujo.tag = "AgudoDificil";
+		angulo = 15;
+		linea = new Linea();
+		linea.radial.Xcenter = tamano/2 + largo / 4 * MathUtils.cosDeg((float) angulo);
+		linea.radial.Ycenter = tamano/2 + largo / 4 * MathUtils.sinDeg((float) angulo);
+		linea.radial.angulo = angulo;
+		linea.radial.largo = largo/2;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		linea = new Linea();
+		angulo = -15;
+		linea.radial.Xcenter = tamano/2 + largo / 4 * MathUtils.cosDeg((float) angulo);
+		linea.radial.Ycenter = tamano/2 + largo / 4 * MathUtils.sinDeg((float) angulo);
+		linea.radial.angulo = angulo;
+		linea.radial.largo = largo/2;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		dibujos.add(dibujo);
+		
+		// Lineas recto facil
+		dibujo = new Dibujo();
+		dibujo.tag = "RectoFacil";
+		angulo = 0;
+		linea = new Linea();
+		linea.radial.Xcenter = tamano/2 + largo / 4 * MathUtils.cosDeg((float) angulo);
+		linea.radial.Ycenter = tamano/2 + largo / 4 * MathUtils.sinDeg((float) angulo);
+		linea.radial.angulo = angulo;
+		linea.radial.largo = largo/2;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		linea = new Linea();
+		angulo = 90;
+		linea.radial.Xcenter = tamano/2 + largo / 4 * MathUtils.cosDeg((float) angulo);
+		linea.radial.Ycenter = tamano/2 + largo / 4 * MathUtils.sinDeg((float) angulo);
+		linea.radial.angulo = angulo;
+		linea.radial.largo = largo/2;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		dibujos.add(dibujo);
+		
+		// Lineas recto dificil
+		dibujo = new Dibujo();
+		dibujo.tag = "RectoDificil";
+		angulo = 45;
+		linea = new Linea();
+		linea.radial.Xcenter = tamano/2 + largo / 4 * MathUtils.cosDeg((float) angulo);
+		linea.radial.Ycenter = tamano/2 + largo / 4 * MathUtils.sinDeg((float) angulo);
+		linea.radial.angulo = angulo;
+		linea.radial.largo = largo/2;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		linea = new Linea();
+		angulo = 135;
+		linea.radial.Xcenter = tamano/2 + largo / 4 * MathUtils.cosDeg((float) angulo);
+		linea.radial.Ycenter = tamano/2 + largo / 4 * MathUtils.sinDeg((float) angulo);
+		linea.radial.angulo = angulo;
+		linea.radial.largo = largo/2;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		dibujos.add(dibujo);		
+		
+		// Lineas obtuso facil
+		dibujo = new Dibujo();
+		dibujo.tag = "ObtusoFacil";
+		angulo = -10;
+		linea = new Linea();
+		linea.radial.Xcenter = tamano/2 + largo / 4 * MathUtils.cosDeg((float) angulo);
+		linea.radial.Ycenter = tamano/2 + largo / 4 * MathUtils.sinDeg((float) angulo);
+		linea.radial.angulo = angulo;
+		linea.radial.largo = largo/2;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		linea = new Linea();
+		angulo = 100;
+		linea.radial.Xcenter = tamano/2 + largo / 4 * MathUtils.cosDeg((float) angulo);
+		linea.radial.Ycenter = tamano/2 + largo / 4 * MathUtils.sinDeg((float) angulo);
+		linea.radial.angulo = angulo;
+		linea.radial.largo = largo/2;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		dibujos.add(dibujo);
+		
+		// Lineas obtuso dificil
+		dibujo = new Dibujo();
+		dibujo.tag = "ObtusoDificil";
+		angulo = 30;
+		linea = new Linea();
+		linea.radial.Xcenter = tamano/2 + largo / 4 * MathUtils.cosDeg((float) angulo);
+		linea.radial.Ycenter = tamano/2 + largo / 4 * MathUtils.sinDeg((float) angulo);
+		linea.radial.angulo = angulo;
+		linea.radial.largo = largo/2;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		linea = new Linea();
+		angulo = 140;
+		linea.radial.Xcenter = tamano/2 + largo / 4 * MathUtils.cosDeg((float) angulo);
+		linea.radial.Ycenter = tamano/2 + largo / 4 * MathUtils.sinDeg((float) angulo);
+		linea.radial.angulo = angulo;
+		linea.radial.largo = largo/2;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		dibujos.add(dibujo);
 		
 		
 		
@@ -296,6 +540,26 @@ public class Tutorial extends GenericExp implements Experiment {
 		dinamica.listaDeTrials.add(trial2.Id);
 		tutorial.jsonTrials.add(trial2);
 		
+		// Creamos el trial tres, para escuchar paralelismo.
+		JsonTrial trial3 = Builder.crearTrial("Selecciones la imagen que desea escuchar", "",
+				DISTRIBUCIONESenPANTALLA.BILINEALx7,
+				new int[] {recursosTag.get("Paralelas4").idRecurso, recursosTag.get("Paralelas3").idRecurso, recursosTag.get("Paralelas2").idRecurso,
+						recursosTag.get("Paralelas1").idRecurso, recursosTag.get("NoParalelas1").idRecurso, recursosTag.get("NoParalelas2").idRecurso,
+						CategoriasImagenes.Siguiente.ID},
+				TIPOdeTRIAL.ENTRENAMIENTO, CategoriasImagenes.Siguiente.ID, false, false, false);
+		dinamica.listaDeTrials.add(trial3.Id);
+		tutorial.jsonTrials.add(trial3);
+		
+		// Creamos el trial tres, para escuchar paralelismo.
+		JsonTrial trial4 = Builder.crearTrial("Selecciones la imagen que desea escuchar", "",
+				DISTRIBUCIONESenPANTALLA.BILINEALx7,
+				new int[] {recursosTag.get("AgudoFacil").idRecurso, recursosTag.get("RectoFacil").idRecurso, recursosTag.get("ObtusoFacil").idRecurso,
+						recursosTag.get("AgudoDificil").idRecurso, recursosTag.get("RectoDificil").idRecurso, recursosTag.get("ObtusoDificil").idRecurso,
+						CategoriasImagenes.Siguiente.ID},
+				TIPOdeTRIAL.ENTRENAMIENTO, CategoriasImagenes.Siguiente.ID, false, false, false);
+		dinamica.listaDeTrials.add(trial4.Id);
+		tutorial.jsonTrials.add(trial4);
+		
 		// Preparamos el level y lo exportamos
 		tutorial.infoDinamica = dinamica;
 		// Extraemos los niveles y los recursos a la carpeta que corresponda
@@ -309,6 +573,7 @@ public class Tutorial extends GenericExp implements Experiment {
 		levelStatus.internalName = this.expName + tutorial.Id;
 		levelStatus.expName = this.expName;
 		levelStatus.alreadyPlayed = false;
+		levelStatus.priority = 0;
 		this.expSettings.levels.add(levelStatus);
 
 		// Creamos un archivo con la info del experimento
@@ -381,7 +646,13 @@ public class Tutorial extends GenericExp implements Experiment {
 	}
 
 	private void levelCompleted() {
-		// TODO Ver que onda si hace falta hacer algo cuando se completa el nivel, por ahora no.
+		for (LevelStatus levelStatus : this.expSettings.levels) {
+			if (levelStatus.id == this.level.Id) {
+				levelStatus.alreadyPlayed = true;
+			}
+		}
+		Json json = new Json();
+		FileHelper.writeFile(Resources.Paths.resources + this.getClass().getSimpleName() + ".settings", json.toJson(this.expSettings));
 	}
 
 	@Override

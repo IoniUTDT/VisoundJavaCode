@@ -7,13 +7,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.turin.tur.main.experiments.Experiment;
 import com.turin.tur.main.util.Assets;
 import com.turin.tur.main.util.Constants;
-import com.turin.tur.obsoleto.UmbralAngulosObsoleto;
 
 
 
 public class LevelInterfaz {
 	
-	// private static final String TAG = LevelInterfaz.class.getName();
+	private static final String TAG = LevelInterfaz.class.getName();
 	private Level levelInfo;   
 	private Trial trial;
 	private Experiment exp;
@@ -51,18 +50,6 @@ public class LevelInterfaz {
 		fpsFont.draw(batch, levelInfo.levelTitle, cameraGUI.viewportWidth*1/20 , cameraGUI.viewportHeight*1/10); 
 		fpsFont.draw(batch, trial.jsonTrial.title , cameraGUI.viewportWidth*2/5 , cameraGUI.viewportHeight*1/10);
 		Assets.fonts.defaultFont.draw(batch, trial.jsonTrial.caption , cameraGUI.viewportWidth*1/5 , cameraGUI.viewportHeight*9/10);
-		//Assets.instance.fonts.defaultFont.draw(batch, "Convergencia cuandrante 1: "+ this.levelInfo.levelLog.analisisActivo.convergencia(0), cameraGUI.viewportWidth*3/5, cameraGUI.viewportHeight*16/20);
-		//Assets.instance.fonts.defaultFont.draw(batch, "Convergencia cuandrante 2: "+ this.levelInfo.levelLog.analisisActivo.convergencia(1), cameraGUI.viewportWidth*3/5, cameraGUI.viewportHeight*17/20);
-		//Assets.instance.fonts.defaultFont.draw(batch, "Convergencia cuandrante 3: "+ this.levelInfo.levelLog.analisisActivo.convergencia(2), cameraGUI.viewportWidth*3/5, cameraGUI.viewportHeight*18/20);
-		//Assets.instance.fonts.defaultFont.draw(batch, "Convergencia cuandrante 4: "+ this.levelInfo.levelLog.analisisActivo.convergencia(3), cameraGUI.viewportWidth*3/5, cameraGUI.viewportHeight*19/20);
-		
 		Assets.fonts.defaultFont.draw(batch, "Numero de trials maximos restantes: " + this.exp.trialsLeft(), cameraGUI.viewportWidth*2/5, cameraGUI.viewportHeight*18/20);
-		//Assets.instance.fonts.defaultFont.draw(batch, "Angulo de referencia: " + this.levelInfo.levelLog.analisisActivo.referencia(), cameraGUI.viewportWidth*2/5, cameraGUI.viewportHeight*14/20);
-		//Assets.instance.fonts.defaultFont.draw(batch, "Trial: " + this.trial.Id, cameraGUI.viewportWidth*2/5, cameraGUI.viewportHeight*13/20);
-		//Assets.instance.fonts.defaultFont.draw(batch, "Nivel: " + this.levelInfo.levelLog.analisisActivo.next.nivel(), cameraGUI.viewportWidth*2/5, cameraGUI.viewportHeight*12/20);
-		//Assets.instance.fonts.defaultFont.draw(batch, "Nivel: " + this.trial.jsonTrial.jsonEstimulo.categories.get(0), cameraGUI.viewportWidth*1/5, cameraGUI.viewportHeight*19/20);
-		// Assets.instance.fonts.defaultFont.draw(batch, String.valueOf(trial.jsonTrial.parametros.D), cameraGUI.viewportWidth*1/5, cameraGUI.viewportHeight*1/10);
-		//Assets.fonts.defaultFont.draw(batch, "Recurso:" + this.trial.stimuliBox.contenido.resourceId.id, cameraGUI.viewportWidth*1/10, cameraGUI.viewportHeight*9/10);
-		//Assets.fonts.defaultFont.draw(batch, "Trial:" + this.trial.jsonTrial.Id, cameraGUI.viewportWidth*5/10, cameraGUI.viewportHeight*9/10);
 	}
 }

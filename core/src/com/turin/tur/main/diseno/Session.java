@@ -15,23 +15,9 @@ public class Session {
 	public int levelVersion = Builder.levelVersionFinal;
 	public int resourcesVersion = Builder.ResourceVersion;
 
-	// this.id = TimeUtils.millis();
-	// public int numberOfLevels;
-	// public int nextLevel;
-	// public SessionLog sessionLog;
-	// public SessionLogHistory sessionLogHistory;
-	// public LevelLogHistory levelLogHistory;
-	// public TrialLogHistory trialLogHistory;
-	
-
 	public Session() {
-		// levelLogHistory = new LevelLogHistory();
-		// trialLogHistory = new TrialLogHistory();
 		Internet.Check();
 		loadUser();
-		
-		// initSession();
-		// loadLevels();
 	}
 	
 	public static class SessionLog {
@@ -40,36 +26,6 @@ public class Session {
 		public String expName;
 	}
 
-	/*
-	private void loadLevels() {
-		// Chequea la cantidad de niveles que hay disponibles. Se asume que estan numerados y empiezan en 1.
-		boolean isFile = true;
-		int i = 0;
-		while (isFile) {
-			Gdx.app.debug(TAG, Gdx.files.internal(Resources.Paths.resources + "level" + (i + 1) + ".meta").path());
-			if (Gdx.files.internal(Resources.Paths.resources + "level" + (i + 1) + ".meta").exists()) {
-				isFile = true;
-				i++;
-			} else {
-				isFile = false;
-			}
-		}
-		this.numberOfLevels = i;
-		this.nextLevel = 0;
-
-	}
-	*/
-	
-	/*
-	private void initSession() {
-		// Crea la session
-		// this.sessionLog = new SessionLog();
-		// this.sessionLog.userID = this.user.id;
-		// sessionLogHistory = new SessionLogHistory();
-		// sessionLogHistory.append(this.sessionLog);
-	}
-	*/
-	
 	private void loadUser() {
 		// Chequea si el usuario ya existe o si es la primera vez
 		if (!Gdx.files.local(Constants.USERFILE).exists()) {
@@ -79,21 +35,4 @@ public class Session {
 		this.user = User.Load();
 	}
 
-	
-	/*
-	public static class SessionLog { //Nota: tiene que ser static porque sino colapsa el JsonLoad al quere crear instancias
-		// public long userID;
-		// public long id;
-		// public String appVersion = Builder.AppVersion;
-		public STATUS status=STATUS.CREADO;
-		public long idEnvio;
-		// public long codeVersion = Constants.CODEVERSION;
-		// public int levelVersion = Builder.levelVersionFinal;
-		// public int resourcesVersion = Builder.ResourceVersion;
-
-		public SessionLog() {
-			this.id = TimeUtils.millis();
-		}
-	}
-	*/
 }

@@ -122,21 +122,6 @@ public class Constants {
 		public static final float SELECT_BOX_ANCHO_RTA = 0.1f;
 	}
 
-	// Constantes para los touch
-	public class Touch {
-
-		public class Type {
-			public static final String NOTHING = "nothing";
-			public static final String IMAGE = "image";
-		}
-
-		public class ToDo {
-			public static final String NOTHING = "nothing";
-			public static final String DETECTOVERLAP = "detectOverlap";
-		}
-	}
-
-	
 	
 	// Constantes relacionadas a IDs de cosas fijas
 	public static class Resources {
@@ -150,11 +135,11 @@ public class Constants {
 			
 			Lineax1(6,"Una Linea"), 
 			Lineax2(7, "Dos Lineas"), 
-			Paralelas(8, "Paralelas"),
+			Paralelas(8),
 			NoParalelas(9, "No Paralelas"),
 			Angulo(10),
 			Agudo(11, "Angulo agudo"),
-			Grave(12, "Angulo grave"),
+			Obtuso(12, "Angulo obtuso"),
 			Recto(13, "Angulo recto"),
 			Lineas(14),  
 			NoAngulo(15,"No Angulo"),

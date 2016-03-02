@@ -4,21 +4,16 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.TimeUtils;
 import com.turin.tur.main.diseno.Level.JsonLevel;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.experiments.Experiments.ExpSettings;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
 import com.turin.tur.main.experiments.Experiments.TIPOdeEXPERIMENTO;
-import com.turin.tur.main.experiments.Umbral.DinamicaExperimento;
-import com.turin.tur.main.experiments.Umbral.LogConvergencia;
 import com.turin.tur.main.util.FileHelper;
-import com.turin.tur.main.util.Internet;
 import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
 import com.turin.tur.main.util.Constants.Resources.CategoriasImagenes;
-import com.turin.tur.main.util.Internet.TIPO_ENVIO;
 import com.turin.tur.main.util.builder.Builder;
 import com.turin.tur.main.util.builder.Imagenes;
 import com.turin.tur.main.util.builder.Textos;
@@ -49,8 +44,6 @@ public class UmbralAngulos extends Umbral {
 	public void makeResources() {
 		// Inicializamos el setup segun parametros
 		this.makeSetup();
-		// Creamos los textos
-		Textos.crearTextos();
 		// Creamos un recurso para cada imagen necesaria
 		for (double ladoFijo : this.setup.angulosReferencia) {
 			for (double ladoMovil : this.setup.desviacionesAngulares) {
@@ -122,7 +115,7 @@ public class UmbralAngulos extends Umbral {
 			imagen.categories.add(CategoriasImagenes.Recto);
 		}
 		if ((info.anguloFormado <= 180) &  (info.anguloFormado > 90)){
-			imagen.categories.add(CategoriasImagenes.Grave);
+			imagen.categories.add(CategoriasImagenes.Obtuso);
 		}
 		// Agregamos las dos lineas para que se dibujen
 		imagen.lineas.add(info.linea1);
@@ -277,7 +270,7 @@ public class UmbralAngulos extends Umbral {
 				EstimuloAngulo recurso = (EstimuloAngulo) estimulos.get(ladoFijo).get(ladoMovil);
 				JsonTrial trial = Builder.crearTrial("Indique a que categoria pertenece el angulo", "",
 							DISTRIBUCIONESenPANTALLA.LINEALx3,
-							new int[] {CategoriasImagenes.Agudo.ID, CategoriasImagenes.Recto.ID, CategoriasImagenes.Grave.ID},
+							new int[] {CategoriasImagenes.Agudo.ID, CategoriasImagenes.Recto.ID, CategoriasImagenes.Obtuso.ID},
 							TIPOdeTRIAL.TEST, recurso.idResource, false, true, false);
 				recurso.idTrial = trial.Id;
 				if ((recurso.anguloFormado <= 90)&(recurso.anguloFormado >= 0)) {
@@ -326,6 +319,7 @@ public class UmbralAngulos extends Umbral {
 			levelStatus.internalName = this.expName + level.Id;
 			levelStatus.expName = this.expName;
 			levelStatus.alreadyPlayed = false;
+			levelStatus.priority = 1;
 			this.expSettings.levels.add(levelStatus);
 		}
 		// Creamos un archivo con la info del experimento

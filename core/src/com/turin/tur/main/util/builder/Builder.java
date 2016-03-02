@@ -64,6 +64,7 @@ public class Builder {
 		if (makeResources) {
 			// Builder.verifyResourcesVersion();
 			for (Experiment exp : exps) {
+				Textos.crearTextos();
 				exp.makeResources();
 			}
 			System.exit(0);

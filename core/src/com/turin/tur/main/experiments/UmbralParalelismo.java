@@ -157,6 +157,7 @@ public class UmbralParalelismo extends Umbral {
 			levelStatus.internalName = this.expName + level.Id;
 			levelStatus.expName = this.expName;
 			levelStatus.alreadyPlayed = false;
+			levelStatus.priority = 1;
 			this.expSettings.levels.add(levelStatus);
 		}
 		// Creamos un archivo con la info del experimento
@@ -242,8 +243,6 @@ public class UmbralParalelismo extends Umbral {
 	public void makeResources() {
 		// Inicializamos el setup segun parametros
 		this.makeSetup();
-		// Creamos los textos
-		Textos.crearTextos();
 		// Creamos un recurso para cada imagen necesaria
 		for (double referencia : this.setup.angulosReferencia) {
 			for (double desviacion : this.setup.desviacionesAngulares) {

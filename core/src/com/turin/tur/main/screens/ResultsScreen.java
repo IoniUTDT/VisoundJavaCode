@@ -1,7 +1,6 @@
 package com.turin.tur.main.screens;
 
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -16,9 +15,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.turin.tur.Visound;
 import com.turin.tur.main.diseno.Level;
-import com.turin.tur.main.diseno.Session;
-import com.turin.tur.main.diseno.User;
-import com.turin.tur.main.experiments.Experiment;
 import com.turin.tur.main.util.Constants;
 
 public class ResultsScreen extends AbstractGameScreen {
@@ -65,78 +61,6 @@ public class ResultsScreen extends AbstractGameScreen {
 		BitmapFont fpsFont = this.assets.fonts.defaultFont;
 		fpsFont.getData().setScale(Constants.factorEscala()/2);
 		fpsFont.draw(batch, "Ha completado el nivel.", x, y);
-		
-		// boolean levelPass = true;
-		
-		/*
-		for (Significancia significancia:level.jsonLevel.significancias) {
-			
-			if (significancia.tipo==TIPOdeSIGNIFICANCIA.COMPLETO) {
-				if (significancia.exitoMinimo<this.level.jsonLevel.aciertosTotales) {
-					fpsFont.setColor(0, 1, 0, 1); // green
-				} else {
-					fpsFont.setColor(1, 0, 0, 1); // red
-					levelPass = false;
-				}
-				if (level.jsonLevel.aciertosTotales==significancia.distribucion.length-1) {
-					levelPass=true;
-				}
-				
-				y = y + cameraGUI.viewportHeight/20;
-				fpsFont.draw(batch, "Ha respondido bien "+this.level.jsonLevel.aciertosTotales+" de "+(significancia.distribucion.length-1)+" intentos posibles.", x, y);
-				y = y + cameraGUI.viewportHeight/20;
-				fpsFont.draw(batch, "En el nivel jugado se considera que hay un acierto significativo con mas de "+significancia.exitoMinimo+" intentos correctos.", x, y);
-			}
-			if (significancia.tipo==TIPOdeSIGNIFICANCIA.IMAGEN) {
-				if (significancia.exitoMinimo<this.level.jsonLevel.aciertosPorImagenes) {
-					fpsFont.setColor(0, 1, 0, 1); // green
-				} else {
-					fpsFont.setColor(1, 0, 0, 1); // red
-					levelPass = false;
-				}
-				if (level.jsonLevel.aciertosPorImagenes==significancia.distribucion.length-1) {
-					levelPass=true;
-				}
-				
-				y = y + cameraGUI.viewportHeight/20;
-				fpsFont.draw(batch, "Ha respondido bien "+this.level.jsonLevel.aciertosPorImagenes+" de "+(significancia.distribucion.length-1)+" en los trials por imagen.", x, y);
-				y = y + cameraGUI.viewportHeight/20;
-				fpsFont.draw(batch, "En el nivel jugado se considera que hay un acierto significativo con mas de "+significancia.exitoMinimo+" intentos correctos.", x, y);
-			}
-			
-			if (significancia.tipo==TIPOdeSIGNIFICANCIA.CATEGORIA) {
-				if (significancia.exitoMinimo<this.level.jsonLevel.aciertosPorCategorias) {
-					fpsFont.setColor(0, 1, 0, 1); // green
-				} else {
-					fpsFont.setColor(1, 0, 0, 1); // red
-					levelPass=false;
-				}
-				if (level.jsonLevel.aciertosPorCategorias==significancia.distribucion.length-1) {
-					levelPass=true;
-				}
-				
-				y = y + cameraGUI.viewportHeight/20;
-				fpsFont.draw(batch, "Ha respondido bien "+this.level.jsonLevel.aciertosPorCategorias+" de "+(significancia.distribucion.length-1)+" en los trials por categoria.", x, y);
-				y = y + cameraGUI.viewportHeight/20;
-				fpsFont.draw(batch, "En el nivel jugado se considera que hay un acierto significativo con mas de "+significancia.exitoMinimo+" intentos correctos.", x, y);
-			}
-
-			fpsFont.setColor(1, 1, 1, 1); // white
-		}
-		*/
-		
-		//x = cameraGUI.viewportWidth/2 - cameraGUI.viewportWidth/8;
-		//y = cameraGUI.viewportHeight- cameraGUI.viewportHeight/8;
-		// if (levelPass) {
-		//	fpsFont.setColor(0, 1, 0, 1); // green
-		//	fpsFont.draw(batch, "Nivel superado", x, y);
-		//	
-		// } else {
-		//	fpsFont.setColor(1, 0, 0, 1); // red
-		//	fpsFont.draw(batch, "Nivel no superado", x, y);
-		//}
-		// fpsFont.setColor(1, 1, 1, 1); // white	
-
 	}
 
 	private void guiRenderInit() {
