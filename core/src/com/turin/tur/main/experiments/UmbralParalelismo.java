@@ -18,7 +18,7 @@ import com.turin.tur.main.util.builder.Builder;
 import com.turin.tur.main.util.builder.Imagenes;
 import com.turin.tur.main.util.builder.Textos;
 
-public class UmbralParalelismo extends Umbral implements Experiment {
+public class UmbralParalelismo extends Umbral {
 
 	
 	private static class ImageInfoParalelismo extends Umbral.ImageInfo {

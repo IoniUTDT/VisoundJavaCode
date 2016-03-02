@@ -27,7 +27,7 @@ import com.turin.tur.main.util.builder.Imagenes;
 import com.turin.tur.main.util.builder.Textos;
 import com.turin.tur.main.util.builder.Imagenes.Linea;
 
-public class UmbralAngulosObsoleto implements Experiment {
+public class UmbralAngulosObsoleto {
 
 	private static final String TAG = UmbralAngulosObsoleto.class.getName();
 	
@@ -194,7 +194,7 @@ public class UmbralAngulosObsoleto implements Experiment {
 	/**
 	 * Este metodo busca un nuevo estimulo a preguntar, lo carga en la clase y devuelve su valor absoluto  
 	 */
-	public void askNext() {
+	public void createTrial() {
 		if (!waitingAnswer) {
 			// Elije un cuadrante al azar y carga esos datos
 			Array<Integer> listaCuadrantesAnalizar = new Array<Integer>();
@@ -649,69 +649,5 @@ public class UmbralAngulosObsoleto implements Experiment {
 
 	
 	
-	@Override
-	public void makeResources() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public Trial getTrial() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void returnAnswer(boolean answer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void initGame(Session session) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void initLevel(Level level) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void stopLevel() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public Array<LevelStatus> levelsStatus() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean askCompleted() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void interrupt() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public int trialsLeft() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 }

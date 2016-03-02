@@ -56,7 +56,7 @@ public class LevelInterfaz {
 		//Assets.instance.fonts.defaultFont.draw(batch, "Convergencia cuandrante 3: "+ this.levelInfo.levelLog.analisisActivo.convergencia(2), cameraGUI.viewportWidth*3/5, cameraGUI.viewportHeight*18/20);
 		//Assets.instance.fonts.defaultFont.draw(batch, "Convergencia cuandrante 4: "+ this.levelInfo.levelLog.analisisActivo.convergencia(3), cameraGUI.viewportWidth*3/5, cameraGUI.viewportHeight*19/20);
 		
-		Assets.fonts.defaultFont.draw(batch, "Numero de trials maximos restantes: " + this.exp.trialsLeft(), cameraGUI.viewportWidth*2/5, cameraGUI.viewportHeight*15/20);
+		Assets.fonts.defaultFont.draw(batch, "Numero de trials maximos restantes: " + this.exp.trialsLeft(), cameraGUI.viewportWidth*2/5, cameraGUI.viewportHeight*18/20);
 		//Assets.instance.fonts.defaultFont.draw(batch, "Angulo de referencia: " + this.levelInfo.levelLog.analisisActivo.referencia(), cameraGUI.viewportWidth*2/5, cameraGUI.viewportHeight*14/20);
 		//Assets.instance.fonts.defaultFont.draw(batch, "Trial: " + this.trial.Id, cameraGUI.viewportWidth*2/5, cameraGUI.viewportHeight*13/20);
 		//Assets.instance.fonts.defaultFont.draw(batch, "Nivel: " + this.levelInfo.levelLog.analisisActivo.next.nivel(), cameraGUI.viewportWidth*2/5, cameraGUI.viewportHeight*12/20);

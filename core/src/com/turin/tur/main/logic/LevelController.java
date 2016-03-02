@@ -48,13 +48,12 @@ public class LevelController implements InputProcessor {
 		this.game = game; // Hereda la info del game (cosa de ventanas y eso)
 		this.level = level; 
 		// Agrega la info del log del level asociada a la creacion
-		//this.level.levelLog.sessionId = this.session.sessionLog.id; //TODO revisar logs!
+		//this.level.levelLog.sessionId = this.session.sessionLog.id;
 		//this.level.levelLog.idUser = this.session.user.id;
 		this.initCamera();
 		this.game.expActivo.initLevel(this.level);
 		
 		// Selecciona el trial que corresponda
-		this.game.expActivo.askNext();
 		this.trial = this.game.expActivo.getTrial();
 		// this.initTrial();
 		this.levelInterfaz = new LevelInterfaz(this.level, this.trial, this.game.expActivo);
@@ -120,13 +119,11 @@ public class LevelController implements InputProcessor {
 		// Procesa cambios de trial si los hay pendientes
 		if (trial.checkTrialCompleted()) {
 			this.game.expActivo.returnAnswer(this.trial.lastAnswer());
-			if (this.game.expActivo.askCompleted()) {
+			if (this.game.expActivo.islevelCompleted()) {
 				this.game.expActivo.stopLevel();
 				this.goToResults();
 			} else {
-				this.game.expActivo.askNext();
 				this.trial = this.game.expActivo.getTrial();
-					
 			}
 			//this.initTrial();
 			//this.nextTrialPending = true;

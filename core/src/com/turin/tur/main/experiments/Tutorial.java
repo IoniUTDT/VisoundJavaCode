@@ -1,41 +1,50 @@
 package com.turin.tur.main.experiments;
 
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Json;
+import com.turin.tur.main.diseno.ExperimentalObject;
 import com.turin.tur.main.diseno.Level;
-import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.main.diseno.Level.JsonLevel;
+import com.turin.tur.main.diseno.Trial.JsonTrial;
+import com.turin.tur.main.experiments.Experiment.GenericExp;
+import com.turin.tur.main.experiments.Experiments.ExpSettings;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
 import com.turin.tur.main.experiments.Experiments.TIPOdeEXPERIMENTO;
 import com.turin.tur.main.util.FileHelper;
+import com.turin.tur.main.util.LevelAsset;
 import com.turin.tur.main.util.Constants.Resources;
+import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
+import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
 import com.turin.tur.main.util.Constants.Resources.CategoriasImagenes;
 import com.turin.tur.main.util.builder.Builder;
 import com.turin.tur.main.util.builder.Imagenes;
 import com.turin.tur.main.util.builder.Imagenes.Linea;
 
-public class Tutorial implements Experiment {
+public class Tutorial extends GenericExp implements Experiment {
 
 	String expName = "Tutorial";
-	Setup setup;
+	private Setup setup;
 	TIPOdeEXPERIMENTO tipoDeExperimento = TIPOdeEXPERIMENTO.TutorialBasico;
+	private DinamicaTutorial dinamicaActiva;
 	
-	private class Setup {
+	
+	private static class Setup {
 		Array<Recurso> listaRecursos = new Array<Recurso>();
 	}
 	
-	private class Recurso {
+	private static class Recurso {
 		int idRecurso;
 		String tag;
 	}
 	
-	private class DinamicaTutorial {
+	private static class DinamicaTutorial {
 		Array<Integer> listaDeTrials = new Array<Integer>();
-		int proximoTrial;
+		int trialActivo;
 	}
 	
-	private class Dibujo {
+	private static class Dibujo {
 		String tag;
 		Array<Linea> lineas = new Array<Linea>();
 	}
@@ -51,6 +60,9 @@ public class Tutorial implements Experiment {
 		// Creamos una lista de las lineas a dibujar
 		Array<Dibujo> dibujos = this.createDibujos ();
 		
+		// Inicializamos el setup
+		this.setup = new Setup();
+		
 		for (Dibujo dibujo : dibujos) {
 			// Creamos la imagen correspondiente
 			Imagenes imagen = new Imagenes();
@@ -63,6 +75,7 @@ public class Tutorial implements Experiment {
 			recurso.idRecurso = imagen.resourceId.id;
 			recurso.tag = dibujo.tag;
 			
+			this.setup.listaRecursos.add(recurso);
 		}
 		
 		// Guardamos el setup
@@ -122,7 +135,7 @@ public class Tutorial implements Experiment {
 
 		// Linea Vertical alta
 		dibujo = new Dibujo();
-		dibujo.tag = "Vertical arriba";
+		dibujo.tag = "VerticalArriba";
 		linea = new Linea();
 		linea.radial.Xcenter = tamano/2;
 		linea.radial.Ycenter = tamano/4;
@@ -134,7 +147,7 @@ public class Tutorial implements Experiment {
 
 		// Linea Vertical completa
 		dibujo = new Dibujo();
-		dibujo.tag = "Vertical completa";
+		dibujo.tag = "VerticalCompleta";
 		linea = new Linea();
 		linea.radial.Xcenter = tamano/2;
 		linea.radial.Ycenter = tamano/2;
@@ -146,7 +159,7 @@ public class Tutorial implements Experiment {
 
 		// Linea Vertical abajo
 		dibujo = new Dibujo();
-		dibujo.tag = "Vertical abajo";
+		dibujo.tag = "VerticalAbajo";
 		linea = new Linea();
 		linea.radial.Xcenter = tamano/2;
 		linea.radial.Ycenter = tamano/4*3;
@@ -156,8 +169,85 @@ public class Tutorial implements Experiment {
 		dibujo.lineas.add(linea);
 		dibujos.add(dibujo);
 
+		// Para la segunda pantalla
+		
+		// Linea que crece suavemente
+		dibujo = new Dibujo();
+		dibujo.tag = "DiagSuave";
+		linea = new Linea();
+		linea.radial.Xcenter = tamano/2;
+		linea.radial.Ycenter = tamano/2;
+		linea.radial.angulo = 20;
+		linea.radial.largo = tamano*0.8;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		dibujos.add(dibujo);
+
+		// Linea que crece no tan suavemente
+		dibujo = new Dibujo();
+		dibujo.tag = "DiagMedio";
+		linea = new Linea();
+		linea.radial.Xcenter = tamano/2;
+		linea.radial.Ycenter = tamano/2;
+		linea.radial.angulo = 45;
+		linea.radial.largo = tamano*0.8;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		dibujos.add(dibujo);
+
+		// Linea que crece rapido
+		dibujo = new Dibujo();
+		dibujo.tag = "DiagRapida";
+		linea = new Linea();
+		linea.radial.Xcenter = tamano/2;
+		linea.radial.Ycenter = tamano/2;
+		linea.radial.angulo = 80;
+		linea.radial.largo = tamano*0.8;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		dibujos.add(dibujo);
+
+		// Linea que decrece muy lento
+		dibujo = new Dibujo();
+		dibujo.tag = "DiagNegMuyLenta";
+		linea = new Linea();
+		linea.radial.Xcenter = tamano/2;
+		linea.radial.Ycenter = tamano/2;
+		linea.radial.angulo = -5;
+		linea.radial.largo = tamano*0.8;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		dibujos.add(dibujo);
+
+		// Linea que decrece bastante rapido
+		dibujo = new Dibujo();
+		dibujo.tag = "DiagNegMedioRapida";
+		linea = new Linea();
+		linea.radial.Xcenter = tamano/2;
+		linea.radial.Ycenter = tamano/2;
+		linea.radial.angulo = -75;
+		linea.radial.largo = tamano*0.8;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		dibujos.add(dibujo);
+		
+		// Linea que decrece muy rapido
+		dibujo = new Dibujo();
+		dibujo.tag = "DiagNegMuyRapido";
+		linea = new Linea();
+		linea.radial.Xcenter = tamano/2;
+		linea.radial.Ycenter = tamano/2;
+		linea.radial.angulo = -88;
+		linea.radial.largo = tamano*0.8;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		dibujos.add(dibujo);
+		
+		
+		
 		
 		return dibujos;
+		
 	}
 
 	@Override
@@ -169,41 +259,109 @@ public class Tutorial implements Experiment {
 		json.setUsePrototypes(false);
 		this.setup = json.fromJson(Tutorial.Setup.class, savedData);
 
+		// Inicializamos el expSettings;
+		this.expSettings = new ExpSettings();
+		this.expSettings.tipoDeExperimento = this.tipoDeExperimento;
+
+		// Creamos un map con todos los recursos
+		ArrayMap<String, Recurso> recursosTag = new ArrayMap<String, Recurso>();
+		for (Recurso recurso : this.setup.listaRecursos) {
+			recursosTag.put(recurso.tag, recurso);
+		}
+		
 		// Hacemos el Nivel 1 que contiene cosas basica (las cosas especificas estan en el tutorial parte dos)
 		JsonLevel tutorial = Builder.crearLevel();
 		tutorial.levelTitle = "Tutorial basico";
 		
+		DinamicaTutorial dinamica = new DinamicaTutorial();
 		
+		// Creamos el trial uno, con segmentos rectos, horizontales y verticuales.
+		JsonTrial trial = Builder.crearTrial("Selecciones la imagen que desea escuchar", "",
+				DISTRIBUCIONESenPANTALLA.BILINEALx7,
+				new int[] {recursosTag.get("HorizontalArriba").idRecurso, recursosTag.get("HorizontalMedio").idRecurso, recursosTag.get("HorizontalBajo").idRecurso,
+						recursosTag.get("VerticalArriba").idRecurso, recursosTag.get("VerticalCompleta").idRecurso, recursosTag.get("VerticalAbajo").idRecurso,
+						CategoriasImagenes.Siguiente.ID},
+				TIPOdeTRIAL.ENTRENAMIENTO, CategoriasImagenes.Siguiente.ID, false, false, false);
+		dinamica.listaDeTrials.add(trial.Id);
+		dinamica.trialActivo = trial.Id;
+		tutorial.jsonTrials.add(trial);
+		
+		// Creamos el trial dos, con segmentos rectos, pero en diagonal.
+		JsonTrial trial2 = Builder.crearTrial("Selecciones la imagen que desea escuchar", "",
+				DISTRIBUCIONESenPANTALLA.BILINEALx7,
+				new int[] {recursosTag.get("DiagSuave").idRecurso, recursosTag.get("DiagMedio").idRecurso, recursosTag.get("DiagRapida").idRecurso,
+						recursosTag.get("DiagNegMuyLenta").idRecurso, recursosTag.get("DiagNegMedioRapida").idRecurso, recursosTag.get("DiagNegMuyRapido").idRecurso,
+						CategoriasImagenes.Siguiente.ID},
+				TIPOdeTRIAL.ENTRENAMIENTO, CategoriasImagenes.Siguiente.ID, false, false, false);
+		dinamica.listaDeTrials.add(trial2.Id);
+		tutorial.jsonTrials.add(trial2);
+		
+		// Preparamos el level y lo exportamos
+		tutorial.infoDinamica = dinamica;
+		// Extraemos los niveles y los recursos a la carpeta que corresponda
+		Builder.extract(tutorial);
+		Builder.buildJsons(tutorial);
+		// Agregamos el nivel al setting
+		LevelStatus levelStatus = new LevelStatus();
+		levelStatus.enabled = true;
+		levelStatus.id = tutorial.Id;
+		levelStatus.publicName = tutorial.levelTitle;
+		levelStatus.internalName = this.expName + tutorial.Id;
+		levelStatus.expName = this.expName;
+		levelStatus.alreadyPlayed = false;
+		this.expSettings.levels.add(levelStatus);
+
+		// Creamos un archivo con la info del experimento
+		String path2 = Resources.Paths.finalPath + "/" + this.getClass().getSimpleName() + ".settings/";
+		Json json2 = new Json();
+		json2.setUsePrototypes(false);
+		FileHelper.writeFile(path2, json.toJson(this.expSettings));
+
 	}
 
 	@Override
-	public Trial getTrial() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public void createTrial() {
+		// Creamos el trial correspondiente
+		String savedData = FileHelper.readFile(Resources.Paths.resources + "level" + level.Id + "/trial" + this.dinamicaActiva.trialActivo + ".meta");
+		Json json = new Json();
+		JsonTrial jsonTrial = json.fromJson(JsonTrial.class, savedData);
+		// Cargamos la lista de objetos experimentales
+		Array<ExperimentalObject> elementos = new Array<ExperimentalObject>();
+		for (int idElemento : jsonTrial.elementosId) {
+			ExperimentalObject elemento = new ExperimentalObject(idElemento, this.assets, level.Id);
+			elementos.add(elemento);
+		}
+		ExperimentalObject estimulo = new ExperimentalObject(jsonTrial.rtaCorrectaId, this.assets, level.Id);
+		// Con la info del json del trial tenemos que crear un trial y
+		// cargarlo
+		if (this.trial != null) {
+			this.trial.exit();
+		}
+		this.trial = new Trial(elementos, jsonTrial, this.assets, estimulo);
 
-	@Override
-	public void askNext() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void returnAnswer(boolean answer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void initGame(Session session) {
-		// TODO Auto-generated method stub
-		
+		// Cambiamos el trial al siguiente de la lista
+		if (this.askNoMoreTrials()) { 
+			this.levelCompleted = true;
+			// Aca iria alguna accion como reportar algo
+		} else {
+			int thisTrialIndex = this.dinamicaActiva.listaDeTrials.indexOf(this.dinamicaActiva.trialActivo, false);
+			this.dinamicaActiva.trialActivo = this.dinamicaActiva.listaDeTrials.get(thisTrialIndex +1);
+			this.createTrial();
+		} 	
 	}
 
 	@Override
 	public void initLevel(Level level) {
-		// TODO Auto-generated method stub
-		
+		// Cargamos los datos especificos del nivel
+		this.level = level;
+		this.dinamicaActiva = (DinamicaTutorial) level.jsonLevel.infoDinamica;
+		this.assets = new LevelAsset(level.Id);
+		this.event_initLevel();
+		this.createTrial();
 	}
 
 	@Override
@@ -213,27 +371,32 @@ public class Tutorial implements Experiment {
 	}
 
 	@Override
-	public Array<LevelStatus> levelsStatus() {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean askNoMoreTrials() {
+		if (this.trialsLeft() == 0) {
+			this.levelCompleted();
+			return true;
+		} else {
+			return false;
+		}
 	}
 
-	@Override
-	public boolean askCompleted() {
-		// TODO Auto-generated method stub
-		return false;
+	private void levelCompleted() {
+		// TODO Ver que onda si hace falta hacer algo cuando se completa el nivel, por ahora no.
 	}
 
 	@Override
 	public void interrupt() {
-		// TODO Auto-generated method stub
-		
+		// TODO Ver que onda si hace falta hacer algo cuando se sale del nivel, por ahora no.
 	}
 
 	@Override
 	public int trialsLeft() {
-		// TODO Auto-generated method stub
-		return 0;
+		int thisTrialIndex = this.dinamicaActiva.listaDeTrials.indexOf(this.dinamicaActiva.trialActivo, false);
+		return this.dinamicaActiva.listaDeTrials.size - (thisTrialIndex + 1);
+	}
+	
+	String getNameTag() {
+		return "Tutorial";
 	}
 
 }

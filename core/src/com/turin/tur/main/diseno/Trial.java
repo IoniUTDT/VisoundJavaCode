@@ -105,6 +105,7 @@ public class Trial {
 			}
 		}
 		// En caso de que no haya feedback nos fijamos si se cumplio el objetivo del trial.
+		/*
 		if (this.jsonTrial.modo == TIPOdeTRIAL.ENTRENAMIENTO) {
 			boolean allCheck = true;
 			for (TrainingBox box : trainigBoxes) {
@@ -119,14 +120,14 @@ public class Trial {
 			}
 		} 
 		if (this.jsonTrial.modo == TIPOdeTRIAL.TEST) {
-			if (this.alreadyAsked) {
-				return true;
-			} else {
-				return false;
-			}
+			
 		}
-		// By default return false
-		return false;
+		*/
+		if (this.alreadyAsked) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	
@@ -458,6 +459,7 @@ public class Trial {
 	 * Metodo que se ejecuta al tocar un box (ya sea Entrenamiento o Test)
 	 */
 	public void boxSelected(Box boxTocada) {
+		/*
 		if (boxTocada.getClass() == TestBox.class) {
 			// Revisamos que onda si se acerto o no. Acertar significa que el elemento tocado y el estimulo compartan al menos una categoria.
 			boolean answerCorrect = false;
@@ -477,7 +479,17 @@ public class Trial {
 			}
 			boxTocada.select(this);
 		}
-		 
+		*/
+		// Revisamos que onda si se acerto o no. Acertar significa que el elemento tocado y el estimulo compartan al menos una categoria.
+		boolean answerCorrect = false;
+		for (CategoriasImagenes categoria : boxTocada.contenido.categorias) {
+			if (this.estimulo.categorias.contains(categoria, false)) {
+				answerCorrect = true;
+			}
+		}
+		boxTocada.select(this);
+		this.lastAnswerCorrect = answerCorrect;
+		this.alreadyAsked = true;
 	}
 
 	public void exit() {

@@ -24,7 +24,7 @@ import com.turin.tur.main.util.builder.Imagenes;
 import com.turin.tur.main.util.builder.Textos;
 
 
-public class UmbralAngulos extends Umbral implements Experiment {
+public class UmbralAngulos extends Umbral {
 
 	static final String TAG = UmbralParalelismo.class.getName();
 	// Cosas generales
@@ -346,6 +346,5 @@ public class UmbralAngulos extends Umbral implements Experiment {
 	protected String getNameTag() {
 		return "expAngulosPiloto";
 	}
-
 	
 }

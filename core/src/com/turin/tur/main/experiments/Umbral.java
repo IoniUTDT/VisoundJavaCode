@@ -5,17 +5,13 @@ import com.badlogic.gdx.math.WindowedMean;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.TimeUtils;
 import com.turin.tur.main.diseno.ExperimentalObject;
 import com.turin.tur.main.diseno.Level;
-import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.main.diseno.Session.SessionLog;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
-import com.turin.tur.main.experiments.Experiments.ExpSettings;
+import com.turin.tur.main.experiments.Experiment.GenericExp;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
-import com.turin.tur.main.experiments.Umbral.DinamicaExperimento;
-import com.turin.tur.main.experiments.Umbral.LogConvergencia;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Internet;
 import com.turin.tur.main.util.LevelAsset;
@@ -23,7 +19,7 @@ import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.main.util.Internet.TIPO_ENVIO;
 import com.turin.tur.main.util.builder.Imagenes.Linea;
 
-public abstract class Umbral {
+public abstract class Umbral extends GenericExp {
 
 	static final String TAG = Umbral.class.getName();
 	
@@ -98,27 +94,19 @@ public abstract class Umbral {
 	// Cosas generales
 	protected Setup setup;
 	protected String expName = "Umbral Generico";
-	protected ExpSettings expSettings;
 	
 	// Cosas que manejan la dinamica en cada ejecucion
-	protected Level level;
-	protected Session session;
 	protected Array<DinamicaExperimento> dinamicas;
 	protected DinamicaExperimento dinamicaActiva;
-	protected Trial trial;
-	protected boolean waitingAnswer;
-	protected LevelAsset assets;
+	// protected boolean waitingAnswer;
 	protected Estimulo estimuloActivo;
 	protected ArrayMap <String, WindowedMean> ventanasNivel = new ArrayMap <String, WindowedMean>(); // Esto esta aca porque la clase WindowedMean no es facil guardarla en un json, entonces se guarada en la clase principal un conjunto de windows asociados al nombre de cada convergencia
 
-	// Logs
-	protected SessionLog sessionLog;
-
+	
 	
 	// Funciones comunes a todos los experimentos de umbral
-	public boolean askCompleted() {
+	public boolean askNoMoreTrials() {
 		if (this.trialsLeft() == 0) {
-			this.levelCompleted();
 			return true;
 		}
 		
@@ -127,11 +115,10 @@ public abstract class Umbral {
 				return false;
 			}
 		}
-		this.levelCompleted();
 		return true;
 	}
 	
-	private void levelCompleted() {
+	private void levelCompletedAction() {
 		for (DinamicaExperimento dinamica : this.dinamicas) {
 			dinamica.convergenciaFinalizada = true;
 		}
@@ -154,30 +141,6 @@ public abstract class Umbral {
 
 	public abstract String getName();
 
-	public Trial getTrial() {
-		return this.trial;
-	}
-	
-	public void initGame(Session session) {
-		// Cargamos la info del experimento
-		Gdx.app.debug(TAG, Resources.Paths.resources + this.getClass().getSimpleName() + ".settings");
-		String savedData = FileHelper.readFile(Resources.Paths.resources + this.getClass().getSimpleName() + ".settings");
-		Json json = new Json();
-		this.expSettings = json.fromJson(Experiments.ExpSettings.class, savedData);
-		this.session = session;
-		this.event_initGame();
-	}
-	
-	private void event_initGame() {
-		// Creamos el log
-		this.sessionLog = new SessionLog();
-		this.sessionLog.session = this.session;
-		this.sessionLog.expName = this.getName();
-		// Creamos el enviable
-		Internet.sendData(this.sessionLog, TIPO_ENVIO.NEWSESION, this.getNameTag());
-	}
-	
-	
 	protected void event_stopLevel () {
 		for (DinamicaExperimento dinamica : this.dinamicas) {
 			LogConvergencia log = new LogConvergencia();
@@ -189,22 +152,10 @@ public abstract class Umbral {
 		}
 	}
 	
-	protected void event_initLevel() {
-		this.sessionLog.levelInstance = TimeUtils.millis();
-		// Creamos el enviable
-		Internet.sendData(this.sessionLog, TIPO_ENVIO.NEWLEVEL, this.getNameTag());
-	}
-	
-
 	public void interrupt() {
-		this.waitingAnswer = false;
 		this.event_stopLevel();
 	}
 
-	public Array<LevelStatus> levelsStatus() {
-		return this.expSettings.levels;
-	}
-	
 	public void initLevel(Level level) {
 		// Cargamos los datos especificos del nivel
 		this.level = level;
@@ -212,56 +163,52 @@ public abstract class Umbral {
 		this.assets = new LevelAsset(level.Id);
 		this.ventanasNivel.clear();
 		this.event_initLevel();
+		this.createTrial();
 	}
 	
 	public void stopLevel() {
-		this.waitingAnswer = false;
 		this.event_stopLevel();
 	}
 	
-	public void askNext() {
-		if (!waitingAnswer) {
-			// Seleccionamos una de las convergencias al azar.
-			Array<DinamicaExperimento> forSelect = new Array<DinamicaExperimento>();
-			for (DinamicaExperimento dinamica : this.dinamicas) {
-				if (!dinamica.convergenciaAlcanzada) {
-					forSelect.add(dinamica);
-				}
+	public void createTrial() {
+		// Seleccionamos una de las convergencias al azar.
+		Array<DinamicaExperimento> forSelect = new Array<DinamicaExperimento>();
+		for (DinamicaExperimento dinamica : this.dinamicas) {
+			if (!dinamica.convergenciaAlcanzada) {
+				forSelect.add(dinamica);
 			}
-			this.dinamicaActiva = forSelect.random();
-			// Buscamos el trial que corresponde al nivel actual de la
-			// convergencia (los cambios se actualizan cuando se recibe el
-			// answer)
-			this.estimuloActivo = this.dinamicaActiva.listaEstimulos.get(this.dinamicaActiva.nivelEstimulo);
-			// leemos el json del trial
-			String savedData = FileHelper.readFile(Resources.Paths.resources + "level" + level.Id + "/trial" + this.estimuloActivo.idTrial + ".meta");
-			
-			//String path = Resources.Paths.finalPath + "level" + level.Id + "/trial" + this.estimuloActivo.idTrial + ".meta";
-			//String savedData = FileHelper.readFile(path);
-			Json json = new Json();
-			JsonTrial jsonTrial = json.fromJson(JsonTrial.class, savedData);
-			// Cargamos la lista de objetos experimentales
-			Array<ExperimentalObject> elementos = new Array<ExperimentalObject>();
-			for (int idElemento : jsonTrial.elementosId) {
-				ExperimentalObject elemento = new ExperimentalObject(idElemento, this.assets, level.Id);
-				elementos.add(elemento);
-			}
-			ExperimentalObject estimulo = new ExperimentalObject(jsonTrial.rtaCorrectaId, this.assets, level.Id);
-			// Con la info del json del trial tenemos que crear un trial y
-			// cargarlo
-			if (this.trial != null) {
-				this.trial.exit();
-			}
-			this.trial = new Trial(elementos, jsonTrial, this.assets, estimulo);
-			this.waitingAnswer = true;
 		}
+		this.dinamicaActiva = forSelect.random();
+		// Buscamos el trial que corresponde al nivel actual de la
+		// convergencia (los cambios se actualizan cuando se recibe el
+		// answer)
+		this.estimuloActivo = this.dinamicaActiva.listaEstimulos.get(this.dinamicaActiva.nivelEstimulo);
+		// leemos el json del trial
+		String savedData = FileHelper.readFile(Resources.Paths.resources + "level" + level.Id + "/trial" + this.estimuloActivo.idTrial + ".meta");
+		
+		//String path = Resources.Paths.finalPath + "level" + level.Id + "/trial" + this.estimuloActivo.idTrial + ".meta";
+		//String savedData = FileHelper.readFile(path);
+		Json json = new Json();
+		JsonTrial jsonTrial = json.fromJson(JsonTrial.class, savedData);
+		// Cargamos la lista de objetos experimentales
+		Array<ExperimentalObject> elementos = new Array<ExperimentalObject>();
+		for (int idElemento : jsonTrial.elementosId) {
+			ExperimentalObject elemento = new ExperimentalObject(idElemento, this.assets, level.Id);
+			elementos.add(elemento);
+		}
+		ExperimentalObject estimulo = new ExperimentalObject(jsonTrial.rtaCorrectaId, this.assets, level.Id);
+		// Con la info del json del trial tenemos que crear un trial y
+		// cargarlo
+		if (this.trial != null) {
+			this.trial.exit();
+		}
+		this.trial = new Trial(elementos, jsonTrial, this.assets, estimulo);
 	}
 	
 	public void returnAnswer(boolean answer) {
 		// Almacenamos en el historial lo que paso
 		this.dinamicaActiva.historial.add(new Respuesta (this.estimuloActivo, answer));
 		// Marcamos que se recibio una rta
-		this.waitingAnswer = false;
 		
 		// Elije si hay que incrementar la dificultad, disminuirla o no hacer nada.
 		boolean incrementarDificultad=false;
@@ -321,9 +268,15 @@ public abstract class Umbral {
 				Gdx.app.debug(TAG, this.dinamicaActiva.identificador + " ha alcanzado la convergencia con valor " + this.dinamicaActiva.ultimoMEAN);
 			}
 		}
-		//Gdx.app.debug(TAG, this.dinamicaActiva.identificador + " SD: " + this.dinamicaActiva.ultimaSD);
-		//Gdx.app.debug(TAG, this.dinamicaActiva.identificador + " Nivel: " + this.dinamicaActiva.nivelEstimulo);
-		//Gdx.app.debug(TAG, this.dinamicaActiva.identificador + " Rta correcta: " + answer);
+		
+		// Una vez que se actualizo la dinamica anterior pasamos a actualizar el trial si corresponde
+		if (this.askNoMoreTrials()) {
+			this.levelCompletedAction();
+			this.levelCompleted = true;
+		} else {
+			this.createTrial();
+		}
+	
 	}
 	
 	protected abstract String getNameTag();
