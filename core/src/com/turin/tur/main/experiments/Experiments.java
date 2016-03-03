@@ -1,7 +1,6 @@
 package com.turin.tur.main.experiments;
 
 import com.badlogic.gdx.utils.Array;
-import com.turin.tur.main.experiments.Umbral.Estimulo;
 
 /**
  * Este paquete esta pensado para almacenar todo lo que tiene que ver con los diseños experimentales.

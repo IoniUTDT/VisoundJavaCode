@@ -46,7 +46,7 @@ public class Builder {
 
 	static int contadorLevels = 0;
 
-	public static final int ResourceVersion = 140;
+	public static final int ResourceVersion = 137;
 	public static final int levelVersion = 28;
 	public static int levelVersionFinal;
 	
@@ -62,9 +62,9 @@ public class Builder {
 
 		
 		if (makeResources) {
-			// Builder.verifyResourcesVersion();
+			Builder.verifyResourcesVersion();
+			Textos.crearTextos();
 			for (Experiment exp : exps) {
-				Textos.crearTextos();
 				exp.makeResources();
 			}
 			System.exit(0);

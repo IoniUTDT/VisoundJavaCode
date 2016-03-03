@@ -33,7 +33,9 @@ public class LevelController implements InputProcessor {
 	public Array<TouchInfo> touchSecuence = new Array<TouchInfo>();
 	public Trial trial;
 	public boolean nextTrialPending = false; // Genera la señal de que hay que cambiar de trial (para esperar a que finalicen cuestiones de animacion) 
-	// boolean elementoSeleccionado = false; // Sin seleccion
+	
+	public final float blankTime = 0.2f; // Tiempo que debe dejar la pantalla en blanco entre trial y trial (en segundos) 
+	public float currentblankTime = this.blankTime;
 	
 	public LevelController(Visound game, Level level) {
 	
@@ -57,20 +59,26 @@ public class LevelController implements InputProcessor {
 	}
 
 	public void update(float deltaTime) {
-		// Actualiza el trial
-		this.trial.update(deltaTime);
-
-		// actualiza cosas generales
-		cameraHelper.update(deltaTime);
-
-		// Procesa cambios de trial si los hay pendientes
-		if (trial.checkTrialCompleted()) {
-			this.game.expActivo.returnAnswer(this.trial.lastAnswer());
-			if (this.game.expActivo.islevelCompleted()) {
-				this.game.expActivo.stopLevel();
-				this.goToResults();
-			} else {
-				this.trial = this.game.expActivo.getTrial();
+		this.currentblankTime = this.currentblankTime + deltaTime;
+		
+		if (this.currentblankTime > this.blankTime) {
+		
+			// Actualiza el trial
+			this.trial.update(deltaTime);
+		
+			// actualiza cosas generales
+			cameraHelper.update(deltaTime);
+			
+			// Procesa cambios de trial si los hay pendientes
+			if (trial.checkTrialCompleted()) {
+				this.game.expActivo.returnAnswer(this.trial.lastAnswer());
+				if (this.game.expActivo.islevelCompleted()) {
+					this.game.expActivo.stopLevel();
+					this.goToResults();
+				} else {
+					this.trial = this.game.expActivo.getTrial();
+					this.currentblankTime = 0;
+				}
 			}
 		}
 	}

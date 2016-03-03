@@ -16,9 +16,8 @@ import com.turin.tur.main.util.Constants.Resources.CategoriasImagenes;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.builder.Builder;
 import com.turin.tur.main.util.builder.Imagenes;
-import com.turin.tur.main.util.builder.Textos;
 
-public class UmbralParalelismo extends Umbral {
+public abstract class UmbralParalelismo extends Umbral {
 
 	
 	private static class ImageInfoParalelismo extends Umbral.ImageInfo {
@@ -26,8 +25,7 @@ public class UmbralParalelismo extends Umbral {
 	}
 
 	static final String TAG = UmbralParalelismo.class.getName();
-	private String expName = "UmbralParalelismo";
-		
+			
 	private ArrayMap<Double, ArrayMap<Double, Estimulo>> indexToMap() {
 		ArrayMap<Double, ArrayMap<Double, Estimulo>> map = new ArrayMap<Double, ArrayMap<Double, Estimulo>>();
 		for (Estimulo estimulo : this.setup.estimulos) {
@@ -43,7 +41,7 @@ public class UmbralParalelismo extends Umbral {
 	public void makeLevels() {
 
 		// Cargamos los datos del setup
-		String path = Resources.Paths.currentVersionPath + "/extras/" + this.expName + "Setup.meta";
+		String path = Resources.Paths.currentVersionPath + "/extras/" + this.getName() + "Setup.meta";
 		String savedData = FileHelper.readLocalFile(path);
 		Json json = new Json();
 		json.setUsePrototypes(false);
@@ -94,7 +92,7 @@ public class UmbralParalelismo extends Umbral {
 							DISTRIBUCIONESenPANTALLA.LINEALx2,
 							new int[] { map.get(referencia).get(desviacion).idResource,
 									map.get(referencia).get(-desviacion).idResource },
-							TIPOdeTRIAL.TEST, map.get(referencia).get(desviacion).idResource, false, true, false);
+							TIPOdeTRIAL.TEST, map.get(referencia).get(desviacion).idResource, false, true, this.setup.feedback);
 				} else { // si es muy chica mostramos dos imagenes donde el
 							// efecto sea visible (igual como comparten
 							// categoria el LevelController detecta la
@@ -103,7 +101,7 @@ public class UmbralParalelismo extends Umbral {
 							DISTRIBUCIONESenPANTALLA.LINEALx2,
 							new int[] { map.get(referencia).get(limiteVisible).idResource,
 									map.get(referencia).get(-limiteVisible).idResource },
-							TIPOdeTRIAL.TEST, map.get(referencia).get(desviacion).idResource, false, true, false);
+							TIPOdeTRIAL.TEST, map.get(referencia).get(desviacion).idResource, false, true, this.setup.feedback);
 				}
 				// agregamos el trial al index
 				map.get(referencia).get(desviacion).idTrial = trial.Id;
@@ -136,8 +134,8 @@ public class UmbralParalelismo extends Umbral {
 			dinamicaNeg.referencia = referencia;
 			dinamicaPos.nivelEstimulo = dinamicaPos.listaEstimulos.size - 1;
 			dinamicaNeg.nivelEstimulo = dinamicaNeg.listaEstimulos.size - 1;
-			dinamicaPos.saltosActivos = dinamicaPos.listaEstimulos.size / 10;
-			dinamicaNeg.saltosActivos = dinamicaNeg.listaEstimulos.size / 10;
+			dinamicaPos.saltosActivos = dinamicaPos.listaEstimulos.size / 10 + 1;
+			dinamicaNeg.saltosActivos = dinamicaNeg.listaEstimulos.size / 10 + 1;
 
 			// Agrupamos todas las convergencias del nivel en un array y lo
 			// mandamos a la variable object del level
@@ -153,11 +151,11 @@ public class UmbralParalelismo extends Umbral {
 			LevelStatus levelStatus = new LevelStatus();
 			levelStatus.enabled = true;
 			levelStatus.id = level.Id;
-			levelStatus.publicName = level.levelTitle;
-			levelStatus.internalName = this.expName + level.Id;
-			levelStatus.expName = this.expName;
+			levelStatus.publicName = this.setup.tagButton + "(" + level.Id + ")";
+			levelStatus.internalName = this.getName() + level.Id;
+			levelStatus.expName = this.getName();
 			levelStatus.alreadyPlayed = false;
-			levelStatus.priority = 1;
+			levelStatus.priority = this.setup.levelPriority;
 			this.expSettings.levels.add(levelStatus);
 		}
 		// Creamos un archivo con la info del experimento
@@ -250,59 +248,18 @@ public class UmbralParalelismo extends Umbral {
 			}
 		}
 		// Guardamos el setup
-		String path = Resources.Paths.currentVersionPath + "/extras/" + this.expName + "Setup.meta";
+		String path = Resources.Paths.currentVersionPath + "/extras/" + this.getName() + "Setup.meta";
 		Json json = new Json();
 		json.setUsePrototypes(false);
 		FileHelper.writeFile(path, json.toJson(this.setup));
 	}
 
-	private void makeSetup() {
-		// Creamos el setup
-		Setup setup = new Setup();
-		setup.numeroDeTrailsMaximosxNivel = 40;
-		// Definimos los angulos de referencia
-		setup.angulosReferencia = new Array<Double>();
-		setup.angulosReferencia.add(0d);
-		setup.angulosReferencia.add(30d);
-		setup.angulosReferencia.add(90d);
-		// Generamos las desviaciones
-		float desvMin = 0.1f;
-		float desvMax = 25f;
-		double desvMinLog = Math.log(desvMin);
-		double desvMaxLog = Math.log(desvMax);
-		int numeroDeDesviaciones = 40;
-		boolean logscale = true;
-		// Creamos la serie de desviaciones respecto al paralelismo
-		if (logscale) {
-			double paso = (desvMaxLog - desvMinLog) / (numeroDeDesviaciones - 1);
-			for (int i = 0; i < numeroDeDesviaciones; i++) {
-				setup.desviacionesAngulares.add(desvMinLog + paso * i);
-			}
-			for (int i = 0; i < numeroDeDesviaciones; i++) {
-				setup.desviacionesAngulares.set(i, Math.exp(setup.desviacionesAngulares.get(i)));
-			}
-		} else {
-			double paso = (desvMax - desvMin) / numeroDeDesviaciones;
-			for (int i = 0; i < numeroDeDesviaciones; i++) {
-				setup.desviacionesAngulares.add(desvMin + paso * i);
-			}
-		}
-		// Agregamos una copia negativa
-		for (int i = 0; i < numeroDeDesviaciones; i++) {
-			setup.desviacionesAngulares.add(-setup.desviacionesAngulares.get(i));
-		}
-		this.setup = setup;
-	}
+	abstract void makeSetup();
 
+
+	abstract public String getName();
 
 	@Override
-	public String getName() {
-		return this.expName;
-	}
-
-	@Override
-	protected String getNameTag() {
-		return "expParalelismoPiloto";
-	}
+	abstract protected String getNameTag();
 
 }

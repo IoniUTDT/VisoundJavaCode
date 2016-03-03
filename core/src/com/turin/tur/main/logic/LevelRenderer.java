@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.turin.tur.main.diseno.Boxes.Box;
 import com.turin.tur.main.util.Constants;
 
+
 public class LevelRenderer implements Disposable {
 
 	private static final String TAG = LevelRenderer.class.getName();
@@ -36,12 +37,6 @@ public class LevelRenderer implements Disposable {
 		renderGui(batch);
 		
 	}
-
-	/*
-	private void renderInterfaz(SpriteBatch batch) {
-		//levelController.levelInterfaz.render(batch);
-	}
-	*/
 	
 	private void renderGui(SpriteBatch batch) { 
 		batch.setProjectionMatrix(cameraGUI.combined);
@@ -80,3 +75,4 @@ public class LevelRenderer implements Disposable {
 	}
 
 }
+

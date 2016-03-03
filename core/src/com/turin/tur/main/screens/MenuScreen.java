@@ -153,7 +153,9 @@ public class MenuScreen extends AbstractGameScreen {
 					button.setColor(1, 0, 0, 1); //Red
 				}	
 			} else {
-				button.setTouchable(Touchable.disabled);
+				if (level.priority > priorityGoal) {
+					button.setTouchable(Touchable.disabled);
+				}
 			}
 			levelButtons.add(button);
 			//Gdx.app.debug(TAG, "agregado boton" + button.getText());

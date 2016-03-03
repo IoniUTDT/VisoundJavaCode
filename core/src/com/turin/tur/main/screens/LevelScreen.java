@@ -50,7 +50,9 @@ public class LevelScreen extends AbstractGameScreen  {
 		// Clears the screen
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		// Render level to screen
-		levelRenderer.render();
+		if (levelController.currentblankTime > levelController.blankTime) {
+			levelRenderer.render();
+		}
 	}
 	
 	@Override

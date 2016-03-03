@@ -12,6 +12,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.badlogic.gdx.Gdx;
 import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.wave.WavFile;
 import com.turin.tur.wave.WavFileException;
@@ -36,9 +37,13 @@ public class SVGtoMp3 {
 	public final static int fs = 44100; // hz of the sound
 	public final static float base = 10; // base of the log scale
 	private String path;
+	private File file;
+
+	private final static String TAG = SVGtoMp3.class.getName();
 	
 	public SVGtoMp3 (File file, String path) {
 		this.path = path;
+		this.file = file;
 		InfoArchivo info = extractInfoFromSVG(file);
 		File fileWAV = createSounds(info);
 		WAVtoMP3(fileWAV);
@@ -290,19 +295,19 @@ public class SVGtoMp3 {
 		double m = (linea.yf - linea.yi) / (linea.xf - linea.xi); //Pendiente
 		// Se fija q los extremos este dentro del rango de la imagen
 		if (linea.xi < 0) {
-			System.out.println("Corrigiendo imagen fuera de rango");
+			Gdx.app.debug(TAG, "El archivo "+ this.file.getAbsolutePath()+" contiene alguna linea fuera de rango. Sera correjido.");
 			double deltaX = 0 - linea.xi;
 			linea.xi = linea.xi + deltaX;
 			linea.yi = linea.yi + deltaX * m;
 		}
 		if (linea.xf > ancho) {
-			System.out.println("Corrigiendo imagen fuera de rango");
+			Gdx.app.debug(TAG, "El archivo "+ this.file.getAbsolutePath()+" contiene alguna linea fuera de rango. Sera correjido.");
 			double deltaX = ancho - linea.xf;
 			linea.xf = linea.xf + deltaX;
 			linea.yf = linea.yf + deltaX * m;
 		}
 		if (linea.yi < 0) { // Corrige si la y inicial esta por debajo del cero
-			System.out.println("Corrigiendo imagen fuera de rango");
+			Gdx.app.debug(TAG, "El archivo "+ this.file.getAbsolutePath()+" contiene alguna linea fuera de rango. Sera correjido.");
 			double deltaY = 0 - linea.yi;
 			linea.yi = linea.yi + deltaY;
 			if ((linea.xf - linea.xi)!=0) {
@@ -310,7 +315,7 @@ public class SVGtoMp3 {
 			}
 		}
 		if (linea.yi > alto) { // corrige si la y inicial esta por encima del alto maximo
-			System.out.println("Corrigiendo imagen fuera de rango");
+			Gdx.app.debug(TAG, "El archivo "+ this.file.getAbsolutePath()+" contiene alguna linea fuera de rango. Sera correjido.");
 			double deltaY = alto - linea.yi;
 			linea.yi = linea.yi + deltaY;
 			if ((linea.xf - linea.xi)!=0) {
@@ -318,7 +323,7 @@ public class SVGtoMp3 {
 			}
 		}
 		if (linea.yf > alto) { // corrige si la yf esta por encima del alto maximo
-			System.out.println("Corrigiendo imagen fuera de rango");
+			Gdx.app.debug(TAG, "El archivo "+ this.file.getAbsolutePath()+" contiene alguna linea fuera de rango. Sera correjido.");
 			double deltaY = alto - linea.yf;
 			linea.yf = linea.yf + deltaY;
 			if ((linea.xf - linea.xi)!=0) {
@@ -326,7 +331,7 @@ public class SVGtoMp3 {
 			}
 		}
 		if (linea.yf < 0) { // corrige si la yf esta por encima del alto maximo
-			System.out.println("Corrigiendo imagen fuera de rango");
+			Gdx.app.debug(TAG, "El archivo "+ this.file.getAbsolutePath()+" contiene alguna linea fuera de rango. Sera correjido.");
 			double deltaY = 0 - linea.yf;
 			linea.yf = linea.yf + deltaY;
 			if ((linea.xf - linea.xi)!=0) {

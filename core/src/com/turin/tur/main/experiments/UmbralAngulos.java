@@ -16,14 +16,12 @@ import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
 import com.turin.tur.main.util.Constants.Resources.CategoriasImagenes;
 import com.turin.tur.main.util.builder.Builder;
 import com.turin.tur.main.util.builder.Imagenes;
-import com.turin.tur.main.util.builder.Textos;
 
 
-public class UmbralAngulos extends Umbral {
+public abstract class UmbralAngulos extends Umbral {
 
 	static final String TAG = UmbralParalelismo.class.getName();
 	// Cosas generales
-	private String expName = "UmbralAngulos";
 	
 	private static class EstimuloAngulo extends Umbral.Estimulo implements Comparable<Estimulo> {
 		private double anguloFormado; // Angulo respecto al lado fijo
@@ -47,13 +45,13 @@ public class UmbralAngulos extends Umbral {
 		// Creamos un recurso para cada imagen necesaria
 		for (double ladoFijo : this.setup.angulosReferencia) {
 			for (double ladoMovil : this.setup.desviacionesAngulares) {
-				if ((ladoMovil - ladoFijo <=180) && (ladoMovil - ladoFijo >=0)) {
+				if ((ladoMovil - ladoFijo <=180) && (ladoMovil - ladoFijo >=0)) { // Ojo que aca hay un problema con el tema de reiteracion circular! porque importa el orden de la resta a parte del lado fijo en 180
 					makeResource(ladoFijo, ladoMovil);
 				}
 			}
 		}
 		// Guardamos el setup
-		String path = Resources.Paths.currentVersionPath + "/extras/" + this.expName + "Setup.meta";
+		String path = Resources.Paths.currentVersionPath + "/extras/" + this.getName() + "Setup.meta";
 		Json json = new Json();
 		json.setUsePrototypes(false);
 		FileHelper.writeFile(path, json.toJson(this.setup));
@@ -133,102 +131,13 @@ public class UmbralAngulos extends Umbral {
 		this.setup.estimulos.add(estimulo);
 	}
 
-	private void makeSetup() {
-		// Creamos el setup
-		Setup setup = new Setup();
-		setup.numeroDeTrailsMaximosxNivel = 40;
-		// Definimos los angulos de referencia
-		setup.angulosReferencia = new Array<Double>();
-		setup.angulosReferencia.add(0d);
-		setup.angulosReferencia.add(30d);
-		setup.angulosReferencia.add(90d);
-		
-		// Generamos los lados moviles
-		setup.desviacionesAngulares.add(0d);
-		setup.desviacionesAngulares.add(1d);
-		setup.desviacionesAngulares.add(2d);
-		setup.desviacionesAngulares.add(4d);
-		setup.desviacionesAngulares.add(6d);
-		setup.desviacionesAngulares.add(8d);
-		setup.desviacionesAngulares.add(10d);
-		setup.desviacionesAngulares.add(20d);
-		setup.desviacionesAngulares.add(30d);
-		setup.desviacionesAngulares.add(40d);
-		setup.desviacionesAngulares.add(50d);
-		setup.desviacionesAngulares.add(60d);
-		setup.desviacionesAngulares.add(70d);
-		setup.desviacionesAngulares.add(80d);
-		setup.desviacionesAngulares.add(82d);
-		setup.desviacionesAngulares.add(84d);
-		setup.desviacionesAngulares.add(86d);
-		setup.desviacionesAngulares.add(88d);
-		setup.desviacionesAngulares.add(89d);
-		setup.desviacionesAngulares.add(90d);
-		setup.desviacionesAngulares.add(91d);
-		setup.desviacionesAngulares.add(92d);
-		setup.desviacionesAngulares.add(94d);
-		setup.desviacionesAngulares.add(96d);
-		setup.desviacionesAngulares.add(98d);
-		setup.desviacionesAngulares.add(100d);
-		setup.desviacionesAngulares.add(110d);
-		setup.desviacionesAngulares.add(120d);
-		setup.desviacionesAngulares.add(130d);
-		setup.desviacionesAngulares.add(140d);
-		setup.desviacionesAngulares.add(150d);
-		setup.desviacionesAngulares.add(160d);
-		setup.desviacionesAngulares.add(170d);
-		setup.desviacionesAngulares.add(172d);
-		setup.desviacionesAngulares.add(174d);
-		setup.desviacionesAngulares.add(176d);
-		setup.desviacionesAngulares.add(178d);
-		setup.desviacionesAngulares.add(179d);
-		setup.desviacionesAngulares.add(180d);
-		setup.desviacionesAngulares.add(181d);
-		setup.desviacionesAngulares.add(182d);
-		setup.desviacionesAngulares.add(184d);
-		setup.desviacionesAngulares.add(186d);
-		setup.desviacionesAngulares.add(188d);
-		setup.desviacionesAngulares.add(190d);
-		setup.desviacionesAngulares.add(200d);
-		setup.desviacionesAngulares.add(210d);
-		setup.desviacionesAngulares.add(220d);
-		setup.desviacionesAngulares.add(230d);
-		setup.desviacionesAngulares.add(240d);
-		setup.desviacionesAngulares.add(250d);
-		setup.desviacionesAngulares.add(260d);
-		setup.desviacionesAngulares.add(262d);
-		setup.desviacionesAngulares.add(264d);
-		setup.desviacionesAngulares.add(266d);
-		setup.desviacionesAngulares.add(268d);
-		setup.desviacionesAngulares.add(269d);
-		setup.desviacionesAngulares.add(270d);
-		setup.desviacionesAngulares.add(271d);
-		setup.desviacionesAngulares.add(272d);
-		setup.desviacionesAngulares.add(274d);
-		setup.desviacionesAngulares.add(276d);
-		setup.desviacionesAngulares.add(278d);
-		setup.desviacionesAngulares.add(280d);
-		setup.desviacionesAngulares.add(290d);
-		setup.desviacionesAngulares.add(300d);
-		setup.desviacionesAngulares.add(310d);
-		setup.desviacionesAngulares.add(320d);
-		setup.desviacionesAngulares.add(330d);
-		setup.desviacionesAngulares.add(340d);
-		setup.desviacionesAngulares.add(350d);
-		setup.desviacionesAngulares.add(352d);
-		setup.desviacionesAngulares.add(354d);
-		setup.desviacionesAngulares.add(356d);
-		setup.desviacionesAngulares.add(358d);
-		setup.desviacionesAngulares.add(359d);
-		this.setup = setup;
-		
-	}
+	abstract void makeSetup();
 
 	@Override
 	public void makeLevels() {
 		
 		// Cargamos los datos del setup
-		String path = Resources.Paths.currentVersionPath + "/extras/" + this.expName + "Setup.meta";
+		String path = Resources.Paths.currentVersionPath + "/extras/" + this.getName() + "Setup.meta";
 		String savedData = FileHelper.readLocalFile(path);
 		Json json = new Json();
 		json.setUsePrototypes(false);
@@ -271,7 +180,7 @@ public class UmbralAngulos extends Umbral {
 				JsonTrial trial = Builder.crearTrial("Indique a que categoria pertenece el angulo", "",
 							DISTRIBUCIONESenPANTALLA.LINEALx3,
 							new int[] {CategoriasImagenes.Agudo.ID, CategoriasImagenes.Recto.ID, CategoriasImagenes.Obtuso.ID},
-							TIPOdeTRIAL.TEST, recurso.idResource, false, true, false);
+							TIPOdeTRIAL.TEST, recurso.idResource, false, true, this.setup.feedback);
 				recurso.idTrial = trial.Id;
 				if ((recurso.anguloFormado <= 90)&(recurso.anguloFormado >= 0)) {
 					dinamicaAguda.listaEstimulos.add(recurso);
@@ -296,8 +205,8 @@ public class UmbralAngulos extends Umbral {
 			// Retocamos la info dinamica
 			dinamicaAguda.nivelEstimulo = dinamicaAguda.listaEstimulos.size - 1;
 			dinamicaGave.nivelEstimulo = dinamicaGave.listaEstimulos.size - 1;
-			dinamicaAguda.saltosActivos = dinamicaAguda.listaEstimulos.size / 10;
-			dinamicaGave.saltosActivos = dinamicaGave.listaEstimulos.size / 10;
+			dinamicaAguda.saltosActivos = dinamicaAguda.listaEstimulos.size / 10 + 1;
+			dinamicaGave.saltosActivos = dinamicaGave.listaEstimulos.size / 10 + 1;
 			dinamicaGave.referencia = ladoFijo;
 			dinamicaAguda.referencia = ladoFijo;
 			
@@ -315,11 +224,11 @@ public class UmbralAngulos extends Umbral {
 			LevelStatus levelStatus = new LevelStatus();
 			levelStatus.enabled = true;
 			levelStatus.id = level.Id;
-			levelStatus.publicName = level.levelTitle;
-			levelStatus.internalName = this.expName + level.Id;
-			levelStatus.expName = this.expName;
+			levelStatus.publicName = this.setup.tagButton + "(" + level.Id + ")";
+			levelStatus.internalName = this.getName() + level.Id;
+			levelStatus.expName = this.getName();
 			levelStatus.alreadyPlayed = false;
-			levelStatus.priority = 1;
+			levelStatus.priority = this.setup.levelPriority;
 			this.expSettings.levels.add(levelStatus);
 		}
 		// Creamos un archivo con la info del experimento
@@ -332,13 +241,9 @@ public class UmbralAngulos extends Umbral {
 	}
 
 	@Override
-	public String getName() {
-		return this.expName;
-	}
+	abstract public String getName();
 
 	@Override
-	protected String getNameTag() {
-		return "expAngulosPiloto";
-	}
+	abstract protected String getNameTag();
 	
 }

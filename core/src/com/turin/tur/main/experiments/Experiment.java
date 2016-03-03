@@ -36,7 +36,6 @@ public interface Experiment {
 	public abstract class GenericExp implements Experiment {
 		
 		// Cosas generales
-		protected String expName = "Umbral Generico";
 		protected ExpSettings expSettings;
 		
 		// Cosas que manejan la dinamica en cada ejecucion

@@ -236,7 +236,6 @@ public class Trial {
 	 * Metodo que se ejecuta al tocar un box (ya sea Entrenamiento o Test)
 	 */
 	public void boxSelected(Box boxTocada) {
-	
 		// Revisamos que onda si se acerto o no. Acertar significa que el elemento tocado y el estimulo compartan al menos una categoria.
 		boolean answerCorrect = false;
 		for (CategoriasImagenes categoria : boxTocada.contenido.categorias) {
@@ -244,7 +243,15 @@ public class Trial {
 				answerCorrect = true;
 			}
 		}
-		boxTocada.select(this);
+		if (boxTocada.getClass() == TestBox.class) {
+			TestBox box =  (TestBox) boxTocada; 
+			box.answerCorrect = answerCorrect;
+			if (!this.somethingTouched) {
+				box.select(this);
+			}
+		} else {
+			boxTocada.select(this);
+		}
 		this.lastAnswerCorrect = answerCorrect;
 		this.somethingTouched = true;
 	}

@@ -89,11 +89,13 @@ public abstract class Umbral extends GenericExp {
 		Array<Double> desviacionesAngulares = new Array<Double>();
 		Array<Estimulo> estimulos = new Array<Estimulo>();
 		public int numeroDeTrailsMaximosxNivel;
+		public int levelPriority;
+		public String tagButton;
+		public boolean feedback;
 	}
 	
 	// Cosas generales
 	protected Setup setup;
-	protected String expName = "Umbral Generico";
 	
 	// Cosas que manejan la dinamica en cada ejecucion
 	protected Array<DinamicaExperimento> dinamicas;
