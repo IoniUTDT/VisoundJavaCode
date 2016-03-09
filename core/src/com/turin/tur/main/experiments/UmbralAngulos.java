@@ -14,8 +14,8 @@ import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
 import com.turin.tur.main.util.Constants.Resources.CategoriasImagenes;
-import com.turin.tur.main.util.builder.Builder;
 import com.turin.tur.main.util.builder.Imagenes;
+import com.turin.tur.main.util.builder.PCBuilder;
 
 
 public abstract class UmbralAngulos extends Umbral {
@@ -160,7 +160,7 @@ public abstract class UmbralAngulos extends Umbral {
 		// Hacemos un nivel para cada lado fijo
 		for (double ladoFijo : estimulos.keys()) {
 			// Creamos el nivel
-			JsonLevel level = Builder.crearLevel();
+			JsonLevel level = PCBuilder.crearLevel();
 			level.numberOfMaxTrials = this.setup.numeroDeTrailsMaximosxNivel;
 			// level.tipoDeLevel = TIPOdeLEVEL.UMBRALPARALELISMO;
 			level.levelTitle = "A: " + ladoFijo;
@@ -177,7 +177,7 @@ public abstract class UmbralAngulos extends Umbral {
 			for (double ladoMovil : estimulos.get(ladoFijo).keys()) {
 				// Seleccionamos el recurso
 				EstimuloAngulo recurso = (EstimuloAngulo) estimulos.get(ladoFijo).get(ladoMovil);
-				JsonTrial trial = Builder.crearTrial("Indique a que categoria pertenece el angulo", "",
+				JsonTrial trial = PCBuilder.crearTrial("Indique a que categoria pertenece el angulo", "",
 							DISTRIBUCIONESenPANTALLA.LINEALx3,
 							new int[] {CategoriasImagenes.Agudo.ID, CategoriasImagenes.Recto.ID, CategoriasImagenes.Obtuso.ID},
 							TIPOdeTRIAL.TEST, recurso.idResource, false, true, this.setup.feedback);
@@ -217,8 +217,8 @@ public abstract class UmbralAngulos extends Umbral {
 			convergencias.add(dinamicaGave);
 			level.infoDinamica = convergencias;
 			// Extraemos los niveles y los recursos a la carpeta que corresponda
-			Builder.extract(level);
-			Builder.buildJsons(level);
+			PCBuilder.extract(level);
+			PCBuilder.buildJsons(level);
 
 			// Agregamos el nivel al setting
 			LevelStatus levelStatus = new LevelStatus();

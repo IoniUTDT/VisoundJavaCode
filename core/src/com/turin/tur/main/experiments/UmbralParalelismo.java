@@ -14,8 +14,8 @@ import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
 import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.main.util.Constants.Resources.CategoriasImagenes;
 import com.turin.tur.main.util.FileHelper;
-import com.turin.tur.main.util.builder.Builder;
 import com.turin.tur.main.util.builder.Imagenes;
+import com.turin.tur.main.util.builder.PCBuilder;
 
 public abstract class UmbralParalelismo extends Umbral {
 
@@ -57,7 +57,7 @@ public abstract class UmbralParalelismo extends Umbral {
 		// Hacemos un nivel para cada referencia
 		for (double referencia : this.setup.angulosReferencia) {
 			// Creamos el nivel
-			JsonLevel level = Builder.crearLevel();
+			JsonLevel level = PCBuilder.crearLevel();
 			level.numberOfMaxTrials = this.setup.numeroDeTrailsMaximosxNivel;
 			// level.tipoDeLevel = TIPOdeLEVEL.UMBRALPARALELISMO;
 			level.levelTitle = "R: " + referencia;
@@ -88,7 +88,7 @@ public abstract class UmbralParalelismo extends Umbral {
 													// dejamos que se elija
 													// entre las dos imagenes
 													// reales
-					trial = Builder.crearTrial("Indique a que imagen se parece el sonido", "",
+					trial = PCBuilder.crearTrial("Indique a que imagen se parece el sonido", "",
 							DISTRIBUCIONESenPANTALLA.LINEALx2,
 							new int[] { map.get(referencia).get(desviacion).idResource,
 									map.get(referencia).get(-desviacion).idResource },
@@ -97,7 +97,7 @@ public abstract class UmbralParalelismo extends Umbral {
 							// efecto sea visible (igual como comparten
 							// categoria el LevelController detecta la
 							// coincidencia
-					trial = Builder.crearTrial("Indique a que imagen se parece el sonido", "",
+					trial = PCBuilder.crearTrial("Indique a que imagen se parece el sonido", "",
 							DISTRIBUCIONESenPANTALLA.LINEALx2,
 							new int[] { map.get(referencia).get(limiteVisible).idResource,
 									map.get(referencia).get(-limiteVisible).idResource },
@@ -144,8 +144,8 @@ public abstract class UmbralParalelismo extends Umbral {
 			convergencias.add(dinamicaNeg);
 			level.infoDinamica = convergencias;
 			// Extraemos los niveles y los recursos a la carpeta que corresponda
-			Builder.extract(level);
-			Builder.buildJsons(level);
+			PCBuilder.extract(level);
+			PCBuilder.buildJsons(level);
 
 			// Agregamos el nivel al setting
 			LevelStatus levelStatus = new LevelStatus();

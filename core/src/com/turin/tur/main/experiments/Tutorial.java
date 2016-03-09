@@ -19,9 +19,9 @@ import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
 import com.turin.tur.main.util.Constants.Resources.CategoriasImagenes;
-import com.turin.tur.main.util.builder.Builder;
 import com.turin.tur.main.util.builder.Imagenes;
 import com.turin.tur.main.util.builder.Imagenes.Linea;
+import com.turin.tur.main.util.builder.PCBuilder;
 
 public class Tutorial extends GenericExp implements Experiment {
 
@@ -514,13 +514,13 @@ public class Tutorial extends GenericExp implements Experiment {
 		}
 		
 		// Hacemos el Nivel 1 que contiene cosas basica (las cosas especificas estan en el tutorial parte dos)
-		JsonLevel tutorial = Builder.crearLevel();
+		JsonLevel tutorial = PCBuilder.crearLevel();
 		tutorial.levelTitle = "Tutorial basico";
 		
 		DinamicaTutorial dinamica = new DinamicaTutorial();
 		
 		// Creamos el trial uno, con segmentos rectos, horizontales y verticuales.
-		JsonTrial trial = Builder.crearTrial("Selecciones la imagen que desea escuchar", "",
+		JsonTrial trial = PCBuilder.crearTrial("Selecciones la imagen que desea escuchar", "",
 				DISTRIBUCIONESenPANTALLA.BILINEALx7,
 				new int[] {recursosTag.get("HorizontalArriba").idRecurso, recursosTag.get("HorizontalMedio").idRecurso, recursosTag.get("HorizontalBajo").idRecurso,
 						recursosTag.get("VerticalArriba").idRecurso, recursosTag.get("VerticalCompleta").idRecurso, recursosTag.get("VerticalAbajo").idRecurso,
@@ -531,7 +531,7 @@ public class Tutorial extends GenericExp implements Experiment {
 		tutorial.jsonTrials.add(trial);
 		
 		// Creamos el trial dos, con segmentos rectos, pero en diagonal.
-		JsonTrial trial2 = Builder.crearTrial("Selecciones la imagen que desea escuchar", "",
+		JsonTrial trial2 = PCBuilder.crearTrial("Selecciones la imagen que desea escuchar", "",
 				DISTRIBUCIONESenPANTALLA.BILINEALx7,
 				new int[] {recursosTag.get("DiagSuave").idRecurso, recursosTag.get("DiagMedio").idRecurso, recursosTag.get("DiagRapida").idRecurso,
 						recursosTag.get("DiagNegMuyLenta").idRecurso, recursosTag.get("DiagNegMedioRapida").idRecurso, recursosTag.get("DiagNegMuyRapido").idRecurso,
@@ -541,7 +541,7 @@ public class Tutorial extends GenericExp implements Experiment {
 		tutorial.jsonTrials.add(trial2);
 		
 		// Creamos el trial tres, para escuchar paralelismo.
-		JsonTrial trial3 = Builder.crearTrial("Selecciones la imagen que desea escuchar", "",
+		JsonTrial trial3 = PCBuilder.crearTrial("Selecciones la imagen que desea escuchar", "",
 				DISTRIBUCIONESenPANTALLA.BILINEALx7,
 				new int[] {recursosTag.get("Paralelas4").idRecurso, recursosTag.get("Paralelas3").idRecurso, recursosTag.get("Paralelas2").idRecurso,
 						recursosTag.get("Paralelas1").idRecurso, recursosTag.get("NoParalelas1").idRecurso, recursosTag.get("NoParalelas2").idRecurso,
@@ -551,7 +551,7 @@ public class Tutorial extends GenericExp implements Experiment {
 		tutorial.jsonTrials.add(trial3);
 		
 		// Creamos el trial tres, para escuchar paralelismo.
-		JsonTrial trial4 = Builder.crearTrial("Selecciones la imagen que desea escuchar", "",
+		JsonTrial trial4 = PCBuilder.crearTrial("Selecciones la imagen que desea escuchar", "",
 				DISTRIBUCIONESenPANTALLA.BILINEALx7,
 				new int[] {recursosTag.get("AgudoFacil").idRecurso, recursosTag.get("RectoFacil").idRecurso, recursosTag.get("ObtusoFacil").idRecurso,
 						recursosTag.get("AgudoDificil").idRecurso, recursosTag.get("RectoDificil").idRecurso, recursosTag.get("ObtusoDificil").idRecurso,
@@ -563,8 +563,8 @@ public class Tutorial extends GenericExp implements Experiment {
 		// Preparamos el level y lo exportamos
 		tutorial.infoDinamica = dinamica;
 		// Extraemos los niveles y los recursos a la carpeta que corresponda
-		Builder.extract(tutorial);
-		Builder.buildJsons(tutorial);
+		PCBuilder.extract(tutorial);
+		PCBuilder.buildJsons(tutorial);
 		// Agregamos el nivel al setting
 		LevelStatus levelStatus = new LevelStatus();
 		levelStatus.enabled = true;

@@ -46,6 +46,7 @@ public class LevelController implements InputProcessor {
 		
 		// Selecciona el trial que corresponda
 		this.trial = this.game.expActivo.getTrial();
+		this.currentblankTime = 0;
 		this.levelInterfaz = new LevelInterfaz(this.level, this.trial, this.game.expActivo);
 
 		
