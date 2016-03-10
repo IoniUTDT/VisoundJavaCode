@@ -1,1 +1,0 @@
-{noSound:false,name:null,comments:null,resourceId:{id:26,resourceVersion:1},categories:[Tutorial],infoLineas:[{radial:{Xcenter:50,Ycenter:25,angulo:90,largo:40},x1:50,x2:50.000004,y1:45,y2:5}],infoConceptual:{class:com.turin.tur.main.experiments.Tutorial$Dibujo,tag:VerticalArriba,lineas:[{radial:{Xcenter:50,Ycenter:25,angulo:90,largo:40},x1:50,x2:50.000004,y1:45,y2:5}]}}
