@@ -13,17 +13,17 @@ public class Builder {
 
 	final static String TAG = Builder.class.getName();
 
-	static String pathLevelsBackUp = Resources.Paths.fullLevelsPath.substring(0, Resources.Paths.fullLevelsPath.length()-1)+"olds/"+TimeUtils.millis()+"/";
+	static String pathLevelsBackUp = Resources.Paths.LevelsBackUp+TimeUtils.millis()+"/";
 
 	static int contadorTrials = 0;
 
 	static int contadorLevels = 0;
 
-	public static final int ResourceVersion = 137;
+	public static final int ResourceVersion = 1;
 	public static final int levelVersion = 28; 
 	public static int levelVersionFinal;
 	
-	static final Boolean makeLevels = false;
+	static final Boolean makeLevels = true;
 	static final Boolean makeResources = false;
 	
 

@@ -1,0 +1,1 @@
+{noSound:false,name:null,comments:null,resourceId:{id:25,resourceVersion:137},categories:[Tutorial],infoLineas:[{radial:{Xcenter:50,Ycenter:90,angulo:0,largo:80},x1:90,x2:10,y1:90,y2:90}],infoConceptual:{class:com.turin.tur.main.experiments.Tutorial$Dibujo,tag:HorizontalBajo,lineas:[{radial:{Xcenter:50,Ycenter:90,angulo:0,largo:80},x1:90,x2:10,y1:90,y2:90}]}}

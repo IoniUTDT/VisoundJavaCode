@@ -43,16 +43,18 @@ public interface Experiment {
 		protected Session session;
 		protected Trial trial;
 		protected LevelAsset assets;
+		protected boolean levelCompleted;
 
+		
 		// Logs
 		protected SessionLog sessionLog;
-		protected boolean levelCompleted;
 
 		protected void event_initLevel() {
 			this.sessionLog.levelInstance = TimeUtils.millis();
 			// Creamos el enviable
 			Internet.sendData(this.sessionLog, TIPO_ENVIO.NEWLEVEL, this.getNameTag());
 			this.createTrial();
+			this.levelCompleted = false;
 		}
 
 		
@@ -76,7 +78,7 @@ public interface Experiment {
 		public void initGame(Session session) {
 			// Cargamos la info del experimento
 			// Gdx.app.debug(TAG, Resources.Paths.resources + this.getClass().getSimpleName() + ".settings");
-			String savedData = FileHelper.readFile(Resources.Paths.resources + this.getClass().getSimpleName() + ".settings");
+			String savedData = FileHelper.readInternalFile(Resources.Paths.InternalResources + this.getClass().getSimpleName() + ".settings");
 			Json json = new Json();
 			this.expSettings = json.fromJson(Experiments.ExpSettings.class, savedData);
 			this.session = session;

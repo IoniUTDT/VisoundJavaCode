@@ -130,7 +130,7 @@ public abstract class Umbral extends GenericExp {
 			}
 		}
 		Json json = new Json();
-		FileHelper.writeFile(Resources.Paths.resources + this.getClass().getSimpleName() + ".settings", json.toJson(this.expSettings));
+		FileHelper.writeLocalFile(Resources.Paths.LocalSettingsCopy + this.getClass().getSimpleName() + ".settings", json.toJson(this.expSettings));
 	}
 	
 	public int trialsLeft() {
@@ -186,7 +186,7 @@ public abstract class Umbral extends GenericExp {
 		// answer)
 		this.estimuloActivo = this.dinamicaActiva.listaEstimulos.get(this.dinamicaActiva.nivelEstimulo);
 		// leemos el json del trial
-		String savedData = FileHelper.readFile(Resources.Paths.resources + "level" + level.Id + "/trial" + this.estimuloActivo.idTrial + ".meta");
+		String savedData = FileHelper.readInternalFile(Resources.Paths.InternalResources + "level" + level.Id + "/trial" + this.estimuloActivo.idTrial + ".meta");
 		
 		Json json = new Json();
 		JsonTrial jsonTrial = json.fromJson(JsonTrial.class, savedData);

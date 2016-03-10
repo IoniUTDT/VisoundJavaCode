@@ -8,7 +8,7 @@ public class FileHelper {
 
 	private static final String TAG = FileHelper.class.getName();
 	
-	public static String readFile(String fileName) {
+	public static String readInternalFile(String fileName) {
 		FileHandle file = Gdx.files.internal(fileName);
 		//Gdx.app.debug(TAG, file.file().getAbsolutePath());
 		if (file != null && file.exists()) {
@@ -33,7 +33,7 @@ public class FileHelper {
 		return "";
 	}
 	
-	public static void writeFile(String fileName, String s) {
+	public static void writeLocalFile(String fileName, String s) {
 		FileHandle file = Gdx.files.local(fileName);
 		file.writeString(s, false);
 	}

@@ -112,8 +112,7 @@ public abstract class Boxes {
 				if (trial.runningSound.playTime > this.soundDuracionReproduccion) {
 					this.unSelect(trial);
 				}
-			}
-			
+			}	
 		}
 
 		@Override
@@ -191,6 +190,7 @@ public abstract class Boxes {
 			if (this.giveFeedback) {
 				this.givinFeedback = true;
 				this.answerAnimationTime = 0;
+				trial.runningSound.stop();
 			}
 		}
 		
@@ -302,9 +302,11 @@ public abstract class Boxes {
 					this.delayAutoreproducir = this.delayAutoreproducir + deltaTime;
 				}
 				if (this.delayAutoreproducir > Constants.Box.DELAY_ESTIMULO_MODO_SELECCIONAR) { //TODO cambiar nombre a esta constante
-					trial.runningSound.action = NEXT.PLAY;
-					trial.runningSound.nextContenido = this.contenido;
-					this.delayAutoreproducir = 0;
+					if (!trial.somethingTouched) {
+						trial.runningSound.action = NEXT.PLAY;
+						trial.runningSound.nextContenido = this.contenido;
+						this.delayAutoreproducir = 0;
+					}
 				}
 			}
 		}

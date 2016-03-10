@@ -11,7 +11,7 @@ public class Constants {
 	// al cambiar la version no se cargan los datos viejo ni las estructuras
 	// viejas
 	public static final float VERSION = 1.1f;
-	public static final int CODEVERSION = 20;
+	public static final int CODEVERSION = 21;
 
 	// Version of game for internal use
 	public static int version() {
@@ -178,15 +178,21 @@ public class Constants {
 		}
 		
 		public static class Paths {
-			public static String tempPath = "/temp/resourcesbuild/";
-			public static String fullTempPath = "." + tempPath;
-			public static String currentVersionPath = tempPath + Builder.ResourceVersion + "/";
-			public static String fullCurrentVersionPath = "." + currentVersionPath;
-			public static String fullLevelsPath = fullTempPath + "tempLevels/";
-			public static String levelsPath = tempPath + "tempLevels/";
-			public static String ProcessingPath = fullTempPath + "tempProcessing/";
-			public static String finalPath = "../android/assets/experimentalsource/";
-			public static String resources = "experimentalsource/";
+			// public static String tempPath = "/temp/resourcesbuild/";
+			// public static String fullTempPath = "." + tempPath;
+			// public static String fullCurrentVersionPath = "." + currentVersionPath;
+			// public static String fullLevelsPath = fullTempPath + "tempLevels/";
+			// public static String levelsPath = tempPath + "tempLevels/";
+			// public static String ProcessingPath = fullTempPath + "tempProcessing/";
+			
+			// Carpetas para el builder			
+			public static String ResourcesBuilder = "./resourcesbuild/" + Builder.ResourceVersion + "/";
+			public static String LevelsBackUp = "./resourcesbuild/levelsOlds/";
+			public static String finalInternalPath = "./../android/assets/resources/";
+			public static String processingTempFolder = "./resourcesbuild/temp/";
+			// Carpetas para el tiempo de ejecucion
+			public static String InternalResources = "resources/";
+			public static String LocalSettingsCopy = "settings/";
 		}
 
 		public static final int Reservados = Resources.CategoriasImagenes.values().length;

@@ -40,7 +40,7 @@ public class Level {
 	 */
 
 	private JsonLevel loadLevel(int level) {
-		String savedData = FileHelper.readFile(Resources.Paths.resources + "level" + level + ".meta");
+		String savedData = FileHelper.readInternalFile(Resources.Paths.InternalResources + "level" + level + ".meta");
 		if (!savedData.isEmpty()) {
 			Json json = new Json();
 			json.setUsePrototypes(false);

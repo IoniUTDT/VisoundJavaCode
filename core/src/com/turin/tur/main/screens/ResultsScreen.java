@@ -101,12 +101,12 @@ public class ResultsScreen extends AbstractGameScreen {
 		button.getStyle().font.getData().setScale(Constants.factorEscala()*3,Constants.factorEscala()*3);
 		table.add(button).width(Gdx.graphics.getWidth()/2.5f).space(Gdx.graphics.getHeight()/10f);
 		table.row();
-		table.align(Align.bottom);
+		table.align(Align.center);
 		//table.row();
 
 
 		guiRenderInit();
-		Gdx.app.debug(TAG, "Resultados cargados");
+		// Gdx.app.debug(TAG, "Resultados cargados");
 
 	}
 

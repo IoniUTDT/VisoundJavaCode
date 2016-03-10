@@ -16,10 +16,15 @@ public class Session {
 	public int resourcesVersion = Builder.ResourceVersion;
 
 	public Session() {
+		initcheck();
 		Internet.Check();
 		loadUser();
 	}
 	
+	private void initcheck() {
+		// TODO Auto-generated method stub
+	}
+
 	public static class SessionLog {
 		public Session session;
 		public long levelInstance;

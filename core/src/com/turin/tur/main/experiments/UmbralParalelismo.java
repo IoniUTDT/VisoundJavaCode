@@ -41,7 +41,7 @@ public abstract class UmbralParalelismo extends Umbral {
 	public void makeLevels() {
 
 		// Cargamos los datos del setup
-		String path = Resources.Paths.currentVersionPath + "/extras/" + this.getName() + "Setup.meta";
+		String path = Resources.Paths.ResourcesBuilder + "/extras/" + this.getName() + "Setup.meta";
 		String savedData = FileHelper.readLocalFile(path);
 		Json json = new Json();
 		json.setUsePrototypes(false);
@@ -159,10 +159,10 @@ public abstract class UmbralParalelismo extends Umbral {
 			this.expSettings.levels.add(levelStatus);
 		}
 		// Creamos un archivo con la info del experimento
-		String path2 = Resources.Paths.finalPath + "/" + this.getClass().getSimpleName() + ".settings/";
+		String path2 = Resources.Paths.InternalResources + "/" + this.getClass().getSimpleName() + ".settings/";
 		Json json2 = new Json();
 		json2.setUsePrototypes(false);
-		FileHelper.writeFile(path2, json.toJson(this.expSettings));
+		FileHelper.writeLocalFile(path2, json.toJson(this.expSettings));
 	}
 
 	private void makeResource(double referencia, double desviacion) {
@@ -248,10 +248,10 @@ public abstract class UmbralParalelismo extends Umbral {
 			}
 		}
 		// Guardamos el setup
-		String path = Resources.Paths.currentVersionPath + "/extras/" + this.getName() + "Setup.meta";
+		String path = Resources.Paths.ResourcesBuilder + "/extras/" + this.getName() + "Setup.meta";
 		Json json = new Json();
 		json.setUsePrototypes(false);
-		FileHelper.writeFile(path, json.toJson(this.setup));
+		FileHelper.writeLocalFile(path, json.toJson(this.setup));
 	}
 
 	abstract void makeSetup();

@@ -23,6 +23,7 @@ public class LevelInterfaz {
 		this.levelInfo = levelInfo;		
 	}
 	
+	/*
 	public void renderFps(SpriteBatch batch, OrthographicCamera cameraGUI) {
 		float x = cameraGUI.viewportWidth - cameraGUI.viewportWidth*1/10;
 		float y = cameraGUI.viewportHeight - cameraGUI.viewportHeight*1/20;
@@ -43,13 +44,17 @@ public class LevelInterfaz {
 		fpsFont.setColor(1, 1, 1, 1); // white
 		
 	}
+	*/
 	
 	public void renderTitle (SpriteBatch batch, OrthographicCamera cameraGUI) {
-		BitmapFont fpsFont = Assets.fonts.defaultFont;
-		fpsFont.getData().setScale(Constants.factorEscala());
-		fpsFont.draw(batch, levelInfo.levelTitle, cameraGUI.viewportWidth*1/20 , cameraGUI.viewportHeight*1/10); 
-		fpsFont.draw(batch, trial.jsonTrial.title , cameraGUI.viewportWidth*2/5 , cameraGUI.viewportHeight*1/10);
-		Assets.fonts.defaultFont.draw(batch, trial.jsonTrial.caption , cameraGUI.viewportWidth*1/5 , cameraGUI.viewportHeight*9/10);
-		Assets.fonts.defaultFont.draw(batch, "Numero de trials maximos restantes: " + this.exp.trialsLeft(), cameraGUI.viewportWidth*2/5, cameraGUI.viewportHeight*18/20);
+		
+		
+		BitmapFont font = Assets.fonts.defaultFont;
+		//font.getData().setScale(Constants.factorEscala());
+		//font.draw(batch, levelInfo.levelTitle, cameraGUI.viewportWidth*1/20 , cameraGUI.viewportHeight*1/10); 
+	//	font.draw(batch, trial.jsonTrial.title , cameraGUI.viewportWidth*2/5 , cameraGUI.viewportHeight*1/10);
+		font.draw(batch, trial.jsonTrial.title, cameraGUI.viewportWidth/2, cameraGUI.viewportHeight*1/10, 10, 1, false);
+		// Assets.fonts.defaultFont.draw(batch, trial.jsonTrial.caption , cameraGUI.viewportWidth*1/5 , cameraGUI.viewportHeight*9/10);
+		font.draw(batch, "Trials restantes: " + this.exp.trialsLeft(), cameraGUI.viewportWidth/2, cameraGUI.viewportHeight*9/10, 10, 1, false);
 	}
 }

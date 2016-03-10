@@ -57,7 +57,7 @@ public class Imagenes {
 	}
 	
 	private void createSVGFile() {
-		FileHelper.writeFile(Resources.Paths.currentVersionPath + this.resourceId.id + ".svg", contenido);
+		FileHelper.writeLocalFile(Resources.Paths.ResourcesBuilder + this.resourceId.id + ".svg", contenido);
 	}
 	
 	private void createMetadata() {
@@ -70,7 +70,7 @@ public class Imagenes {
 		jsonMetaData.infoLineas = this.lineas;
 		jsonMetaData.infoConceptual = this.infoConceptual;
 		// jsonMetaData.infoConceptualAngulos = this.infoConceptualAngulos;
-		ExperimentalObject.JsonResourcesMetaData.CreateJsonMetaData(jsonMetaData, Resources.Paths.currentVersionPath);
+		ExperimentalObject.JsonResourcesMetaData.CreateJsonMetaData(jsonMetaData, Resources.Paths.ResourcesBuilder);
 	}
 
 	

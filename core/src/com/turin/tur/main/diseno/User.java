@@ -50,7 +50,7 @@ public class User {
 		public void save(){
 			Json json = new Json();
 			json.setUsePrototypes(false);
-			FileHelper.writeFile(Constants.USERFILE, json.toJson(this));
+			FileHelper.writeLocalFile(Constants.USERFILE, json.toJson(this));
 		}
 		
 		public static JsonUser load(){

@@ -50,11 +50,11 @@ public abstract class UmbralAngulos extends Umbral {
 				}
 			}
 		}
-		// Guardamos el setup
-		String path = Resources.Paths.currentVersionPath + "/extras/" + this.getName() + "Setup.meta";
+		// Guardamos el setup en la carpeta temporal
+		String path = Resources.Paths.ResourcesBuilder + "/extras/" + this.getName() + "Setup.meta";
 		Json json = new Json();
 		json.setUsePrototypes(false);
-		FileHelper.writeFile(path, json.toJson(this.setup));
+		FileHelper.writeLocalFile(path, json.toJson(this.setup));
 	}
 
 	private void makeResource(double ladoFijo, double ladoMovil) {
@@ -137,7 +137,7 @@ public abstract class UmbralAngulos extends Umbral {
 	public void makeLevels() {
 		
 		// Cargamos los datos del setup
-		String path = Resources.Paths.currentVersionPath + "/extras/" + this.getName() + "Setup.meta";
+		String path = Resources.Paths.ResourcesBuilder + "/extras/" + this.getName() + "Setup.meta";
 		String savedData = FileHelper.readLocalFile(path);
 		Json json = new Json();
 		json.setUsePrototypes(false);
@@ -162,7 +162,6 @@ public abstract class UmbralAngulos extends Umbral {
 			// Creamos el nivel
 			JsonLevel level = PCBuilder.crearLevel();
 			level.numberOfMaxTrials = this.setup.numeroDeTrailsMaximosxNivel;
-			// level.tipoDeLevel = TIPOdeLEVEL.UMBRALPARALELISMO;
 			level.levelTitle = "A: " + ladoFijo;
 
 			// Creamos el elemento de la info dinamica que corresponde al nivel
@@ -177,15 +176,15 @@ public abstract class UmbralAngulos extends Umbral {
 			for (double ladoMovil : estimulos.get(ladoFijo).keys()) {
 				// Seleccionamos el recurso
 				EstimuloAngulo recurso = (EstimuloAngulo) estimulos.get(ladoFijo).get(ladoMovil);
-				JsonTrial trial = PCBuilder.crearTrial("Indique a que categoria pertenece el angulo", "",
+				JsonTrial trial = PCBuilder.crearTrial("Indique a que categoría pertenece el ángulo", "",
 							DISTRIBUCIONESenPANTALLA.LINEALx3,
 							new int[] {CategoriasImagenes.Agudo.ID, CategoriasImagenes.Recto.ID, CategoriasImagenes.Obtuso.ID},
 							TIPOdeTRIAL.TEST, recurso.idResource, false, true, this.setup.feedback);
 				recurso.idTrial = trial.Id;
-				if ((recurso.anguloFormado <= 90)&(recurso.anguloFormado >= 0)) {
+				if ((recurso.anguloFormado <= 90)&(recurso.anguloFormado > 9)) {
 					dinamicaAguda.listaEstimulos.add(recurso);
 				}
-				if ((recurso.anguloFormado <= 180)&(recurso.anguloFormado >= 90)) {
+				if ((recurso.anguloFormado < 171)&(recurso.anguloFormado >= 90)) {
 					dinamicaGave.listaEstimulos.add(recurso);
 				}
 				level.jsonTrials.add(trial);
@@ -232,10 +231,10 @@ public abstract class UmbralAngulos extends Umbral {
 			this.expSettings.levels.add(levelStatus);
 		}
 		// Creamos un archivo con la info del experimento
-		String path2 = Resources.Paths.finalPath + "/" + this.getClass().getSimpleName() + ".settings/";
+		String path2 = Resources.Paths.InternalResources + "/" + this.getClass().getSimpleName() + ".settings/";
 		Json json2 = new Json();
 		json2.setUsePrototypes(false);
-		FileHelper.writeFile(path2, json.toJson(this.expSettings));
+		FileHelper.writeLocalFile(path2, json.toJson(this.expSettings));
 
 		
 	}

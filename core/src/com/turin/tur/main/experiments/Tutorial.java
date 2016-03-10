@@ -80,10 +80,10 @@ public class Tutorial extends GenericExp implements Experiment {
 		}
 		
 		// Guardamos el setup
-		String path = Resources.Paths.currentVersionPath + "/extras/" + this.expName + "Setup.meta";
+		String path = Resources.Paths.ResourcesBuilder + "extras/" + this.expName + "Setup.meta";
 		Json json = new Json();
 		json.setUsePrototypes(false);
-		FileHelper.writeFile(path, json.toJson(this.setup));
+		FileHelper.writeLocalFile(path, json.toJson(this.setup));
 		
 
 	}
@@ -246,28 +246,9 @@ public class Tutorial extends GenericExp implements Experiment {
 
 		// Para el tercer trial, el de mas de una linea
 		
-		// Lineas paralelas 1
+		// Lineas paralelas 1 parte 1
 		dibujo = new Dibujo();
 		dibujo.tag = "Paralelas1";
-		linea = new Linea();
-		linea.radial.Xcenter = tamano/2;
-		linea.radial.Ycenter = tamano/3;
-		linea.radial.angulo = 10;
-		linea.radial.largo = tamano*0.8;
-		linea.lineaFromRadial();
-		dibujo.lineas.add(linea);
-		linea = new Linea();
-		linea.radial.Xcenter = tamano/2;
-		linea.radial.Ycenter = tamano/3*2;
-		linea.radial.angulo = 10;
-		linea.radial.largo = tamano*0.8;
-		linea.lineaFromRadial();
-		dibujo.lineas.add(linea);
-		dibujos.add(dibujo);
-		
-		// Lineas paralelas 2
-		dibujo = new Dibujo();
-		dibujo.tag = "Paralelas2";
 		linea = new Linea();
 		linea.radial.Xcenter = tamano/3;
 		linea.radial.Ycenter = tamano/2;
@@ -283,7 +264,51 @@ public class Tutorial extends GenericExp implements Experiment {
 		linea.lineaFromRadial();
 		dibujo.lineas.add(linea);
 		dibujos.add(dibujo);
+		
+		// Lineas paralelas 2 P1
+		dibujo = new Dibujo();
+		dibujo.tag = "Paralelas2P1";
+		linea = new Linea();
+		linea.radial.Xcenter = tamano/2;
+		linea.radial.Ycenter = tamano/3;
+		linea.radial.angulo = 10;
+		linea.radial.largo = tamano*0.8;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		dibujos.add(dibujo);
+		
+		// Lineas paralelas 2 P2
+		dibujo = new Dibujo();
+		dibujo.tag = "Paralelas2P2";
+		linea = new Linea();
+		linea.radial.Xcenter = tamano/2;
+		linea.radial.Ycenter = tamano/3*2;
+		linea.radial.angulo = 10;
+		linea.radial.largo = tamano*0.8;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		dibujos.add(dibujo);
 
+		// Lineas paralelas 2 
+		dibujo = new Dibujo();
+		dibujo.tag = "Paralelas2";
+		linea = new Linea();
+		linea.radial.Xcenter = tamano/2;
+		linea.radial.Ycenter = tamano/3;
+		linea.radial.angulo = 10;
+		linea.radial.largo = tamano*0.8;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		linea = new Linea();
+		linea.radial.Xcenter = tamano/2;
+		linea.radial.Ycenter = tamano/3*2;
+		linea.radial.angulo = 10;
+		linea.radial.largo = tamano*0.8;
+		linea.lineaFromRadial();
+		dibujo.lineas.add(linea);
+		dibujos.add(dibujo);
+
+		/*
 		// Lineas paralelas 3
 		dibujo = new Dibujo();
 		dibujo.tag = "Paralelas3";
@@ -302,7 +327,9 @@ public class Tutorial extends GenericExp implements Experiment {
 		linea.lineaFromRadial();
 		dibujo.lineas.add(linea);
 		dibujos.add(dibujo);
+		*/
 		
+		/*
 		// Lineas paralelas 4
 		dibujo = new Dibujo();
 		dibujo.tag = "Paralelas4";
@@ -321,6 +348,7 @@ public class Tutorial extends GenericExp implements Experiment {
 		linea.lineaFromRadial();
 		dibujo.lineas.add(linea);
 		dibujos.add(dibujo);
+		*/
 		
 		// Lineas NO paralelas 1
 		dibujo = new Dibujo();
@@ -497,7 +525,7 @@ public class Tutorial extends GenericExp implements Experiment {
 	@Override
 	public void makeLevels() {
 		// Cargamos los datos del setup
-		String path = Resources.Paths.currentVersionPath + "/extras/" + this.expName + "Setup.meta";
+		String path = Resources.Paths.ResourcesBuilder + "/extras/" + this.expName + "Setup.meta";
 		String savedData = FileHelper.readLocalFile(path);
 		Json json = new Json();
 		json.setUsePrototypes(false);
@@ -515,12 +543,12 @@ public class Tutorial extends GenericExp implements Experiment {
 		
 		// Hacemos el Nivel 1 que contiene cosas basica (las cosas especificas estan en el tutorial parte dos)
 		JsonLevel tutorial = PCBuilder.crearLevel();
-		tutorial.levelTitle = "Tutorial basico";
+		tutorial.levelTitle = "Tutorial básico";
 		
 		DinamicaTutorial dinamica = new DinamicaTutorial();
 		
 		// Creamos el trial uno, con segmentos rectos, horizontales y verticuales.
-		JsonTrial trial = PCBuilder.crearTrial("Selecciones la imagen que desea escuchar", "",
+		JsonTrial trial = PCBuilder.crearTrial("Seleccione la imagen que desea escuchar", "",
 				DISTRIBUCIONESenPANTALLA.BILINEALx7,
 				new int[] {recursosTag.get("HorizontalArriba").idRecurso, recursosTag.get("HorizontalMedio").idRecurso, recursosTag.get("HorizontalBajo").idRecurso,
 						recursosTag.get("VerticalArriba").idRecurso, recursosTag.get("VerticalCompleta").idRecurso, recursosTag.get("VerticalAbajo").idRecurso,
@@ -531,7 +559,7 @@ public class Tutorial extends GenericExp implements Experiment {
 		tutorial.jsonTrials.add(trial);
 		
 		// Creamos el trial dos, con segmentos rectos, pero en diagonal.
-		JsonTrial trial2 = PCBuilder.crearTrial("Selecciones la imagen que desea escuchar", "",
+		JsonTrial trial2 = PCBuilder.crearTrial("Seleccione la imagen que desea escuchar", "",
 				DISTRIBUCIONESenPANTALLA.BILINEALx7,
 				new int[] {recursosTag.get("DiagSuave").idRecurso, recursosTag.get("DiagMedio").idRecurso, recursosTag.get("DiagRapida").idRecurso,
 						recursosTag.get("DiagNegMuyLenta").idRecurso, recursosTag.get("DiagNegMedioRapida").idRecurso, recursosTag.get("DiagNegMuyRapido").idRecurso,
@@ -541,9 +569,9 @@ public class Tutorial extends GenericExp implements Experiment {
 		tutorial.jsonTrials.add(trial2);
 		
 		// Creamos el trial tres, para escuchar paralelismo.
-		JsonTrial trial3 = PCBuilder.crearTrial("Selecciones la imagen que desea escuchar", "",
+		JsonTrial trial3 = PCBuilder.crearTrial("Seleccione la imagen que desea escuchar", "",
 				DISTRIBUCIONESenPANTALLA.BILINEALx7,
-				new int[] {recursosTag.get("Paralelas4").idRecurso, recursosTag.get("Paralelas3").idRecurso, recursosTag.get("Paralelas2").idRecurso,
+				new int[] {recursosTag.get("Paralelas2P1").idRecurso, recursosTag.get("Paralelas2P2").idRecurso, recursosTag.get("Paralelas2").idRecurso,
 						recursosTag.get("Paralelas1").idRecurso, recursosTag.get("NoParalelas1").idRecurso, recursosTag.get("NoParalelas2").idRecurso,
 						CategoriasImagenes.Siguiente.ID},
 				TIPOdeTRIAL.ENTRENAMIENTO, CategoriasImagenes.Siguiente.ID, false, false, false);
@@ -551,7 +579,7 @@ public class Tutorial extends GenericExp implements Experiment {
 		tutorial.jsonTrials.add(trial3);
 		
 		// Creamos el trial tres, para escuchar paralelismo.
-		JsonTrial trial4 = PCBuilder.crearTrial("Selecciones la imagen que desea escuchar", "",
+		JsonTrial trial4 = PCBuilder.crearTrial("Seleccione la imagen que desea escuchar", "",
 				DISTRIBUCIONESenPANTALLA.BILINEALx7,
 				new int[] {recursosTag.get("AgudoFacil").idRecurso, recursosTag.get("RectoFacil").idRecurso, recursosTag.get("ObtusoFacil").idRecurso,
 						recursosTag.get("AgudoDificil").idRecurso, recursosTag.get("RectoDificil").idRecurso, recursosTag.get("ObtusoDificil").idRecurso,
@@ -577,17 +605,17 @@ public class Tutorial extends GenericExp implements Experiment {
 		this.expSettings.levels.add(levelStatus);
 
 		// Creamos un archivo con la info del experimento
-		String path2 = Resources.Paths.finalPath + "/" + this.getClass().getSimpleName() + ".settings/";
+		String path2 = Resources.Paths.InternalResources + "/" + this.getClass().getSimpleName() + ".settings/";
 		Json json2 = new Json();
 		json2.setUsePrototypes(false);
-		FileHelper.writeFile(path2, json.toJson(this.expSettings));
+		FileHelper.writeLocalFile(path2, json.toJson(this.expSettings));
 
 	}
 
 	@Override
 	public void createTrial() {
 		// Creamos el trial correspondiente
-		String savedData = FileHelper.readFile(Resources.Paths.resources + "level" + level.Id + "/trial" + this.dinamicaActiva.trialActivo + ".meta");
+		String savedData = FileHelper.readInternalFile(Resources.Paths.InternalResources + "level" + level.Id + "/trial" + this.dinamicaActiva.trialActivo + ".meta");
 		Json json = new Json();
 		JsonTrial jsonTrial = json.fromJson(JsonTrial.class, savedData);
 		// Cargamos la lista de objetos experimentales
@@ -652,7 +680,7 @@ public class Tutorial extends GenericExp implements Experiment {
 			}
 		}
 		Json json = new Json();
-		FileHelper.writeFile(Resources.Paths.resources + this.getClass().getSimpleName() + ".settings", json.toJson(this.expSettings));
+		FileHelper.writeLocalFile(Resources.Paths.LocalSettingsCopy + this.getClass().getSimpleName() + ".settings", json.toJson(this.expSettings));
 	}
 
 	@Override

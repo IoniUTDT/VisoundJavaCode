@@ -39,7 +39,7 @@ public class Textos {
 	}
 	
 	private void createSVGFile() {
-		FileHelper.writeFile(Resources.Paths.currentVersionPath + this.resourceId.id + ".svg", contenido);
+		FileHelper.writeLocalFile(Resources.Paths.ResourcesBuilder + this.resourceId.id + ".svg", contenido);
 	}
 	
 	private void createMetadataText() {
@@ -49,7 +49,7 @@ public class Textos {
 		jsonMetaData.comments = this.comments;
 		jsonMetaData.categories = this.categories;
 		jsonMetaData.noSound = true;
-		ExperimentalObject.JsonResourcesMetaData.CreateJsonMetaData(jsonMetaData, Resources.Paths.currentVersionPath);
+		ExperimentalObject.JsonResourcesMetaData.CreateJsonMetaData(jsonMetaData, Resources.Paths.ResourcesBuilder);
 	}
 	
 	/**

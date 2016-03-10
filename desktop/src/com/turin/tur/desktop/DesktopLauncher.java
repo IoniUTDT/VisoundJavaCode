@@ -26,10 +26,13 @@ public class DesktopLauncher {
 					"cajas-ui.pack");
 		}
 		
+		
+		System.setProperty("org.lwjgl.opengl.Display.allowSoftwareOpenGL", "true");
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-	    System.setProperty("org.lwjgl.opengl.Display.allowSoftwareOpenGL", "true");
-		config.width = 800;
-		config.height = 480;
-		new LwjglApplication(new Visound(), config);
+        config.width = LwjglApplicationConfiguration.getDesktopDisplayMode().width;
+        config.height = LwjglApplicationConfiguration.getDesktopDisplayMode().height;
+        config.fullscreen = true;
+        new LwjglApplication(new Visound(), config);
+	    
 	}
 }

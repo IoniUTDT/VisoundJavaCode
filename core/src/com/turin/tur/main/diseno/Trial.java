@@ -27,7 +27,7 @@ public class Trial {
 	public Array<TestBox> testBoxes = new Array<TestBox>();
 	public StimuliBox stimuliBox;
 	public Array<Box> allBox = new Array<Box>();
-	private boolean somethingTouched = false; // almacena si ya se respondio el trial o no 
+	boolean somethingTouched = false; // almacena si ya se respondio el trial o no 
 	private boolean lastAnswerCorrect; // Guarda si se marco la opcion correcta en un trial en caso de que corresponda
 	
 	public Trial (Array<ExperimentalObject> elementos, JsonTrial jsonTrial, LevelAsset asset, ExperimentalObject estimulo) {
@@ -106,19 +106,6 @@ public class Trial {
 		}
 		// En caso de que no haya feedback nos fijamos si se cumplio el objetivo del trial.
 		if (this.jsonTrial.modo == TIPOdeTRIAL.ENTRENAMIENTO) {
-			/*
-			boolean allCheck = true;
-			for (TrainingBox box : trainigBoxes) {
-				if (box.alreadySelected == false) {
-					allCheck = false;
-				}
-			}
-			if (allCheck) {
-				return true;
-			} else {
-				return false;
-			}
-			*/
 			if (this.lastAnswerCorrect) {
 				return true;
 			} else {

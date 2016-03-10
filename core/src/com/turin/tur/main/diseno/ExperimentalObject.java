@@ -55,17 +55,17 @@ public class ExperimentalObject {
 		public static void CreateJsonMetaData (JsonResourcesMetaData jsonMetaData, String path) {
 			Json json = new Json();
 			json.setUsePrototypes(false);
-			FileHelper.writeFile(path + jsonMetaData.resourceId.id + ".meta", json.toJson(jsonMetaData));			
+			FileHelper.writeLocalFile(path + jsonMetaData.resourceId.id + ".meta", json.toJson(jsonMetaData));			
 		} 
 		
 		public void save() {
 			Json json = new Json();
 			json.setUsePrototypes(false);
-			FileHelper.writeFile("experimentalsource/" + Constants.version() + "/" + resourceId.id + ".meta", json.toJson(this));
+			FileHelper.writeLocalFile("experimentalsource/" + Constants.version() + "/" + resourceId.id + ".meta", json.toJson(this));
 		}
 		
 		public static JsonResourcesMetaData Load(int Id, int levelId) {
-			String savedData = FileHelper.readFile(Resources.Paths.resources + "level"+ levelId + "/" + Id + ".meta");
+			String savedData = FileHelper.readInternalFile(Resources.Paths.InternalResources + "level"+ levelId + "/" + Id + ".meta");
 			if (!savedData.isEmpty()) {
 				Json json = new Json();
 				json.setUsePrototypes(false);
