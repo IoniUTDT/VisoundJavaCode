@@ -123,6 +123,8 @@ public class Constants {
 	}
 
 	
+	public static final String SPANISH_FONT_NAME = "fonts/goodfish rg.ttf";
+	
 	// Constantes relacionadas a IDs de cosas fijas
 	public static class Resources {
 

@@ -23,7 +23,7 @@ public class Builder {
 	public static final int levelVersion = 1; 
 	public static int levelVersionFinal;
 	
-	static final Boolean makeLevels = false;
+	static final Boolean makeLevels = true;
 	static final Boolean makeResources = false;
 	
 

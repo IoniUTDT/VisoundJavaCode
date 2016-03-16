@@ -543,7 +543,7 @@ public class Tutorial extends GenericExp implements Experiment {
 		
 		// Hacemos el Nivel 1 que contiene cosas basica (las cosas especificas estan en el tutorial parte dos)
 		JsonLevel tutorial = PCBuilder.crearLevel();
-		tutorial.levelTitle = "Tutorial b&#225;sico";
+		tutorial.levelTitle = "Tutorial básico";
 		
 		DinamicaTutorial dinamica = new DinamicaTutorial();
 		
