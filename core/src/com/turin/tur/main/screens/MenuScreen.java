@@ -164,7 +164,7 @@ public class MenuScreen extends AbstractGameScreen {
 		// Arma el menu
 		int n=0;
 		for (TextButton button : levelButtons) {
-			button.getStyle().font.getData().setScale(Constants.factorEscala()*3,Constants.factorEscala()*3);
+			//button.getStyle().font.getData().setScale(Constants.factorEscala()*3,Constants.factorEscala()*3);
 			table.add(button).width(Gdx.graphics.getWidth()/5f).space(Gdx.graphics.getHeight()/30f);
 			n=n+1;
 			if (n%3 == 0) {

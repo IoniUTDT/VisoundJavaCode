@@ -51,7 +51,7 @@ public class Assets implements Disposable, AssetErrorListener {
 	public void dispose () {
 		assetManager.dispose();
 		fonts.defaultFont.dispose();
-		fonts.defaultSmallFont.dispose();
+		//fonts.defaultSmallFont.dispose();
 	}
 	
 	
@@ -64,19 +64,19 @@ public class Assets implements Disposable, AssetErrorListener {
 	
 	public class AssetFonts {
 		public final BitmapFont defaultFont;
-		public final BitmapFont defaultSmallFont;
+		// public final BitmapFont defaultSmallFont;
 		public AssetFonts () {
 			// create font using Libgdx's 15px bitmap font
 			defaultFont = new BitmapFont(
-					Gdx.files.internal("images/verdana.fnt"), true);
+					Gdx.files.internal("fonts/Completo32.fnt"), true);
 			// enable linear texture filtering for smooth fonts
 			defaultFont.getRegion().getTexture().setFilter(
 					TextureFilter.Linear, TextureFilter.Linear);
 			// Fuente 15 px
-			defaultSmallFont = new BitmapFont(
-					Gdx.files.internal("images/verdana10.fnt"), true);
-			defaultSmallFont.getRegion().getTexture().setFilter(
-					TextureFilter.Linear, TextureFilter.Linear);
+			//defaultSmallFont = new BitmapFont(
+			//		Gdx.files.internal("images/verdana10.fnt"), true);
+			//defaultSmallFont.getRegion().getTexture().setFilter(
+			//		TextureFilter.Linear, TextureFilter.Linear);
 			
 			}
 		}
