@@ -231,7 +231,7 @@ public abstract class UmbralAngulos extends Umbral {
 			this.expSettings.levels.add(levelStatus);
 		}
 		// Creamos un archivo con la info del experimento
-		String path2 = Resources.Paths.InternalResources + "/" + this.getClass().getSimpleName() + ".settings/";
+		String path2 = Resources.Paths.finalInternalPath + "/" + this.getClass().getSimpleName() + ".settings/";
 		Json json2 = new Json();
 		json2.setUsePrototypes(false);
 		FileHelper.writeLocalFile(path2, json.toJson(this.expSettings));

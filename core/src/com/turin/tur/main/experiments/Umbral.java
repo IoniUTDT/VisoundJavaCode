@@ -186,7 +186,7 @@ public abstract class Umbral extends GenericExp {
 		// answer)
 		this.estimuloActivo = this.dinamicaActiva.listaEstimulos.get(this.dinamicaActiva.nivelEstimulo);
 		// leemos el json del trial
-		String savedData = FileHelper.readInternalFile(Resources.Paths.InternalResources + "level" + level.Id + "/trial" + this.estimuloActivo.idTrial + ".meta");
+		String savedData = FileHelper.readInternalFile(Resources.Paths.finalInternalPath + "level" + level.Id + "/trial" + this.estimuloActivo.idTrial + ".meta");
 		
 		Json json = new Json();
 		JsonTrial jsonTrial = json.fromJson(JsonTrial.class, savedData);

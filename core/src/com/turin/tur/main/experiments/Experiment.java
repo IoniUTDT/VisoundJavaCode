@@ -1,5 +1,7 @@
 package com.turin.tur.main.experiments;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -14,6 +16,7 @@ import com.turin.tur.main.util.Internet;
 import com.turin.tur.main.util.LevelAsset;
 import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.main.util.Internet.TIPO_ENVIO;
+import com.turin.tur.main.util.builder.Builder;
 
 public interface Experiment {
 	// Cosas offline
@@ -34,7 +37,9 @@ public interface Experiment {
 	boolean islevelCompleted();
 	
 	public abstract class GenericExp implements Experiment {
-		
+
+		final static String TAG = GenericExp.class.getName();
+
 		// Cosas generales
 		protected ExpSettings expSettings;
 		
@@ -78,7 +83,13 @@ public interface Experiment {
 		public void initGame(Session session) {
 			// Cargamos la info del experimento
 			// Gdx.app.debug(TAG, Resources.Paths.resources + this.getClass().getSimpleName() + ".settings");
-			String savedData = FileHelper.readInternalFile(Resources.Paths.InternalResources + this.getClass().getSimpleName() + ".settings");
+			if (!Gdx.files.local(Resources.Paths.LocalSettingsCopy + this.getClass().getSimpleName() + ".settings").exists()) { // hacemos una copia de la info guardada en internal
+				FileHandle from = Gdx.files.internal(Resources.Paths.InternalResources + this.getClass().getSimpleName() + ".settings");
+				// Gdx.app.debug(TAG, from.list());
+				FileHandle to = Gdx.files.local(Resources.Paths.LocalSettingsCopy + this.getClass().getSimpleName() + ".settings");
+				from.copyTo(to);
+			}
+			String savedData = FileHelper.readLocalFile(Resources.Paths.LocalSettingsCopy + this.getClass().getSimpleName() + ".settings");
 			Json json = new Json();
 			this.expSettings = json.fromJson(Experiments.ExpSettings.class, savedData);
 			this.session = session;

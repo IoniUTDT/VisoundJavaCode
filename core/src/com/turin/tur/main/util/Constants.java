@@ -188,7 +188,7 @@ public class Constants {
 			// Carpetas para el builder			
 			public static String ResourcesBuilder = "./resourcesbuild/" + Builder.ResourceVersion + "/";
 			public static String LevelsBackUp = "./resourcesbuild/levelsOlds/";
-			public static String finalInternalPath = "./../android/assets/resources/";
+			public static String finalInternalPath = "../android/assets/resources/";
 			public static String processingTempFolder = "./resourcesbuild/temp/";
 			// Carpetas para el tiempo de ejecucion
 			public static String InternalResources = "resources/";

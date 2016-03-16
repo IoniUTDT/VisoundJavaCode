@@ -20,10 +20,10 @@ public class Builder {
 	static int contadorLevels = 0;
 
 	public static final int ResourceVersion = 1;
-	public static final int levelVersion = 28; 
+	public static final int levelVersion = 1; 
 	public static int levelVersionFinal;
 	
-	static final Boolean makeLevels = true;
+	static final Boolean makeLevels = false;
 	static final Boolean makeResources = false;
 	
 

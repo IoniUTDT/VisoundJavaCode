@@ -543,7 +543,7 @@ public class Tutorial extends GenericExp implements Experiment {
 		
 		// Hacemos el Nivel 1 que contiene cosas basica (las cosas especificas estan en el tutorial parte dos)
 		JsonLevel tutorial = PCBuilder.crearLevel();
-		tutorial.levelTitle = "Tutorial básico";
+		tutorial.levelTitle = "Tutorial b&#225;sico";
 		
 		DinamicaTutorial dinamica = new DinamicaTutorial();
 		
@@ -605,7 +605,7 @@ public class Tutorial extends GenericExp implements Experiment {
 		this.expSettings.levels.add(levelStatus);
 
 		// Creamos un archivo con la info del experimento
-		String path2 = Resources.Paths.InternalResources + "/" + this.getClass().getSimpleName() + ".settings/";
+		String path2 = Resources.Paths.finalInternalPath + "/" + this.getClass().getSimpleName() + ".settings/";
 		Json json2 = new Json();
 		json2.setUsePrototypes(false);
 		FileHelper.writeLocalFile(path2, json.toJson(this.expSettings));

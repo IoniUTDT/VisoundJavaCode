@@ -25,7 +25,6 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.Level.JsonLevel;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
-import com.turin.tur.main.experiments.UmbralParalelismo;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
 import com.turin.tur.main.util.Constants.Resources;
@@ -218,7 +217,7 @@ public class PCBuilder {
 			File resource = new File (Resources.Paths.ResourcesBuilder+id+".svg");
 			convertirSVGtoPNG(resource);
 			if (id > Resources.Reservados) { // Means that is not a category with no audio
-				SVGtoMp3 converter = new SVGtoMp3(resource, Resources.Paths.InternalResources+folderName+"/");
+				SVGtoMp3 converter = new SVGtoMp3(resource, Resources.Paths.finalInternalPath+folderName+"/");
 			}
 			moveMeta(resource,folderName);
 		}
@@ -229,18 +228,21 @@ public class PCBuilder {
 		settings.maxHeight = 1024;
 		settings.duplicatePadding = false;
 		settings.debug = false;
-		TexturePacker.process(settings, Resources.Paths.processingTempFolder, Resources.Paths.InternalResources, folderName + "img");
+		TexturePacker.process(settings, Resources.Paths.processingTempFolder, Resources.Paths.finalInternalPath, folderName + "img");
 		Gdx.app.debug(Builder.TAG, "Recursos correctamente exportados: " + folderName+".");
 	}
 
 	public static void cleanAssets () {
+		// borramos la carptea destino interna
 		File internalPath = new File(Resources.Paths.finalInternalPath);
-		Gdx.app.debug(TAG , internalPath.getAbsolutePath());
 		try {
 			FileUtils.cleanDirectory(internalPath);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} 
+		// Borramos la carptea destino local donde se guardan los cambios en los niveles y las configuraciones
+		FileHandle to = Gdx.files.local(Resources.Paths.LocalSettingsCopy);
+		to.emptyDirectory();
 	}
 
 	public static void verifyResources(){

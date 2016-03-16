@@ -65,9 +65,14 @@ build/
 
 ## Recursos
 android/assets/experimentalsource/
+android/assets/experimentalsource.old/
+android/assets/resources/
 desktop/asset-raw/
 desktop/logs/
 desktop/temp/
 desktop/logSent/
 desktop/logToSend/
+desktop/temp.old/
+desktop/resourcesbuild
+desktop/settings/
 
