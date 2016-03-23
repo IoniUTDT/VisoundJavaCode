@@ -8,15 +8,14 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.turin.tur.main.diseno.Level;
 import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.diseno.Trial;
-import com.turin.tur.main.diseno.Session.SessionLog;
 import com.turin.tur.main.experiments.Experiments.ExpSettings;
+import com.turin.tur.main.experiments.Experiments.ExperimentLog;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Internet;
 import com.turin.tur.main.util.LevelAsset;
 import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.main.util.Internet.TIPO_ENVIO;
-import com.turin.tur.main.util.builder.Builder;
 
 public interface Experiment {
 	// Cosas offline
@@ -52,12 +51,15 @@ public interface Experiment {
 
 		
 		// Logs
-		protected SessionLog sessionLog;
+		protected ExperimentLog expLog;
 
 		protected void event_initLevel() {
-			this.sessionLog.levelInstance = TimeUtils.millis();
+			this.expLog = new ExperimentLog();
+			this.expLog.levelInstance = TimeUtils.millis();
+			this.expLog.session = this.session;
+			this.expLog.expName = this.getName();
 			// Creamos el enviable
-			Internet.sendData(this.sessionLog, TIPO_ENVIO.NEWLEVEL, this.getNameTag());
+			Internet.sendData(this.expLog, TIPO_ENVIO.NEWLEVEL, this.getNameTag());
 			this.createTrial();
 			this.levelCompleted = false;
 		}
@@ -68,12 +70,6 @@ public interface Experiment {
 		abstract String getNameTag();
 		
 		protected void event_initGame() {
-			// Creamos el log
-			this.sessionLog = new SessionLog();
-			this.sessionLog.session = this.session;
-			this.sessionLog.expName = this.getName();
-			// Creamos el enviable
-			Internet.sendData(this.sessionLog, TIPO_ENVIO.NEWSESION, this.getNameTag());
 		}
 
 		public Array<LevelStatus> levelsStatus() {

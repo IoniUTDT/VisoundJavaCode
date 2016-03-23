@@ -8,9 +8,9 @@ import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.ExperimentalObject;
 import com.turin.tur.main.diseno.Level;
 import com.turin.tur.main.diseno.Trial;
-import com.turin.tur.main.diseno.Session.SessionLog;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.experiments.Experiment.GenericExp;
+import com.turin.tur.main.experiments.Experiments.ExperimentLog;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Internet;
@@ -24,7 +24,7 @@ public abstract class Umbral extends GenericExp {
 	static final String TAG = Umbral.class.getName();
 	
 	static class LogConvergencia {
-		SessionLog session;
+		ExperimentLog expLog; 
 		DinamicaExperimento dinamica; 
 	}
 
@@ -146,7 +146,7 @@ public abstract class Umbral extends GenericExp {
 	protected void event_stopLevel () {
 		for (DinamicaExperimento dinamica : this.dinamicas) {
 			LogConvergencia log = new LogConvergencia();
-			log.session = this.sessionLog;
+			log.expLog = this.expLog;
 			log.dinamica = dinamica;
 			log.dinamica.listaEstimulos.clear();
 			// Creamos el enviable
@@ -186,7 +186,7 @@ public abstract class Umbral extends GenericExp {
 		// answer)
 		this.estimuloActivo = this.dinamicaActiva.listaEstimulos.get(this.dinamicaActiva.nivelEstimulo);
 		// leemos el json del trial
-		String savedData = FileHelper.readInternalFile(Resources.Paths.finalInternalPath + "level" + level.Id + "/trial" + this.estimuloActivo.idTrial + ".meta");
+		String savedData = FileHelper.readInternalFile(Resources.Paths.InternalResources + "level" + level.Id + "/trial" + this.estimuloActivo.idTrial + ".meta");
 		
 		Json json = new Json();
 		JsonTrial jsonTrial = json.fromJson(JsonTrial.class, savedData);

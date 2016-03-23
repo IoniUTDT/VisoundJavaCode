@@ -122,14 +122,17 @@ public class MenuScreen extends AbstractGameScreen {
 		levels.sort();
 		
 		// Seleccionamos solo los no jugados
-		Array<LevelStatus> levelsPlayed = new Array<LevelStatus>();
+		Array<LevelStatus> levelsToPlay = new Array<LevelStatus>();
 		for (LevelStatus level : levels) {
-			if (!level.alreadyPlayed) {levelsPlayed.add(level);}
+			if (!level.alreadyPlayed) {levelsToPlay.add(level);}
 		}
-		levelsPlayed.sort();
+		levelsToPlay.sort();
 		
 		// Buscamos que nivel de prioridad es la primera no jugada
-		int priorityGoal = levelsPlayed.first().priority;
+		int priorityGoal = 100; // Asumimos que 100 nunca va a ser una prioridad de un nivel en juego
+		if (levelsToPlay.size != 0) {
+			priorityGoal = levelsToPlay.first().priority;
+		}
 		
 		for (final LevelStatus level : levels) {
 			TextButton button = new TextButton(level.publicName, skin, "default");
@@ -140,10 +143,10 @@ public class MenuScreen extends AbstractGameScreen {
 				}
 			});
 			if (level.alreadyPlayed) {
-				button.setColor(0, 1, 0, 0.8f); // Green
+				button.setColor(0, 1, 0, 0.5f); // Green
 			} else {
 				//	button.setColor(1, 1, 0, 1); //Yellow
-				button.setColor(1, 0, 0, 0.8f); //Red
+				button.setColor(1, 0, 0, 0.5f); //Red
 			}
 			
 			if (level.priority == priorityGoal) { // Significa que esta en el nivel de opciones a jugar
