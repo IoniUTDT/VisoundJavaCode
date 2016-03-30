@@ -97,6 +97,20 @@ public class LevelController implements InputProcessor {
 			this.game.expActivo.interrupt();
 			goToResults();
 		}
+		if (keycode == Keys.DPAD_DOWN) {
+			this.trial.runningSound.volumen = this.trial.runningSound.volumen - 0.1f;
+			if (this.trial.runningSound.volumen < 0.1f) {
+				this.trial.runningSound.volumen = 0.1f;
+			}
+			this.trial.runningSound.sound.setVolume(this.trial.runningSound.idSound, this.trial.runningSound.volumen);
+		}
+		if (keycode == Keys.DPAD_UP) {
+			this.trial.runningSound.volumen = this.trial.runningSound.volumen + 0.1f;
+			if (this.trial.runningSound.volumen > 1f) {
+				this.trial.runningSound.volumen = 1f;
+			}
+			this.trial.runningSound.sound.setVolume(this.trial.runningSound.idSound, this.trial.runningSound.volumen);
+		}
 		return false;
 	}
 

@@ -71,7 +71,7 @@ public class ResultsScreen extends AbstractGameScreen {
 		cameraGUI.setToOrtho(true); // flip y-axis
 		cameraGUI.update();
 	}
-
+	
 	@Override
 	public void resize(int width, int height) {
 		stage.getViewport().update(width, height, true);

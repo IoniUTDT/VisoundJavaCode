@@ -5,6 +5,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.turin.tur.main.diseno.Boxes.TestBox;
+import com.turin.tur.Visound;
 import com.turin.tur.main.diseno.Boxes.Box;
 import com.turin.tur.main.diseno.Boxes.StimuliBox;
 import com.turin.tur.main.diseno.Boxes.TrainingBox;
@@ -150,11 +151,13 @@ public class Trial {
 		public int id; // El id que identifica el recurso del ultimo sonido
 		public long instance; // instancia que identifica cada reproduccion unequivocamente
 		private LevelAsset assets;
+		public long idSound;
 		
 		// Info para el update
 		public NEXT action = NEXT.NADA;
 		public float playTime; 
 		public ExperimentalObject nextContenido;
+		public float volumen = 0.5f;
 		
 
 		public RunningSound (LevelAsset assets) {
@@ -191,7 +194,7 @@ public class Trial {
 
 			// Cargamos el sonido
 			this.sound = this.assets.sound(this.id);
-			this.sound.play(); 
+			this.idSound = this.sound.play(this.volumen); 
 			this.running = true;
 		}
 

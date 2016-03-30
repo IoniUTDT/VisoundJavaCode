@@ -3,6 +3,9 @@ package com.turin.tur.main.util;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.Net.HttpMethods;
+import com.badlogic.gdx.Net.HttpRequest;
+import com.badlogic.gdx.Net.HttpResponse;
+import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.net.HttpStatus;
 import com.badlogic.gdx.utils.Array;
@@ -19,6 +22,8 @@ public class Internet {
 	public static String serverStatus="";
 	public static HttpStatus serverStatusCode;
 	public static boolean serverOk;
+	public static final String serverBackUP2 = "http://www.google.com";
+	public static final String serverBackUP = "http://172.18.19.6:3000";
 	public static final String server = "http://turintur.dynu.com/";
 	public static String pathToSend = "logs/logToSend";
 	public static String pathSent = "logs/logSent";
@@ -33,6 +38,8 @@ public class Internet {
 			@Override
 			public void run() {
 
+				//HttpChecker pruebaBackUp = new HttpChecker(serverBackUP2);
+				
 				String requestJson = "";
 				
 				final Net.HttpRequest request = new Net.HttpRequest(HttpMethods.GET);
@@ -74,7 +81,6 @@ public class Internet {
 					}
 
 				});
-
 			}
 		}).start();
 		
@@ -234,4 +240,42 @@ public class Internet {
 		Enviable envio = new Enviable (id, data, tipo, tag);
 		Internet.PUT(envio);
 	}
+	
+	
+	public static class HttpChecker implements HttpResponseListener {   
+
+        HttpRequest request;
+        public int state;
+        
+
+        public HttpChecker(String url)
+        {
+            request = new HttpRequest();
+            request.setMethod(Net.HttpMethods.GET); //or POST
+            request.setContent(""); //you can put here some PUT/GET content
+            request.setUrl("http://www.google.com");
+            Gdx.net.sendHttpRequest(request, this);
+        }
+
+        @Override
+        public void handleHttpResponse(HttpResponse httpResponse) 
+        {
+        	state = httpResponse.getStatus().getStatusCode();
+        	Gdx.app.debug(TAG, "Exitos" +state);
+        }
+
+        @Override
+        public void failed(Throwable t) 
+        {
+        	state = -1;
+            Gdx.app.debug(TAG, "failed HttpChecker");
+        }
+
+        @Override
+        public void cancelled() 
+        {
+        	state = -1;
+        	Gdx.app.debug(TAG, "cancelled  HttpChecker");  
+        }
+    }
 }

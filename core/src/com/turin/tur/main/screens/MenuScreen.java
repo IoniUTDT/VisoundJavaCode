@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.turin.tur.Visound;
 import com.turin.tur.main.experiments.Experiment;
@@ -110,6 +111,19 @@ public class MenuScreen extends AbstractGameScreen {
 		shapeRenderer = new ShapeRenderer();
 		skin = new Skin(Gdx.files.internal(Constants.SKIN_LIBGDX_UI));
 		
+		/*
+		// Creamos el boton de las instrucciones
+		TextButton instrucciones = new TextButton("Instrucciones", skin, "default");
+		instrucciones.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				game.setScreen(new InstructionsScreen(game));
+			}
+		});
+		table.add(instrucciones).width(Gdx.graphics.getWidth()/5f).space(Gdx.graphics.getHeight()/30f).colspan(3);
+		table.row();
+		*/
+		
 		// Crea los botones de los niveles
 		
 		// Cargamos los niveles
@@ -133,6 +147,8 @@ public class MenuScreen extends AbstractGameScreen {
 		if (levelsToPlay.size != 0) {
 			priorityGoal = levelsToPlay.first().priority;
 		}
+		
+		
 		
 		for (final LevelStatus level : levels) {
 			TextButton button = new TextButton(level.publicName, skin, "default");
