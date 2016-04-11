@@ -59,14 +59,13 @@ public interface Experiment {
 			this.expLog.session = this.session;
 			this.expLog.expName = this.getName();
 			// Creamos el enviable
-			Internet.sendData(this.expLog, TIPO_ENVIO.NEWLEVEL, this.getNameTag());
+			Internet.addDataToSend(this.expLog, TIPO_ENVIO.NEWLEVEL, this.getNameTag());
 			this.createTrial();
 			this.levelCompleted = false;
 		}
 
 		
 		abstract void createTrial();
-
 		abstract String getNameTag();
 		
 		protected void event_initGame() {

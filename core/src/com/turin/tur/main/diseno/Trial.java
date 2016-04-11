@@ -157,7 +157,7 @@ public class Trial {
 		public NEXT action = NEXT.NADA;
 		public float playTime; 
 		public ExperimentalObject nextContenido;
-		public float volumen = 0.5f;
+		//public float volumen = 0.5f;
 		
 
 		public RunningSound (LevelAsset assets) {
@@ -194,7 +194,7 @@ public class Trial {
 
 			// Cargamos el sonido
 			this.sound = this.assets.sound(this.id);
-			this.idSound = this.sound.play(this.volumen); 
+			this.idSound = this.sound.play(Visound.volumen); 
 			this.running = true;
 		}
 

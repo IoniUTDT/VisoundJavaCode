@@ -13,6 +13,7 @@ import com.turin.tur.main.experiments.TutorialUmbralParalelismo;
 import com.turin.tur.main.experiments.UmbralAngulosPiloto;
 import com.turin.tur.main.experiments.UmbralParalelismoPiloto;
 import com.turin.tur.main.screens.MenuScreen;
+import com.turin.tur.main.util.Internet;
 import com.turin.tur.main.util.builder.Builder;
 
 public class Visound extends Game {
@@ -24,10 +25,14 @@ public class Visound extends Game {
 	private static final String TAG = Visound.class.getName();
 	private static boolean buildResources = true;
 	public Session session;
+	public static float volumen = 0.5f;
+	public boolean sendingData;
 	
 	@Override
 	public void create () {
 
+		// Hacemos aca el chequeo porque sino se activan envios de internet y es un problema
+		Internet.checkInternet();
 		// Set Libgdx log level
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 		

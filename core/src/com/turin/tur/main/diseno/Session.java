@@ -22,9 +22,8 @@ public class Session {
 	public ApplicationType plataforma = Gdx.app.getType();
 
 	public Session() {
-		Internet.Check();
 		this.userId = userId();
-		Internet.sendData(this, TIPO_ENVIO.NEWSESION, "Visound");
+		Internet.addDataToSend(this, TIPO_ENVIO.NEWSESION, "Visound");
 	}
 	
 	public void saveUserId(Long id) {

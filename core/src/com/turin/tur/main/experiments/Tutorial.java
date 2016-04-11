@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Json;
+import com.turin.tur.Visound;
 import com.turin.tur.main.diseno.ExperimentalObject;
 import com.turin.tur.main.diseno.Level;
 import com.turin.tur.main.diseno.Trial;

@@ -36,6 +36,7 @@ public class LevelController implements InputProcessor {
 	
 	public final float blankTime = 0.2f; // Tiempo que debe dejar la pantalla en blanco entre trial y trial (en segundos) 
 	public float currentblankTime = this.blankTime;
+		
 	
 	public LevelController(Visound game, Level level) {
 	
@@ -98,18 +99,18 @@ public class LevelController implements InputProcessor {
 			goToResults();
 		}
 		if (keycode == Keys.DPAD_DOWN) {
-			this.trial.runningSound.volumen = this.trial.runningSound.volumen - 0.1f;
-			if (this.trial.runningSound.volumen < 0.1f) {
-				this.trial.runningSound.volumen = 0.1f;
+			Visound.volumen = Visound.volumen - 0.1f;
+			if (Visound.volumen < 0.1f) {
+				Visound.volumen = 0.1f;
 			}
-			this.trial.runningSound.sound.setVolume(this.trial.runningSound.idSound, this.trial.runningSound.volumen);
+			this.trial.runningSound.sound.setVolume(this.trial.runningSound.idSound, Visound.volumen);
 		}
 		if (keycode == Keys.DPAD_UP) {
-			this.trial.runningSound.volumen = this.trial.runningSound.volumen + 0.1f;
-			if (this.trial.runningSound.volumen > 1f) {
-				this.trial.runningSound.volumen = 1f;
+			Visound.volumen = Visound.volumen + 0.1f;
+			if (Visound.volumen > 1f) {
+				Visound.volumen = 1f;
 			}
-			this.trial.runningSound.sound.setVolume(this.trial.runningSound.idSound, this.trial.runningSound.volumen);
+			this.trial.runningSound.sound.setVolume(this.trial.runningSound.idSound, this.game.volumen);
 		}
 		return false;
 	}

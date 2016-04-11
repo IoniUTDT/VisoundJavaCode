@@ -150,7 +150,7 @@ public abstract class Umbral extends GenericExp {
 			log.dinamica = dinamica;
 			log.dinamica.listaEstimulos.clear();
 			// Creamos el enviable
-			Internet.sendData(log, TIPO_ENVIO.CONVERGENCIA, this.getNameTag());
+			Internet.addDataToSend(log, TIPO_ENVIO.CONVERGENCIA, this.getNameTag());
 		}
 	}
 	

@@ -29,7 +29,7 @@ public class SVGtoMp3 {
 	public final static boolean logScale = true;
 	public final static boolean fixScale = true;
 	public final static float maxHeigth = 100;
-	public final static float frecMax = 8000;
+	public final static float frecMax = 4000;
 	public final static float frecMin = 100;
 	public final static float time = 5; // in secs
 	public final static boolean fixedTime = true; // indicate if the length of sound must be the variable time

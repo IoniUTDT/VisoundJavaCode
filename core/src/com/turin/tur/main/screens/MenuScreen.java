@@ -2,6 +2,9 @@ package com.turin.tur.main.screens;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -14,7 +17,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.turin.tur.Visound;
 import com.turin.tur.main.experiments.Experiment;
@@ -23,7 +25,7 @@ import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.Internet;
 
 
-public class MenuScreen extends AbstractGameScreen {
+public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 
 	private static final String TAG = MenuScreen.class.getName();
 
@@ -50,6 +52,7 @@ public class MenuScreen extends AbstractGameScreen {
 	@Override
 	public void render(float deltaTime) {
 
+		// Gdx.input.setInputProcessor(this);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		stage.act(deltaTime);
 		stage.draw();
@@ -57,6 +60,13 @@ public class MenuScreen extends AbstractGameScreen {
 										// lines for tables.
 		guiRender();
 		
+		// Verificamos el estatus de envio de datos
+		FileHandle[] files = Gdx.files.local(Internet.pathSending).list();
+		if (files.length>1) { // Hay que considerar que esta la carpeta tags. Si se mejora y esa carpeta vuela entonces hayq ue cambiar la comparacion a 0
+			game.sendingData = true;
+		} else {
+			game.sendingData = false;
+		}
 	}
 
 	private void guiRender() {
@@ -67,8 +77,6 @@ public class MenuScreen extends AbstractGameScreen {
 	}
 
 	private void renderServerStatus() {
-		float x = cameraGUI.viewportWidth - cameraGUI.viewportWidth*1/10;
-		float y = cameraGUI.viewportHeight - cameraGUI.viewportHeight*1/20;
 		BitmapFont fpsFont = this.assets.fonts.defaultFont;
 		fpsFont.getData().setScale(Constants.factorEscala());
 		if (Internet.serverOk) {
@@ -77,8 +85,11 @@ public class MenuScreen extends AbstractGameScreen {
 		} else {
 			// show up in red
 			fpsFont.setColor(1, 0, 0, 1);
+			fpsFont.draw(batch, "Servidor offline", cameraGUI.viewportWidth*1/5, cameraGUI.viewportHeight - cameraGUI.viewportHeight*1/20);
 		}
-		fpsFont.draw(batch, "Server", x, y);
+		if (game.sendingData) {
+			fpsFont.draw(batch, "Enviando datos...", cameraGUI.viewportWidth - cameraGUI.viewportWidth*1/5, cameraGUI.viewportHeight - cameraGUI.viewportHeight*1/20);
+		}
 		fpsFont.setColor(1, 1, 1, 1); // white
 		
 	}
@@ -111,7 +122,6 @@ public class MenuScreen extends AbstractGameScreen {
 		shapeRenderer = new ShapeRenderer();
 		skin = new Skin(Gdx.files.internal(Constants.SKIN_LIBGDX_UI));
 		
-		/*
 		// Creamos el boton de las instrucciones
 		TextButton instrucciones = new TextButton("Instrucciones", skin, "default");
 		instrucciones.addListener(new ClickListener() {
@@ -122,7 +132,6 @@ public class MenuScreen extends AbstractGameScreen {
 		});
 		table.add(instrucciones).width(Gdx.graphics.getWidth()/5f).space(Gdx.graphics.getHeight()/30f).colspan(3);
 		table.row();
-		*/
 		
 		// Crea los botones de los niveles
 		
@@ -204,5 +213,58 @@ public class MenuScreen extends AbstractGameScreen {
 	@Override
 	public void pause() {
 		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public boolean keyDown(int keycode) {
+		// Back to Menu
+		if (keycode == Keys.ESCAPE || keycode == Keys.Q) {
+			if (!game.sendingData) {
+				Gdx.app.exit();
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean keyUp(int keycode) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean keyTyped(char character) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean touchDragged(int screenX, int screenY, int pointer) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean mouseMoved(int screenX, int screenY) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean scrolled(int amount) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }
