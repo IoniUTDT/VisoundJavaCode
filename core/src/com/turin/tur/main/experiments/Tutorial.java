@@ -579,7 +579,7 @@ public class Tutorial extends GenericExp implements Experiment {
 		dinamica.listaDeTrials.add(trial3.Id);
 		tutorial.jsonTrials.add(trial3);
 		
-		// Creamos el trial tres, para escuchar paralelismo.
+		// Creamos el trial cuatro.
 		JsonTrial trial4 = PCBuilder.crearTrial("Seleccione la imagen que desea escuchar", "",
 				DISTRIBUCIONESenPANTALLA.BILINEALx7,
 				new int[] {recursosTag.get("AgudoFacil").idRecurso, recursosTag.get("RectoFacil").idRecurso, recursosTag.get("ObtusoFacil").idRecurso,
