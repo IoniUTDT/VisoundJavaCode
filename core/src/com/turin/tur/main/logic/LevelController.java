@@ -73,7 +73,7 @@ public class LevelController implements InputProcessor {
 			
 			// Procesa cambios de trial si los hay pendientes
 			if (trial.checkTrialCompleted()) {
-				this.game.expActivo.returnAnswer(this.trial.lastAnswer());
+				this.game.expActivo.returnAnswer(this.trial.lastAnswer(),-1);
 				if (this.game.expActivo.islevelCompleted()) {
 					this.game.expActivo.stopLevel();
 					this.goToResults();

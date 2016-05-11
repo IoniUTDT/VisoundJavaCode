@@ -9,18 +9,19 @@ public class UmbralParalelismoPiloto extends UmbralParalelismo{
 	void makeSetup() {
 		// Creamos el setup
 		Setup setup = new Setup();
-		setup.numeroDeTrailsMaximosxNivel = 40;
+		setup.numeroDeTrailsMaximosxDinamica = 20;
 		// Definimos los angulos de referencia
 		setup.angulosReferencia = new Array<Double>();
-		setup.angulosReferencia.add(0d);
 		setup.angulosReferencia.add(30d);
-		setup.angulosReferencia.add(90d);
+		setup.angulosReferencia.add(60d);
+		setup.angulosReferencia.add(120d);
+		setup.angulosReferencia.add(150d);
 		// Generamos las desviaciones
 		float desvMin = 0.1f;
 		float desvMax = 25f;
 		double desvMinLog = Math.log(desvMin);
 		double desvMaxLog = Math.log(desvMax);
-		int numeroDeDesviaciones = 40;
+		int numeroDeDesviaciones = 50;
 		boolean logscale = true;
 		// Creamos la serie de desviaciones respecto al paralelismo
 		if (logscale) {

@@ -1,9 +1,6 @@
 package com.turin.tur.main.experiments;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.WindowedMean;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.ExperimentalObject;
 import com.turin.tur.main.diseno.Level;
@@ -38,18 +35,19 @@ public abstract class Umbral extends GenericExp {
 	 */
 	public static class DinamicaExperimento {
 		String identificador; // Algo para indentificar cual convergencia es cual.
-		int nivelEstimulo; // nivel de señal enviada
+		int nivelEstimulo; // nivel de proxima señal a enviar
 		int saltosActivos; // nivel del proximo salto (en numero de niveles de señal)
-		boolean convergenciaAlcanzada = false;
+		//boolean convergenciaAlcanzada = false;
 		boolean convergenciaFinalizada = false;
+		int trialsInSerie;
 		Array<Respuesta> historial = new Array<Respuesta>(); // Se almacena la info de lo que va pasando
 		Array<Estimulo> listaEstimulos = new Array<Estimulo>(); // Lista de estimulos ordenados de menor a mayor dificultad
-		float ultimaSD;
-		float ultimoMEAN;
+		//float ultimaSD;
+		//float ultimoMEAN;
 		int proporcionAciertos = 2; // Es la cantidad de aciertos que tiene que haber en el numero total de ultimas respuestas para que aumente la dificultad
 		// private int proporcionTotal = 3; // Es el numero de elementos a revisar en el historial en busca de la cantidad de acierto para definir si se aumenta la dificultad o no
-		int tamanoVentanaAnalisisConvergencia = 6;
-		float sdEsperada = 0.5f;
+		//int tamanoVentanaAnalisisConvergencia = 6;
+		//float sdEsperada = 0.5f;
 		double referencia;
 	}
 
@@ -71,9 +69,11 @@ public abstract class Umbral extends GenericExp {
 	static class Respuesta {
 		private Estimulo estimulo;
 		boolean acertado;
-		Respuesta (Estimulo estimulo, Boolean rta) {
+		float confianza;
+		Respuesta (Estimulo estimulo, Boolean rta, float confianza) {
 			this.estimulo = estimulo;
 			this.acertado = rta;
+			this.confianza = confianza;
 		}
 	}
 	
@@ -88,7 +88,7 @@ public abstract class Umbral extends GenericExp {
 		Array<Double> angulosReferencia = new Array<Double>();
 		Array<Double> desviacionesAngulares = new Array<Double>();
 		Array<Estimulo> estimulos = new Array<Estimulo>();
-		public int numeroDeTrailsMaximosxNivel;
+		public int numeroDeTrailsMaximosxDinamica;
 		public int levelPriority;
 		public String tagButton;
 		public boolean feedback;
@@ -102,28 +102,18 @@ public abstract class Umbral extends GenericExp {
 	protected DinamicaExperimento dinamicaActiva;
 	// protected boolean waitingAnswer;
 	protected Estimulo estimuloActivo;
-	protected ArrayMap <String, WindowedMean> ventanasNivel = new ArrayMap <String, WindowedMean>(); // Esto esta aca porque la clase WindowedMean no es facil guardarla en un json, entonces se guarada en la clase principal un conjunto de windows asociados al nombre de cada convergencia
-
-	
+		
 	
 	// Funciones comunes a todos los experimentos de umbral
 	public boolean askNoMoreTrials() {
 		if (this.trialsLeft() == 0) {
 			return true;
+		} else {
+			return false;
 		}
-		
-		for (DinamicaExperimento dinamica : this.dinamicas) {
-			if (!dinamica.convergenciaAlcanzada) {
-				return false;
-			}
-		}
-		return true;
 	}
 	
 	private void levelCompletedAction() {
-		for (DinamicaExperimento dinamica : this.dinamicas) {
-			dinamica.convergenciaFinalizada = true;
-		}
 		for (LevelStatus levelStatus : this.expSettings.levels) {
 			if (levelStatus.id == this.level.Id) {
 				levelStatus.alreadyPlayed = true;
@@ -134,11 +124,11 @@ public abstract class Umbral extends GenericExp {
 	}
 	
 	public int trialsLeft() {
-		int realizados = 0;
+		int pendientes = 0;
 		for (DinamicaExperimento dinamica : this.dinamicas) {
-			realizados = realizados + dinamica.historial.size;
+			pendientes = pendientes + dinamica.trialsInSerie - dinamica.historial.size;
 		}
-		return this.level.jsonLevel.numberOfMaxTrials - realizados;
+		return pendientes;
 	}
 
 	public abstract String getName();
@@ -163,7 +153,6 @@ public abstract class Umbral extends GenericExp {
 		this.level = level;
 		this.dinamicas = (Array<DinamicaExperimento>) level.jsonLevel.infoDinamica;
 		this.assets = new LevelAsset(level.Id);
-		this.ventanasNivel.clear();
 		this.event_initLevel();
 		this.createTrial();
 	}
@@ -176,7 +165,7 @@ public abstract class Umbral extends GenericExp {
 		// Seleccionamos una de las convergencias al azar.
 		Array<DinamicaExperimento> forSelect = new Array<DinamicaExperimento>();
 		for (DinamicaExperimento dinamica : this.dinamicas) {
-			if (!dinamica.convergenciaAlcanzada) {
+			if (!dinamica.convergenciaFinalizada) {
 				forSelect.add(dinamica);
 			}
 		}
@@ -205,9 +194,9 @@ public abstract class Umbral extends GenericExp {
 		this.trial = new Trial(elementos, jsonTrial, this.assets, estimulo);
 	}
 	
-	public void returnAnswer(boolean answer) {
+	public void returnAnswer(boolean answerIsCorrect, float confianza) {
 		// Almacenamos en el historial lo que paso
-		this.dinamicaActiva.historial.add(new Respuesta (this.estimuloActivo, answer));
+		this.dinamicaActiva.historial.add(new Respuesta (this.estimuloActivo, answerIsCorrect, confianza));
 		// Marcamos que se recibio una rta
 		
 		// Elije si hay que incrementar la dificultad, disminuirla o no hacer nada.
@@ -215,7 +204,7 @@ public abstract class Umbral extends GenericExp {
 		boolean disminuirDificultad=false;
 		if (this.dinamicaActiva.historial.peek().acertado) { // Si se acerto y no hay suficiente historial se debe disminuir la dificultad, sino hay que revisar si la proporcion de aciertos requeridos esta cumpleida
 			if (this.dinamicaActiva.historial.size >= this.dinamicaActiva.proporcionAciertos) { // Estamos en el caso en que hay que mirar el historial
-				// Nos fijamos si hay suficientes aciertos en el ultimo tramo como para aumentar la dificultad
+				// Nos fijamos si hay algun desacierdo en los ultimos datos
 				int contadorAciertos=0;
 				for (int i=1; i<=(this.dinamicaActiva.proporcionAciertos); i++){
 					if (this.dinamicaActiva.historial.get(this.dinamicaActiva.historial.size-i).acertado==true){
@@ -232,18 +221,9 @@ public abstract class Umbral extends GenericExp {
 			disminuirDificultad = true;
 		}
 		
-		// Se fija si hay que disminuir el salto entre nivel y nivel. Para simplicar solo se considera que disminuye cuando hay un rebote "hacia arriba"
-		if (this.dinamicaActiva.historial.size >1) { // Verifica q haya al menos dos datos
-			if (!this.dinamicaActiva.historial.peek().acertado) { // Se se erro el ultimo 
-				if (this.dinamicaActiva.historial.get(this.dinamicaActiva.historial.size-2).acertado) { // Si se acerto el anterior (hay rebote) 
-					this.dinamicaActiva.saltosActivos = this.dinamicaActiva.saltosActivos - 1;
-					// Verificamos que no llegue a cero el salto
-					if (this.dinamicaActiva.saltosActivos==0) {
-						this.dinamicaActiva.saltosActivos = 1;
-					}
-				}
-			}
-		}
+		// Setea el salto entre nivel y nivel 
+		this.dinamicaActiva.saltosActivos = (this.dinamicaActiva.trialsInSerie - 10) / 4;
+		if (this.dinamicaActiva.saltosActivos < 1) { this.dinamicaActiva.saltosActivos = 1; }
 		
 		// Aqui ya se determino si hay que incrementar o dosminuir la dificultad y por lo tanto se aplica, cuidando que no exceda los limites
 		if (incrementarDificultad) {
@@ -254,20 +234,12 @@ public abstract class Umbral extends GenericExp {
 			this.dinamicaActiva.nivelEstimulo=this.dinamicaActiva.nivelEstimulo+this.dinamicaActiva.saltosActivos;
 			if (this.dinamicaActiva.nivelEstimulo>this.dinamicaActiva.listaEstimulos.size-1) {this.dinamicaActiva.nivelEstimulo=this.dinamicaActiva.listaEstimulos.size-1;}
 		}
-		 
-		// Nos fijamos si se alcanzo la convergencia
-		if (!this.ventanasNivel.containsKey(this.dinamicaActiva.identificador)) { // Primero nos fijamos si existe una ventana para el cuadrante activo
-			this.ventanasNivel.put(this.dinamicaActiva.identificador, new WindowedMean(this.dinamicaActiva.tamanoVentanaAnalisisConvergencia));
-		}	
-		this.ventanasNivel.get(this.dinamicaActiva.identificador).addValue(this.estimuloActivo.nivelSenal);
-		if (this.ventanasNivel.get(this.dinamicaActiva.identificador).hasEnoughData()) {
-			this.dinamicaActiva.ultimaSD = this.ventanasNivel.get(this.dinamicaActiva.identificador).standardDeviation();
-			this.dinamicaActiva.ultimoMEAN = this.ventanasNivel.get(this.dinamicaActiva.identificador).getMean();
-			if (this.dinamicaActiva.ultimaSD < this.dinamicaActiva.sdEsperada) {
-				this.dinamicaActiva.convergenciaAlcanzada = true;
-				Gdx.app.debug(TAG, this.dinamicaActiva.identificador + " ha alcanzado la convergencia con valor " + this.dinamicaActiva.ultimoMEAN);
-			}
+		
+		// Nos fijamos si ya se completo la dinamica o no.
+		if (this.dinamicaActiva.historial.size == this.dinamicaActiva.trialsInSerie) {
+			this.dinamicaActiva.convergenciaFinalizada=true;
 		}
+		
 		
 		// Una vez que se actualizo la dinamica anterior pasamos a actualizar el trial si corresponde
 		if (this.askNoMoreTrials()) {

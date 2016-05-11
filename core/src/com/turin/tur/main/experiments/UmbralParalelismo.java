@@ -49,7 +49,7 @@ public abstract class UmbralParalelismo extends Umbral {
 
 		// Creamos el setting del experimento
 		this.expSettings = new ExpSettings();
-		this.expSettings.tipoDeExperimento = TIPOdeEXPERIMENTO.UmbralParalelismo;
+		this.expSettings.tipoDeExperimento = TIPOdeEXPERIMENTO.TestParalelismo;
 
 		// Categorizamos los recursos en un mapa
 		ArrayMap<Double, ArrayMap<Double, Estimulo>> map = this.indexToMap();
@@ -58,9 +58,8 @@ public abstract class UmbralParalelismo extends Umbral {
 		for (double referencia : this.setup.angulosReferencia) {
 			// Creamos el nivel
 			JsonLevel level = PCBuilder.crearLevel();
-			level.numberOfMaxTrials = this.setup.numeroDeTrailsMaximosxNivel;
 			// level.tipoDeLevel = TIPOdeLEVEL.UMBRALPARALELISMO;
-			level.levelTitle = "R: " + referencia;
+			level.levelTitle = "Paralelismo: " + referencia;
 
 			// Buscamos la inclinacion minima para la referencia que sea visible
 			// (porque la sensibilidad auditiva puede ser superior a la
@@ -80,7 +79,9 @@ public abstract class UmbralParalelismo extends Umbral {
 			DinamicaExperimento dinamicaNeg = new DinamicaExperimento();
 			dinamicaPos.identificador = "Acercamiento Positivo";
 			dinamicaNeg.identificador = "Acercamiento Negativo";
-
+			dinamicaPos.trialsInSerie=this.setup.numeroDeTrailsMaximosxDinamica;
+			dinamicaNeg.trialsInSerie=this.setup.numeroDeTrailsMaximosxDinamica;
+			
 			// Creamos los trials (uno para cada desviacion)
 			for (double desviacion : this.setup.desviacionesAngulares) {
 				JsonTrial trial;
@@ -126,10 +127,8 @@ public abstract class UmbralParalelismo extends Umbral {
 			}
 
 			// Retocamos la info dinamica
-			// dinamicaPos.anguloDeReferencia = referencia;
-			// dinamicaNeg.anguloDeReferencia = referencia;
-			dinamicaPos.convergenciaAlcanzada = false;
-			dinamicaNeg.convergenciaAlcanzada = false;
+			dinamicaPos.convergenciaFinalizada = false;
+			dinamicaNeg.convergenciaFinalizada = false;
 			dinamicaPos.referencia = referencia;
 			dinamicaNeg.referencia = referencia;
 			dinamicaPos.nivelEstimulo = dinamicaPos.listaEstimulos.size - 1;

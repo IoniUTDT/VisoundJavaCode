@@ -34,10 +34,13 @@ public class Experiments {
 	}
 	
 	public enum TIPOdeEXPERIMENTO {
-		UmbralAngulos,
-		UmbralParalelismo,
 		TutorialBasico,
-		TutorialAvanzadoUmbral
+		TurorialAngulos,
+		TutorialParalelismo,
+		TestAngulos,
+		TestParalelismo,
+		EntrenamientoAngulos,
+		EntrenamientoParalelismo
 	}
 	
 	

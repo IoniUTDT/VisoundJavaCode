@@ -24,17 +24,17 @@ public abstract class UmbralAngulos extends Umbral {
 	// Cosas generales
 	
 	private static class EstimuloAngulo extends Umbral.Estimulo implements Comparable<Estimulo> {
-		private double anguloFormado; // Angulo respecto al lado fijo
+		private double anguloLadoMovil; // Angulo absoluto del lado movil
 		
 		public int compareTo(EstimuloAngulo o) {
-			return Double.valueOf(anguloFormado).compareTo(o.anguloFormado);
+			return Double.valueOf(this.desviacion).compareTo(o.desviacion);
 		}
 		
 	}
 
 	
 	private static class ImageInfoAngulo extends Umbral.ImageInfo {
-		double anguloFormado;
+		double anguloLadoMovil;
 	}
 	
 	
@@ -43,11 +43,9 @@ public abstract class UmbralAngulos extends Umbral {
 		// Inicializamos el setup segun parametros
 		this.makeSetup();
 		// Creamos un recurso para cada imagen necesaria
-		for (double ladoFijo : this.setup.angulosReferencia) {
-			for (double ladoMovil : this.setup.desviacionesAngulares) {
-				if ((ladoMovil - ladoFijo <=180) && (ladoMovil - ladoFijo >=0)) { // Ojo que aca hay un problema con el tema de reiteracion circular! porque importa el orden de la resta a parte del lado fijo en 180
-					makeResource(ladoFijo, ladoMovil);
-				}
+		for (double ladoFijo : this.setup.angulosReferencia) { // Asume que en esta variable estan los angulos de referencia
+			for (double angulo : this.setup.desviacionesAngulares) { // Asume que en esta variable estan los angulos a formar para cada referencia, siempre positivos
+				makeResource(ladoFijo, angulo);
 			}
 		}
 		// Guardamos el setup en la carpeta temporal
@@ -57,7 +55,7 @@ public abstract class UmbralAngulos extends Umbral {
 		FileHelper.writeLocalFile(path, json.toJson(this.setup));
 	}
 
-	private void makeResource(double ladoFijo, double ladoMovil) {
+	private void makeResource(double ladoFijo, double angulo) {
 		// buscamos el tamaño del lienzo a dibujar
 		float tamano;
 		if (Resources.Display.width > Resources.Display.height) {
@@ -77,23 +75,26 @@ public abstract class UmbralAngulos extends Umbral {
 		// Calculamos los centros de manera que esten separados en funcion del
 		// angulo 
 		
+		// Asumimos que los lados fijo estan entre 0 y 180!
+		if (ladoFijo < 90) {angulo = -angulo;}
+		double anguloLadoMovil = (ladoFijo + angulo);
 		
 		// Nota: los ejes son cartesianos y hacia abajo, x hacia la derecha
 		info.linea1.radial.Xcenter = Xcenter + largoLados / 2 * MathUtils.cosDeg((float) ladoFijo);
 		info.linea1.radial.Ycenter = Ycenter + largoLados / 2 * MathUtils.sinDeg((float) ladoFijo);
-		info.linea2.radial.Xcenter = Xcenter + largoLados / 2 * MathUtils.cosDeg((float) ladoMovil);
-		info.linea2.radial.Ycenter = Ycenter + largoLados / 2 * MathUtils.sinDeg((float) ladoMovil);
+		info.linea2.radial.Xcenter = Xcenter + largoLados / 2 * MathUtils.cosDeg((float) anguloLadoMovil);
+		info.linea2.radial.Ycenter = Ycenter + largoLados / 2 * MathUtils.sinDeg((float) anguloLadoMovil);
 		
 		
 		info.linea1.radial.angulo = ladoFijo;
-		info.linea2.radial.angulo = ladoMovil;
+		info.linea2.radial.angulo = anguloLadoMovil;
 
 		info.linea1.radial.largo = largoLados;
 		info.linea2.radial.largo = largoLados;
 
-		info.anguloFormado = ladoMovil - ladoFijo;
+		info.anguloLadoMovil = anguloLadoMovil;
 		info.referencia = ladoFijo;
-		info.desviacion = ladoMovil;
+		info.desviacion = angulo%360; //El angulo tiene signo, y esta entre -360 y 360 
 		
 		// Pasamos la info a formato cartesiano
 		info.linea1.lineaFromRadial();
@@ -105,15 +106,34 @@ public abstract class UmbralAngulos extends Umbral {
 		// Cargamos la info conceptual (que varia segun el tipo de experimento)
 		imagen.infoConceptual = info;
 
-		// Creamos las categorias correspondientes
-		if ((info.anguloFormado < 90) &  (info.anguloFormado >= 0)){
+		
+		// Creamos las categorias correspondientes (para angulos de -360 a 360)
+		if ((info.desviacion < -270) & (info.desviacion >= -360)){
 			imagen.categories.add(CategoriasImagenes.Agudo);
 		}
-		if (info.anguloFormado == 90) {
+		if (info.desviacion == -270){
 			imagen.categories.add(CategoriasImagenes.Recto);
 		}
-		if ((info.anguloFormado <= 180) &  (info.anguloFormado > 90)){
+		if ((info.desviacion < -90) & (info.desviacion > -270)){
 			imagen.categories.add(CategoriasImagenes.Obtuso);
+		}
+		if (info.desviacion == -90) {
+			imagen.categories.add(CategoriasImagenes.Recto);
+		}
+		if ((info.desviacion > -90) & (info.desviacion < 90)){
+			imagen.categories.add(CategoriasImagenes.Agudo);
+		}
+		if (info.desviacion == 90) {
+			imagen.categories.add(CategoriasImagenes.Recto);
+		}
+		if ((info.desviacion < 270) & (info.desviacion > 90)){
+			imagen.categories.add(CategoriasImagenes.Obtuso);
+		}
+		if (info.desviacion == 270) {
+			imagen.categories.add(CategoriasImagenes.Recto);
+		}
+		if ((info.desviacion > 270) & (info.desviacion <= 360)){
+			imagen.categories.add(CategoriasImagenes.Agudo);
 		}
 		// Agregamos las dos lineas para que se dibujen
 		imagen.lineas.add(info.linea1);
@@ -125,7 +145,7 @@ public abstract class UmbralAngulos extends Umbral {
 		// Agregamos al setup el recurso
 		EstimuloAngulo estimulo = new EstimuloAngulo();
 		estimulo.idResource = imagen.resourceId.id;
-		estimulo.anguloFormado = info.anguloFormado;
+		estimulo.anguloLadoMovil = info.anguloLadoMovil;
 		estimulo.referencia = info.referencia;
 		estimulo.desviacion = info.desviacion;
 		this.setup.estimulos.add(estimulo);
@@ -145,75 +165,96 @@ public abstract class UmbralAngulos extends Umbral {
 
 		// Creamos el setting del experimento
 		this.expSettings = new ExpSettings();
-		this.expSettings.tipoDeExperimento = TIPOdeEXPERIMENTO.UmbralAngulos;
+		this.expSettings.tipoDeExperimento = TIPOdeEXPERIMENTO.TestAngulos;
 
 		// Categorizamos los recursos una vez.
-		ArrayMap<Double, ArrayMap<Double, EstimuloAngulo>> estimulos = new ArrayMap<Double, ArrayMap<Double, EstimuloAngulo>>(); 
+		ArrayMap<Double, ArrayMap<Double, Estimulo>> estimulosByAngulos = new ArrayMap<Double, ArrayMap<Double, Estimulo>>(); 
 		for (Estimulo estimulo : this.setup.estimulos) {
-			EstimuloAngulo estimuloA = (EstimuloAngulo) estimulo;
-			if (!estimulos.containsKey(estimulo.referencia)) {
-				estimulos.put(estimulo.referencia, new ArrayMap<Double, EstimuloAngulo>());
+			if (!estimulosByAngulos.containsKey(estimulo.referencia)) {
+				estimulosByAngulos.put(estimulo.referencia, new ArrayMap<Double, Estimulo>());
 			}
-			estimulos.get(estimulo.referencia).put(estimulo.desviacion, estimuloA);
+			estimulosByAngulos.get(estimulo.referencia).put(estimulo.desviacion, estimulo);
 		}
 		
-		// Hacemos un nivel para cada lado fijo
-		for (double ladoFijo : estimulos.keys()) {
+		// Hacemos un nivel para cada referencia
+		for (double referencia : estimulosByAngulos.keys) {
 			// Creamos el nivel
 			JsonLevel level = PCBuilder.crearLevel();
-			level.numberOfMaxTrials = this.setup.numeroDeTrailsMaximosxNivel;
-			level.levelTitle = "A: " + ladoFijo;
+			level.levelTitle = "Angulos: " + referencia;
 
 			// Creamos el elemento de la info dinamica que corresponde al nivel
 			DinamicaExperimento dinamicaAguda = new DinamicaExperimento();
-			dinamicaAguda.identificador = "1er Cuad.";
-			// dinamicaAguda.numeroCuadrante = 1;
-			DinamicaExperimento dinamicaGave = new DinamicaExperimento();
-			dinamicaGave.identificador = "2do Cuad.";
-			// dinamicaGave.numeroCuadrante = 2;
+			dinamicaAguda.identificador = "DinamicaAguda,"+referencia+"grados";
+			DinamicaExperimento dinamicaGrave = new DinamicaExperimento();
+			dinamicaGrave.identificador = "DinamicaGrave,"+referencia+"grados";
+			// Agregamos data a los dinamicas
+			dinamicaGrave.referencia = referencia;
+			dinamicaAguda.referencia = referencia;
+			dinamicaGrave.trialsInSerie = this.setup.numeroDeTrailsMaximosxDinamica;
+			dinamicaAguda.trialsInSerie = this.setup.numeroDeTrailsMaximosxDinamica;
+			
 			
 			// Creamos los trials (uno para cada lado movil)
-			for (double ladoMovil : estimulos.get(ladoFijo).keys()) {
+			for (double ladoMovil : estimulosByAngulos.get(referencia).keys()) {
 				// Seleccionamos el recurso
-				EstimuloAngulo recurso = (EstimuloAngulo) estimulos.get(ladoFijo).get(ladoMovil);
+				EstimuloAngulo recurso = (EstimuloAngulo) estimulosByAngulos.get(referencia).get(ladoMovil);
 				JsonTrial trial = PCBuilder.crearTrial("Indique a que categoría pertenece el ángulo", "",
-							DISTRIBUCIONESenPANTALLA.LINEALx3,
-							new int[] {CategoriasImagenes.Agudo.ID, CategoriasImagenes.Recto.ID, CategoriasImagenes.Obtuso.ID},
+							DISTRIBUCIONESenPANTALLA.LINEALx2,
+							new int[] {CategoriasImagenes.Agudo.ID, CategoriasImagenes.Obtuso.ID},
 							TIPOdeTRIAL.TEST, recurso.idResource, false, true, this.setup.feedback);
 				recurso.idTrial = trial.Id;
-				if ((recurso.anguloFormado <= 90)&(recurso.anguloFormado > 9)) {
+				
+				// Agregamos a la dinamica que corresponda
+				if ((recurso.desviacion < -270) & (recurso.desviacion >= -360)){
 					dinamicaAguda.listaEstimulos.add(recurso);
 				}
-				if ((recurso.anguloFormado < 171)&(recurso.anguloFormado >= 90)) {
-					dinamicaGave.listaEstimulos.add(recurso);
+				if ((recurso.desviacion < -90) & (recurso.desviacion > -270)){
+					dinamicaGrave.listaEstimulos.add(recurso);
 				}
+				if ((recurso.desviacion > -90) & (recurso.desviacion < 90)){
+					dinamicaAguda.listaEstimulos.add(recurso);
+				}
+				if ((recurso.desviacion < 270) & (recurso.desviacion > 90)){
+					dinamicaGrave.listaEstimulos.add(recurso);
+				}
+				if ((recurso.desviacion > 270) & (recurso.desviacion <= 360)){
+					dinamicaAguda.listaEstimulos.add(recurso);
+				}
+				
+				// Agregamos el trial creado al level
 				level.jsonTrials.add(trial);
 			}
 			// Ordenamos las listas de estimulos segun dificultad decreciente y
 			// la numeramos
-			dinamicaAguda.listaEstimulos.sort();
-			dinamicaAguda.listaEstimulos.reverse();
-			dinamicaGave.listaEstimulos.sort();  
+			if (referencia>90) {
+				dinamicaAguda.listaEstimulos.sort();
+				dinamicaAguda.listaEstimulos.reverse();
+				dinamicaGrave.listaEstimulos.sort();
+			} else {
+				dinamicaAguda.listaEstimulos.sort();
+				dinamicaGrave.listaEstimulos.sort();
+				dinamicaGrave.listaEstimulos.reverse();
+			}
+			
+			// Numeramos los recursos por dificultad
 			for (int i = 0; i < dinamicaAguda.listaEstimulos.size; i++) {
 				dinamicaAguda.listaEstimulos.get(i).nivelSenal = i;
 			}
-			for (int i = 0; i < dinamicaGave.listaEstimulos.size; i++) {
-				dinamicaGave.listaEstimulos.get(i).nivelSenal = i;
+			for (int i = 0; i < dinamicaGrave.listaEstimulos.size; i++) {
+				dinamicaGrave.listaEstimulos.get(i).nivelSenal = i;
 			}
 
-			// Retocamos la info dinamica
+			// Seteamos la dificultad inicial en el maximo y el salto inicial
 			dinamicaAguda.nivelEstimulo = dinamicaAguda.listaEstimulos.size - 1;
-			dinamicaGave.nivelEstimulo = dinamicaGave.listaEstimulos.size - 1;
-			dinamicaAguda.saltosActivos = dinamicaAguda.listaEstimulos.size / 10 + 1;
-			dinamicaGave.saltosActivos = dinamicaGave.listaEstimulos.size / 10 + 1;
-			dinamicaGave.referencia = ladoFijo;
-			dinamicaAguda.referencia = ladoFijo;
+			dinamicaGrave.nivelEstimulo = dinamicaGrave.listaEstimulos.size - 1;
+			dinamicaAguda.saltosActivos = dinamicaAguda.listaEstimulos.size / 4;
+			dinamicaGrave.saltosActivos = dinamicaGrave.listaEstimulos.size / 4;
 			
 			// Agrupamos todas las convergencias del nivel en un array y lo
 			// mandamos a la variable object del level
 			Array<DinamicaExperimento> convergencias = new Array<DinamicaExperimento>();
 			convergencias.add(dinamicaAguda);
-			convergencias.add(dinamicaGave);
+			convergencias.add(dinamicaGrave);
 			level.infoDinamica = convergencias;
 			// Extraemos los niveles y los recursos a la carpeta que corresponda
 			PCBuilder.extract(level);
@@ -230,6 +271,7 @@ public abstract class UmbralAngulos extends Umbral {
 			levelStatus.priority = this.setup.levelPriority;
 			this.expSettings.levels.add(levelStatus);
 		}
+		
 		// Creamos un archivo con la info del experimento
 		String path2 = Resources.Paths.finalInternalPath + "/" + this.getClass().getSimpleName() + ".settings/";
 		Json json2 = new Json();

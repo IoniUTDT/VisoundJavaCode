@@ -2,7 +2,7 @@ package com.turin.tur.main.experiments;
 
 import com.badlogic.gdx.utils.Array;
 
-public class TutorialUmbralParalelismo extends UmbralParalelismo{
+public class UmbralParalelismoTutorial extends UmbralParalelismo{
 
 	private String expName = "UmbralParalelismoTutorial";
 	
@@ -10,10 +10,10 @@ public class TutorialUmbralParalelismo extends UmbralParalelismo{
 	void makeSetup() {
 		// Creamos el setup
 		Setup setup = new Setup();
-		setup.numeroDeTrailsMaximosxNivel = 10;
+		setup.numeroDeTrailsMaximosxDinamica = 5;
 		// Definimos los angulos de referencia
 		setup.angulosReferencia = new Array<Double>();
-		setup.angulosReferencia.add(10d);
+		setup.angulosReferencia.add(0d);
 		// Generamos las desviaciones
 		float desvMin = 5f;
 		float desvMax = 25f;

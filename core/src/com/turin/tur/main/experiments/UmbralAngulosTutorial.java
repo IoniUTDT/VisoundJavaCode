@@ -2,34 +2,30 @@ package com.turin.tur.main.experiments;
 
 import com.badlogic.gdx.utils.Array;
 
+public class UmbralAngulosTutorial extends UmbralAngulos{
 
-public class UmbralAngulosPiloto extends UmbralAngulos {
-
-	static final String TAG = UmbralAngulosPiloto.class.getName();
+	static final String TAG = UmbralAngulosTutorial.class.getName();
 	// Cosas generales
-	private String expName = "UmbralAngulosPiloto";
+	protected String expName = "UmbralAngulosTutorial";
 	
 	
+	@Override
 	void makeSetup() {
 		// Creamos el setup
 		Setup setup = new Setup();
-		setup.numeroDeTrailsMaximosxDinamica = 20;
+		setup.numeroDeTrailsMaximosxDinamica = 5;
 		// Definimos los angulos de referencia
-		setup.angulosReferencia = new Array<Double>();
-		setup.angulosReferencia.add(30d);
-		setup.angulosReferencia.add(60d);
-		setup.angulosReferencia.add(120d);
-		setup.angulosReferencia.add(150d);
+		setup.angulosReferencia.add(180d);
 		
 		// Generamos los lados moviles
 		float desvMin = 1f;
 		float desvMax = 80f;
 		double desvMinLog = Math.log(desvMin);
 		double desvMaxLog = Math.log(desvMax);
-		int numeroDeDesviaciones = 50;
+		int numeroDeDesviaciones = 5;
 		boolean logscale = true;
+		// Creamos la serie de desviaciones respecto al paralelismo
 		Array<Double> desviaciones = new Array<Double>();
-		// Creamos la serie de desviaciones en abstracto
 		if (logscale) {
 			double paso = (desvMaxLog - desvMinLog) / (numeroDeDesviaciones - 1);
 			for (int i = 0; i < numeroDeDesviaciones; i++) {
@@ -55,9 +51,9 @@ public class UmbralAngulosPiloto extends UmbralAngulos {
 			setup.desviacionesAngulares.add(90 - desviacion);
 		}
 		
-		setup.levelPriority=2;
-		setup.tagButton = "Nivel";
-		setup.feedback = false;
+		setup.levelPriority=1;
+		setup.tagButton = "Tutorial";
+		setup.feedback = true;
 		this.setup = setup;
 		
 	}
@@ -69,7 +65,8 @@ public class UmbralAngulosPiloto extends UmbralAngulos {
 
 	@Override
 	protected String getNameTag() {
-		return "expAngulosPiloto";
+		return "TutorialAngulo";
 	}
+	
 	
 }
