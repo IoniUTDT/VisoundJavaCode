@@ -3,6 +3,7 @@ package com.turin.tur.main.experiments;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
+import com.badlogic.gdx.utils.ArrayMap.Keys;
 import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.Level.JsonLevel;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
@@ -177,7 +178,7 @@ public abstract class UmbralAngulos extends Umbral {
 		}
 		
 		// Hacemos un nivel para cada referencia
-		for (double referencia : estimulosByAngulos.keys) {
+		for (double referencia : this.setup.angulosReferencia) {
 			// Creamos el nivel
 			JsonLevel level = PCBuilder.crearLevel();
 			level.levelTitle = "Angulos: " + referencia;
@@ -226,16 +227,20 @@ public abstract class UmbralAngulos extends Umbral {
 			}
 			// Ordenamos las listas de estimulos segun dificultad decreciente y
 			// la numeramos
+			dinamicaAguda.listaEstimulos.sort();
+			dinamicaGrave.listaEstimulos.sort();
+			dinamicaGrave.listaEstimulos.reverse();
+			/*
 			if (referencia>90) {
-				dinamicaAguda.listaEstimulos.sort();
-				dinamicaAguda.listaEstimulos.reverse();
-				dinamicaGrave.listaEstimulos.sort();
-			} else {
 				dinamicaAguda.listaEstimulos.sort();
 				dinamicaGrave.listaEstimulos.sort();
 				dinamicaGrave.listaEstimulos.reverse();
+			} else {
+				dinamicaAguda.listaEstimulos.sort();
+				dinamicaAguda.listaEstimulos.reverse();
+				dinamicaGrave.listaEstimulos.sort();
 			}
-			
+			*/
 			// Numeramos los recursos por dificultad
 			for (int i = 0; i < dinamicaAguda.listaEstimulos.size; i++) {
 				dinamicaAguda.listaEstimulos.get(i).nivelSenal = i;

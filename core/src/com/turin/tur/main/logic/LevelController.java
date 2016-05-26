@@ -19,6 +19,11 @@ import com.turin.tur.main.util.Constants;
 public class LevelController implements InputProcessor {
 
 	private static final String TAG = LevelController.class.getName();
+	private state inputState;
+
+	public enum state {
+		listening, processing, waiting, exiting, initing
+	}
 	
 	// Cosas relacionadas con la interfaz grafica
 	public OrthographicCamera camera;
@@ -40,6 +45,7 @@ public class LevelController implements InputProcessor {
 	
 	public LevelController(Visound game, Level level) {
 	
+		this.inputState = state.initing;
 		this.game = game; // Hereda la info del game (cosa de ventanas y eso)
 		this.level = level; 
 		this.initCamera();
@@ -49,7 +55,7 @@ public class LevelController implements InputProcessor {
 		this.trial = this.game.expActivo.getTrial();
 		this.currentblankTime = 0;
 		this.levelInterfaz = new LevelInterfaz(this.level, this.trial, this.game.expActivo);
-
+		this.inputState = state.waiting;
 		
 	}
 
@@ -64,23 +70,26 @@ public class LevelController implements InputProcessor {
 		this.currentblankTime = this.currentblankTime + deltaTime;
 		
 		if (this.currentblankTime > this.blankTime) {
-		
+			if (this.inputState == state.waiting) {
+				this.inputState = state.listening;
+			}
 			// Actualiza el trial
 			this.trial.update(deltaTime);
 		
 			// actualiza cosas generales
 			cameraHelper.update(deltaTime);
-			
-			// Procesa cambios de trial si los hay pendientes
-			if (trial.checkTrialCompleted()) {
-				this.game.expActivo.returnAnswer(this.trial.lastAnswer(),-1);
-				if (this.game.expActivo.islevelCompleted()) {
-					this.game.expActivo.stopLevel();
-					this.goToResults();
-				} else {
-					this.trial = this.game.expActivo.getTrial();
-					this.currentblankTime = 0;
-				}
+		}
+		
+		// Procesa cambios de trial si los hay pendientes
+		if (trial.checkTrialCompleted()) {
+			this.game.expActivo.returnAnswer(this.trial.lastAnswer(),-1);
+			if (this.game.expActivo.islevelCompleted()) {
+				this.game.expActivo.stopLevel();
+				this.goToResults();
+			} else {
+				this.trial = this.game.expActivo.getTrial();
+				this.currentblankTime = 0;
+				this.inputState = state.waiting;
 			}
 		}
 	}
@@ -129,37 +138,39 @@ public class LevelController implements InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		if (Gdx.graphics.getFramesPerSecond()>40) {
-			// Crea un evento de toque
-			TouchInfo touch = new TouchInfo();
-			// calcula el toque en pantalla
-			touch.coordScreen = new Vector3(screenX, screenY, 0);
-			// calcula el toque en el juego 
-			touch.coordGame = camera.unproject(touch.coordScreen.cpy()); // PREGUNTA: si no le pongo el copy, toma como el mismo vector y sobreescribe el coordScreen. RARO
-			
-			// procesa la info del toque en funcion de otros elementos del juego
-			
-			boolean elementoTocado = false;
-			Box boxTocada = null;
-			// se fija si se toco alguna imagen training
-			for (Box box : this.trial.trainigBoxes) {
-				if (box.spr.getBoundingRectangle().contains(touch.coordGame.x, touch.coordGame.y)) {
-					elementoTocado = true;
-					boxTocada = box;
+		if (this.inputState == state.listening) {
+			if (Gdx.graphics.getFramesPerSecond()>40) {
+				this.inputState = state.processing;
+				// Crea un evento de toque
+				TouchInfo touch = new TouchInfo();
+				// calcula el toque en pantalla
+				touch.coordScreen = new Vector3(screenX, screenY, 0);
+				// calcula el toque en el juego 
+				touch.coordGame = camera.unproject(touch.coordScreen.cpy()); // PREGUNTA: si no le pongo el copy, toma como el mismo vector y sobreescribe el coordScreen. RARO
+				
+				// procesa la info del toque en funcion de otros elementos del juego
+				
+				boolean elementoTocado = false;
+				Box boxTocada = null;
+				// se fija si se toco alguna imagen training
+				for (Box box : this.trial.trainigBoxes) {
+					if (box.spr.getBoundingRectangle().contains(touch.coordGame.x, touch.coordGame.y)) {
+						elementoTocado = true;
+						boxTocada = box;
+					}
+				}
+				// se fija si se toco alguna imagen answer
+				for (Box box : this.trial.testBoxes) {
+					if (box.spr.getBoundingRectangle().contains(touch.coordGame.x, touch.coordGame.y)) {
+						elementoTocado = true;
+						boxTocada = box;
+					}
+				}
+				
+				if (elementoTocado) {
+					this.trial.boxSelected(boxTocada);
 				}
 			}
-			// se fija si se toco alguna imagen answer
-			for (Box box : this.trial.testBoxes) {
-				if (box.spr.getBoundingRectangle().contains(touch.coordGame.x, touch.coordGame.y)) {
-					elementoTocado = true;
-					boxTocada = box;
-				}
-			}
-			
-			if (elementoTocado) {
-				this.trial.boxSelected(boxTocada);
-			}
-			
 		}
 		return false;
 	}
