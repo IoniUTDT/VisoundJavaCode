@@ -147,7 +147,7 @@ public abstract class UmbralAngulos extends Umbral {
 		EstimuloAngulo estimulo = new EstimuloAngulo();
 		estimulo.idResource = imagen.resourceId.id;
 		estimulo.anguloLadoMovil = info.anguloLadoMovil;
-		estimulo.referencia = info.referencia;
+		estimulo.ladoFijo = info.referencia;
 		estimulo.desviacion = info.desviacion;
 		this.setup.estimulos.add(estimulo);
 	}
@@ -191,8 +191,8 @@ public abstract class UmbralAngulos extends Umbral {
 			// Agregamos data a los dinamicas
 			dinamicaGrave.referencia = referencia;
 			dinamicaAguda.referencia = referencia;
-			dinamicaGrave.trialsInSerie = this.setup.numeroDeTrailsMaximosxDinamica;
-			dinamicaAguda.trialsInSerie = this.setup.numeroDeTrailsMaximosxDinamica;
+			dinamicaGrave.trialsPorNivel = this.setup.numeroDeTrailsMaximosxDinamica;
+			dinamicaAguda.trialsPorNivel = this.setup.numeroDeTrailsMaximosxDinamica;
 			
 			
 			// Creamos los trials (uno para cada lado movil)

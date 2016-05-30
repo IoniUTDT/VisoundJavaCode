@@ -57,7 +57,7 @@ public class Level {
 		public int Id; // Id q identifica al level
 		public Array<JsonTrial> jsonTrials = new Array<JsonTrial>(); // Este se usa solamente en el proceso de creacion de niveles (pero por como esta dise�ado el codigo que graba y carga el json completo se guarda   
 		public int resourceVersion;
-		public Object infoDinamica;
+		public Object dinamicaExperimento;
 	}
 	
 }

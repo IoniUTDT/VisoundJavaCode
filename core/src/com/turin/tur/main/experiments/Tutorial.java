@@ -589,7 +589,7 @@ public class Tutorial extends GenericExp implements Experiment {
 		tutorial.jsonTrials.add(trial4);
 		
 		// Preparamos el level y lo exportamos
-		tutorial.infoDinamica = dinamica;
+		tutorial.dinamicaExperimento = dinamica;
 		// Extraemos los niveles y los recursos a la carpeta que corresponda
 		PCBuilder.extract(tutorial);
 		PCBuilder.buildJsons(tutorial);
@@ -651,7 +651,7 @@ public class Tutorial extends GenericExp implements Experiment {
 	public void initLevel(Level level) {
 		// Cargamos los datos especificos del nivel
 		this.level = level;
-		this.dinamicaActiva = (DinamicaTutorial) level.jsonLevel.infoDinamica;
+		this.dinamicaActiva = (DinamicaTutorial) level.jsonLevel.dinamicaExperimento;
 		this.assets = new LevelAsset(level.Id);
 		this.event_initLevel();
 		this.createTrial();

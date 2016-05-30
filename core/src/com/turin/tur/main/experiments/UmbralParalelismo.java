@@ -79,8 +79,8 @@ public abstract class UmbralParalelismo extends Umbral {
 			DinamicaExperimento dinamicaNeg = new DinamicaExperimento();
 			dinamicaPos.identificador = "Acercamiento Positivo";
 			dinamicaNeg.identificador = "Acercamiento Negativo";
-			dinamicaPos.trialsInSerie=this.setup.numeroDeTrailsMaximosxDinamica;
-			dinamicaNeg.trialsInSerie=this.setup.numeroDeTrailsMaximosxDinamica;
+			dinamicaPos.trialsPorNivel=this.setup.numeroDeTrailsMaximosxDinamica;
+			dinamicaNeg.trialsPorNivel=this.setup.numeroDeTrailsMaximosxDinamica;
 			
 			// Creamos los trials (uno para cada desviacion)
 			for (double desviacion : this.setup.desviacionesAngulares) {
