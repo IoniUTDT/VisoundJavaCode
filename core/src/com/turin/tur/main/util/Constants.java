@@ -25,7 +25,7 @@ public class Constants {
 		return version_temp + temp;
 	}
 
-	// recupera la escala para mostrar todos los textos con el tama�o correcto
+	// recupera la escala para mostrar todos los textos con el tamaño correcto
 	public static float factorEscala () {
 		float factorEscala;
 		// Escala de referencia
@@ -140,18 +140,19 @@ public class Constants {
 			Paralelas(8),
 			NoParalelas(9, "No Paralelas"),
 			Angulo(10),
-			Agudo(11, "Angulo agudo"),
-			Obtuso(12, "Angulo obtuso"),
-			Recto(13, "Angulo recto"),
+			Agudo(11, "Ángulo agudo"),
+			Obtuso(12, "Ángulo obtuso"),
+			Recto(13, "Ángulo recto"),
 			Lineas(14),  
-			NoAngulo(15,"No Angulo"),
+			NoAngulo(15,"No Ángulo"),
 			Cuadrilatero(16),
 			Cuadrado(17),
 			Rombo(18),
 			Rotado(19),
 			SinRotar(20),
 			Converge (21),
-			Diverge (22)
+			Diverge (22),
+			NoRecto (23, "Ángulo No Recto")
 			;
 
 			/*

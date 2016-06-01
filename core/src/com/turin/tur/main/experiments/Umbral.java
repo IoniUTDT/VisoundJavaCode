@@ -2,6 +2,7 @@ package com.turin.tur.main.experiments;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.ExperimentalObject;
 import com.turin.tur.main.diseno.Level;
@@ -10,6 +11,8 @@ import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.experiments.Experiment.GenericExp;
 import com.turin.tur.main.experiments.Experiments.ExperimentLog;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
+import com.turin.tur.main.experiments.Umbral.Estimulo;
+import com.turin.tur.main.experiments.Umbral.Setup;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Internet;
 import com.turin.tur.main.util.LevelAsset;
@@ -60,15 +63,15 @@ public abstract class Umbral extends GenericExp {
 
 	public static class SerieEstimulos {
 		String identificador; // Algo para indentificar cual convergencia es cual.
-		float ladoFijo;
-		boolean desdeAgudos;
+		double ladoFijo;
+		boolean desdeAgudosOPos;
 		Array<Estimulo> listaEstimulos = new Array<Estimulo>(); // Lista de estimulos ordenados de menor a mayor dificultad
 	}
 	
 	static class Estimulo implements Comparable<Estimulo> {
 		int idResource; // Id del archivo con el recurso
 		int idTrial; // Id del trial en que se evalua al recurso (esto es porque 
-		double ladoFijo; // Angulo de inclinacion de las rectas paralelas de
+		double anguloFijo; // Angulo de inclinacion de las rectas paralelas de
 							// referencia
 		double desviacion; // Desviacion respecto a la referencia
 		int nivelSenal; // Nivel de intensidad de la señal. Cero representa el angulo recto o las rectas paralelas. Y despues representa una escala lineal que mapea las estimulos ordenados segun la intensidad del estimulo a medir (mas facil mayor intencidad)
@@ -102,8 +105,8 @@ public abstract class Umbral extends GenericExp {
 		Array<Double> angulosReferencia = new Array<Double>(); // Referencias del experimento
 		Array<Float> fluctuacionesLocalesReferenciaSeries = new Array<Float>(); // Fluctuaciones dentro de cada referencia, en terminos relativos
 		Array<Double> desviacionesAngulares = new Array<Double>(); // Variaciones del lado movil o del angulo respecto a la referencia
-		Array<Float> fluctuacionesLocalesReferenciaEstimuloCero = new Array<Float>(); // angulos en los cuales se muestra a señal recta. 
-		// Array<Estimulo> estimulos = new Array<Estimulo>();
+		Array<Double> fluctuacionesLocalesReferenciaEstimuloCero = new Array<Double>(); // angulos en los cuales se muestra a señal recta. 
+		Array<Estimulo> estimulos = new Array<Estimulo>(); // Lista de estimulos que se arman en la fse de generacion de recursos.
 		public int trialsPorNivel; // Numero de trial que conforman un nivel
 		public int levelPriority; // Prioridad que tiene el nivel en la lista de niveles. Sirve para habilitar a que se tenga que completar un nivel antes que otro.
 		public String tagButton;
@@ -111,7 +114,10 @@ public abstract class Umbral extends GenericExp {
 		public int testFraction; // Representa la inversa del numero de test que se dedica a testear al usuario enviandole trials faciles.
 		public int numeroDeEstimulosPorSerie;
 		public int saltoInicialFraccion = 4;
-		public int saltoColaUNOFraccion = 5; 
+		public int saltoColaUNOFraccion = 5;
+		double desvMin;
+		double desvMax;
+		boolean logscale = true;
 	}
 	
 	// Cosas generales
@@ -311,6 +317,71 @@ public abstract class Umbral extends GenericExp {
 		}
 	
 	}
+	
+	protected ArrayMap<Double, ArrayMap<Double, Estimulo>> indexToMap() {
+		ArrayMap<Double, ArrayMap<Double, Estimulo>> map = new ArrayMap<Double, ArrayMap<Double, Estimulo>>();
+		for (Estimulo estimulo : this.setup.estimulos) {
+			if (!map.containsKey(estimulo.anguloFijo)) {
+				map.put(estimulo.anguloFijo, new ArrayMap<Double, Estimulo>());
+			}
+			map.get(estimulo.anguloFijo).put(estimulo.desviacion, estimulo);
+		}
+		return map;
+	}
+	
+	protected void generarDesviaciones (Setup setup) {
+		// Generamos los lados moviles
+		double desvMinLog = Math.log(setup.desvMin);
+		double desvMaxLog = Math.log(setup.desvMax);
+		Array<Double> desviaciones = new Array<Double>();
+		// Creamos la serie de desviaciones en abstracto
+		if (setup.logscale) {
+			double paso = (desvMaxLog - desvMinLog) / (setup.numeroDeEstimulosPorSerie - 1);
+			for (int i = 0; i < setup.numeroDeEstimulosPorSerie; i++) {
+				desviaciones.add(desvMinLog + paso * i);
+			}
+			for (int i = 0; i < setup.numeroDeEstimulosPorSerie; i++) {
+				desviaciones.set(i, Math.exp(desviaciones.get(i)));
+			}
+		} else {
+			double paso = (setup.desvMax - setup.desvMin) / setup.numeroDeEstimulosPorSerie;
+			for (int i = 0; i < setup.numeroDeEstimulosPorSerie; i++) {
+				desviaciones.add(setup.desvMin + paso * i);
+			}
+		}
+		// Armamos la serie completa
+		desviaciones.reverse();
+		for (double desviacion : desviaciones) {
+			setup.desviacionesAngulares.add(90 + desviacion);
+		}
+		desviaciones.reverse();
+		for (double desviacion : desviaciones) {
+			setup.desviacionesAngulares.add(90 - desviacion);
+		}
+	}
+	
+	@Override
+	public void makeResources() {
+		// Inicializamos el setup segun parametros
+		this.makeSetup();
+		// Creamos un recurso para cada imagen necesaria
+		for (double referencia : this.setup.angulosReferencia) { // Asume que en esta variable estan los angulos de referencia
+			for (double ladoFijo : this.setup.fluctuacionesLocalesReferenciaSeries) {
+				ladoFijo = ladoFijo + referencia;
+				for (double desviacion : this.setup.desviacionesAngulares) { // Asume que en esta variable estan los angulos a formar para cada referencia, siempre positivos
+					makeResource(ladoFijo, desviacion);
+				}
+			}
+		}
+		// Guardamos el setup en la carpeta temporal
+		String path = Resources.Paths.ResourcesBuilder + "/extras/" + this.getName() + "Setup.meta";
+		Json json = new Json();
+		json.setUsePrototypes(false);
+		FileHelper.writeLocalFile(path, json.toJson(this.setup));
+	}
+	
+	abstract void makeSetup();
+	abstract void makeResource(double ladoFijo, double desviacion);
 	
 	protected abstract String getNameTag();
 	

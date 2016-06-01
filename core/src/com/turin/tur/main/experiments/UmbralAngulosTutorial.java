@@ -1,7 +1,5 @@
 package com.turin.tur.main.experiments;
 
-import com.badlogic.gdx.utils.Array;
-
 public class UmbralAngulosTutorial extends UmbralAngulos{
 
 	static final String TAG = UmbralAngulosTutorial.class.getName();
@@ -13,49 +11,39 @@ public class UmbralAngulosTutorial extends UmbralAngulos{
 	void makeSetup() {
 		// Creamos el setup
 		Setup setup = new Setup();
-		setup.numeroDeTrailsMaximosxDinamica = 5;
+		
 		// Definimos los angulos de referencia
 		setup.angulosReferencia.add(180d);
 		
-		// Generamos los lados moviles
-		float desvMin = 1f;
-		float desvMax = 80f;
-		double desvMinLog = Math.log(desvMin);
-		double desvMaxLog = Math.log(desvMax);
-		int numeroDeDesviaciones = 5;
-		boolean logscale = true;
-		// Creamos la serie de desviaciones respecto al paralelismo
-		Array<Double> desviaciones = new Array<Double>();
-		if (logscale) {
-			double paso = (desvMaxLog - desvMinLog) / (numeroDeDesviaciones - 1);
-			for (int i = 0; i < numeroDeDesviaciones; i++) {
-				desviaciones.add(desvMinLog + paso * i);
-			}
-			for (int i = 0; i < numeroDeDesviaciones; i++) {
-				desviaciones.set(i, Math.exp(desviaciones.get(i)));
-			}
-		} else {
-			double paso = (desvMax - desvMin) / numeroDeDesviaciones;
-			for (int i = 0; i < numeroDeDesviaciones; i++) {
-				desviaciones.add(desvMin + paso * i);
-			}
-		}
-		// Armamos la serie completa
-		desviaciones.reverse();
-		for (double desviacion : desviaciones) {
-			
-			setup.desviacionesAngulares.add(90 + desviacion);
-		}
-		desviaciones.reverse();
-		for (double desviacion : desviaciones) {
-			setup.desviacionesAngulares.add(90 - desviacion);
-		}
+		// Definimos las fluctuaciones locales
+		setup.fluctuacionesLocalesReferenciaSeries.add(0f);
+		
+		// Definimos las fluctuaciones para el cero
+		setup.fluctuacionesLocalesReferenciaEstimuloCero.add(0d);
+		setup.fluctuacionesLocalesReferenciaEstimuloCero.add(2.5);
+		setup.fluctuacionesLocalesReferenciaEstimuloCero.add(-2.5);
+		setup.fluctuacionesLocalesReferenciaEstimuloCero.add(5d);
+		setup.fluctuacionesLocalesReferenciaEstimuloCero.add(-5d);
+		setup.fluctuacionesLocalesReferenciaEstimuloCero.add(7.5);
+		setup.fluctuacionesLocalesReferenciaEstimuloCero.add(-7.5);
+		setup.fluctuacionesLocalesReferenciaEstimuloCero.add(10d);
+		setup.fluctuacionesLocalesReferenciaEstimuloCero.add(-10d);
+		
+		// Definimos la cantidad de estimulos por serie
+		setup.numeroDeEstimulosPorSerie = 5;
+		
+		// Definimos el numero de trials por level
+		setup.trialsPorNivel = 10;
+		
 		
 		setup.levelPriority=1;
 		setup.tagButton = "Tutorial";
 		setup.feedback = true;
+		setup.desvMax = 80;
+		setup.desvMin = 1;
 		this.setup = setup;
-		
+		this.generarDesviaciones(setup);
+
 	}
 
 	@Override

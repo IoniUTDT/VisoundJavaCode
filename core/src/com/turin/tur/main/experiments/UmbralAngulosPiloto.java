@@ -13,7 +13,9 @@ public class UmbralAngulosPiloto extends UmbralAngulos {
 	void makeSetup() {
 		// Creamos el setup
 		Setup setup = new Setup();
-		setup.numeroDeTrailsMaximosxDinamica = 20;
+		setup.numeroDeEstimulosPorSerie = 50;
+		setup.trialsPorNivel = 100; //TODO cuando haga las pruebas preliminares tengo que fijarme en cuanto tipicamente converge y reducirlo en funcion de eso
+		
 		// Definimos los angulos de referencia
 		setup.angulosReferencia = new Array<Double>();
 		setup.angulosReferencia.add(30d);
@@ -21,44 +23,33 @@ public class UmbralAngulosPiloto extends UmbralAngulos {
 		setup.angulosReferencia.add(120d);
 		setup.angulosReferencia.add(150d);
 		
-		// Generamos los lados moviles
-		float desvMin = 1f;
-		float desvMax = 80f;
-		double desvMinLog = Math.log(desvMin);
-		double desvMaxLog = Math.log(desvMax);
-		int numeroDeDesviaciones = 50;
-		boolean logscale = true;
-		Array<Double> desviaciones = new Array<Double>();
-		// Creamos la serie de desviaciones en abstracto
-		if (logscale) {
-			double paso = (desvMaxLog - desvMinLog) / (numeroDeDesviaciones - 1);
-			for (int i = 0; i < numeroDeDesviaciones; i++) {
-				desviaciones.add(desvMinLog + paso * i);
-			}
-			for (int i = 0; i < numeroDeDesviaciones; i++) {
-				desviaciones.set(i, Math.exp(desviaciones.get(i)));
-			}
-		} else {
-			double paso = (desvMax - desvMin) / numeroDeDesviaciones;
-			for (int i = 0; i < numeroDeDesviaciones; i++) {
-				desviaciones.add(desvMin + paso * i);
-			}
-		}
-		// Armamos la serie completa
-		desviaciones.reverse();
-		for (double desviacion : desviaciones) {
-			
-			setup.desviacionesAngulares.add(90 + desviacion);
-		}
-		desviaciones.reverse();
-		for (double desviacion : desviaciones) {
-			setup.desviacionesAngulares.add(90 - desviacion);
-		}
+		// Definimos las fluctuaciones locales
+		setup.fluctuacionesLocalesReferenciaSeries.add(0f);
+		setup.fluctuacionesLocalesReferenciaSeries.add(2.5f);
+		setup.fluctuacionesLocalesReferenciaSeries.add(5f);
+		setup.fluctuacionesLocalesReferenciaSeries.add(-2.5f);
+		setup.fluctuacionesLocalesReferenciaSeries.add(-5f);
+				
+		// Definimos las fluctuaciones para el cero
+		setup.fluctuacionesLocalesReferenciaEstimuloCero.add(0d);
+		setup.fluctuacionesLocalesReferenciaEstimuloCero.add(2.5);
+		setup.fluctuacionesLocalesReferenciaEstimuloCero.add(-2.5);
+		setup.fluctuacionesLocalesReferenciaEstimuloCero.add(5d);
+		setup.fluctuacionesLocalesReferenciaEstimuloCero.add(-5d);
+		setup.fluctuacionesLocalesReferenciaEstimuloCero.add(7.5);
+		setup.fluctuacionesLocalesReferenciaEstimuloCero.add(-7.5);
+		setup.fluctuacionesLocalesReferenciaEstimuloCero.add(10d);
+		setup.fluctuacionesLocalesReferenciaEstimuloCero.add(-10d);
+		
+		
 		
 		setup.levelPriority=2;
 		setup.tagButton = "Nivel";
 		setup.feedback = false;
+		setup.desvMin = 1;
+		setup.desvMax = 80;
 		this.setup = setup;
+		this.generarDesviaciones(setup);
 		
 	}
 

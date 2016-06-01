@@ -1,7 +1,6 @@
 package com.turin.tur.main.experiments;
 
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.Level.JsonLevel;
@@ -26,17 +25,6 @@ public abstract class UmbralParalelismo extends Umbral {
 
 	static final String TAG = UmbralParalelismo.class.getName();
 			
-	private ArrayMap<Double, ArrayMap<Double, Estimulo>> indexToMap() {
-		ArrayMap<Double, ArrayMap<Double, Estimulo>> map = new ArrayMap<Double, ArrayMap<Double, Estimulo>>();
-		for (Estimulo estimulo : this.setup.estimulos) {
-			if (!map.containsKey(estimulo.referencia)) {
-				map.put(estimulo.referencia, new ArrayMap<Double, Estimulo>());
-			}
-			map.get(estimulo.referencia).put(estimulo.desviacion, estimulo);
-		}
-		return map;
-	}
-
 	@Override
 	public void makeLevels() {
 
@@ -52,7 +40,7 @@ public abstract class UmbralParalelismo extends Umbral {
 		this.expSettings.tipoDeExperimento = TIPOdeEXPERIMENTO.TestParalelismo;
 
 		// Categorizamos los recursos en un mapa
-		ArrayMap<Double, ArrayMap<Double, Estimulo>> map = this.indexToMap();
+		ArrayMap<Double, ArrayMap<Double, Estimulo>> estimulosByAngulos = this.indexToMap();
 
 		// Hacemos un nivel para cada referencia
 		for (double referencia : this.setup.angulosReferencia) {
@@ -61,6 +49,91 @@ public abstract class UmbralParalelismo extends Umbral {
 			// level.tipoDeLevel = TIPOdeLEVEL.UMBRALPARALELISMO;
 			level.levelTitle = "Paralelismo: " + referencia;
 
+			// Creamos el elemento de la info dinamica que corresponde al nivel
+			DinamicaExperimento dinamicaExperimento = new DinamicaExperimento();
+			dinamicaExperimento.identificador = "Dinamica, "+referencia+" grados";
+			dinamicaExperimento.referencia = referencia;
+			dinamicaExperimento.trialsPorNivel = this.setup.trialsPorNivel;
+
+			
+			
+			// TODO : crear u agregar los estimulos cero
+			
+			// Creamos las series
+			
+			for (double variacion : this.setup.fluctuacionesLocalesReferenciaSeries) {
+				double anguloFijo = referencia + variacion;
+			
+				// Creamos la serie
+				SerieEstimulos seriePos = new SerieEstimulos();
+				SerieEstimulos serieNeg = new SerieEstimulos();
+				// Las configuramos
+				seriePos.desdeAgudosOPos = true;
+				seriePos.identificador = "Orientacion:"+anguloFijo+"SeriePos";
+				seriePos.ladoFijo = anguloFijo;
+				serieNeg.desdeAgudosOPos = false;
+				serieNeg.identificador = "Orientacion:"+anguloFijo+"SerieNeg";
+				serieNeg.ladoFijo = anguloFijo;
+				
+				// Creamos los trials (uno para cada desviacion)
+				for (double desviacion : this.setup.desviacionesAngulares) {
+					
+					Estimulo recurso = estimulosByAngulos.get(anguloFijo).get(desviacion);
+					JsonTrial trial = PCBuilder.crearTrial("Indique a que categoría pertenece el estímulo", "",
+								DISTRIBUCIONESenPANTALLA.LINEALx2,
+								new int[] {CategoriasImagenes.Paralelas.ID, CategoriasImagenes.NoParalelas.ID},
+								TIPOdeTRIAL.TEST, recurso.idResource, false, true, this.setup.feedback);
+					recurso.idTrial = trial.Id;
+
+					// Agregamos a la dinamica que corresponda
+					if (recurso.desviacion > 0) {
+						seriePos.listaEstimulos.add(recurso);
+					}
+					if (recurso.desviacion < 0) {
+						serieNeg.listaEstimulos.add(recurso);
+					}
+					
+					// Agregamos el trial al nivel
+					level.jsonTrials.add(trial);
+				}
+				
+				// Ordenamos las listas de estimulos segun dificultad decreciente y
+				// la numeramos
+				seriePos.listaEstimulos.sort();
+				serieNeg.listaEstimulos.sort();
+				serieNeg.listaEstimulos.reverse();
+				
+				// Numeramos los recursos por dificultad
+				for (int i = 1; i <= seriePos.listaEstimulos.size; i++) {
+					seriePos.listaEstimulos.get(i).nivelSenal = i;
+				}
+				for (int i = 1; i <= serieNeg.listaEstimulos.size; i++) {
+					serieNeg.listaEstimulos.get(i).nivelSenal = i;
+				}
+				
+				// Agregamos las dos series a la dinamica
+				dinamicaExperimento.seriesEstimulos.add(seriePos);
+				dinamicaExperimento.seriesEstimulos.add(serieNeg);
+			}
+
+			level.dinamicaExperimento = dinamicaExperimento;
+			// Extraemos los niveles y los recursos a la carpeta que corresponda
+			PCBuilder.extract(level);
+			PCBuilder.buildJsons(level);
+
+			// Agregamos el nivel al setting
+			LevelStatus levelStatus = new LevelStatus();
+			levelStatus.enabled = true;
+			levelStatus.id = level.Id;
+			levelStatus.publicName = this.setup.tagButton + "(" + level.Id + ")";
+			levelStatus.internalName = this.getName() + level.Id;
+			levelStatus.expName = this.getName();
+			levelStatus.alreadyPlayed = false;
+			levelStatus.priority = this.setup.levelPriority;
+			this.expSettings.levels.add(levelStatus);
+			
+			/* Con el cambio a categorias esto estaria obsoleto.
+			
 			// Buscamos la inclinacion minima para la referencia que sea visible
 			// (porque la sensibilidad auditiva puede ser superior a la
 			// visual!). A ojo una desviacion de 2.5 grados se percibe.
@@ -74,16 +147,11 @@ public abstract class UmbralParalelismo extends Umbral {
 			temp.sort();
 			double limiteVisible = temp.first();
 
-			// Creamos el elemento de la info dinamica que corresponde al nivel
-			DinamicaExperimento dinamicaPos = new DinamicaExperimento();
-			DinamicaExperimento dinamicaNeg = new DinamicaExperimento();
-			dinamicaPos.identificador = "Acercamiento Positivo";
-			dinamicaNeg.identificador = "Acercamiento Negativo";
-			dinamicaPos.trialsPorNivel=this.setup.numeroDeTrailsMaximosxDinamica;
-			dinamicaNeg.trialsPorNivel=this.setup.numeroDeTrailsMaximosxDinamica;
 			
+
 			// Creamos los trials (uno para cada desviacion)
 			for (double desviacion : this.setup.desviacionesAngulares) {
+				/* obsoleto
 				JsonTrial trial;
 				if ((desviacion > limiteVisible) || (desviacion < -limiteVisible)) { // Si la desviacion es visible
 													// dejamos que se elija
@@ -104,6 +172,7 @@ public abstract class UmbralParalelismo extends Umbral {
 									map.get(referencia).get(-limiteVisible).idResource },
 							TIPOdeTRIAL.TEST, map.get(referencia).get(desviacion).idResource, false, true, this.setup.feedback);
 				}
+				
 				// agregamos el trial al index
 				map.get(referencia).get(desviacion).idTrial = trial.Id;
 				if (desviacion > 0) {
@@ -114,8 +183,10 @@ public abstract class UmbralParalelismo extends Umbral {
 				}
 				level.jsonTrials.add(trial);
 			}
+			*/
 			// Ordenamos las listas de estimulos segun dificultad decreciente y
 			// la numeramos
+			/*
 			dinamicaPos.listaEstimulos.sort();
 			dinamicaNeg.listaEstimulos.sort(); //Por alguna extraña razon el sort usa el modulo y no el valor con signo. 
 			// dinamicaNeg.listaEstimulos.reverse();
@@ -156,6 +227,7 @@ public abstract class UmbralParalelismo extends Umbral {
 			levelStatus.alreadyPlayed = false;
 			levelStatus.priority = this.setup.levelPriority;
 			this.expSettings.levels.add(levelStatus);
+			*/
 		}
 		// Creamos un archivo con la info del experimento
 		String path2 = Resources.Paths.finalInternalPath + "/" + this.getClass().getSimpleName() + ".settings/";
@@ -164,7 +236,7 @@ public abstract class UmbralParalelismo extends Umbral {
 		FileHelper.writeLocalFile(path2, json.toJson(this.expSettings));
 	}
 
-	private void makeResource(double referencia, double desviacion) {
+	protected void makeResource(double referencia, double desviacion) {
 		// buscamos el tamaño del lienzo a dibujar
 		float tamano;
 		if (Resources.Display.width > Resources.Display.height) {
@@ -184,6 +256,7 @@ public abstract class UmbralParalelismo extends Umbral {
 
 		// Calculamos los centros de manera que esten separados en funcion del
 		// angulo
+		// Nota: los ejes son cartesianos y hacia abajo, x hacia la derecha
 		info.linea1.radial.Xcenter = Xcenter - separacion / 2 * MathUtils.sinDeg((float) referencia);
 		info.linea2.radial.Xcenter = Xcenter + separacion / 2 * MathUtils.sinDeg((float) referencia);
 		info.linea1.radial.Ycenter = Ycenter + separacion / 2 * MathUtils.cosDeg((float) referencia);
@@ -212,9 +285,11 @@ public abstract class UmbralParalelismo extends Umbral {
 		// Creamos las categorias correspondientes
 		if (info.desviacion > 0) {
 			imagen.categories.add(CategoriasImagenes.Diverge);
+			imagen.categories.add(CategoriasImagenes.NoParalelas);
 		}
 		if (info.desviacion < 0) {
 			imagen.categories.add(CategoriasImagenes.Converge);
+			imagen.categories.add(CategoriasImagenes.NoParalelas);
 		}
 		if (info.desviacion == 0) {
 			imagen.categories.add(CategoriasImagenes.Paralelas);
@@ -230,27 +305,8 @@ public abstract class UmbralParalelismo extends Umbral {
 		Estimulo estimulo = new Estimulo();
 		estimulo.idResource = imagen.resourceId.id;
 		estimulo.desviacion = info.desviacion;
-		estimulo.referencia = info.referencia;
+		estimulo.anguloFijo = info.referencia;
 		this.setup.estimulos.add(estimulo);
-	}
-
-	// Todo lo que sigue a continuacion son cosas publicas de la interfaz, las
-	// anteriores son privadas del funcionamiento interno
-	@Override
-	public void makeResources() {
-		// Inicializamos el setup segun parametros
-		this.makeSetup();
-		// Creamos un recurso para cada imagen necesaria
-		for (double referencia : this.setup.angulosReferencia) {
-			for (double desviacion : this.setup.desviacionesAngulares) {
-				makeResource(referencia, desviacion);
-			}
-		}
-		// Guardamos el setup
-		String path = Resources.Paths.ResourcesBuilder + "/extras/" + this.getName() + "Setup.meta";
-		Json json = new Json();
-		json.setUsePrototypes(false);
-		FileHelper.writeLocalFile(path, json.toJson(this.setup));
 	}
 
 	abstract void makeSetup();
