@@ -1,7 +1,5 @@
 package com.turin.tur.main.experiments;
 
-import com.badlogic.gdx.utils.Array;
-import com.turin.tur.main.experiments.Umbral.Setup;
 
 public class UmbralParalelismoTutorial extends UmbralParalelismo{
 
@@ -31,7 +29,7 @@ public class UmbralParalelismoTutorial extends UmbralParalelismo{
 		setup.fluctuacionesLocalesReferenciaEstimuloCero.add(-10d);
 		
 		// Definimos la cantidad de estimulos por serie
-		setup.numeroDeEstimulosPorSerie = 5;
+		setup.numeroDeEstimulosPorSerie = 10;
 		
 		// Definimos el numero de trials por level
 		setup.trialsPorNivel = 10;

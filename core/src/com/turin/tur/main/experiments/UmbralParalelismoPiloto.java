@@ -1,7 +1,6 @@
 package com.turin.tur.main.experiments;
 
 import com.badlogic.gdx.utils.Array;
-import com.turin.tur.main.experiments.Umbral.Setup;
 
 public class UmbralParalelismoPiloto extends UmbralParalelismo{
 
@@ -22,9 +21,9 @@ public class UmbralParalelismoPiloto extends UmbralParalelismo{
 		
 		// Definimos las fluctuaciones locales
 		setup.fluctuacionesLocalesReferenciaSeries.add(0f);
-		setup.fluctuacionesLocalesReferenciaSeries.add(2.5f);
+		//setup.fluctuacionesLocalesReferenciaSeries.add(2.5f);
 		setup.fluctuacionesLocalesReferenciaSeries.add(5f);
-		setup.fluctuacionesLocalesReferenciaSeries.add(-2.5f);
+		//setup.fluctuacionesLocalesReferenciaSeries.add(-2.5f);
 		setup.fluctuacionesLocalesReferenciaSeries.add(-5f);
 				
 		// Definimos las fluctuaciones para el cero

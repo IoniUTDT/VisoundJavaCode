@@ -25,9 +25,9 @@ public class UmbralAngulosPiloto extends UmbralAngulos {
 		
 		// Definimos las fluctuaciones locales
 		setup.fluctuacionesLocalesReferenciaSeries.add(0f);
-		setup.fluctuacionesLocalesReferenciaSeries.add(2.5f);
+		//setup.fluctuacionesLocalesReferenciaSeries.add(2.5f);
 		setup.fluctuacionesLocalesReferenciaSeries.add(5f);
-		setup.fluctuacionesLocalesReferenciaSeries.add(-2.5f);
+		//setup.fluctuacionesLocalesReferenciaSeries.add(-2.5f);
 		setup.fluctuacionesLocalesReferenciaSeries.add(-5f);
 				
 		// Definimos las fluctuaciones para el cero

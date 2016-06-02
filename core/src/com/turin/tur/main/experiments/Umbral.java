@@ -11,8 +11,6 @@ import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.experiments.Experiment.GenericExp;
 import com.turin.tur.main.experiments.Experiments.ExperimentLog;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
-import com.turin.tur.main.experiments.Umbral.Estimulo;
-import com.turin.tur.main.experiments.Umbral.Setup;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Internet;
 import com.turin.tur.main.util.LevelAsset;
@@ -101,7 +99,7 @@ public abstract class Umbral extends GenericExp {
 		double desviacion;
 	}
 	
-	static class Setup {
+	public static class Setup {
 		Array<Double> angulosReferencia = new Array<Double>(); // Referencias del experimento
 		Array<Float> fluctuacionesLocalesReferenciaSeries = new Array<Float>(); // Fluctuaciones dentro de cada referencia, en terminos relativos
 		Array<Double> desviacionesAngulares = new Array<Double>(); // Variaciones del lado movil o del angulo respecto a la referencia
@@ -111,7 +109,7 @@ public abstract class Umbral extends GenericExp {
 		public int levelPriority; // Prioridad que tiene el nivel en la lista de niveles. Sirve para habilitar a que se tenga que completar un nivel antes que otro.
 		public String tagButton;
 		public boolean feedback;
-		public int testFraction; // Representa la inversa del numero de test que se dedica a testear al usuario enviandole trials faciles.
+		public int testFraction = 5; // Representa la inversa del numero de test que se dedica a testear al usuario enviandole trials faciles.
 		public int numeroDeEstimulosPorSerie;
 		public int saltoInicialFraccion = 4;
 		public int saltoColaUNOFraccion = 5;
@@ -193,6 +191,7 @@ public abstract class Umbral extends GenericExp {
 		// Cargamos los datos especificos del nivel
 		this.level = level;
 		this.dinamicaExperimento = (DinamicaExperimento) level.jsonLevel.dinamicaExperimento;
+		this.setup = level.jsonLevel.setup;
 		this.assets = new LevelAsset(level.Id);
 		this.event_initLevel();
 		this.createTrial();
@@ -352,11 +351,11 @@ public abstract class Umbral extends GenericExp {
 		// Armamos la serie completa
 		desviaciones.reverse();
 		for (double desviacion : desviaciones) {
-			setup.desviacionesAngulares.add(90 + desviacion);
+			setup.desviacionesAngulares.add(desviacion);
 		}
 		desviaciones.reverse();
 		for (double desviacion : desviaciones) {
-			setup.desviacionesAngulares.add(90 - desviacion);
+			setup.desviacionesAngulares.add(-desviacion);
 		}
 	}
 	

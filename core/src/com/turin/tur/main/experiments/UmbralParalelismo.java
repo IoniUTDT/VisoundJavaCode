@@ -105,10 +105,10 @@ public abstract class UmbralParalelismo extends Umbral {
 				
 				// Numeramos los recursos por dificultad
 				for (int i = 1; i <= seriePos.listaEstimulos.size; i++) {
-					seriePos.listaEstimulos.get(i).nivelSenal = i;
+					seriePos.listaEstimulos.get(i-1).nivelSenal = i;
 				}
 				for (int i = 1; i <= serieNeg.listaEstimulos.size; i++) {
-					serieNeg.listaEstimulos.get(i).nivelSenal = i;
+					serieNeg.listaEstimulos.get(i-1).nivelSenal = i;
 				}
 				
 				// Agregamos las dos series a la dinamica
@@ -117,6 +117,8 @@ public abstract class UmbralParalelismo extends Umbral {
 			}
 
 			level.dinamicaExperimento = dinamicaExperimento;
+			level.setup = setup;
+			level.setup.estimulos.clear();
 			// Extraemos los niveles y los recursos a la carpeta que corresponda
 			PCBuilder.extract(level);
 			PCBuilder.buildJsons(level);

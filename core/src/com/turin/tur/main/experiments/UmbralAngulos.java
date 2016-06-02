@@ -1,16 +1,13 @@
 package com.turin.tur.main.experiments;
 
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
-import com.badlogic.gdx.utils.ArrayMap.Keys;
 import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.Level.JsonLevel;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.experiments.Experiments.ExpSettings;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
 import com.turin.tur.main.experiments.Experiments.TIPOdeEXPERIMENTO;
-import com.turin.tur.main.experiments.Umbral.Estimulo;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
@@ -221,10 +218,10 @@ public abstract class UmbralAngulos extends Umbral {
 				
 				// Numeramos los recursos por dificultad
 				for (int i = 1; i <= serieAgudos.listaEstimulos.size; i++) {
-					serieAgudos.listaEstimulos.get(i).nivelSenal = i;
+					serieAgudos.listaEstimulos.get(i-1).nivelSenal = i;
 				}
 				for (int i = 1; i <= serieObtusos.listaEstimulos.size; i++) {
-					serieObtusos.listaEstimulos.get(i).nivelSenal = i;
+					serieObtusos.listaEstimulos.get(i-1).nivelSenal = i;
 				}
 
 				// Agregamos las dos series a la dinamica
@@ -233,6 +230,8 @@ public abstract class UmbralAngulos extends Umbral {
 			}
 			
 			level.dinamicaExperimento = dinamicaExperimento;
+			level.setup = setup;
+			level.setup.estimulos.clear();
 			// Extraemos los niveles y los recursos a la carpeta que corresponda
 			PCBuilder.extract(level);
 			PCBuilder.buildJsons(level);
@@ -258,6 +257,12 @@ public abstract class UmbralAngulos extends Umbral {
 		
 	}
 
+	protected void generarDesviaciones (Setup setup) {
+		super.generarDesviaciones(setup);
+		for (int i=0 ; i < setup.desviacionesAngulares.size; i++) {
+			setup.desviacionesAngulares.set(i, setup.desviacionesAngulares.get(i)+90);
+		}
+	}
 		
 	@Override
 	abstract public String getName();

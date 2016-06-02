@@ -59,7 +59,7 @@ public class Tutorial extends GenericExp implements Experiment {
 	public void makeResources() {
 		
 		// Creamos una lista de las lineas a dibujar
-		Array<Dibujo> dibujos = this.createDibujos ();
+		Array<Dibujo> dibujos = this.createDibujos();
 		
 		// Inicializamos el setup
 		this.setup = new Setup();
