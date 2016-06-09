@@ -40,7 +40,7 @@ public class UmbralParalelismoPiloto extends UmbralParalelismo{
 
 		setup.levelPriority=2;
 		setup.tagButton = "Nivel";
-		setup.feedback = false;
+		setup.feedback = true;
 		setup.desvMax = 50;
 		setup.desvMin = 0.1;
 		this.setup = setup;

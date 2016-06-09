@@ -98,8 +98,8 @@ public abstract class UmbralParalelismo extends Umbral {
 				// Ordenamos las listas de estimulos segun dificultad decreciente y
 				// la numeramos
 				seriePos.listaEstimulos.sort();
+				seriePos.listaEstimulos.reverse();
 				serieNeg.listaEstimulos.sort();
-				serieNeg.listaEstimulos.reverse();
 				
 				// Numeramos los recursos por dificultad
 				for (int i = 1; i <= seriePos.listaEstimulos.size; i++) {

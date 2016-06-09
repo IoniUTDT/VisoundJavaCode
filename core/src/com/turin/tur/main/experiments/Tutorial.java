@@ -663,7 +663,10 @@ public class Tutorial extends GenericExp implements Experiment {
 		
 	}
 
-	@Override
+	/**
+	 * Esto tiene sentido para que ejecute el levelCompleted
+	 * @return
+	 */
 	public boolean askNoMoreTrials() {
 		if (this.trialsLeft() == 0) {
 			this.levelCompleted();
@@ -672,6 +675,7 @@ public class Tutorial extends GenericExp implements Experiment {
 			return false;
 		}
 	}
+	
 
 	private void levelCompleted() {
 		for (LevelStatus levelStatus : this.expSettings.levels) {
@@ -697,5 +701,5 @@ public class Tutorial extends GenericExp implements Experiment {
 	String getNameTag() {
 		return "Tutorial";
 	}
-
+	
 }

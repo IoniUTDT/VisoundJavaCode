@@ -31,7 +31,7 @@ public interface Experiment {
 	void stopLevel(); // Se ejecuta cuando se detiene un nivel (la idea es que aca se generen todos los logs y se envien al servidor)
 	// Cosas de interfaz general
 	Array<LevelStatus> levelsStatus(); // Pasa la info para que la pantalla menu pueda armarse como corresponde
-	boolean askNoMoreTrials(); // Indica si se completo el nivel o no.
+	// boolean askNoMoreTrials(); // Indica si se completo el nivel o no.
 	void interrupt(); // Sirve para ejecutar acciones cuando se interrumpe el experimento porque el usuario decide salir del nivel
 	int trialsLeft(); // Indica cuantos trials quedan como maximo (sievr para mostrar indicadores en la interfaz
 	boolean islevelCompleted();

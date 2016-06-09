@@ -11,6 +11,7 @@ import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.experiments.Experiment.GenericExp;
 import com.turin.tur.main.experiments.Experiments.ExperimentLog;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
+import com.turin.tur.main.experiments.Umbral.DinamicaExperimento.TRIAL_TYPE;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Internet;
 import com.turin.tur.main.util.LevelAsset;
@@ -81,14 +82,17 @@ public abstract class Umbral extends GenericExp {
 	}
 	
 	static class Respuesta {
-		DinamicaExperimento.TRIAL_TYPE tipoDeTrial;
 		private Estimulo estimulo;
-		boolean acertado;
-		float confianza;
-		Respuesta (Estimulo estimulo, Boolean rta, float confianza) {
+		private boolean acertado;
+		private float confianza;
+		private TRIAL_TYPE trialType;
+		private int nivelEstimulo;
+		Respuesta (Estimulo estimulo, Boolean rta, float confianza, TRIAL_TYPE trialType, int nivelEstimulo) {
 			this.estimulo = estimulo;
 			this.acertado = rta;
 			this.confianza = confianza;
+			this.trialType = trialType;
+			this.nivelEstimulo = nivelEstimulo;
 		}
 	}
 	
@@ -130,6 +134,7 @@ public abstract class Umbral extends GenericExp {
 		
 	
 	// Funciones comunes a todos los experimentos de umbral
+	/*
 	public boolean askNoMoreTrials() {
 		if (this.trialsLeft() == 0) {
 			return true;
@@ -137,6 +142,7 @@ public abstract class Umbral extends GenericExp {
 			return false;
 		}
 	}
+	*/
 	
 	private void levelCompletedAction() {
 		for (LevelStatus levelStatus : this.expSettings.levels) {
@@ -148,6 +154,7 @@ public abstract class Umbral extends GenericExp {
 		Json json = new Json();
 		FileHelper.writeLocalFile(Resources.Paths.LocalSettingsCopy + this.getClass().getSimpleName() + ".settings", json.toJson(this.expSettings));
 	}
+	
 	
 	public int trialsLeft() {
 		/*
@@ -258,7 +265,7 @@ public abstract class Umbral extends GenericExp {
 	
 	public void returnAnswer(boolean answerIsCorrect, float confianza) {
 		// Almacenamos en el historial lo que paso
-		this.dinamicaExperimento.historial.add(new Respuesta (this.dinamicaExperimento.estimuloActivo, answerIsCorrect, confianza));
+		this.dinamicaExperimento.historial.add(new Respuesta (this.dinamicaExperimento.estimuloActivo, answerIsCorrect, confianza, this.dinamicaExperimento.trialType, this.dinamicaExperimento.nivelEstimulo));
 		// Marcamos que se recibio una rta
 		
 		// Elije si hay que incrementar la dificultad, disminuirla o no hacer nada.
@@ -284,10 +291,10 @@ public abstract class Umbral extends GenericExp {
 		}
 		
 		// Setea el salto entre nivel y nivel
-		float avanceHastaUNOs = this.dinamicaExperimento.historial.size / this.setup.trialsPorNivel * (1 - 1/this.setup.saltoColaUNOFraccion);
+		float avanceHastaUNOs = (float) this.dinamicaExperimento.historial.size / this.setup.trialsPorNivel * (1 - 1f/this.setup.saltoColaUNOFraccion);
 		if (avanceHastaUNOs<1) {
 			int saltoMaximo = this.setup.numeroDeEstimulosPorSerie/this.setup.saltoInicialFraccion;
-			this.dinamicaExperimento.saltosActivos = MathUtils.ceil(saltoMaximo*avanceHastaUNOs);
+			this.dinamicaExperimento.saltosActivos = MathUtils.ceil(saltoMaximo*(1-avanceHastaUNOs));
 		} else {
 			this.dinamicaExperimento.saltosActivos = 1;
 		}
@@ -303,19 +310,24 @@ public abstract class Umbral extends GenericExp {
 		}
 		
 		// Nos fijamos si ya se completo la dinamica o no.
-		if (this.dinamicaExperimento.historial.size == this.setup.trialsPorNivel) {
+		if (this.trialsLeft() == 0) {
 			this.dinamicaExperimento.levelFinalizadoCorrectamente=true;
+			this.levelCompletedAction();
+			this.levelCompleted = true;
+		} else {
+			this.createTrial();			
 		}
 		
 		
 		// Una vez que se actualizo la dinamica anterior pasamos a actualizar el trial si corresponde
+		/* OBSOLETO
 		if (this.askNoMoreTrials()) {
 			this.levelCompletedAction();
 			this.levelCompleted = true;
 		} else {
 			this.createTrial();
 		}
-	
+		*/
 	}
 	
 	protected ArrayMap<Double, ArrayMap<Double, Estimulo>> indexToMap() {

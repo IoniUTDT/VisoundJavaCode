@@ -45,7 +45,7 @@ public class UmbralAngulosPiloto extends UmbralAngulos {
 		
 		setup.levelPriority=2;
 		setup.tagButton = "Nivel";
-		setup.feedback = false;
+		setup.feedback = true;
 		setup.desvMin = 1;
 		setup.desvMax = 80;
 		this.setup = setup;
