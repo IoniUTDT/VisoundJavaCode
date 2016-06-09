@@ -1,12 +1,10 @@
 package com.turin.tur.main.diseno;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.turin.tur.main.experiments.Experiment;
 import com.turin.tur.main.util.Assets;
-import com.turin.tur.main.util.Constants;
 
 
 

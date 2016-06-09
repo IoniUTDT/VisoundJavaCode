@@ -89,30 +89,35 @@ public abstract class UmbralAngulos extends Umbral {
 		// Creamos las categorias correspondientes (para angulos de -360 a 360)
 		if ((info.desviacion < -270) & (info.desviacion >= -360)){
 			imagen.categories.add(CategoriasImagenes.Agudo);
+			imagen.categories.add(CategoriasImagenes.NoRecto);
 		}
 		if (info.desviacion == -270){
 			imagen.categories.add(CategoriasImagenes.Recto);
 		}
 		if ((info.desviacion < -90) & (info.desviacion > -270)){
 			imagen.categories.add(CategoriasImagenes.Obtuso);
+			imagen.categories.add(CategoriasImagenes.NoRecto);
 		}
 		if (info.desviacion == -90) {
 			imagen.categories.add(CategoriasImagenes.Recto);
 		}
 		if ((info.desviacion > -90) & (info.desviacion < 90)){
 			imagen.categories.add(CategoriasImagenes.Agudo);
+			imagen.categories.add(CategoriasImagenes.NoRecto);
 		}
 		if (info.desviacion == 90) {
 			imagen.categories.add(CategoriasImagenes.Recto);
 		}
 		if ((info.desviacion < 270) & (info.desviacion > 90)){
 			imagen.categories.add(CategoriasImagenes.Obtuso);
+			imagen.categories.add(CategoriasImagenes.NoRecto);
 		}
 		if (info.desviacion == 270) {
 			imagen.categories.add(CategoriasImagenes.Recto);
 		}
 		if ((info.desviacion > 270) & (info.desviacion <= 360)){
 			imagen.categories.add(CategoriasImagenes.Agudo);
+			imagen.categories.add(CategoriasImagenes.NoRecto);
 		}
 		// Agregamos las dos lineas para que se dibujen
 		imagen.lineas.add(info.linea1);
@@ -162,8 +167,6 @@ public abstract class UmbralAngulos extends Umbral {
 			dinamicaExperimento.referencia = referencia;
 			dinamicaExperimento.trialsPorNivel = this.setup.trialsPorNivel;
 			
-			// TODO : crear u agregar los estimulos cero
-			
 			// Creamos las series 
 			for (double variacion : this.setup.fluctuacionesLocalesReferenciaSeries) {
 				double anguloFijo = referencia + variacion;
@@ -180,7 +183,7 @@ public abstract class UmbralAngulos extends Umbral {
 				serieObtusos.ladoFijo = anguloFijo;
 				
 				// Creamos los trials (uno para cada lado movil)
-				for (double anguloMovil : estimulosByAngulos.get(anguloFijo).keys()) {
+				for (double anguloMovil : estimulosByAngulos.get(anguloFijo).keys()) { // Esto incluye a los estimulos con nivel de estimulo cero que tienen el lado fijo en la referencia, pero despues se los ignora.
 					// Seleccionamos el recurso
 					EstimuloAngulo recurso = (EstimuloAngulo) estimulosByAngulos.get(anguloFijo).get(anguloMovil);
 					JsonTrial trial = PCBuilder.crearTrial("Indique a que categoría pertenece el ángulo", "",
@@ -189,8 +192,8 @@ public abstract class UmbralAngulos extends Umbral {
 								TIPOdeTRIAL.TEST, recurso.idResource, false, true, this.setup.feedback);
 					recurso.idTrial = trial.Id;
 					
-					// Agregamos a la dinamica que corresponda
-					if ((recurso.desviacion < -270) & (recurso.desviacion >= -360)){
+					// Agregamos a la dinamica que correspondam (nota, aca se elimina de la lista de recursos a los que tienen estinulo 0, osea desviacion 90)
+					if ((recurso.desviacion < -270) & (recurso.desviacion > -360)){
 						serieAgudos.listaEstimulos.add(recurso);
 					}
 					if ((recurso.desviacion < -90) & (recurso.desviacion > -270)){
@@ -202,7 +205,7 @@ public abstract class UmbralAngulos extends Umbral {
 					if ((recurso.desviacion < 270) & (recurso.desviacion > 90)){
 						serieObtusos.listaEstimulos.add(recurso);
 					}
-					if ((recurso.desviacion > 270) & (recurso.desviacion <= 360)){
+					if ((recurso.desviacion > 270) & (recurso.desviacion < 360)){
 						serieAgudos.listaEstimulos.add(recurso);
 					}
 					
@@ -227,6 +230,27 @@ public abstract class UmbralAngulos extends Umbral {
 				// Agregamos las dos series a la dinamica
 				dinamicaExperimento.seriesEstimulos.add(serieAgudos);
 				dinamicaExperimento.seriesEstimulos.add(serieObtusos);
+				
+			}
+			
+			// Creamos el conjunto de estimulos cero
+			for (Double variacion : setup.fluctuacionesLocalesReferenciaEstimuloCero) {
+				// Creamos el trial
+				// Seleccionamos el recurso
+				EstimuloAngulo recurso;
+				if ((referencia+variacion) > 90) {  
+					recurso = (EstimuloAngulo) estimulosByAngulos.get(referencia+variacion).get(90d);
+				} else {
+					recurso = (EstimuloAngulo) estimulosByAngulos.get(referencia+variacion).get(-90d);
+				}
+				JsonTrial trial = PCBuilder.crearTrial("Indique a que categoría pertenece el ángulo", "",
+							DISTRIBUCIONESenPANTALLA.LINEALx2,
+							new int[] {CategoriasImagenes.Recto.ID, CategoriasImagenes.NoRecto.ID},
+							TIPOdeTRIAL.TEST, recurso.idResource, false, true, this.setup.feedback);
+				recurso.idTrial = trial.Id;
+				dinamicaExperimento.estimulosCeros.add(recurso);
+				// Agregamos el trial creado al level
+				level.jsonTrials.add(trial);
 			}
 			
 			level.dinamicaExperimento = dinamicaExperimento;
@@ -270,4 +294,7 @@ public abstract class UmbralAngulos extends Umbral {
 	@Override
 	abstract protected String getNameTag();
 	
+	float getDesviacionCero() {
+		return 90;
+	}
 }

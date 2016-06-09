@@ -57,8 +57,6 @@ public abstract class UmbralParalelismo extends Umbral {
 
 			
 			
-			// TODO : crear u agregar los estimulos cero
-			
 			// Creamos las series
 			
 			for (double variacion : this.setup.fluctuacionesLocalesReferenciaSeries) {
@@ -85,7 +83,7 @@ public abstract class UmbralParalelismo extends Umbral {
 								TIPOdeTRIAL.TEST, recurso.idResource, false, true, this.setup.feedback);
 					recurso.idTrial = trial.Id;
 
-					// Agregamos a la dinamica que corresponda
+					// Agregamos a la dinamica que corresponda (aca se ignoran los estimulos de señal CERO
 					if (recurso.desviacion > 0) {
 						seriePos.listaEstimulos.add(recurso);
 					}
@@ -116,6 +114,21 @@ public abstract class UmbralParalelismo extends Umbral {
 				dinamicaExperimento.seriesEstimulos.add(serieNeg);
 			}
 
+			// Creamos el conjunto de estimulos cero
+			for (Double variacion : setup.fluctuacionesLocalesReferenciaEstimuloCero) {
+				// Creamos el trial
+				// Seleccionamos el recurso
+				Estimulo recurso = estimulosByAngulos.get(referencia+variacion).get(0d);
+				JsonTrial trial = PCBuilder.crearTrial("Indique a que categoría pertenece el estímulo", "",
+						DISTRIBUCIONESenPANTALLA.LINEALx2,
+						new int[] {CategoriasImagenes.Paralelas.ID, CategoriasImagenes.NoParalelas.ID},
+						TIPOdeTRIAL.TEST, recurso.idResource, false, true, this.setup.feedback);
+				recurso.idTrial = trial.Id;
+				dinamicaExperimento.estimulosCeros.add(recurso);
+				// Agregamos el trial creado al level
+				level.jsonTrials.add(trial);
+			}
+			
 			level.dinamicaExperimento = dinamicaExperimento;
 			level.setup = setup;
 			level.setup.estimulos.clear();
@@ -319,4 +332,7 @@ public abstract class UmbralParalelismo extends Umbral {
 	@Override
 	abstract protected String getNameTag();
 
+	float getDesviacionCero() {
+		return 0;
+	}
 }

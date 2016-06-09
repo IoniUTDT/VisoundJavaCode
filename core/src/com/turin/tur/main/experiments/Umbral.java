@@ -109,7 +109,7 @@ public abstract class Umbral extends GenericExp {
 		public int levelPriority; // Prioridad que tiene el nivel en la lista de niveles. Sirve para habilitar a que se tenga que completar un nivel antes que otro.
 		public String tagButton;
 		public boolean feedback;
-		public int testFraction = 5; // Representa la inversa del numero de test que se dedica a testear al usuario enviandole trials faciles.
+		public float testProbability = 0.2f; // Representa la inversa del numero de test que se dedica a testear al usuario enviandole trials faciles.
 		public int numeroDeEstimulosPorSerie;
 		public int saltoInicialFraccion = 4;
 		public int saltoColaUNOFraccion = 5;
@@ -192,6 +192,7 @@ public abstract class Umbral extends GenericExp {
 		this.level = level;
 		this.dinamicaExperimento = (DinamicaExperimento) level.jsonLevel.dinamicaExperimento;
 		this.setup = level.jsonLevel.setup;
+		this.dinamicaExperimento.nivelEstimulo = this.setup.numeroDeEstimulosPorSerie - 1;
 		this.assets = new LevelAsset(level.Id);
 		this.event_initLevel();
 		this.createTrial();
@@ -204,7 +205,7 @@ public abstract class Umbral extends GenericExp {
 	public void createTrial() {
 		
 		// Decide si manda una señal para medir de verdad o un test para probar al usuario
-		if (MathUtils.random(this.setup.testFraction-1)==0) { // Caso en que se mande un test
+		if (MathUtils.randomBoolean(this.setup.testProbability)) { // Caso en que se mande un test
 			this.dinamicaExperimento.trialType = DinamicaExperimento.TRIAL_TYPE.TEST_EASY_Trial;
 			int nivel = MathUtils.random(this.dinamicaExperimento.nivelEstimulo, this.setup.numeroDeEstimulosPorSerie-1);
 			this.dinamicaExperimento.estimuloActivo = this.dinamicaExperimento.seriesEstimulos.random().listaEstimulos.get(nivel);
@@ -363,13 +364,20 @@ public abstract class Umbral extends GenericExp {
 	public void makeResources() {
 		// Inicializamos el setup segun parametros
 		this.makeSetup();
-		// Creamos un recurso para cada imagen necesaria
+		// Creamos un recurso para cada imagen necesaria en las series de estimulo variable
 		for (double referencia : this.setup.angulosReferencia) { // Asume que en esta variable estan los angulos de referencia
 			for (double ladoFijo : this.setup.fluctuacionesLocalesReferenciaSeries) {
 				ladoFijo = ladoFijo + referencia;
 				for (double desviacion : this.setup.desviacionesAngulares) { // Asume que en esta variable estan los angulos a formar para cada referencia, siempre positivos
 					makeResource(ladoFijo, desviacion);
 				}
+			}
+		}
+		// Creamos los recursos correspondientes a cada estimulo de nivel cero
+		for (double referencia : this.setup.angulosReferencia) { // Asume que en esta variable estan los angulos de referencia
+			for (double ladoFijo : this.setup.fluctuacionesLocalesReferenciaEstimuloCero) {
+				ladoFijo = ladoFijo + referencia;
+				makeResource(ladoFijo, this.getDesviacionCero());
 			}
 		}
 		// Guardamos el setup en la carpeta temporal
@@ -379,6 +387,7 @@ public abstract class Umbral extends GenericExp {
 		FileHelper.writeLocalFile(path, json.toJson(this.setup));
 	}
 	
+	abstract float getDesviacionCero();
 	abstract void makeSetup();
 	abstract void makeResource(double ladoFijo, double desviacion);
 	
