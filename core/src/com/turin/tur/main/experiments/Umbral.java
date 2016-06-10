@@ -1,5 +1,6 @@
 package com.turin.tur.main.experiments;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
@@ -226,6 +227,7 @@ public abstract class Umbral extends GenericExp {
 			}
 		}
 		
+		
 		/*  Codigo version vieja!
 		
 		// Seleccionamos una de las convergencias al azar.
@@ -291,13 +293,15 @@ public abstract class Umbral extends GenericExp {
 		}
 		
 		// Setea el salto entre nivel y nivel
-		float avanceHastaUNOs = (float) this.dinamicaExperimento.historial.size / this.setup.trialsPorNivel * (1 - 1f/this.setup.saltoColaUNOFraccion);
+		float avanceHastaUNOs = (float) this.dinamicaExperimento.historial.size / (this.setup.trialsPorNivel * (1 - 1f/this.setup.saltoColaUNOFraccion));
 		if (avanceHastaUNOs<1) {
 			int saltoMaximo = this.setup.numeroDeEstimulosPorSerie/this.setup.saltoInicialFraccion;
 			this.dinamicaExperimento.saltosActivos = MathUtils.ceil(saltoMaximo*(1-avanceHastaUNOs));
 		} else {
 			this.dinamicaExperimento.saltosActivos = 1;
 		}
+		Gdx.app.debug(TAG, "avance:" + avanceHastaUNOs);
+		Gdx.app.debug(TAG, "salto:" + this.dinamicaExperimento.saltosActivos);
 		
 		// Aqui ya se determino si hay que incrementar o dosminuir la dificultad y por lo tanto se aplica, cuidando que no exceda los limites
 		if (incrementarDificultad) {
