@@ -1,33 +1,19 @@
 
 cajas.pack.png
-size: 512,256
+size: 1024,256
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-Animacion
+rectaConfianza
   rotate: false
-  xy: 2, 2
-  size: 17, 12
-  orig: 17, 12
-  offset: 0, 0
-  index: -1
-LogoAudio
-  rotate: false
-  xy: 320, 116
-  size: 100, 100
-  orig: 100, 100
-  offset: 0, 0
-  index: -1
-arrow
-  rotate: false
-  xy: 2, 16
-  size: 200, 200
-  orig: 200, 200
+  xy: 2, 48
+  size: 800, 114
+  orig: 800, 114
   offset: 0, 0
   index: -1
 stimuliLogo
   rotate: false
-  xy: 204, 56
+  xy: 804, 2
   size: 114, 160
   orig: 114, 160
   offset: 0, 0

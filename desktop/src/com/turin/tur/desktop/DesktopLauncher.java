@@ -22,8 +22,8 @@ public class DesktopLauncher {
 			settings.debug = drawDebugOutline;
 			TexturePacker.process(settings, "asset-raw/images", "../android/assets/images",
 					"cajas.pack");
-			TexturePacker.process(settings, "asset-raw/images-ui", "../android/assets/images",
-					"cajas-ui.pack");
+			//TexturePacker.process(settings, "asset-raw/images-ui", "../android/assets/images",
+			//		"cajas-ui.pack");
 		}
 		
 		
