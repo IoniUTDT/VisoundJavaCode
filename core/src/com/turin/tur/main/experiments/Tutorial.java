@@ -31,7 +31,6 @@ public class Tutorial extends GenericExp implements Experiment {
 	
 	private static class Setup {
 		private Array<Recurso> listaRecursos = new Array<Recurso>();
-		private float confianceProbability = 0f;
 	}
 	
 	private static class Recurso {
@@ -591,29 +590,6 @@ public class Tutorial extends GenericExp implements Experiment {
 	
 	
 	
-	
-	/*
-	public void createTrial() {
-		// Creamos el trial correspondiente
-		String savedData = FileHelper.readInternalFile(Resources.Paths.InternalResources + "level" + level.Id + "/trial" + this.dinamicaActiva.trialActivo + ".meta");
-		Json json = new Json();
-		JsonTrial jsonTrial = json.fromJson(JsonTrial.class, savedData);
-		// Cargamos la lista de objetos experimentales
-		Array<ExperimentalObject> elementos = new Array<ExperimentalObject>();
-		for (int idElemento : jsonTrial.elementosId) {
-			ExperimentalObject elemento = new ExperimentalObject(idElemento, this.assets, level.Id);
-			elementos.add(elemento);
-		}
-		ExperimentalObject estimulo = new ExperimentalObject(jsonTrial.rtaCorrectaId, this.assets, level.Id);
-		// Con la info del json del trial tenemos que crear un trial y
-		// cargarlo
-		if (this.trial != null) {
-			this.trial.exit();
-		}
-		this.trial = new Trial(elementos, jsonTrial, estimulo);
-
-	}
-	*/
 
 	@Override
 	public void returnAnswer(boolean answer, float confianza) {
@@ -656,10 +632,10 @@ public class Tutorial extends GenericExp implements Experiment {
 		// Cargamos la lista de objetos experimentales
 		Array<ExperimentalObject> elementos = new Array<ExperimentalObject>();
 		for (int idElemento : jsonTrial.elementosId) {
-			ExperimentalObject elemento = new ExperimentalObject(idElemento, this.assets, level.Id);
+			ExperimentalObject elemento = new ExperimentalObject(idElemento, this.level.levelAssets, level.Id);
 			elementos.add(elemento);
 		}
-		ExperimentalObject estimulo = new ExperimentalObject(jsonTrial.rtaCorrectaId, this.assets, level.Id);
+		ExperimentalObject estimulo = new ExperimentalObject(jsonTrial.rtaCorrectaId, this.level.levelAssets, level.Id);
 		// Con la info del json del trial tenemos que crear un trial
 		return new Trial(elementos, jsonTrial, estimulo);		
 	}

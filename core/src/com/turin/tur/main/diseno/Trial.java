@@ -5,6 +5,7 @@ import com.turin.tur.main.diseno.Boxes.OptionsBox;
 import com.turin.tur.main.diseno.Boxes.Box;
 import com.turin.tur.main.diseno.Boxes.StimuliBox;
 import com.turin.tur.main.diseno.Boxes.TrainingBox;
+import com.turin.tur.main.logic.LevelController;
 import com.turin.tur.main.logic.LevelController.EstadoLoop;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
@@ -73,10 +74,10 @@ public class Trial {
 		}
 	}
 	
-	public void update(float deltaTime, EstadoLoop estadoLoop, RunningSound runningSound) {
+	public void update(float deltaTime, LevelController levelController) {
 		// Actualiza las boxes
 		for (Box box : allBox) {
-			box.update(deltaTime, runningSound, estadoLoop);
+			box.update(deltaTime, levelController);
 		}
 	}
 	
@@ -105,19 +106,19 @@ public class Trial {
 	/*
 	 * Metodo que se ejecuta al tocar un box (ya sea Entrenamiento o Test)
 	 */
-	public void boxSelected(Box boxTocada, EstadoLoop estadoLoop, RunningSound runningSound) {
+	public void boxSelected(LevelController levelController) {
 		// Revisamos que onda si se acerto o no. Acertar significa que el elemento tocado y el estimulo compartan al menos una categoria.
 		
 		// TODO Hay que revisar aca la logica!!! Estoy muy quemado!
 		
 		boolean answerCorrect = false;
-		for (CategoriasImagenes categoria : boxTocada.contenido.categorias) {
+		for (CategoriasImagenes categoria : levelController.boxTocada.contenido.categorias) {
 			if (this.estimulo.categorias.contains(categoria, false)) {
 				answerCorrect = true;
 			}
 		}
 		
-		boxTocada.answerCorrect = answerCorrect;
-		boxTocada.select(runningSound, estadoLoop);
+		levelController.boxTocada.answerCorrect = answerCorrect;
+		levelController.boxTocada.select(levelController);
 	}
 }

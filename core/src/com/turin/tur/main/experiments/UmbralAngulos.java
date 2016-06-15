@@ -159,6 +159,7 @@ public abstract class UmbralAngulos extends Umbral {
 		for (double referencia : this.setup.angulosReferencia) {
 			// Creamos el nivel
 			JsonLevel level = PCBuilder.crearLevel();
+			level.genericSetup.confianceProbability = 0.3f;
 			level.levelTitle = "Angulos: " + referencia;
 
 			// Creamos el elemento de la info dinamica que corresponde al nivel

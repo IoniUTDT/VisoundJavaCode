@@ -113,7 +113,6 @@ public abstract class Umbral extends GenericExp {
 		double desvMin;
 		double desvMax;
 		boolean logscale = true;
-		public float confianceProbability = 0.3f;
 	}
 	
 	// Cosas generales
@@ -191,10 +190,10 @@ public abstract class Umbral extends GenericExp {
 		// Cargamos la lista de objetos experimentales
 		Array<ExperimentalObject> elementos = new Array<ExperimentalObject>();
 		for (int idElemento : jsonTrial.elementosId) {
-			ExperimentalObject elemento = new ExperimentalObject(idElemento, this.assets, level.Id);
+			ExperimentalObject elemento = new ExperimentalObject(idElemento, this.level.levelAssets, level.Id);
 			elementos.add(elemento);
 		}
-		ExperimentalObject estimulo = new ExperimentalObject(jsonTrial.rtaCorrectaId, this.assets, level.Id);
+		ExperimentalObject estimulo = new ExperimentalObject(jsonTrial.rtaCorrectaId, this.level.levelAssets, level.Id);
 		
 		return new Trial(elementos, jsonTrial, estimulo);
 	}

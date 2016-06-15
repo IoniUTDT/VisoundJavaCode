@@ -46,7 +46,7 @@ public abstract class UmbralParalelismo extends Umbral {
 		for (double referencia : this.setup.angulosReferencia) {
 			// Creamos el nivel
 			JsonLevel level = PCBuilder.crearLevel();
-			// level.tipoDeLevel = TIPOdeLEVEL.UMBRALPARALELISMO;
+			level.genericSetup.confianceProbability = 0.3f;
 			level.levelTitle = "Paralelismo: " + referencia;
 
 			// Creamos el elemento de la info dinamica que corresponde al nivel

@@ -3,6 +3,7 @@ package com.turin.tur.main.experiments;
 import com.badlogic.gdx.utils.Array;
 import com.turin.tur.main.diseno.Session;
 
+
 /**
  * Este paquete esta pensado para almacenar todo lo que tiene que ver con los diseños experimentales.
  * @author ionatan
@@ -49,6 +50,8 @@ public class Experiments {
 		public long levelInstance;
 		public String expName;
 	}
-	
-	
+
+	public static class GenericSetup {
+		public float confianceProbability = 0;
+	}
 }

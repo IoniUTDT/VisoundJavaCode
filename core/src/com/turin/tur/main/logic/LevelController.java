@@ -60,7 +60,7 @@ public class LevelController implements InputProcessor {
 	
 	public final float blankTime = 0.2f; // Tiempo que debe dejar la pantalla en blanco entre trial y trial (en segundos) 
 	public float timeInTrial = 0;
-	private Box boxTocada;
+	public Box boxTocada;
 	private float confianzaReportada;
 		
 	public LevelController(Visound game, Level level) {
@@ -70,6 +70,7 @@ public class LevelController implements InputProcessor {
 		this.level = level; 
 		this.initCamera();
 		this.game.expActivo.initLevel(this.level);
+		this.runningSound = new RunningSound(this.level.levelAssets);
 		
 		// Selecciona el trial que corresponda
 		this.trial = this.game.expActivo.getNextTrial();
@@ -88,6 +89,7 @@ public class LevelController implements InputProcessor {
 	}
 
 	public void update(float deltaTime) {
+		Gdx.app.debug(TAG, estadoLoop.toString());
 		this.timeInTrial = this.timeInTrial + deltaTime;
 		
 		if (this.estadoLoop == EstadoLoop.PantallaBlanca) {
@@ -97,17 +99,18 @@ public class LevelController implements InputProcessor {
 		}
 		
 		if (this.estadoLoop == EstadoLoop.ListoParaProcesarBox) {
-			this.trial.boxSelected(this.boxTocada, this.estadoLoop, runningSound); // El box tiene que decidir si el estatus cambia a feedback, a reproducri sonido o a cambiar trial
+			this.trial.boxSelected(this); // El box tiene que decidir si el estatus cambia a feedback, a reproducri sonido o a cambiar trial
 		}
 		
 		if (this.estadoLoop.update) {
 			// Actualiza el trial
-			this.trial.update(deltaTime, this.estadoLoop, this.runningSound); // El trial tiene que decidir cuando termina el feedback o la reproduccion de sonido para activar el cambio de trial
+			this.trial.update(deltaTime, this); // El trial tiene que decidir cuando termina el feedback o la reproduccion de sonido para activar el cambio de trial
 			// actualiza cosas generales
 			cameraHelper.update(deltaTime);
 		}
 			
 		if (this.estadoLoop == EstadoLoop.CambiarTrial) {
+			this.game.expActivo.returnAnswer(this.boxTocada.answerCorrect, this.confianzaReportada);
 			if (this.game.expActivo.islevelCompleted()) {
 				this.estadoLoop = EstadoLoop.LevelFinalizado;
 				this.game.expActivo.levelCompleted();
@@ -193,7 +196,7 @@ public class LevelController implements InputProcessor {
 				}
 				
 				if (elementoTocado) {
-					if (MathUtils.randomBoolean(this.level.jsonLevel.setup.confianceProbability)) {
+					if (MathUtils.randomBoolean(this.level.jsonLevel.genericSetup.confianceProbability)) {
 						this.estadoLoop = EstadoLoop.EsperandoConfianza;
 					} else {
 						this.estadoLoop = EstadoLoop.ListoParaProcesarBox;

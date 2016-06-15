@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.turin.tur.main.diseno.RunningSound.NEXT;
+import com.turin.tur.main.logic.LevelController;
 import com.turin.tur.main.logic.LevelController.EstadoLoop;
 import com.turin.tur.main.util.Assets;
 import com.turin.tur.main.util.Constants;
@@ -46,8 +47,8 @@ public abstract class Boxes {
 		}
 			
 		protected abstract void specificRender (SpriteBatch batch, RunningSound runningSound);
-		protected abstract void update(float deltaTime, RunningSound sound, EstadoLoop estadoLoop);
-		public abstract void select(RunningSound runningSound, EstadoLoop estadoLoop);
+		protected abstract void update(float deltaTime, LevelController levelControler);
+		public abstract void select(LevelController levelControler);
 		
 		public void SetPosition(float xCenter, float yCenter) {
 			this.posicionCenter.x = xCenter;
@@ -106,25 +107,25 @@ public abstract class Boxes {
 		}
 
 		@Override
-		public void select(RunningSound runningSound, EstadoLoop estadoLoop) {
+		public void select(LevelController levelController) {
 			if (!this.contenido.noSound) {
-				runningSound.action = NEXT.PLAY;
-				runningSound.nextContenido = this.contenido;
+				levelController.runningSound.action = NEXT.PLAY;
+				levelController.runningSound.nextContenido = this.contenido;
 			} else {
-				runningSound.stop();
+				levelController.runningSound.stop();
 			}
 			if (this.answerCorrect) {
-				estadoLoop = EstadoLoop.CambiarTrial;
+				levelController.estadoLoop = EstadoLoop.CambiarTrial;
 			} else {
-				estadoLoop = EstadoLoop.EsperandoSeeleccionDeBox;
+				levelController.estadoLoop = EstadoLoop.EsperandoSeeleccionDeBox;
 			}
 		}
 
 		@Override
-		protected void update(float deltaTime, RunningSound runningSound, EstadoLoop estadoLoop) {
-			if (runningSound.running) {
-				if (runningSound.playTime > this.soundDuracionReproduccion) {
-					runningSound.stop();
+		protected void update(float deltaTime, LevelController levelController) {
+			if (levelController.runningSound.running) {
+				if (levelController.runningSound.playTime > this.soundDuracionReproduccion) {
+					levelController.runningSound.stop();
 				}
 			}	
 		}
@@ -244,23 +245,25 @@ public abstract class Boxes {
 		}
 
 		@Override
-		protected void update(float deltaTime, RunningSound sound, EstadoLoop estadoLoop) {
-			this.answerAnimationTime += deltaTime;
-			if (answerAnimationTime > Constants.Box.ANIMATION_ANSWER_TIME) {
-				this.givinFeedback = false;
-				estadoLoop = EstadoLoop.CambiarTrial;
+		protected void update(float deltaTime, LevelController levelController) {
+			if (this.givinFeedback) {
+				this.answerAnimationTime += deltaTime;
+				if (answerAnimationTime > Constants.Box.ANIMATION_ANSWER_TIME) {
+					this.givinFeedback = false;
+					levelController.estadoLoop = EstadoLoop.CambiarTrial;
+				}
 			}
 		}
 
 		@Override
-		public void select(RunningSound runningSound, EstadoLoop estadoLoop) {
+		public void select(LevelController levelController) {
 			if (this.giveFeedback) {
-				estadoLoop = EstadoLoop.DandoFeedback;
+				levelController.estadoLoop = EstadoLoop.DandoFeedback;
 				this.givinFeedback = true;
 				this.answerAnimationTime = 0;
-				runningSound.stop();
+				levelController.runningSound.stop();
 			} else {
-				estadoLoop = EstadoLoop.CambiarTrial;
+				levelController.estadoLoop = EstadoLoop.CambiarTrial;
 			}
 		}
 	}
@@ -299,15 +302,15 @@ public abstract class Boxes {
 		}
 
 		@Override
-		protected void update(float deltaTime, RunningSound runningSound, EstadoLoop estadoLoop) {
+		protected void update(float deltaTime, LevelController levelController) {
 			if (!this.contenido.noSound) {
-				if (!runningSound.running) {
+				if (!levelController.runningSound.running) {
 					this.delayAutoreproducir = this.delayAutoreproducir + deltaTime;
 				}
 				if (this.delayAutoreproducir > Constants.Box.DELAY_ESTIMULO_MODO_SELECCIONAR) { //TODO cambiar nombre a esta constante
-					if (estadoLoop == EstadoLoop.EsperandoSeeleccionDeBox) {
-						runningSound.action = NEXT.PLAY;
-						runningSound.nextContenido = this.contenido;
+					if (levelController.estadoLoop == EstadoLoop.EsperandoSeeleccionDeBox) {
+						levelController.runningSound.action = NEXT.PLAY;
+						levelController.runningSound.nextContenido = this.contenido;
 						this.delayAutoreproducir = 0;
 					}
 				}
@@ -315,8 +318,8 @@ public abstract class Boxes {
 		}
 
 		@Override
-		public void select(RunningSound runningSound, EstadoLoop estadoLoop) {
-			estadoLoop = EstadoLoop.EsperandoSeeleccionDeBox; // Esta linea deberia ser innecesaria porque el box estimulo nunca se deberia tocar para algo util. 
+		public void select(LevelController levelController) {
+			levelController.estadoLoop = EstadoLoop.EsperandoSeeleccionDeBox; // Esta linea deberia ser innecesaria porque el box estimulo nunca se deberia tocar para algo util. 
 		} 
 		
 	}

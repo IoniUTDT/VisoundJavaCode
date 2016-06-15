@@ -33,7 +33,6 @@ public class LevelScreen extends AbstractGameScreen  {
 			}
 		}
 		this.levelNumber=levelNumber;
-		// this.levelAssets = new LevelAsset (level);
 	}
 
 	@Override

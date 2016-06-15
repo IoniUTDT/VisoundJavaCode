@@ -25,6 +25,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.Level.JsonLevel;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
+import com.turin.tur.main.experiments.Experiments.GenericSetup;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
 import com.turin.tur.main.util.Constants.Resources;
@@ -183,6 +184,7 @@ public class PCBuilder {
 		jsonLevel.Id = Builder.contadorLevels;
 		jsonLevel.resourceVersion = Builder.ResourceVersion;
 		jsonLevel.levelVersion = Builder.levelVersionFinal;
+		jsonLevel.genericSetup = new GenericSetup();
 		return jsonLevel;
 	}
 

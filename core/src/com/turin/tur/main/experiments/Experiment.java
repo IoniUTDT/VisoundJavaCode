@@ -10,10 +10,10 @@ import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.main.experiments.Experiments.ExpSettings;
 import com.turin.tur.main.experiments.Experiments.ExperimentLog;
+import com.turin.tur.main.experiments.Experiments.GenericSetup;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Internet;
-import com.turin.tur.main.util.LevelAsset;
 import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.main.util.Internet.TIPO_ENVIO;
 
@@ -45,8 +45,8 @@ public interface Experiment {
 		protected Level level;
 		protected Session session;
 		protected Trial trial;
-		protected LevelAsset assets;
 		public boolean levelCompleted;
+		public GenericSetup genericSetup;
 		
 		// Logs
 		protected ExperimentLog expLog;
@@ -85,7 +85,7 @@ public interface Experiment {
 			this.expSettings = json.fromJson(Experiments.ExpSettings.class, savedData);
 			this.session = session;
 		}
-
+		
 		public boolean islevelCompleted() {
 			return this.levelCompleted;
 		}
