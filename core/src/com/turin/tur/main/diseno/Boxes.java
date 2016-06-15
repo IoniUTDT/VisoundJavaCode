@@ -29,7 +29,7 @@ public abstract class Boxes {
 		public Vector2 posicionCenter; // Esta es la posicion de la caja dada por las coordenadas de su centro. 
 		public Sprite spr; // Guarda la imagen que se va a mostrar (se genera a partir del contenido de la caja)
 		
-	
+		public boolean answerCorrect;
 		// Variables especificas de cada tipo pero que estan en la clase general porque se llaman desde afuera
 		
 		public void render(SpriteBatch batch, RunningSound runningSound) {
@@ -47,7 +47,7 @@ public abstract class Boxes {
 			
 		protected abstract void specificRender (SpriteBatch batch, RunningSound runningSound);
 		protected abstract void update(float deltaTime, RunningSound sound, EstadoLoop estadoLoop);
-		public abstract void select(RunningSound runningSound);
+		public abstract void select(RunningSound runningSound, EstadoLoop estadoLoop);
 		
 		public void SetPosition(float xCenter, float yCenter) {
 			this.posicionCenter.x = xCenter;
@@ -66,7 +66,6 @@ public abstract class Boxes {
 		// Variables utiles para las cajas que son reproducibles
 		private float soundDuracionReproduccion; //Tiempo total establecido para el sonido (ojo que no es necesariamente el tiempo total del sonido, pero se trabaja con sonidos a priori de longitud fija 
 		private Sprite soundAnimationSpr; // imagen para mostrar la animacion de reproduccion del sonido 
-		public boolean alreadySelected;
 		
 		public TrainingBox (ExperimentalObject contenido) {
 			
@@ -107,12 +106,17 @@ public abstract class Boxes {
 		}
 
 		@Override
-		public void select(RunningSound runningSound) {
+		public void select(RunningSound runningSound, EstadoLoop estadoLoop) {
 			if (!this.contenido.noSound) {
 				runningSound.action = NEXT.PLAY;
 				runningSound.nextContenido = this.contenido;
 			} else {
 				runningSound.stop();
+			}
+			if (this.answerCorrect) {
+				estadoLoop = EstadoLoop.CambiarTrial;
+			} else {
+				estadoLoop = EstadoLoop.EsperandoSeeleccionDeBox;
 			}
 		}
 
@@ -134,7 +138,6 @@ public abstract class Boxes {
 		private Sprite answerSprFalse; // Imagen para respuestas falsas
 		public boolean givinFeedback;
 		public boolean giveFeedback;
-		public boolean answerCorrect;
 		
 		public OptionsBox (ExperimentalObject contenido,boolean feedback){
 			// Carga cosas relacionadas al contenido
@@ -250,11 +253,14 @@ public abstract class Boxes {
 		}
 
 		@Override
-		public void select(RunningSound runningSound) {
+		public void select(RunningSound runningSound, EstadoLoop estadoLoop) {
 			if (this.giveFeedback) {
+				estadoLoop = EstadoLoop.DandoFeedback;
 				this.givinFeedback = true;
 				this.answerAnimationTime = 0;
 				runningSound.stop();
+			} else {
+				estadoLoop = EstadoLoop.CambiarTrial;
 			}
 		}
 	}
@@ -309,7 +315,9 @@ public abstract class Boxes {
 		}
 
 		@Override
-		public void select(RunningSound runningSound) {} // No hace nada
+		public void select(RunningSound runningSound, EstadoLoop estadoLoop) {
+			estadoLoop = EstadoLoop.EsperandoSeeleccionDeBox; // Esta linea deberia ser innecesaria porque el box estimulo nunca se deberia tocar para algo util. 
+		} 
 		
 	}
 }

@@ -5,7 +5,6 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.ExperimentalObject;
-import com.turin.tur.main.diseno.Level;
 import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.main.diseno.Level.JsonLevel;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
@@ -14,7 +13,6 @@ import com.turin.tur.main.experiments.Experiments.ExpSettings;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
 import com.turin.tur.main.experiments.Experiments.TIPOdeEXPERIMENTO;
 import com.turin.tur.main.util.FileHelper;
-import com.turin.tur.main.util.LevelAsset;
 import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
@@ -32,7 +30,8 @@ public class Tutorial extends GenericExp implements Experiment {
 	
 	
 	private static class Setup {
-		Array<Recurso> listaRecursos = new Array<Recurso>();
+		private Array<Recurso> listaRecursos = new Array<Recurso>();
+		private float confianceProbability = 0f;
 	}
 	
 	private static class Recurso {

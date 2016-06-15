@@ -25,7 +25,6 @@ public class Trial {
 	public StimuliBox stimuliBox;
 	public Array<Box> allBox = new Array<Box>();
 	// boolean somethingTouched = false; // almacena si ya se respondio el trial o no 
-	private boolean lastAnswerCorrect; // Guarda si se marco la opcion correcta en un trial en caso de que corresponda
 	
 	public Trial (Array<ExperimentalObject> elementos, JsonTrial jsonTrial, ExperimentalObject estimulo) {
 		this.elementos = elementos;
@@ -117,13 +116,8 @@ public class Trial {
 				answerCorrect = true;
 			}
 		}
-		if (boxTocada.getClass() == OptionsBox.class) {
-			OptionsBox box =  (OptionsBox) boxTocada; 
-			box.answerCorrect = answerCorrect;
-			box.select(runningSound);
-		} else {
-			boxTocada.select(runningSound);
-		}
-		this.lastAnswerCorrect = answerCorrect;
+		
+		boxTocada.answerCorrect = answerCorrect;
+		boxTocada.select(runningSound, estadoLoop);
 	}
 }
