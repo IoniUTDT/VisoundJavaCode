@@ -1,6 +1,5 @@
 package com.turin.tur.main.experiments;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
@@ -44,7 +43,7 @@ public abstract class Umbral extends GenericExp {
 		Array<Respuesta> historial = new Array<Respuesta>(); // Se almacena la info de lo que va pasando
 		Array<SerieEstimulos> seriesEstimulos = new Array<SerieEstimulos>();
 		Array<Estimulo> estimulosCeros = new Array<Estimulo>();
-		int proporcionAciertos = 2; // Es la cantidad de aciertos que tiene que haber en el numero total de ultimas respuestas para que aumente la dificultad
+		int proporcionAciertos = 3; // Es la cantidad de aciertos que tiene que haber en el numero total de ultimas respuestas para que aumente la dificultad
 		double referencia;
 		protected Estimulo estimuloActivo;
 		
@@ -170,7 +169,11 @@ public abstract class Umbral extends GenericExp {
 		// Decide si manda una señal para medir de verdad o un test para probar al usuario
 		if (MathUtils.randomBoolean(this.setup.testProbability)) { // Caso en que se mande un test
 			this.dinamicaExperimento.trialType = DinamicaExperimento.TRIAL_TYPE.TEST_EASY_Trial;
-			int nivel = MathUtils.random(this.dinamicaExperimento.nivelEstimulo, this.setup.numeroDeEstimulosPorSerie-1);
+			int base = this.dinamicaExperimento.nivelEstimulo *2;
+			if (base>this.setup.numeroDeEstimulosPorSerie-1 - 10) {
+				base = this.setup.numeroDeEstimulosPorSerie-1 - 10;
+			}
+			int nivel = MathUtils.random(base, this.setup.numeroDeEstimulosPorSerie-1);
 			this.dinamicaExperimento.estimuloActivo = this.dinamicaExperimento.seriesEstimulos.random().listaEstimulos.get(nivel);
 		} else {
 			if (MathUtils.randomBoolean()) {
@@ -233,8 +236,6 @@ public abstract class Umbral extends GenericExp {
 		} else {
 			this.dinamicaExperimento.saltosActivos = 1;
 		}
-		Gdx.app.debug(TAG, "avance:" + avanceHastaUNOs);
-		Gdx.app.debug(TAG, "salto:" + this.dinamicaExperimento.saltosActivos);
 		
 		// Aqui ya se determino si hay que incrementar o dosminuir la dificultad y por lo tanto se aplica, cuidando que no exceda los limites
 		if (incrementarDificultad) {
