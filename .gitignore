@@ -67,7 +67,7 @@ build/
 android/assets/experimentalsource/
 android/assets/experimentalsource.old/
 android/assets/resources/
-desktop/asset-raw/
+#desktop/asset-raw/
 desktop/logs/
 desktop/temp/
 desktop/logSent/

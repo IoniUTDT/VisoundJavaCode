@@ -122,6 +122,10 @@ public class Constants {
 		public static final float SELECT_BOX_ANCHO_RTA = 0.1f;
 	}
 
+	public class Confianza {
+		public static final float ALTO = 0.5f;
+		public static final float ANCHO = 2;
+	}
 	
 	public static final String SPANISH_FONT_NAME = "fonts/goodfish rg.ttf";
 	

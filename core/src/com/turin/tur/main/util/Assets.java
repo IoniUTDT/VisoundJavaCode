@@ -84,11 +84,13 @@ public class Assets implements Disposable, AssetErrorListener {
 	public class Imagenes {
 		
 		public AtlasRegion stimuliLogo;
-		public AtlasRegion arrowLevel;
+		// public AtlasRegion arrowLevel;
+		public AtlasRegion rectaConfianza;
 		
 		public Imagenes (TextureAtlas atlas) {
 			stimuliLogo = atlas.findRegion("stimuliLogo");
-			arrowLevel = atlas.findRegion("arrow");
+			//arrowLevel = atlas.findRegion("arrow");
+			rectaConfianza = atlas.findRegion("rectaConfianza");
 		}
 	}
 	

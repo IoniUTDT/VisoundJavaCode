@@ -89,7 +89,7 @@ public class LevelController implements InputProcessor {
 	}
 
 	public void update(float deltaTime) {
-		Gdx.app.debug(TAG, estadoLoop.toString());
+		//Gdx.app.debug(TAG, estadoLoop.toString());
 		this.timeInTrial = this.timeInTrial + deltaTime;
 		
 		if (this.estadoLoop == EstadoLoop.PantallaBlanca) {
