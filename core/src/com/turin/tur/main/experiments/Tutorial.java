@@ -28,7 +28,7 @@ public class Tutorial extends GenericExp implements Experiment {
 	String expName = "Tutorial";
 	private Setup setup;
 	TIPOdeEXPERIMENTO tipoDeExperimento = TIPOdeEXPERIMENTO.TutorialBasico;
-	private DinamicaTutorial dinamicaActiva;
+	private DinamicaTutorial dinamicaTutorial;
 	
 	
 	private static class Setup {
@@ -308,48 +308,6 @@ public class Tutorial extends GenericExp implements Experiment {
 		dibujo.lineas.add(linea);
 		dibujos.add(dibujo);
 
-		/*
-		// Lineas paralelas 3
-		dibujo = new Dibujo();
-		dibujo.tag = "Paralelas3";
-		linea = new Linea();
-		linea.radial.Xcenter = tamano/2;
-		linea.radial.Ycenter = tamano/3;
-		linea.radial.angulo = 0;
-		linea.radial.largo = tamano*0.8;
-		linea.lineaFromRadial();
-		dibujo.lineas.add(linea);
-		linea = new Linea();
-		linea.radial.Xcenter = tamano/2;
-		linea.radial.Ycenter = tamano/3*2;
-		linea.radial.angulo = 0;
-		linea.radial.largo = tamano*0.8;
-		linea.lineaFromRadial();
-		dibujo.lineas.add(linea);
-		dibujos.add(dibujo);
-		*/
-		
-		/*
-		// Lineas paralelas 4
-		dibujo = new Dibujo();
-		dibujo.tag = "Paralelas4";
-		linea = new Linea();
-		linea.radial.Xcenter = tamano/3;
-		linea.radial.Ycenter = tamano/2;
-		linea.radial.angulo = 90;
-		linea.radial.largo = tamano*0.8;
-		linea.lineaFromRadial();
-		dibujo.lineas.add(linea);
-		linea = new Linea();
-		linea.radial.Xcenter = tamano/3*2;
-		linea.radial.Ycenter = tamano/2;
-		linea.radial.angulo = 90;
-		linea.radial.largo = tamano*0.8;
-		linea.lineaFromRadial();
-		dibujo.lineas.add(linea);
-		dibujos.add(dibujo);
-		*/
-		
 		// Lineas NO paralelas 1
 		dibujo = new Dibujo();
 		dibujo.tag = "NoParalelas1";
@@ -516,8 +474,6 @@ public class Tutorial extends GenericExp implements Experiment {
 		dibujo.lineas.add(linea);
 		dibujos.add(dibujo);
 		
-		
-		
 		return dibujos;
 		
 	}
@@ -612,7 +568,32 @@ public class Tutorial extends GenericExp implements Experiment {
 
 	}
 
-	@Override
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/*
 	public void createTrial() {
 		// Creamos el trial correspondiente
 		String savedData = FileHelper.readInternalFile(Resources.Paths.InternalResources + "level" + level.Id + "/trial" + this.dinamicaActiva.trialActivo + ".meta");
@@ -630,76 +611,63 @@ public class Tutorial extends GenericExp implements Experiment {
 		if (this.trial != null) {
 			this.trial.exit();
 		}
-		this.trial = new Trial(elementos, jsonTrial, this.assets, estimulo);
+		this.trial = new Trial(elementos, jsonTrial, estimulo);
 
 	}
+	*/
 
 	@Override
 	public void returnAnswer(boolean answer, float confianza) {
 		// Cambiamos el trial al siguiente de la lista
-		if (this.askNoMoreTrials()) { 
+		if (this.trialsLeft()==0) { 
 			this.levelCompleted = true;
-			// Aca iria alguna accion como reportar algo
 		} else {
-			int thisTrialIndex = this.dinamicaActiva.listaDeTrials.indexOf(this.dinamicaActiva.trialActivo, false);
-			this.dinamicaActiva.trialActivo = this.dinamicaActiva.listaDeTrials.get(thisTrialIndex +1);
-			this.createTrial();
+			int thisTrialIndex = this.dinamicaTutorial.listaDeTrials.indexOf(this.dinamicaTutorial.trialActivo, false);
+			this.dinamicaTutorial.trialActivo = this.dinamicaTutorial.listaDeTrials.get(thisTrialIndex +1);
 		} 	
 	}
 
 	@Override
-	public void initLevel(Level level) {
+	public void specificInitLevel() {
 		// Cargamos los datos especificos del nivel
-		this.level = level;
-		this.dinamicaActiva = (DinamicaTutorial) level.jsonLevel.dinamicaExperimento;
-		this.assets = new LevelAsset(level.Id);
-		this.event_initLevel();
-		this.createTrial();
-	}
-
-	@Override
-	public void stopLevel() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * Esto tiene sentido para que ejecute el levelCompleted
-	 * @return
-	 */
-	public boolean askNoMoreTrials() {
-		if (this.trialsLeft() == 0) {
-			this.levelCompleted();
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-
-	private void levelCompleted() {
-		for (LevelStatus levelStatus : this.expSettings.levels) {
-			if (levelStatus.id == this.level.Id) {
-				levelStatus.alreadyPlayed = true;
-			}
-		}
-		Json json = new Json();
-		FileHelper.writeLocalFile(Resources.Paths.LocalSettingsCopy + this.getClass().getSimpleName() + ".settings", json.toJson(this.expSettings));
+		this.dinamicaTutorial = (DinamicaTutorial) level.jsonLevel.dinamicaExperimento;
 	}
 
 	@Override
 	public void interrupt() {
-		// TODO Ver que onda si hace falta hacer algo cuando se sale del nivel, por ahora no.
+		// Ver que onda si hace falta hacer algo cuando se sale del nivel, por ahora no.
 	}
 
 	@Override
 	public int trialsLeft() {
-		int thisTrialIndex = this.dinamicaActiva.listaDeTrials.indexOf(this.dinamicaActiva.trialActivo, false);
-		return this.dinamicaActiva.listaDeTrials.size - (thisTrialIndex + 1);
+		int thisTrialIndex = this.dinamicaTutorial.listaDeTrials.indexOf(this.dinamicaTutorial.trialActivo, false);
+		return this.dinamicaTutorial.listaDeTrials.size - (thisTrialIndex + 1);
 	}
 	
-	String getNameTag() {
+	public String getNameTag() {
 		return "Tutorial";
+	}
+
+	@Override
+	public Trial getNextTrial() {
+		// Creamos el trial correspondiente
+		String savedData = FileHelper.readInternalFile(Resources.Paths.InternalResources + "level" + level.Id + "/trial" + this.dinamicaTutorial.trialActivo + ".meta");
+		Json json = new Json();
+		JsonTrial jsonTrial = json.fromJson(JsonTrial.class, savedData);
+		// Cargamos la lista de objetos experimentales
+		Array<ExperimentalObject> elementos = new Array<ExperimentalObject>();
+		for (int idElemento : jsonTrial.elementosId) {
+			ExperimentalObject elemento = new ExperimentalObject(idElemento, this.assets, level.Id);
+			elementos.add(elemento);
+		}
+		ExperimentalObject estimulo = new ExperimentalObject(jsonTrial.rtaCorrectaId, this.assets, level.Id);
+		// Con la info del json del trial tenemos que crear un trial
+		return new Trial(elementos, jsonTrial, estimulo);		
+	}
+
+	@Override
+	protected void sendDataLevel() {
+		// En el caso del tutorial no enviamos datos del nivel cuando finaliza
 	}
 	
 }

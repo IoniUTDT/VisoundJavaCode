@@ -26,10 +26,11 @@ public class Level {
 		this.initlevel(level);
 	}
 
-	private void initlevel(int level) {
-		this.jsonLevel = loadLevel(level);
+	private void initlevel(int levelNumber) {
+		this.jsonLevel = loadLevel(levelNumber);
 		this.Id = jsonLevel.Id;
 		this.levelTitle = jsonLevel.levelTitle;
+		this.levelAssets = new LevelAsset(this.Id);
 	}
 
 	public void levelDispose() {

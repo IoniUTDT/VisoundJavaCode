@@ -6,7 +6,8 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.turin.tur.main.diseno.Trial.RunningSound.NEXT;
+import com.turin.tur.main.diseno.RunningSound.NEXT;
+import com.turin.tur.main.logic.LevelController.EstadoLoop;
 import com.turin.tur.main.util.Assets;
 import com.turin.tur.main.util.Constants;
 
@@ -31,7 +32,7 @@ public abstract class Boxes {
 	
 		// Variables especificas de cada tipo pero que estan en la clase general porque se llaman desde afuera
 		
-		public void render(SpriteBatch batch, Trial trial) {
+		public void render(SpriteBatch batch, RunningSound runningSound) {
 			// Render the main content of the box
 			float x;
 			float y;
@@ -41,13 +42,12 @@ public abstract class Boxes {
 			y = posicionCenter.y - Constants.Box.TAMANO / 2;
 			spr.setPosition(x, y);
 			spr.draw(batch);
-			specificRender(batch, trial);
+			specificRender(batch, runningSound);
 		}
 			
-		protected abstract void specificRender (SpriteBatch batch, Trial trial);
-		protected abstract void update(float deltaTime, Trial trial);
-		public abstract void select(Trial trial);
-		public abstract void unSelect(Trial trial);
+		protected abstract void specificRender (SpriteBatch batch, RunningSound runningSound);
+		protected abstract void update(float deltaTime, RunningSound sound, EstadoLoop estadoLoop);
+		public abstract void select(RunningSound runningSound);
 		
 		public void SetPosition(float xCenter, float yCenter) {
 			this.posicionCenter.x = xCenter;
@@ -92,14 +92,14 @@ public abstract class Boxes {
 
 	
 		@Override
-		protected void specificRender (SpriteBatch batch, Trial trial) {
+		protected void specificRender (SpriteBatch batch, RunningSound runningSound) {
 			// Render the animation of the box
-			if (trial.runningSound.running) {
-				if (trial.runningSound.contenido == this.contenido) { // Esto funciona bien si el objeto cargado en el running proviene exactamente del mismo lugar que el cargado en el box. Hay que tener cuidado que si se repite contenido en dos boxes, sean instancias diferentes.
+			if (runningSound.running) {
+				if (runningSound.contenido == this.contenido) { // Esto funciona bien si el objeto cargado en el running proviene exactamente del mismo lugar que el cargado en el box. Hay que tener cuidado que si se repite contenido en dos boxes, sean instancias diferentes.
 					soundAnimationSpr.setSize(Constants.Box.TAMANO_CONTORNO_X,Constants.Box.TAMANO_CONTORNO_Y);
 					float x = posicionCenter.x - Constants.Box.TAMANO/2 - Constants.Box.TAMANO_CONTORNO_X /2;
 					float y = posicionCenter.y - Constants.Box.TAMANO/2 - Constants.Box.TAMANO_CONTORNO_Y;
-					float xShift = Constants.Box.TAMANO * trial.runningSound.playTime / soundDuracionReproduccion;
+					float xShift = Constants.Box.TAMANO * runningSound.playTime / soundDuracionReproduccion;
 					soundAnimationSpr.setPosition(x + xShift, y);
 					soundAnimationSpr.draw(batch);
 				}
@@ -107,34 +107,26 @@ public abstract class Boxes {
 		}
 
 		@Override
-		public void update(float deltaTime, Trial trial) {
-			if (trial.runningSound.running) {
-				if (trial.runningSound.playTime > this.soundDuracionReproduccion) {
-					this.unSelect(trial);
-				}
-			}	
+		public void select(RunningSound runningSound) {
+			if (!this.contenido.noSound) {
+				runningSound.action = NEXT.PLAY;
+				runningSound.nextContenido = this.contenido;
+			} else {
+				runningSound.stop();
+			}
 		}
 
 		@Override
-		public void unSelect(Trial trial) {
-			if (!this.contenido.noSound) {
-				trial.runningSound.stop();
-			}
-		}
-		
-		@Override
-		public void select(Trial trial) {
-			this.alreadySelected = true;
-			if (!this.contenido.noSound) {
-				trial.runningSound.action = NEXT.PLAY;
-				trial.runningSound.nextContenido = this.contenido;
-			} else {
-				trial.runningSound.stop();
-			}
+		protected void update(float deltaTime, RunningSound runningSound, EstadoLoop estadoLoop) {
+			if (runningSound.running) {
+				if (runningSound.playTime > this.soundDuracionReproduccion) {
+					runningSound.stop();
+				}
+			}	
 		}
 	}
 		
-	public static class TestBox extends Box {
+	public static class OptionsBox extends Box {
 
 		private float answerAnimationTime = 0; // Avance el la animacion de respuesta
 		private Sprite answerUsedSprite; // Imagen con que se muestra la respuesta 
@@ -144,7 +136,7 @@ public abstract class Boxes {
 		public boolean giveFeedback;
 		public boolean answerCorrect;
 		
-		public TestBox (ExperimentalObject contenido,boolean feedback){
+		public OptionsBox (ExperimentalObject contenido,boolean feedback){
 			// Carga cosas relacionadas al contenido
 			this.giveFeedback = feedback;
 			this.contenido = contenido;
@@ -156,14 +148,6 @@ public abstract class Boxes {
 			this.createAnswerAnimationResources();
 		}
 
-		@Override
-		public void update(float deltaTime, Trial trial) {
-			this.answerAnimationTime += deltaTime;
-			if (answerAnimationTime > Constants.Box.ANIMATION_ANSWER_TIME) {
-				this.givinFeedback = false;
-			}
-		}
-		
 		private Pixmap createAnswerResources(boolean condicion) {
 			Pixmap pixmap = new Pixmap(10, 10, Format.RGBA8888);
 			if (condicion) {
@@ -185,25 +169,6 @@ public abstract class Boxes {
 			this.answerSprFalse = new Sprite(textureFalse);
 		}
 
-		@Override
-		public void select(Trial trial){
-			if (this.giveFeedback) {
-				this.givinFeedback = true;
-				this.answerAnimationTime = 0;
-				trial.runningSound.stop();
-			}
-		}
-		
-		@Override
-		public void unSelect(Trial trial) {
-			this.givinFeedback = false;
-		}
-		
-		@Override
-		protected void specificRender(SpriteBatch batch, Trial trial) {
-			if (this.givinFeedback) {this.contourRender(batch);}
-		}
-		
 		private void contourRender(SpriteBatch batch) {
 			float x;
 			float y;
@@ -269,6 +234,29 @@ public abstract class Boxes {
 			answerUsedSprite.setPosition(x, y);
 			answerUsedSprite.draw(batch);
 		}
+
+		@Override
+		protected void specificRender(SpriteBatch batch, RunningSound runningSound) {
+			if (this.givinFeedback) {this.contourRender(batch);}
+		}
+
+		@Override
+		protected void update(float deltaTime, RunningSound sound, EstadoLoop estadoLoop) {
+			this.answerAnimationTime += deltaTime;
+			if (answerAnimationTime > Constants.Box.ANIMATION_ANSWER_TIME) {
+				this.givinFeedback = false;
+				estadoLoop = EstadoLoop.CambiarTrial;
+			}
+		}
+
+		@Override
+		public void select(RunningSound runningSound) {
+			if (this.giveFeedback) {
+				this.givinFeedback = true;
+				this.answerAnimationTime = 0;
+				runningSound.stop();
+			}
+		}
 	}
 	
 	public static class StimuliBox extends Box {
@@ -283,39 +271,6 @@ public abstract class Boxes {
 			this.createSoundAnimationResources();
 		}
 
-		@Override
-		protected void specificRender(SpriteBatch batch, Trial trial) {
-			if (trial.runningSound.running) {
-				stimuliAnimationSpr.setSize(Constants.Box.TAMANO_CONTORNO_X,Constants.Box.TAMANO_CONTORNO_Y);
-				float x = posicionCenter.x - Constants.Box.TAMANO/2 - Constants.Box.TAMANO_CONTORNO_X /2;
-				float y = posicionCenter.y - Constants.Box.TAMANO/2 - Constants.Box.TAMANO_CONTORNO_Y;
-				float xShift = Constants.Box.TAMANO * trial.runningSound.playTime / Constants.Box.DURACION_REPRODUCCION_PREDETERMINADA;
-				stimuliAnimationSpr.setPosition(x + xShift, y);
-				stimuliAnimationSpr.draw(batch);
-			}
-		}
-
-		@Override
-		protected void update(float deltaTime, Trial trial) {
-			if (!this.contenido.noSound) {
-				if (!trial.runningSound.running) {
-					this.delayAutoreproducir = this.delayAutoreproducir + deltaTime;
-				}
-				if (this.delayAutoreproducir > Constants.Box.DELAY_ESTIMULO_MODO_SELECCIONAR) { //TODO cambiar nombre a esta constante
-					if (!trial.somethingTouched) {
-						trial.runningSound.action = NEXT.PLAY;
-						trial.runningSound.nextContenido = this.contenido;
-						this.delayAutoreproducir = 0;
-					}
-				}
-			}
-		}
-
-		@Override
-		public void select(Trial trial) {} // No hace nada
-
-		@Override
-		public void unSelect(Trial trial) {} // No hace nada
 		
 		private void createSoundAnimationResources() {
 			Pixmap pixmap = new Pixmap(10, 10, Format.RGBA8888);
@@ -325,5 +280,36 @@ public abstract class Boxes {
 			this.stimuliAnimationSpr = new Sprite (texture);
 		}
 
+		@Override
+		protected void specificRender(SpriteBatch batch, RunningSound runningSound) {
+			if (runningSound.running) {
+				stimuliAnimationSpr.setSize(Constants.Box.TAMANO_CONTORNO_X,Constants.Box.TAMANO_CONTORNO_Y);
+				float x = posicionCenter.x - Constants.Box.TAMANO/2 - Constants.Box.TAMANO_CONTORNO_X /2;
+				float y = posicionCenter.y - Constants.Box.TAMANO/2 - Constants.Box.TAMANO_CONTORNO_Y;
+				float xShift = Constants.Box.TAMANO * runningSound.playTime / Constants.Box.DURACION_REPRODUCCION_PREDETERMINADA;
+				stimuliAnimationSpr.setPosition(x + xShift, y);
+				stimuliAnimationSpr.draw(batch);
+			}
+		}
+
+		@Override
+		protected void update(float deltaTime, RunningSound runningSound, EstadoLoop estadoLoop) {
+			if (!this.contenido.noSound) {
+				if (!runningSound.running) {
+					this.delayAutoreproducir = this.delayAutoreproducir + deltaTime;
+				}
+				if (this.delayAutoreproducir > Constants.Box.DELAY_ESTIMULO_MODO_SELECCIONAR) { //TODO cambiar nombre a esta constante
+					if (estadoLoop == EstadoLoop.EsperandoSeeleccionDeBox) {
+						runningSound.action = NEXT.PLAY;
+						runningSound.nextContenido = this.contenido;
+						this.delayAutoreproducir = 0;
+					}
+				}
+			}
+		}
+
+		@Override
+		public void select(RunningSound runningSound) {} // No hace nada
+		
 	}
 }

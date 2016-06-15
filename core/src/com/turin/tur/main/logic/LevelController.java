@@ -4,10 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.turin.tur.main.diseno.Level;
 import com.turin.tur.main.diseno.LevelInterfaz;
+import com.turin.tur.main.diseno.RunningSound;
 import com.turin.tur.main.diseno.TouchInfo;
 import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.Visound;
@@ -19,10 +21,27 @@ import com.turin.tur.main.util.Constants;
 public class LevelController implements InputProcessor {
 
 	private static final String TAG = LevelController.class.getName();
-	private state inputState;
+	public EstadoLoop estadoLoop;
 
-	public enum state {
-		listening, processing, waiting, exiting, initing
+	public enum EstadoLoop {
+		EsperandoSeeleccionDeBox(true), // Cuando esta esperando que el usuario selecciones una categoria
+		ProcesandoToque(false),  // Cuando se esta procesando los toquees y esas cosas
+		Iniciando(false), // Iniciando el programa
+		PantallaBlanca(false), // El programa esta en el tiempo de reseteo de la imagen para separar un trial de otro
+		EsperandoConfianza(true), // El programa esta esperando que se indique nivel de confianza 
+		DandoFeedback(true), // Dando feedback
+		TrialInterrumpido(false), // Reproduciendo sonido (en modo tutorial)
+		ListoParaProcesarBox(false), // Hay un toque listo para procesar y activar el feedback, el audio o el proximo trial.
+		CambiarTrial (false), // Indica que se debe buscar el proximo trial
+		LevelFinalizado (false) // Indica que se debe finalizar el nivel ordinariamente
+		;
+		
+		public boolean update;
+		
+		EstadoLoop(boolean update) {
+			this.update = update;
+		}
+		
 	}
 	
 	// Cosas relacionadas con la interfaz grafica
@@ -33,29 +52,31 @@ public class LevelController implements InputProcessor {
 	public LevelInterfaz levelInterfaz;
 	private Visound game;
 	private Level level; //Informacion del nivel cargado
+	public RunningSound runningSound; // Maneja el sonido
 	
 	// Cosas relacionadas con los elementos del juego
 	public Array<TouchInfo> touchSecuence = new Array<TouchInfo>();
 	public Trial trial;
-	public boolean nextTrialPending = false; // Genera la señal de que hay que cambiar de trial (para esperar a que finalicen cuestiones de animacion) 
 	
 	public final float blankTime = 0.2f; // Tiempo que debe dejar la pantalla en blanco entre trial y trial (en segundos) 
-	public float currentblankTime = this.blankTime;
+	public float timeInTrial = 0;
+	private Box boxTocada;
+	private float confianzaReportada;
 		
-	
 	public LevelController(Visound game, Level level) {
 	
-		this.inputState = state.initing;
+		this.estadoLoop = EstadoLoop.Iniciando;
 		this.game = game; // Hereda la info del game (cosa de ventanas y eso)
 		this.level = level; 
 		this.initCamera();
 		this.game.expActivo.initLevel(this.level);
 		
 		// Selecciona el trial que corresponda
-		this.trial = this.game.expActivo.getTrial();
-		this.currentblankTime = 0;
+		this.trial = this.game.expActivo.getNextTrial();
 		this.levelInterfaz = new LevelInterfaz(this.level, this.trial, this.game.expActivo);
-		this.inputState = state.waiting;
+
+		// Indica que el programa esta listo para seleccionar un box
+		this.estadoLoop = EstadoLoop.EsperandoSeeleccionDeBox;
 		
 	}
 
@@ -67,36 +88,56 @@ public class LevelController implements InputProcessor {
 	}
 
 	public void update(float deltaTime) {
-		this.currentblankTime = this.currentblankTime + deltaTime;
+		this.timeInTrial = this.timeInTrial + deltaTime;
 		
-		if (this.currentblankTime > this.blankTime) {
-			if (this.inputState == state.waiting) {
-				this.inputState = state.listening;
+		if (this.estadoLoop == EstadoLoop.PantallaBlanca) {
+			if (this.timeInTrial > this.blankTime) {
+				this.estadoLoop = EstadoLoop.EsperandoSeeleccionDeBox;
 			}
-			// Actualiza el trial
-			this.trial.update(deltaTime);
+		}
 		
+		if (this.estadoLoop == EstadoLoop.ListoParaProcesarBox) {
+			this.trial.boxSelected(this.boxTocada, this.estadoLoop, runningSound); // El box tiene que decidir si el estatus cambia a feedback, a reproducri sonido o a cambiar trial
+		}
+		
+		if (this.estadoLoop.update) {
+			// Actualiza el trial
+			this.trial.update(deltaTime, this.estadoLoop, this.runningSound); // El trial tiene que decidir cuando termina el feedback o la reproduccion de sonido para activar el cambio de trial
 			// actualiza cosas generales
 			cameraHelper.update(deltaTime);
 		}
-		
-		// Procesa cambios de trial si los hay pendientes
-		if (trial.checkTrialCompleted()) {
-			this.game.expActivo.returnAnswer(this.trial.lastAnswer(),-1);
+			
+		if (this.estadoLoop == EstadoLoop.CambiarTrial) {
 			if (this.game.expActivo.islevelCompleted()) {
-				this.game.expActivo.stopLevel();
+				this.estadoLoop = EstadoLoop.LevelFinalizado;
+				this.game.expActivo.levelCompleted();
 				this.goToResults();
 			} else {
-				this.trial = this.game.expActivo.getTrial();
-				this.currentblankTime = 0;
-				this.inputState = state.waiting;
+				this.trial = this.game.expActivo.getNextTrial();
+				this.timeInTrial = 0;
+				this.estadoLoop = EstadoLoop.PantallaBlanca;
 			}
 		}
+		
+		
+		/*
+			// Procesa cambios de trial si los hay pendientes
+			if (trial.checkTrialCompleted()) {
+				this.game.expActivo.returnAnswer(this.trial.lastAnswer(),-1);
+				if (this.game.expActivo.islevelCompleted()) {
+					this.game.expActivo.stopLevel();
+					this.goToResults();
+				} else {
+					this.trial = this.game.expActivo.getTrial();
+					this.currentblankTime = 0;
+					this.inputState = estadoLoop.waitingCategorySelection;
+				}
+			}
+		 */
 	}
 	
 	@Override
 	public boolean keyDown(int keycode) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -104,6 +145,7 @@ public class LevelController implements InputProcessor {
 	public boolean keyUp(int keycode) {
 		// Back to Menu
 		if (keycode == Keys.ESCAPE || keycode == Keys.BACK) {
+			this.estadoLoop = EstadoLoop.TrialInterrumpido;
 			this.game.expActivo.interrupt();
 			goToResults();
 		}
@@ -112,35 +154,34 @@ public class LevelController implements InputProcessor {
 			if (Visound.volumen < 0.1f) {
 				Visound.volumen = 0.1f;
 			}
-			this.trial.runningSound.sound.setVolume(this.trial.runningSound.idSound, Visound.volumen);
+			this.runningSound.sound.setVolume(this.runningSound.idSound, Visound.volumen);
 		}
 		if (keycode == Keys.DPAD_UP) {
 			Visound.volumen = Visound.volumen + 0.1f;
 			if (Visound.volumen > 1f) {
 				Visound.volumen = 1f;
 			}
-			this.trial.runningSound.sound.setVolume(this.trial.runningSound.idSound, this.game.volumen);
+			this.runningSound.sound.setVolume(this.runningSound.idSound, Visound.volumen);
 		}
 		return false;
 	}
 
 	
 	private void goToResults() {
-		trial.runningSound.stop();
+		runningSound.stop();
 		game.setScreen(new ResultsScreen(game, this.level));
 	}
 	
 	@Override
 	public boolean keyTyped(char character) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		if (this.inputState == state.listening) {
-			if (Gdx.graphics.getFramesPerSecond()>40) {
-				this.inputState = state.processing;
+		if (Gdx.graphics.getFramesPerSecond()>40) {
+			if (this.estadoLoop == EstadoLoop.EsperandoSeeleccionDeBox) {
+				this.estadoLoop = EstadoLoop.ProcesandoToque;
 				// Crea un evento de toque
 				TouchInfo touch = new TouchInfo();
 				// calcula el toque en pantalla
@@ -151,25 +192,39 @@ public class LevelController implements InputProcessor {
 				// procesa la info del toque en funcion de otros elementos del juego
 				
 				boolean elementoTocado = false;
-				Box boxTocada = null;
+				this.boxTocada = null;
 				// se fija si se toco alguna imagen training
 				for (Box box : this.trial.trainigBoxes) {
 					if (box.spr.getBoundingRectangle().contains(touch.coordGame.x, touch.coordGame.y)) {
 						elementoTocado = true;
-						boxTocada = box;
+						this.boxTocada = box;
 					}
 				}
 				// se fija si se toco alguna imagen answer
 				for (Box box : this.trial.testBoxes) {
 					if (box.spr.getBoundingRectangle().contains(touch.coordGame.x, touch.coordGame.y)) {
 						elementoTocado = true;
-						boxTocada = box;
+						this.boxTocada = box;
 					}
 				}
 				
 				if (elementoTocado) {
-					this.trial.boxSelected(boxTocada);
+					if (MathUtils.randomBoolean(this.level.jsonLevel.setup.confianceProbability)) {
+						this.estadoLoop = EstadoLoop.EsperandoConfianza;
+					} else {
+						this.estadoLoop = EstadoLoop.ListoParaProcesarBox;
+						//this.trial.boxSelected(boxTocada);
+					}
+				} else {
+					this.estadoLoop = EstadoLoop.EsperandoSeeleccionDeBox;
 				}
+			}
+			
+			if (this.estadoLoop == EstadoLoop.EsperandoConfianza) {
+				this.confianzaReportada = -1;
+				//TODO que se fije si se toco la barra de confianza y cuanto dio 
+				this.confianzaReportada = -1;
+				this.estadoLoop = EstadoLoop.ListoParaProcesarBox;
 			}
 		}
 		return false;
@@ -177,25 +232,21 @@ public class LevelController implements InputProcessor {
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean scrolled(int amount) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

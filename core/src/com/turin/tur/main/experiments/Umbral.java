@@ -6,16 +6,13 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.ExperimentalObject;
-import com.turin.tur.main.diseno.Level;
 import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.experiments.Experiment.GenericExp;
 import com.turin.tur.main.experiments.Experiments.ExperimentLog;
-import com.turin.tur.main.experiments.Experiments.LevelStatus;
 import com.turin.tur.main.experiments.Umbral.DinamicaExperimento.TRIAL_TYPE;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Internet;
-import com.turin.tur.main.util.LevelAsset;
 import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.main.util.Internet.TIPO_ENVIO;
 import com.turin.tur.main.util.builder.Imagenes.Linea;
@@ -47,12 +44,7 @@ public abstract class Umbral extends GenericExp {
 		Array<Respuesta> historial = new Array<Respuesta>(); // Se almacena la info de lo que va pasando
 		Array<SerieEstimulos> seriesEstimulos = new Array<SerieEstimulos>();
 		Array<Estimulo> estimulosCeros = new Array<Estimulo>();
-		//float ultimaSD;
-		//float ultimoMEAN;
 		int proporcionAciertos = 2; // Es la cantidad de aciertos que tiene que haber en el numero total de ultimas respuestas para que aumente la dificultad
-		// private int proporcionTotal = 3; // Es el numero de elementos a revisar en el historial en busca de la cantidad de acierto para definir si se aumenta la dificultad o no
-		//int tamanoVentanaAnalisisConvergencia = 6;
-		//float sdEsperada = 0.5f;
 		double referencia;
 		protected Estimulo estimuloActivo;
 		
@@ -121,67 +113,39 @@ public abstract class Umbral extends GenericExp {
 		double desvMin;
 		double desvMax;
 		boolean logscale = true;
+		public float confianceProbability = 0.3f;
 	}
 	
 	// Cosas generales
 	protected Setup setup;
-	
-	// Cosas que manejan la dinamica en cada ejecucion
-	// protected Array<DinamicaExperimento> dinamicas;
-	// protected DinamicaExperimento dinamicaActiva;
 	protected DinamicaExperimento dinamicaExperimento;
-	// protected boolean waitingAnswer;
 	
-		
 	
-	// Funciones comunes a todos los experimentos de umbral
-	/*
-	public boolean askNoMoreTrials() {
-		if (this.trialsLeft() == 0) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	*/
 	
-	private void levelCompletedAction() {
-		for (LevelStatus levelStatus : this.expSettings.levels) {
-			if (levelStatus.id == this.level.Id) {
-				levelStatus.alreadyPlayed = true;
-			}
-		}
-		// Hacemos un update a los datos guardados en disco
-		Json json = new Json();
-		FileHelper.writeLocalFile(Resources.Paths.LocalSettingsCopy + this.getClass().getSimpleName() + ".settings", json.toJson(this.expSettings));
-	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	public int trialsLeft() {
-		/*
-		int pendientes = 0;
-		for (DinamicaExperimento dinamica : this.dinamicas) {
-			pendientes = pendientes + dinamica.trialsInSerie - dinamica.historial.size;
-		}
-		return pendientes;
-		*/
 		return this.dinamicaExperimento.trialsPorNivel - this.dinamicaExperimento.historial.size;
 	}
 
 	public abstract String getName();
 
-	protected void event_stopLevel () {
-		/*
-		for (DinamicaExperimento dinamica : this.dinamicas) {
-			LogConvergencia log = new LogConvergencia();
-			log.expLog = this.expLog;
-			log.dinamica = dinamica;
-			log.dinamica.listaEstimulos.clear();
-			// Creamos el enviable
-			Internet.addDataToSend(log, TIPO_ENVIO.CONVERGENCIA, this.getNameTag());
-		}
-		*/
-		
+	protected void sendDataLevel () {	
 		// Hacemos un send para la data del nivel que acaba de detenerse.
 		LogConvergencia log = new LogConvergencia();
 		log.expLog = this.expLog;
@@ -192,26 +156,18 @@ public abstract class Umbral extends GenericExp {
 	}
 	
 	public void interrupt() {
-		this.event_stopLevel();
+		this.sendDataLevel();
 	}
 
-	public void initLevel(Level level) {
+	@Override
+	protected void specificInitLevel() {
 		// Cargamos los datos especificos del nivel
-		this.level = level;
 		this.dinamicaExperimento = (DinamicaExperimento) level.jsonLevel.dinamicaExperimento;
 		this.setup = level.jsonLevel.setup;
 		this.dinamicaExperimento.nivelEstimulo = this.setup.numeroDeEstimulosPorSerie - 1;
-		this.assets = new LevelAsset(level.Id);
-		this.event_initLevel();
-		this.createTrial();
 	}
 	
-	public void stopLevel() {
-		this.event_stopLevel();
-	}
-	
-	public void createTrial() {
-		
+	public Trial getNextTrial() {
 		// Decide si manda una señal para medir de verdad o un test para probar al usuario
 		if (MathUtils.randomBoolean(this.setup.testProbability)) { // Caso en que se mande un test
 			this.dinamicaExperimento.trialType = DinamicaExperimento.TRIAL_TYPE.TEST_EASY_Trial;
@@ -227,23 +183,6 @@ public abstract class Umbral extends GenericExp {
 			}
 		}
 		
-		
-		/*  Codigo version vieja!
-		
-		// Seleccionamos una de las convergencias al azar.
-		Array<DinamicaExperimento> forSelect = new Array<DinamicaExperimento>();
-		for (DinamicaExperimento dinamica : this.dinamicas) {
-			if (!dinamica.convergenciaFinalizada) {
-				forSelect.add(dinamica);
-			}
-		}
-		this.dinamicaActiva = forSelect.random();
-		// Buscamos el trial que corresponde al nivel actual de la
-		// convergencia (los cambios se actualizan cuando se recibe el
-		// answer)
-		this.estimuloActivo = this.dinamicaActiva.listaEstimulos.get(this.dinamicaActiva.nivelEstimulo);
-		*/
-		
 		// leemos el json del trial
 		String savedData = FileHelper.readInternalFile(Resources.Paths.InternalResources + "level" + level.Id + "/trial" + this.dinamicaExperimento.estimuloActivo.idTrial + ".meta");
 		
@@ -256,13 +195,8 @@ public abstract class Umbral extends GenericExp {
 			elementos.add(elemento);
 		}
 		ExperimentalObject estimulo = new ExperimentalObject(jsonTrial.rtaCorrectaId, this.assets, level.Id);
-		// Con la info del json del trial tenemos que crear un trial y
-		// cargarlo
-		if (this.trial != null) {
-			this.trial.exit();
-		}
-		this.trial = new Trial(elementos, jsonTrial, this.assets, estimulo);
 		
+		return new Trial(elementos, jsonTrial, estimulo);
 	}
 	
 	public void returnAnswer(boolean answerIsCorrect, float confianza) {
@@ -316,23 +250,60 @@ public abstract class Umbral extends GenericExp {
 		// Nos fijamos si ya se completo la dinamica o no.
 		if (this.trialsLeft() == 0) {
 			this.dinamicaExperimento.levelFinalizadoCorrectamente=true;
-			this.levelCompletedAction();
 			this.levelCompleted = true;
-		} else {
-			this.createTrial();			
 		}
-		
-		
-		// Una vez que se actualizo la dinamica anterior pasamos a actualizar el trial si corresponde
-		/* OBSOLETO
-		if (this.askNoMoreTrials()) {
-			this.levelCompletedAction();
-			this.levelCompleted = true;
-		} else {
-			this.createTrial();
-		}
-		*/
-	}
+}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	protected ArrayMap<Double, ArrayMap<Double, Estimulo>> indexToMap() {
 		ArrayMap<Double, ArrayMap<Double, Estimulo>> map = new ArrayMap<Double, ArrayMap<Double, Estimulo>>();

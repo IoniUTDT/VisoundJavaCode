@@ -2,11 +2,12 @@ package com.turin.tur.main.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.turin.tur.main.diseno.Trial.RunningSound.NEXT;
 import com.turin.tur.main.experiments.Experiment;
 import com.turin.tur.Visound;
 import com.turin.tur.main.diseno.Level;
+import com.turin.tur.main.diseno.RunningSound.NEXT;
 import com.turin.tur.main.logic.LevelController;
+import com.turin.tur.main.logic.LevelController.EstadoLoop;
 import com.turin.tur.main.logic.LevelRenderer;
 import com.turin.tur.main.util.LevelAsset;
 
@@ -24,14 +25,14 @@ public class LevelScreen extends AbstractGameScreen  {
 	private int levelNumber;
 	private boolean paused;
 	
-	public LevelScreen (Visound game, int level, String expName) {
+	public LevelScreen (Visound game, int levelNumber, String expName) {
 		super(game);
 		for (Experiment exp : this.game.exps) {
 			if (exp.getName().equals(expName)) {
 				this.game.expActivo = exp;
 			}
 		}
-		this.levelNumber=level;
+		this.levelNumber=levelNumber;
 		// this.levelAssets = new LevelAsset (level);
 	}
 
@@ -42,7 +43,7 @@ public class LevelScreen extends AbstractGameScreen  {
 			// Update game world by the time that has passed
 			// since last rendered frame.
 			levelController.update(deltaTime);
-			levelController.trial.runningSound.update(deltaTime);
+			levelController.runningSound.update(deltaTime);
 		}
 		// Sets the clear screen color to: Cornflower Blue
 		Gdx.gl.glClearColor(0x64 / 255.0f, 0x95 / 255.0f,0xed /
@@ -50,7 +51,7 @@ public class LevelScreen extends AbstractGameScreen  {
 		// Clears the screen
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		// Render level to screen
-		if (levelController.currentblankTime > levelController.blankTime) {
+		if (levelController.estadoLoop != EstadoLoop.PantallaBlanca) {
 			levelRenderer.render();
 		}
 	}
@@ -79,14 +80,14 @@ public class LevelScreen extends AbstractGameScreen  {
 	@Override
 	public void pause () {
 		// this.levelAssets.dispose();
-		this.levelController.trial.runningSound.stop();
+		this.levelController.runningSound.stop();
 		paused = true;
 	}
 	
 	@Override
 	public void resume () {
 		super.resume();
-		this.levelController.trial.runningSound.action = NEXT.PLAY;
+		this.levelController.runningSound.action = NEXT.PLAY;
 		// Only called on Android!
 		paused = false;
 	}
