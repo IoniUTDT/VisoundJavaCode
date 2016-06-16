@@ -592,7 +592,7 @@ public class Tutorial extends GenericExp implements Experiment {
 	
 
 	@Override
-	public void returnAnswer(boolean answer, float confianza) {
+	public void returnAnswer(boolean answer, float confianza, float selectionTime, float confianceTime, int soundLoops) {
 		// Cambiamos el trial al siguiente de la lista
 		if (this.trialsLeft()==0) { 
 			this.levelCompleted = true;

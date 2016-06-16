@@ -24,7 +24,7 @@ public interface Experiment {
 	void makeLevels(); // Se encarga de armar la estructura de niveles
 	// Cosas online de control de flujo de informacion
 	Trial getNextTrial(); // Devuelve el proximo trial a usar
-	void returnAnswer (boolean answer, float confianza); // Le indica al experimento como salio el trial
+	void returnAnswer (boolean answer, float confianza, float selectionTime, float confianceTime, int soundLoops); // Le indica al experimento como salio el trial
 	void initGame (Session session); // Se ejecuta cuando se inicial el juego (la idea es que aca se inicialicen todas las variables generales.
 	void initLevel (Level level); // Inicia cuestiones generales del nivel
 	void levelCompleted(); // Se ejecuta cuando se detiene un nivel (la idea es que aca se generen todos los logs y se envien al servidor)

@@ -64,7 +64,9 @@ public class LevelController implements InputProcessor {
 	public final float blankTime = 0.2f; // Tiempo que debe dejar la pantalla en blanco entre trial y trial (en segundos) 
 	public float timeInTrial = 0;
 	public Box boxTocada;
-	private float confianzaReportada;
+	private float confianzaReportada = -1;
+	private float timeSelecion;
+	private float timeConfiance;
 		
 	public LevelController(Visound game, Level level) {
 	
@@ -95,7 +97,6 @@ public class LevelController implements InputProcessor {
 	public void update(float deltaTime) {
 		//Gdx.app.debug(TAG, estadoLoop.toString());
 		this.timeInTrial = this.timeInTrial + deltaTime;
-		
 		if (this.estadoLoop == EstadoLoop.PantallaBlanca) {
 			if (this.timeInTrial > this.blankTime) {
 				this.estadoLoop = EstadoLoop.EsperandoSeeleccionDeBox;
@@ -114,14 +115,18 @@ public class LevelController implements InputProcessor {
 		}
 			
 		if (this.estadoLoop == EstadoLoop.CambiarTrial) {
-			this.game.expActivo.returnAnswer(this.boxTocada.answerCorrect, this.confianzaReportada);
+			this.game.expActivo.returnAnswer(this.boxTocada.answerCorrect, this.confianzaReportada, this.timeSelecion, this.timeConfiance, this.runningSound.loopsCount);
 			if (this.game.expActivo.islevelCompleted()) {
 				this.estadoLoop = EstadoLoop.LevelFinalizado;
 				this.game.expActivo.levelCompleted();
 				this.goToResults();
 			} else {
 				this.trial = this.game.expActivo.getNextTrial();
+				this.confianzaReportada = -1;
+				Gdx.app.debug(TAG, this.timeInTrial+"Tiempo a resetaer");
 				this.timeInTrial = 0;
+				this.timeConfiance = -2;
+				this.timeSelecion = -2;
 				this.estadoLoop = EstadoLoop.PantallaBlanca;
 			}
 		}
@@ -200,13 +205,14 @@ public class LevelController implements InputProcessor {
 				}
 				
 				if (elementoTocado) {
+					this.timeSelecion = this.timeInTrial;
+					Gdx.app.debug(TAG, this.timeInTrial+"Tiempo de toque");
 					if (MathUtils.randomBoolean(this.level.jsonLevel.genericSetup.confianceProbability)) {
 						this.estadoLoop = EstadoLoop.EsperandoConfianza;
 						this.confianza.SetPosition(this.boxTocada.posicionCenter.x, this.boxTocada.posicionCenter.y-0.8f);
 						this.confianza.visible = true;
 					} else {
 						this.estadoLoop = EstadoLoop.ListoParaProcesarBox;
-						//this.trial.boxSelected(boxTocada);
 					}
 				} else {
 					this.estadoLoop = EstadoLoop.EsperandoSeeleccionDeBox;
@@ -231,6 +237,8 @@ public class LevelController implements InputProcessor {
 					//Gdx.app.debug(TAG, this.confianza.posicionCenter.x+"");
 					//Gdx.app.debug(TAG, this.confianza.spr.getWidth()+"");
 					this.confianzaReportada = (touch.coordGame.x-(this.confianza.posicionCenter.x-this.confianza.spr.getWidth()/2))/(this.confianza.spr.getWidth());
+					Gdx.app.debug(TAG, this.timeInTrial+"TiempoDeConfianza");
+					this.timeConfiance = this.timeInTrial;
 					//Gdx.app.debug(TAG, this.confianzaReportada+"");
 					this.estadoLoop = EstadoLoop.ListoParaProcesarBox;
 					this.confianza.visible = false;

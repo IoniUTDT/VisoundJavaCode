@@ -80,12 +80,18 @@ public abstract class Umbral extends GenericExp {
 		private float confianza;
 		private TRIAL_TYPE trialType;
 		private int nivelEstimulo;
-		Respuesta (Estimulo estimulo, Boolean rta, float confianza, TRIAL_TYPE trialType, int nivelEstimulo) {
+		private float selectionTimeInTrial = -1;
+		private float confianceTimeInTrial = -1;
+		private int soundLoops = -1;
+		Respuesta (Estimulo estimulo, Boolean rta, float confianza, TRIAL_TYPE trialType, int nivelEstimulo, float selectionTime, float confianceTime, int soundLoops) {
 			this.estimulo = estimulo;
 			this.acertado = rta;
 			this.confianza = confianza;
 			this.trialType = trialType;
 			this.nivelEstimulo = nivelEstimulo;
+			this.selectionTimeInTrial = selectionTime;
+			this.confianceTimeInTrial = confianceTime;
+			this.soundLoops = soundLoops;
 		}
 	}
 	
@@ -176,7 +182,6 @@ public abstract class Umbral extends GenericExp {
 			}
 			int nivel = MathUtils.random(base, this.setup.numeroDeEstimulosPorSerie-1);
 			this.dinamicaExperimento.estimuloActivo = this.dinamicaExperimento.seriesEstimulos.random().listaEstimulos.get(nivel);
-			Gdx.app.debug(TAG, nivel+"");
 		} else {
 			if (MathUtils.randomBoolean()) {
 				this.dinamicaExperimento.trialType = DinamicaExperimento.TRIAL_TYPE.REAL_TRIAL_ESTIMULO;
@@ -203,9 +208,9 @@ public abstract class Umbral extends GenericExp {
 		return new Trial(elementos, jsonTrial, estimulo);
 	}
 	
-	public void returnAnswer(boolean answerIsCorrect, float confianza) {
+	public void returnAnswer(boolean answerIsCorrect, float confianza, float selectionTime, float confianceTime, int soundLoops) {
 		// Almacenamos en el historial lo que paso
-		this.dinamicaExperimento.historial.add(new Respuesta (this.dinamicaExperimento.estimuloActivo, answerIsCorrect, confianza, this.dinamicaExperimento.trialType, this.dinamicaExperimento.nivelEstimulo));
+		this.dinamicaExperimento.historial.add(new Respuesta (this.dinamicaExperimento.estimuloActivo, answerIsCorrect, confianza, this.dinamicaExperimento.trialType, this.dinamicaExperimento.nivelEstimulo, selectionTime, confianceTime, soundLoops));
 		// Marcamos que se recibio una rta
 		
 		// Elije si hay que incrementar la dificultad, disminuirla o no hacer nada.

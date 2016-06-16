@@ -271,7 +271,8 @@ public abstract class Boxes {
 	public static class StimuliBox extends Box {
 		
 		private float delayAutoreproducir = Constants.Box.DELAY_ESTIMULO_MODO_SELECCIONAR;
-		private Sprite stimuliAnimationSpr; // Sprite para la animacion del sonido 
+		private Sprite stimuliAnimationSpr; // Sprite para la animacion del sonido
+		private int loopsCount = 0;
 		
 		public StimuliBox (ExperimentalObject contenido) {	
 			this.contenido = contenido;
@@ -303,6 +304,9 @@ public abstract class Boxes {
 
 		@Override
 		protected void update(float deltaTime, LevelController levelController) {
+			if (levelController.estadoLoop == EstadoLoop.EsperandoConfianza) {
+				levelController.runningSound.stop();
+			}
 			if (!this.contenido.noSound) {
 				if (!levelController.runningSound.running) {
 					this.delayAutoreproducir = this.delayAutoreproducir + deltaTime;
@@ -312,6 +316,8 @@ public abstract class Boxes {
 						levelController.runningSound.action = NEXT.PLAY;
 						levelController.runningSound.nextContenido = this.contenido;
 						this.delayAutoreproducir = 0;
+						this.loopsCount++;
+						levelController.runningSound.loopsCount=this.loopsCount;
 					}
 				}
 			}
