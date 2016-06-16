@@ -1,5 +1,6 @@
 package com.turin.tur.main.experiments;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
@@ -170,11 +171,12 @@ public abstract class Umbral extends GenericExp {
 		if (MathUtils.randomBoolean(this.setup.testProbability)) { // Caso en que se mande un test
 			this.dinamicaExperimento.trialType = DinamicaExperimento.TRIAL_TYPE.TEST_EASY_Trial;
 			int base = this.dinamicaExperimento.nivelEstimulo *2;
-			if (base>this.setup.numeroDeEstimulosPorSerie-1 - 10) {
-				base = this.setup.numeroDeEstimulosPorSerie-1 - 10;
+			if (base>this.setup.numeroDeEstimulosPorSerie-1 - this.setup.numeroDeEstimulosPorSerie/5) {
+				base = this.setup.numeroDeEstimulosPorSerie-1 - this.setup.numeroDeEstimulosPorSerie/5;
 			}
 			int nivel = MathUtils.random(base, this.setup.numeroDeEstimulosPorSerie-1);
 			this.dinamicaExperimento.estimuloActivo = this.dinamicaExperimento.seriesEstimulos.random().listaEstimulos.get(nivel);
+			Gdx.app.debug(TAG, nivel+"");
 		} else {
 			if (MathUtils.randomBoolean()) {
 				this.dinamicaExperimento.trialType = DinamicaExperimento.TRIAL_TYPE.REAL_TRIAL_ESTIMULO;

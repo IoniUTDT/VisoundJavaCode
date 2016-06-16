@@ -122,8 +122,8 @@ public class Constants {
 		public static final float SELECT_BOX_ANCHO_RTA = 0.1f;
 	}
 
-	public class Confianza {
-		public static final float ALTO = 0.5f;
+	public class ConfianzaConstants {
+		public static final float ALTO = 0.3f;
 		public static final float ANCHO = 2;
 	}
 	

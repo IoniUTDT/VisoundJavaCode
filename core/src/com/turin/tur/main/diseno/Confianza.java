@@ -9,7 +9,7 @@ import com.turin.tur.main.util.Constants;
 public class Confianza {
 
 	public static final String TAG = Confianza.class.getName();
-	public Vector2 posicionCenter; // Esta es la posicion de la caja dada por las coordenadas de su centro. 
+	public Vector2 posicionCenter = new Vector2(); // Esta es la posicion de la caja dada por las coordenadas de su centro. 
 	public Sprite spr; // Guarda la imagen que se va a mostrar (se genera a partir del contenido de la caja)
 	public boolean visible;
 	
@@ -19,9 +19,9 @@ public class Confianza {
 			float x;
 			float y;
 			// Find the position of the main imagen and setup it
-			spr.setSize(Constants.Box.TAMANO, Constants.Box.TAMANO);
-			x = posicionCenter.x - Constants.Confianza.ANCHO / 2;
-			y = posicionCenter.y - Constants.Confianza.ALTO / 2;
+			spr.setSize(Constants.ConfianzaConstants.ANCHO, Constants.ConfianzaConstants.ALTO);
+			x = posicionCenter.x - Constants.ConfianzaConstants.ANCHO / 2;
+			y = posicionCenter.y - Constants.ConfianzaConstants.ALTO / 2;
 			spr.setPosition(x, y);
 			spr.draw(batch);
 		}
@@ -32,8 +32,8 @@ public class Confianza {
 		this.posicionCenter.y = yCenter;
 	}
 
-	Confianza() {
+	public Confianza() {
 		this.visible = false;
-		this.spr = new Sprite (Assets.imagenes.stimuliLogo);
+		this.spr = new Sprite (Assets.imagenes.rectaConfianza);
 	}
 }

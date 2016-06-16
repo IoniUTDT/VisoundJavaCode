@@ -14,9 +14,11 @@ import com.turin.tur.main.diseno.TouchInfo;
 import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.Visound;
 import com.turin.tur.main.diseno.Boxes.Box;
+import com.turin.tur.main.diseno.Confianza;
 import com.turin.tur.main.screens.ResultsScreen;
 import com.turin.tur.main.util.CameraHelper;
 import com.turin.tur.main.util.Constants;
+
 
 public class LevelController implements InputProcessor {
 
@@ -53,6 +55,7 @@ public class LevelController implements InputProcessor {
 	private Visound game;
 	private Level level; //Informacion del nivel cargado
 	public RunningSound runningSound; // Maneja el sonido
+	public Confianza confianza; // sirve para obtener el nivel de confianza
 	
 	// Cosas relacionadas con los elementos del juego
 	public Array<TouchInfo> touchSecuence = new Array<TouchInfo>();
@@ -71,6 +74,7 @@ public class LevelController implements InputProcessor {
 		this.initCamera();
 		this.game.expActivo.initLevel(this.level);
 		this.runningSound = new RunningSound(this.level.levelAssets);
+		this.confianza = new Confianza();
 		
 		// Selecciona el trial que corresponda
 		this.trial = this.game.expActivo.getNextTrial();
@@ -198,6 +202,8 @@ public class LevelController implements InputProcessor {
 				if (elementoTocado) {
 					if (MathUtils.randomBoolean(this.level.jsonLevel.genericSetup.confianceProbability)) {
 						this.estadoLoop = EstadoLoop.EsperandoConfianza;
+						this.confianza.SetPosition(this.boxTocada.posicionCenter.x, this.boxTocada.posicionCenter.y-0.8f);
+						this.confianza.visible = true;
 					} else {
 						this.estadoLoop = EstadoLoop.ListoParaProcesarBox;
 						//this.trial.boxSelected(boxTocada);
@@ -208,10 +214,29 @@ public class LevelController implements InputProcessor {
 			}
 			
 			if (this.estadoLoop == EstadoLoop.EsperandoConfianza) {
+				this.estadoLoop = EstadoLoop.ProcesandoToque;
 				this.confianzaReportada = -1;
-				//TODO que se fije si se toco la barra de confianza y cuanto dio 
-				this.confianzaReportada = -1;
-				this.estadoLoop = EstadoLoop.ListoParaProcesarBox;
+				
+				// Crea un evento de toque
+				TouchInfo touch = new TouchInfo();
+				// calcula el toque en pantalla
+				touch.coordScreen = new Vector3(screenX, screenY, 0);
+				// calcula el toque en el juego 
+				touch.coordGame = camera.unproject(touch.coordScreen.cpy()); // PREGUNTA: si no le pongo el copy, toma como el mismo vector y sobreescribe el coordScreen. RARO
+				
+				// procesa la info del toque en funcion de otros elementos del juego
+				
+				if (this.confianza.spr.getBoundingRectangle().contains(touch.coordGame.x, touch.coordGame.y)) {
+					//Gdx.app.debug(TAG, touch.coordGame.x+"");
+					//Gdx.app.debug(TAG, this.confianza.posicionCenter.x+"");
+					//Gdx.app.debug(TAG, this.confianza.spr.getWidth()+"");
+					this.confianzaReportada = (touch.coordGame.x-(this.confianza.posicionCenter.x-this.confianza.spr.getWidth()/2))/(this.confianza.spr.getWidth());
+					//Gdx.app.debug(TAG, this.confianzaReportada+"");
+					this.estadoLoop = EstadoLoop.ListoParaProcesarBox;
+					this.confianza.visible = false;
+				} else {
+					this.estadoLoop = EstadoLoop.EsperandoConfianza;
+				}
 			}
 		}
 		return false;
