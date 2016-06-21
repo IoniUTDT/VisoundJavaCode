@@ -10,7 +10,6 @@ import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.main.experiments.Experiments.ExpSettings;
 import com.turin.tur.main.experiments.Experiments.ExperimentLog;
-import com.turin.tur.main.experiments.Experiments.GenericSetup;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Internet;
@@ -33,6 +32,7 @@ public interface Experiment {
 	Array<LevelStatus> levelsStatus(); // Pasa la info para que la pantalla menu pueda armarse como corresponde
 	void interrupt(); // Sirve para ejecutar acciones cuando se interrumpe el experimento porque el usuario decide salir del nivel
 	int trialsLeft(); // Indica cuantos trials quedan como maximo (sievr para mostrar indicadores en la interfaz
+	boolean goConfiance(); // Marca si tiene que ir a preguntar la confianza o no.
 	
 	public abstract class GenericExp implements Experiment {
 
@@ -46,7 +46,6 @@ public interface Experiment {
 		protected Session session;
 		protected Trial trial;
 		public boolean levelCompleted;
-		public GenericSetup genericSetup;
 		
 		// Logs
 		protected ExperimentLog expLog;

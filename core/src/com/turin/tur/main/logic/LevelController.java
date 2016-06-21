@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.turin.tur.main.diseno.Level;
@@ -14,7 +13,7 @@ import com.turin.tur.main.diseno.TouchInfo;
 import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.Visound;
 import com.turin.tur.main.diseno.Boxes.Box;
-import com.turin.tur.main.diseno.Confianza;
+import com.turin.tur.main.diseno.MedidorDeConfianza;
 import com.turin.tur.main.screens.ResultsScreen;
 import com.turin.tur.main.util.CameraHelper;
 import com.turin.tur.main.util.Constants;
@@ -55,7 +54,7 @@ public class LevelController implements InputProcessor {
 	private Visound game;
 	private Level level; //Informacion del nivel cargado
 	public RunningSound runningSound; // Maneja el sonido
-	public Confianza confianza; // sirve para obtener el nivel de confianza
+	public MedidorDeConfianza confianza; // sirve para obtener el nivel de confianza
 	
 	// Cosas relacionadas con los elementos del juego
 	public Array<TouchInfo> touchSecuence = new Array<TouchInfo>();
@@ -76,7 +75,7 @@ public class LevelController implements InputProcessor {
 		this.initCamera();
 		this.game.expActivo.initLevel(this.level);
 		this.runningSound = new RunningSound(this.level.levelAssets);
-		this.confianza = new Confianza();
+		this.confianza = new MedidorDeConfianza();
 		
 		// Selecciona el trial que corresponda
 		this.trial = this.game.expActivo.getNextTrial();
@@ -206,8 +205,7 @@ public class LevelController implements InputProcessor {
 				
 				if (elementoTocado) {
 					this.timeSelecion = this.timeInTrial;
-					Gdx.app.debug(TAG, this.timeInTrial+"Tiempo de toque");
-					if (MathUtils.randomBoolean(this.level.jsonLevel.genericSetup.confianceProbability)) {
+					if (this.game.expActivo.goConfiance()) {
 						this.estadoLoop = EstadoLoop.EsperandoConfianza;
 						this.confianza.SetPosition(this.boxTocada.posicionCenter.x, this.boxTocada.posicionCenter.y-0.8f);
 						this.confianza.visible = true;

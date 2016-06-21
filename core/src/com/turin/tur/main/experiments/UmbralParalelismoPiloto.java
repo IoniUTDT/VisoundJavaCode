@@ -43,6 +43,9 @@ public class UmbralParalelismoPiloto extends UmbralParalelismo{
 		setup.feedback = true;
 		setup.desvMax = 50;
 		setup.desvMin = 0.1;
+		setup.confianceProbability = 0.3f;
+		setup.testProbability = 0.1f;
+		
 		this.setup = setup;
 		this.generarDesviaciones(setup);
 		

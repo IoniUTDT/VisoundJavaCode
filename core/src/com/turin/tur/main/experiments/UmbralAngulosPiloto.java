@@ -48,6 +48,9 @@ public class UmbralAngulosPiloto extends UmbralAngulos {
 		setup.feedback = true;
 		setup.desvMin = 1;
 		setup.desvMax = 80;
+		setup.confianceProbability = 0.3f;
+		setup.testProbability = 0.1f;
+		
 		this.setup = setup;
 		this.generarDesviaciones(setup);
 		

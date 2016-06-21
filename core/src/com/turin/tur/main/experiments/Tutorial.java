@@ -644,5 +644,10 @@ public class Tutorial extends GenericExp implements Experiment {
 	protected void sendDataLevel() {
 		// En el caso del tutorial no enviamos datos del nivel cuando finaliza
 	}
+
+	@Override
+	public boolean goConfiance() {
+		return false;
+	}
 	
 }

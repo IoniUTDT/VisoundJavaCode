@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
-import com.turin.tur.main.experiments.Experiments.GenericSetup;
 import com.turin.tur.main.experiments.Umbral;
 import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.main.util.FileHelper;
@@ -62,7 +61,6 @@ public class Level {
 		public int resourceVersion;
 		public Object dinamicaExperimento;
 		public Umbral.Setup setup;
-		public GenericSetup genericSetup;
 	}
 	
 }

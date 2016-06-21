@@ -19,7 +19,7 @@ public class Builder {
 
 	static int contadorLevels = 0;
 
-	public static final int ResourceVersion = 10;
+	public static final int ResourceVersion = 13;
 	public static final int levelVersion = 9; 
 	public static int levelVersionFinal;
 	

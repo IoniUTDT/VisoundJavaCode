@@ -46,7 +46,6 @@ public abstract class UmbralParalelismo extends Umbral {
 		for (double referencia : this.setup.angulosReferencia) {
 			// Creamos el nivel
 			JsonLevel level = PCBuilder.crearLevel();
-			level.genericSetup.confianceProbability = 0.3f;
 			level.levelTitle = "Paralelismo: " + referencia;
 
 			// Creamos el elemento de la info dinamica que corresponde al nivel
@@ -147,102 +146,7 @@ public abstract class UmbralParalelismo extends Umbral {
 			levelStatus.priority = this.setup.levelPriority;
 			this.expSettings.levels.add(levelStatus);
 			
-			/* Con el cambio a categorias esto estaria obsoleto.
-			
-			// Buscamos la inclinacion minima para la referencia que sea visible
-			// (porque la sensibilidad auditiva puede ser superior a la
-			// visual!). A ojo una desviacion de 2.5 grados se percibe.
-			// Es probable que esto se pueda hacer mas eficiente
-			Array<Double> temp = new Array<Double>();
-			for (double desviacion : this.setup.desviacionesAngulares) {
-				if (desviacion > 2.5d) {
-					temp.add(desviacion);
-				}
-			}
-			temp.sort();
-			double limiteVisible = temp.first();
-
-			
-
-			// Creamos los trials (uno para cada desviacion)
-			for (double desviacion : this.setup.desviacionesAngulares) {
-				/* obsoleto
-				JsonTrial trial;
-				if ((desviacion > limiteVisible) || (desviacion < -limiteVisible)) { // Si la desviacion es visible
-													// dejamos que se elija
-													// entre las dos imagenes
-													// reales
-					trial = PCBuilder.crearTrial("Indique a que imagen se parece el sonido", "",
-							DISTRIBUCIONESenPANTALLA.LINEALx2,
-							new int[] { map.get(referencia).get(desviacion).idResource,
-									map.get(referencia).get(-desviacion).idResource },
-							TIPOdeTRIAL.TEST, map.get(referencia).get(desviacion).idResource, false, true, this.setup.feedback);
-				} else { // si es muy chica mostramos dos imagenes donde el
-							// efecto sea visible (igual como comparten
-							// categoria el LevelController detecta la
-							// coincidencia
-					trial = PCBuilder.crearTrial("Indique a que imagen se parece el sonido", "",
-							DISTRIBUCIONESenPANTALLA.LINEALx2,
-							new int[] { map.get(referencia).get(limiteVisible).idResource,
-									map.get(referencia).get(-limiteVisible).idResource },
-							TIPOdeTRIAL.TEST, map.get(referencia).get(desviacion).idResource, false, true, this.setup.feedback);
-				}
-				
-				// agregamos el trial al index
-				map.get(referencia).get(desviacion).idTrial = trial.Id;
-				if (desviacion > 0) {
-					dinamicaPos.listaEstimulos.add(map.get(referencia).get(desviacion));
-				}
-				if (desviacion < 0) {
-					dinamicaNeg.listaEstimulos.add(map.get(referencia).get(desviacion));
-				}
-				level.jsonTrials.add(trial);
-			}
-			*/
-			// Ordenamos las listas de estimulos segun dificultad decreciente y
-			// la numeramos
-			/*
-			dinamicaPos.listaEstimulos.sort();
-			dinamicaNeg.listaEstimulos.sort(); //Por alguna extraña razon el sort usa el modulo y no el valor con signo. 
-			// dinamicaNeg.listaEstimulos.reverse();
-			for (int i = 0; i < dinamicaPos.listaEstimulos.size; i++) {
-				dinamicaPos.listaEstimulos.get(i).nivelSenal = i;
-			}
-			for (int i = 0; i < dinamicaNeg.listaEstimulos.size; i++) {
-				dinamicaNeg.listaEstimulos.get(i).nivelSenal = i;
-			}
-
-			// Retocamos la info dinamica
-			dinamicaPos.convergenciaFinalizada = false;
-			dinamicaNeg.convergenciaFinalizada = false;
-			dinamicaPos.referencia = referencia;
-			dinamicaNeg.referencia = referencia;
-			dinamicaPos.nivelEstimulo = dinamicaPos.listaEstimulos.size - 1;
-			dinamicaNeg.nivelEstimulo = dinamicaNeg.listaEstimulos.size - 1;
-			dinamicaPos.saltosActivos = dinamicaPos.listaEstimulos.size / 10 + 1;
-			dinamicaNeg.saltosActivos = dinamicaNeg.listaEstimulos.size / 10 + 1;
-
-			// Agrupamos todas las convergencias del nivel en un array y lo
-			// mandamos a la variable object del level
-			Array<DinamicaExperimento> convergencias = new Array<DinamicaExperimento>();
-			convergencias.add(dinamicaPos);
-			convergencias.add(dinamicaNeg);
-			level.infoDinamica = convergencias;
-			// Extraemos los niveles y los recursos a la carpeta que corresponda
-			PCBuilder.extract(level);
-			PCBuilder.buildJsons(level);
-
-			// Agregamos el nivel al setting
-			LevelStatus levelStatus = new LevelStatus();
-			levelStatus.enabled = true;
-			levelStatus.id = level.Id;
-			levelStatus.publicName = this.setup.tagButton + "(" + level.Id + ")";
-			levelStatus.internalName = this.getName() + level.Id;
-			levelStatus.expName = this.getName();
-			levelStatus.alreadyPlayed = false;
-			levelStatus.priority = this.setup.levelPriority;
-			this.expSettings.levels.add(levelStatus);
-			*/
+		
 		}
 		// Creamos un archivo con la info del experimento
 		String path2 = Resources.Paths.finalInternalPath + "/" + this.getClass().getSimpleName() + ".settings/";

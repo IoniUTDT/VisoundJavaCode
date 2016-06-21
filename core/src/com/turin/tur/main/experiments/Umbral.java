@@ -10,7 +10,6 @@ import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.experiments.Experiment.GenericExp;
 import com.turin.tur.main.experiments.Experiments.ExperimentLog;
-import com.turin.tur.main.experiments.Umbral.DinamicaExperimento.TRIAL_TYPE;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Internet;
 import com.turin.tur.main.util.Constants.Resources;
@@ -35,7 +34,7 @@ public abstract class Umbral extends GenericExp {
 	 *
 	 */
 	public static class DinamicaExperimento {
-		TRIAL_TYPE trialType; // Distinguimos si se trata de un trial que busca medir de verdad o si es un trial facil para verificar que el usuario esta entendiendo la consigna
+		TrialType trialType; // Distinguimos si se trata de un trial que busca medir de verdad o si es un trial facil para verificar que el usuario esta entendiendo la consigna
 		String identificador; // Algo para indentificar la dinamica
 		int nivelEstimulo; // nivel de proxima señal a enviar
 		int saltosActivos; // nivel del proximo salto (en numero de niveles de señal)
@@ -47,10 +46,8 @@ public abstract class Umbral extends GenericExp {
 		int proporcionAciertos = 3; // Es la cantidad de aciertos que tiene que haber en el numero total de ultimas respuestas para que aumente la dificultad
 		double referencia;
 		protected Estimulo estimuloActivo;
-		
-		public enum TRIAL_TYPE {
-			TEST_EASY_Trial, REAL_TRIAL_CERO, REAL_TRIAL_ESTIMULO
-		}
+		protected Array<TrialConfig> pseudorandom = new Array<TrialConfig>();
+
 	}
 
 	public static class SerieEstimulos {
@@ -78,12 +75,12 @@ public abstract class Umbral extends GenericExp {
 		private Estimulo estimulo;
 		private boolean acertado;
 		private float confianza;
-		private TRIAL_TYPE trialType;
+		private TrialType trialType;
 		private int nivelEstimulo;
 		private float selectionTimeInTrial = -1;
 		private float confianceTimeInTrial = -1;
 		private int soundLoops = -1;
-		Respuesta (Estimulo estimulo, Boolean rta, float confianza, TRIAL_TYPE trialType, int nivelEstimulo, float selectionTime, float confianceTime, int soundLoops) {
+		Respuesta (Estimulo estimulo, Boolean rta, float confianza, TrialType trialType, int nivelEstimulo, float selectionTime, float confianceTime, int soundLoops) {
 			this.estimulo = estimulo;
 			this.acertado = rta;
 			this.confianza = confianza;
@@ -112,13 +109,16 @@ public abstract class Umbral extends GenericExp {
 		public int levelPriority; // Prioridad que tiene el nivel en la lista de niveles. Sirve para habilitar a que se tenga que completar un nivel antes que otro.
 		public String tagButton;
 		public boolean feedback;
-		public float testProbability = 0.2f; // Representa la inversa del numero de test que se dedica a testear al usuario enviandole trials faciles.
+		public float testProbability = 0f; // Representa la inversa del numero de test que se dedica a testear al usuario enviandole trials faciles.
+		public float signalProbability = 0.5f; // Esto tiene sentido que sea asi, mitad y mitad para que ande bien el sistema de medicion. No puede ser mas proibable una opcion que la otra (enm principio)
 		public int numeroDeEstimulosPorSerie;
 		public int saltoInicialFraccion = 4;
 		public int saltoColaUNOFraccion = 5;
 		double desvMin;
 		double desvMax;
 		boolean logscale = true;
+		boolean allTestsConfianza = true; // Esto esta condicionado a que testProbability sea diferente de cero en la generacion del pseudorandom
+		public float confianceProbability = 0;
 	}
 	
 	// Cosas generales
@@ -170,26 +170,29 @@ public abstract class Umbral extends GenericExp {
 		this.dinamicaExperimento = (DinamicaExperimento) level.jsonLevel.dinamicaExperimento;
 		this.setup = level.jsonLevel.setup;
 		this.dinamicaExperimento.nivelEstimulo = this.setup.numeroDeEstimulosPorSerie - 1;
+		this.makeSpeudoRandom();
 	}
 	
 	public Trial getNextTrial() {
+		// Obtiene lo que deberia pasar de la lista speudorando
+		TrialConfig trialConfig = this.dinamicaExperimento.pseudorandom.get(this.dinamicaExperimento.historial.size);
 		// Decide si manda una señal para medir de verdad o un test para probar al usuario
-		if (MathUtils.randomBoolean(this.setup.testProbability)) { // Caso en que se mande un test
-			this.dinamicaExperimento.trialType = DinamicaExperimento.TRIAL_TYPE.TEST_EASY_Trial;
+		if (trialConfig.trialType==TrialType.Test) { // Caso en que se mande un test
+			this.dinamicaExperimento.trialType = TrialType.Test;
 			int base = this.dinamicaExperimento.nivelEstimulo *2;
 			if (base>this.setup.numeroDeEstimulosPorSerie-1 - this.setup.numeroDeEstimulosPorSerie/5) {
 				base = this.setup.numeroDeEstimulosPorSerie-1 - this.setup.numeroDeEstimulosPorSerie/5;
 			}
 			int nivel = MathUtils.random(base, this.setup.numeroDeEstimulosPorSerie-1);
 			this.dinamicaExperimento.estimuloActivo = this.dinamicaExperimento.seriesEstimulos.random().listaEstimulos.get(nivel);
-		} else {
-			if (MathUtils.randomBoolean()) {
-				this.dinamicaExperimento.trialType = DinamicaExperimento.TRIAL_TYPE.REAL_TRIAL_ESTIMULO;
-				this.dinamicaExperimento.estimuloActivo = this.dinamicaExperimento.seriesEstimulos.random().listaEstimulos.get(this.dinamicaExperimento.nivelEstimulo);
-			} else {
-				this.dinamicaExperimento.trialType = DinamicaExperimento.TRIAL_TYPE.REAL_TRIAL_CERO;
-				this.dinamicaExperimento.estimuloActivo = this.dinamicaExperimento.estimulosCeros.random();
-			}
+		}
+		if (trialConfig.trialType==TrialType.Estimulo) {
+			this.dinamicaExperimento.trialType = TrialType.Estimulo;
+			this.dinamicaExperimento.estimuloActivo = this.dinamicaExperimento.seriesEstimulos.random().listaEstimulos.get(this.dinamicaExperimento.nivelEstimulo);
+		}
+		if (trialConfig.trialType==TrialType.NoEstimulo) {
+			this.dinamicaExperimento.trialType = TrialType.NoEstimulo;
+			this.dinamicaExperimento.estimuloActivo = this.dinamicaExperimento.estimulosCeros.random();
 		}
 		
 		// leemos el json del trial
@@ -259,7 +262,99 @@ public abstract class Umbral extends GenericExp {
 			this.dinamicaExperimento.levelFinalizadoCorrectamente=true;
 			this.levelCompleted = true;
 		}
-}
+	}
+	
+	
+	
+	protected class TrialConfig {
+		boolean confiance;
+		TrialType trialType;
+	}
+	
+	protected enum TrialType {
+		Test,Estimulo,NoEstimulo
+	}
+	
+	protected void makeSpeudoRandom () {
+		int numberOfEstimulo;
+		int numberOfNoEstimulo;
+		int numberOfTest;
+		
+		numberOfTest = (int) (this.setup.trialsPorNivel*this.setup.testProbability);
+		if ((this.setup.trialsPorNivel - numberOfTest) % 2 != 0) {
+			Gdx.app.debug(TAG, "WARNING: El numero de trials a asignar en señal o no señal no es par y no quedara bien balanceado");
+		}
+		numberOfEstimulo = ((this.setup.trialsPorNivel - numberOfTest) / 2);
+		numberOfNoEstimulo = ((this.setup.trialsPorNivel - numberOfTest) / 2);
+		
+		Array <TrialConfig> trialsTest= new Array<TrialConfig> ();
+		Array <TrialConfig> trialsEstimulo= new Array<TrialConfig> ();
+		Array <TrialConfig> trialsNoEstimulo= new Array<TrialConfig> ();
+		for (int i=0 ; i < numberOfTest; i++) {
+			trialsTest.add(new TrialConfig());
+		}
+		for (int i=0 ; i < numberOfEstimulo; i++) {
+			trialsEstimulo.add(new TrialConfig());
+		}
+		for (int i=0 ; i < numberOfNoEstimulo; i++) {
+			trialsNoEstimulo.add(new TrialConfig());
+		}
+		
+		int i;
+		int confianceCount;
+		
+		i = 0;
+		confianceCount = (int) (this.setup.confianceProbability * trialsTest.size);
+		if (this.setup.allTestsConfianza) {
+			for (TrialConfig test : trialsTest) {
+				test.confiance = true;
+				test.trialType = TrialType.Test;
+			}
+		} else {
+			for (TrialConfig test : trialsTest) {
+				i++;
+				if (i<=confianceCount) {
+					test.confiance = true;
+				} else {
+					test.confiance = false;
+				}
+				test.trialType = TrialType.Test;
+			}
+		}
+		
+		i = 0;
+		confianceCount = (int) (this.setup.confianceProbability * trialsEstimulo.size);
+		for (TrialConfig test : trialsEstimulo) {
+			i++;
+			if (i<=confianceCount) {
+				test.confiance = true;
+			} else {
+				test.confiance = false;
+			}
+			test.trialType = TrialType.Estimulo;
+		}
+		
+		i = 0;
+		confianceCount = (int) (this.setup.confianceProbability * trialsNoEstimulo.size);
+		for (TrialConfig test : trialsNoEstimulo) {
+			i++;
+			if (i<=confianceCount) {
+				test.confiance = true;
+			} else {
+				test.confiance = false;
+			}
+			test.trialType = TrialType.NoEstimulo;
+		}
+		
+		this.dinamicaExperimento.pseudorandom.addAll(trialsTest);
+		this.dinamicaExperimento.pseudorandom.addAll(trialsEstimulo);
+		this.dinamicaExperimento.pseudorandom.addAll(trialsNoEstimulo);
+		this.dinamicaExperimento.pseudorandom.shuffle();
+	}
+	
+	public boolean goConfiance() {
+		return this.dinamicaExperimento.pseudorandom.get(this.dinamicaExperimento.historial.size).confiance;
+	}
 	
 	
 	
@@ -306,11 +401,7 @@ public abstract class Umbral extends GenericExp {
 	
 	
 	
-	
-	
-	
-	
-	
+	// Cosas relacionadas al makelevel
 	
 	protected ArrayMap<Double, ArrayMap<Double, Estimulo>> indexToMap() {
 		ArrayMap<Double, ArrayMap<Double, Estimulo>> map = new ArrayMap<Double, ArrayMap<Double, Estimulo>>();

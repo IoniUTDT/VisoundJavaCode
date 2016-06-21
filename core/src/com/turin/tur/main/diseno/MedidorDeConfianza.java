@@ -6,9 +6,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.turin.tur.main.util.Assets;
 import com.turin.tur.main.util.Constants;
 
-public class Confianza {
+public class MedidorDeConfianza {
 
-	public static final String TAG = Confianza.class.getName();
+	public static final String TAG = MedidorDeConfianza.class.getName();
 	public Vector2 posicionCenter = new Vector2(); // Esta es la posicion de la caja dada por las coordenadas de su centro. 
 	public Sprite spr; // Guarda la imagen que se va a mostrar (se genera a partir del contenido de la caja)
 	public boolean visible;
@@ -32,7 +32,7 @@ public class Confianza {
 		this.posicionCenter.y = yCenter;
 	}
 
-	public Confianza() {
+	public MedidorDeConfianza() {
 		this.visible = false;
 		this.spr = new Sprite (Assets.imagenes.rectaConfianza);
 	}
