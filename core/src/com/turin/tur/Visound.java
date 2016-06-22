@@ -10,8 +10,8 @@ import com.turin.tur.main.experiments.Experiment;
 import com.turin.tur.main.experiments.Tutorial;
 import com.turin.tur.main.experiments.UmbralAngulosTutorial;
 import com.turin.tur.main.experiments.UmbralParalelismoTutorial;
-import com.turin.tur.main.experiments.UmbralAngulosPiloto;
-import com.turin.tur.main.experiments.UmbralParalelismoPiloto;
+import com.turin.tur.main.experiments.UmbralAngulosTest;
+import com.turin.tur.main.experiments.UmbralParalelismoTest;
 import com.turin.tur.main.screens.MenuScreen;
 import com.turin.tur.main.util.Internet;
 import com.turin.tur.main.util.builder.Builder;
@@ -37,11 +37,11 @@ public class Visound extends Game {
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 		
 		// Create the experiment class
-		exps.add(new Tutorial());
-		exps.add(new UmbralAngulosTutorial());
-		exps.add(new UmbralParalelismoTutorial());
-		//exps.add(new UmbralParalelismoPiloto());
-		//exps.add(new UmbralAngulosPiloto());
+		//exps.add(new Tutorial());
+		//exps.add(new UmbralAngulosTutorial());
+		//exps.add(new UmbralParalelismoTutorial());
+		exps.add(new UmbralParalelismoTest());
+		exps.add(new UmbralAngulosTest());
 		
 		if ((buildResources) & (Gdx.app.getType() == ApplicationType.Desktop)) {
 			

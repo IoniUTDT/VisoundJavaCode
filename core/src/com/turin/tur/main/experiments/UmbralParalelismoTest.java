@@ -2,13 +2,9 @@ package com.turin.tur.main.experiments;
 
 import com.badlogic.gdx.utils.Array;
 
+public class UmbralParalelismoTest extends UmbralParalelismo{
 
-public class UmbralAngulosPiloto extends UmbralAngulos {
-
-	static final String TAG = UmbralAngulosPiloto.class.getName();
-	// Cosas generales
-	private String expName = "UmbralAngulosPiloto";
-	
+	private String expName = "UmbralParalelismoTest";
 	
 	void makeSetup() {
 		// Creamos el setup
@@ -41,15 +37,15 @@ public class UmbralAngulosPiloto extends UmbralAngulos {
 		setup.fluctuacionesLocalesReferenciaEstimuloCero.add(10d);
 		setup.fluctuacionesLocalesReferenciaEstimuloCero.add(-10d);
 		
-		
-		
-		setup.levelPriority=2;
+
+		setup.levelPriority=1;
 		setup.tagButton = "Nivel";
 		setup.feedback = true;
-		setup.desvMin = 1;
-		setup.desvMax = 80;
+		setup.desvMax = 50;
+		setup.desvMin = 0.1;
 		setup.confianceProbability = 0.3f;
 		setup.testProbability = 0.1f;
+		setup.allTestsConfianza = true;
 		
 		this.setup = setup;
 		this.generarDesviaciones(setup);
@@ -63,7 +59,6 @@ public class UmbralAngulosPiloto extends UmbralAngulos {
 
 	@Override
 	protected String getNameTag() {
-		return "expAngulosPiloto";
+		return "expUmbralParalelismoPiloto";
 	}
-	
 }
