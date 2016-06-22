@@ -40,8 +40,8 @@ public class Visound extends Game {
 		exps.add(new Tutorial());
 		exps.add(new UmbralAngulosTutorial());
 		exps.add(new UmbralParalelismoTutorial());
-		exps.add(new UmbralParalelismoPiloto());
-		exps.add(new UmbralAngulosPiloto());
+		//exps.add(new UmbralParalelismoPiloto());
+		//exps.add(new UmbralAngulosPiloto());
 		
 		if ((buildResources) & (Gdx.app.getType() == ApplicationType.Desktop)) {
 			

@@ -51,10 +51,4 @@ public class Experiments {
 		public String expName;
 	}
 
-	/*
-	public static class GenericSetup {
-		public float confianceProbability = 0;
-	}
-	*/
-	
 }

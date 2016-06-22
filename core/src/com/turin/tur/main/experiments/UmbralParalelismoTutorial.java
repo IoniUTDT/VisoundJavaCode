@@ -41,6 +41,7 @@ public class UmbralParalelismoTutorial extends UmbralParalelismo{
 		setup.desvMax = 50;
 		setup.confianceProbability = 0.3f;
 		setup.testProbability = 0.2f;
+		setup.allTestsConfianza = true;
 		
 		this.setup = setup;
 		this.generarDesviaciones(setup);

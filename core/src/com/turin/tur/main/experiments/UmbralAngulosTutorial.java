@@ -37,12 +37,13 @@ public class UmbralAngulosTutorial extends UmbralAngulos{
 		
 		
 		setup.levelPriority=1;
-		setup.tagButton = "Tutorial";
+		setup.tagButton = "TutorialAngulo";
 		setup.feedback = true;
 		setup.desvMax = 80;
 		setup.desvMin = 1;
 		setup.confianceProbability = 0.3f;
 		setup.testProbability = 0.2f;
+		setup.allTestsConfianza = true;
 		this.setup = setup;
 		this.generarDesviaciones(setup);
 
