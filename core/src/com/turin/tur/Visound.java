@@ -40,11 +40,18 @@ public class Visound extends Game {
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 		
 		// Create the experiment class
+		
+		//Version tutorial
 		//exps.add(new Tutorial());
 		//exps.add(new UmbralAngulosTutorial());
 		//exps.add(new UmbralParalelismoTutorial());
-		//exps.add(new UmbralParalelismoTest());
-		//exps.add(new UmbralAngulosTest());
+		
+		// Version test
+		exps.add(new UmbralParalelismoTest());
+		exps.add(new UmbralAngulosTest());
+		
+		
+		// Version entrenamiento
 		exps.add(new UmbralParalelismoTrainingFeedbackInicial());
 		exps.add(new UmbralParalelismoTrainingNoFeedback());
 		exps.add(new UmbralParalelismoTrainingFeedbackFinal());

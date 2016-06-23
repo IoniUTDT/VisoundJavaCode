@@ -43,7 +43,7 @@ public class UmbralAngulosTest extends UmbralAngulos {
 		
 		setup.levelPriority=1;
 		setup.tagButton = "Nivel";
-		setup.feedback = true;
+		setup.feedback = false;
 		setup.desvMin = 1;
 		setup.desvMax = 80;
 		setup.confianceProbability = 0.3f;

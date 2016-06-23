@@ -40,7 +40,7 @@ public class UmbralParalelismoTest extends UmbralParalelismo{
 
 		setup.levelPriority=1;
 		setup.tagButton = "Nivel";
-		setup.feedback = true;
+		setup.feedback = false;
 		setup.desvMax = 50;
 		setup.desvMin = 0.1;
 		setup.confianceProbability = 0.3f;

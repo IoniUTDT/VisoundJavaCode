@@ -23,9 +23,9 @@ public class Builder {
 	public static final int levelVersion = 20; 
 	public static int levelVersionFinal;
 	
-	static final Boolean makeLevels = false; 
-	static final Boolean makeResources = false;
-	
+	static final Boolean makeLevels = true; 
+	static final Boolean makeResources = true;
+	static final Boolean build = true;
 
 	public Builder (){
 		
@@ -33,22 +33,23 @@ public class Builder {
 	
 	public void build(Array<Experiment> exps) {
 
-		
-		if (makeResources) {
-			PCBuilder.verifyResourcesVersion();
-			Textos.crearTextos();
-			for (Experiment exp : exps) {
-				exp.makeResources();
-			}
-			System.exit(0);
-		}	
-		if (makeLevels) {
-			PCBuilder.makeLevels();
-			for (Experiment exp : exps) {
-				exp.makeLevels();
+		if (build) {
+			if (makeResources) {
+				PCBuilder.verifyResourcesVersion();
+				Textos.crearTextos();
+				for (Experiment exp : exps) {
+					exp.makeResources();
+				}
+				System.exit(0);
+			}	
+			if (makeLevels) {
+				PCBuilder.makeLevels();
+				for (Experiment exp : exps) {
+					exp.makeLevels();
+				}
+				System.exit(0);
 			}
 			System.exit(0);
 		}
-		
 	}
 }
