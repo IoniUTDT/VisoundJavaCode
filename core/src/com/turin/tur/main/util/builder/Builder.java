@@ -25,7 +25,7 @@ public class Builder {
 	
 	static final Boolean makeLevels = true; 
 	static final Boolean makeResources = true;
-	static final Boolean build = true;
+	static final Boolean build = false;
 
 	public Builder (){
 		
@@ -40,14 +40,12 @@ public class Builder {
 				for (Experiment exp : exps) {
 					exp.makeResources();
 				}
-				System.exit(0);
 			}	
 			if (makeLevels) {
 				PCBuilder.makeLevels();
 				for (Experiment exp : exps) {
 					exp.makeLevels();
 				}
-				System.exit(0);
 			}
 			System.exit(0);
 		}

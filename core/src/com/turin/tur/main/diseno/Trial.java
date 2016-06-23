@@ -108,16 +108,13 @@ public class Trial {
 	 */
 	public void boxSelected(LevelController levelController) {
 		// Revisamos que onda si se acerto o no. Acertar significa que el elemento tocado y el estimulo compartan al menos una categoria.
-		
-		// TODO Hay que revisar aca la logica!!! Estoy muy quemado!
-		
+		// El el tutorial la categoria del estimulo (que no se ve) coincide con la del boton de siguiente
 		boolean answerCorrect = false;
 		for (CategoriasImagenes categoria : levelController.boxTocada.contenido.categorias) {
 			if (this.estimulo.categorias.contains(categoria, false)) {
 				answerCorrect = true;
 			}
 		}
-		
 		levelController.boxTocada.answerCorrect = answerCorrect;
 		levelController.boxTocada.select(levelController);
 	}

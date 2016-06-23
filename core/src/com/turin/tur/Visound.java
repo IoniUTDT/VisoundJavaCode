@@ -52,9 +52,9 @@ public class Visound extends Game {
 		
 		
 		// Version entrenamiento
-		exps.add(new UmbralParalelismoTrainingFeedbackInicial());
-		exps.add(new UmbralParalelismoTrainingNoFeedback());
-		exps.add(new UmbralParalelismoTrainingFeedbackFinal());
+		//exps.add(new UmbralParalelismoTrainingFeedbackInicial());
+		//exps.add(new UmbralParalelismoTrainingNoFeedback());
+		//exps.add(new UmbralParalelismoTrainingFeedbackFinal());
 		
 		if ((buildResources) & (Gdx.app.getType() == ApplicationType.Desktop)) {
 			

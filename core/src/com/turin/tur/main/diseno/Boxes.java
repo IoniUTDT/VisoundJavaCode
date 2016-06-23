@@ -258,11 +258,12 @@ public abstract class Boxes {
 		@Override
 		public void select(LevelController levelController) {
 			if (this.giveFeedback) {
-				levelController.estadoLoop = EstadoLoop.DandoFeedback;
 				this.givinFeedback = true;
 				this.answerAnimationTime = 0;
 				levelController.runningSound.stop();
+				levelController.estadoLoop = EstadoLoop.DandoFeedback;
 			} else {
+				levelController.runningSound.stop();
 				levelController.estadoLoop = EstadoLoop.CambiarTrial;
 			}
 		}
