@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.turin.tur.Visound.TipoDeAplicacion;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Internet;
@@ -20,6 +21,7 @@ public class Session {
 	// public int levelVersion = Builder.levelVersionFinal;
 	public int resourcesVersion = Builder.ResourceVersion;
 	public ApplicationType plataforma = Gdx.app.getType();
+	public TipoDeAplicacion tipoDeAplicacion;
 
 	public Session() {
 		this.userId = userId();

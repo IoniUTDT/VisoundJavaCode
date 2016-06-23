@@ -30,6 +30,7 @@ public class Visound extends Game {
 	public Session session;
 	public static float volumen = 0.5f;
 	public boolean sendingData;
+	private TipoDeAplicacion tipoDeAplicacion = TipoDeAplicacion.Test;
 	
 	@Override
 	public void create () {
@@ -41,20 +42,23 @@ public class Visound extends Game {
 		
 		// Create the experiment class
 		
-		//Version tutorial
-		//exps.add(new Tutorial());
-		//exps.add(new UmbralAngulosTutorial());
-		//exps.add(new UmbralParalelismoTutorial());
+		if (tipoDeAplicacion == TipoDeAplicacion.Tutorial) {
+			exps.add(new Tutorial());
+			exps.add(new UmbralAngulosTutorial());
+			exps.add(new UmbralParalelismoTutorial());
+		}
 		
-		// Version test
-		exps.add(new UmbralParalelismoTest());
-		exps.add(new UmbralAngulosTest());
+		if (tipoDeAplicacion == TipoDeAplicacion.Test) {
+			exps.add(new UmbralParalelismoTest());
+			exps.add(new UmbralAngulosTest());
+		}
 		
+		if (tipoDeAplicacion == TipoDeAplicacion.Entrenamiento) {
+			exps.add(new UmbralParalelismoTrainingFeedbackInicial());
+			exps.add(new UmbralParalelismoTrainingNoFeedback());
+			exps.add(new UmbralParalelismoTrainingFeedbackFinal());
+		}
 		
-		// Version entrenamiento
-		//exps.add(new UmbralParalelismoTrainingFeedbackInicial());
-		//exps.add(new UmbralParalelismoTrainingNoFeedback());
-		//exps.add(new UmbralParalelismoTrainingFeedbackFinal());
 		
 		if ((buildResources) & (Gdx.app.getType() == ApplicationType.Desktop)) {
 			
@@ -64,9 +68,14 @@ public class Visound extends Game {
 
 		// Inicializa la session y el juego
 		this.session = new Session();
+		this.session.tipoDeAplicacion = this.tipoDeAplicacion;
 		for (Experiment exp : this.exps) {
 			exp.initGame(this.session);
 		}
 		setScreen(new MenuScreen(this));
 	}	
+	
+	public enum TipoDeAplicacion {
+		Tutorial, Test, Entrenamiento
+	}
 }
