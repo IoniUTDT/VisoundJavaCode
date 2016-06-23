@@ -282,10 +282,12 @@ public abstract class Umbral extends GenericExp {
 		
 		numberOfTest = (int) (this.setup.trialsPorNivel*this.setup.testProbability);
 		if ((this.setup.trialsPorNivel - numberOfTest) % 2 != 0) {
-			Gdx.app.debug(TAG, "WARNING: El numero de trials a asignar en señal o no señal no es par y no quedara bien balanceado");
+			Gdx.app.debug(TAG, "WARNING: El numero de trials a asignar en señal o no señal no es par y no quedara bien balanceado. Se agrega un trial test para equilibrar");
+			numberOfTest ++;
 		}
 		numberOfEstimulo = ((this.setup.trialsPorNivel - numberOfTest) / 2);
 		numberOfNoEstimulo = ((this.setup.trialsPorNivel - numberOfTest) / 2);
+		
 		
 		Array <TrialConfig> trialsTest= new Array<TrialConfig> ();
 		Array <TrialConfig> trialsEstimulo= new Array<TrialConfig> ();

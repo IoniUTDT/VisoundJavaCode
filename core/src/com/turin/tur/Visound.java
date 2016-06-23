@@ -12,6 +12,9 @@ import com.turin.tur.main.experiments.UmbralAngulosTutorial;
 import com.turin.tur.main.experiments.UmbralParalelismoTutorial;
 import com.turin.tur.main.experiments.UmbralAngulosTest;
 import com.turin.tur.main.experiments.UmbralParalelismoTest;
+import com.turin.tur.main.experiments.UmbralParalelismoTrainingFeedbackFinal;
+import com.turin.tur.main.experiments.UmbralParalelismoTrainingFeedbackInicial;
+import com.turin.tur.main.experiments.UmbralParalelismoTrainingNoFeedback;
 import com.turin.tur.main.screens.MenuScreen;
 import com.turin.tur.main.util.Internet;
 import com.turin.tur.main.util.builder.Builder;
@@ -40,8 +43,11 @@ public class Visound extends Game {
 		//exps.add(new Tutorial());
 		//exps.add(new UmbralAngulosTutorial());
 		//exps.add(new UmbralParalelismoTutorial());
-		exps.add(new UmbralParalelismoTest());
-		exps.add(new UmbralAngulosTest());
+		//exps.add(new UmbralParalelismoTest());
+		//exps.add(new UmbralAngulosTest());
+		exps.add(new UmbralParalelismoTrainingFeedbackInicial());
+		exps.add(new UmbralParalelismoTrainingNoFeedback());
+		exps.add(new UmbralParalelismoTrainingFeedbackFinal());
 		
 		if ((buildResources) & (Gdx.app.getType() == ApplicationType.Desktop)) {
 			

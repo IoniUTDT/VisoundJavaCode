@@ -122,7 +122,7 @@ public class LevelController implements InputProcessor {
 			} else {
 				this.trial = this.game.expActivo.getNextTrial();
 				this.confianzaReportada = -1;
-				Gdx.app.debug(TAG, this.timeInTrial+"Tiempo a resetaer");
+				//Gdx.app.debug(TAG, this.timeInTrial+"Tiempo a resetaer");
 				this.timeInTrial = 0;
 				this.timeConfiance = -2;
 				this.timeSelecion = -2;
@@ -235,7 +235,7 @@ public class LevelController implements InputProcessor {
 					//Gdx.app.debug(TAG, this.confianza.posicionCenter.x+"");
 					//Gdx.app.debug(TAG, this.confianza.spr.getWidth()+"");
 					this.confianzaReportada = (touch.coordGame.x-(this.confianza.posicionCenter.x-this.confianza.spr.getWidth()/2))/(this.confianza.spr.getWidth());
-					Gdx.app.debug(TAG, this.timeInTrial+"TiempoDeConfianza");
+					// Gdx.app.debug(TAG, this.timeInTrial+"TiempoDeConfianza");
 					this.timeConfiance = this.timeInTrial;
 					//Gdx.app.debug(TAG, this.confianzaReportada+"");
 					this.estadoLoop = EstadoLoop.ListoParaProcesarBox;
