@@ -30,7 +30,7 @@ public class Visound extends Game {
 	public Session session;
 	public static float volumen = 0.5f;
 	public boolean sendingData;
-	private TipoDeAplicacion tipoDeAplicacion = TipoDeAplicacion.Test;
+	public TipoDeAplicacion tipoDeAplicacion = TipoDeAplicacion.Test;
 	
 	@Override
 	public void create () {
