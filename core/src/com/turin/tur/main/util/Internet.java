@@ -16,7 +16,7 @@ import com.badlogic.gdx.utils.TimeUtils;
 
 public class Internet {
 
-	private static final boolean CODETESTMODE = false;
+	private static final boolean CODETESTMODE = true;
 	private static final String TAG = Internet.class.getName();
 	//public static boolean internetChecked=false;
 	public static boolean serverOnline=false;

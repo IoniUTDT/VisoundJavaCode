@@ -1,7 +1,7 @@
 package com.turin.tur.main.experiments;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.Level.JsonLevel;
@@ -137,7 +137,7 @@ public class UmbralAngulos extends Umbral {
 		
 		for (SetupLevel setupLevel : this.setupsLevels) {
 			// Categorizamos los recursos una vez.
-			ArrayMap<Double, ArrayMap<Double, Estimulo>> estimulosByAngulos = this.indexToMap(setupLevel); 
+			ArrayMap<Double, ArrayMap<Double, Estimulo>> estimulosByAngulos = this.indexToMap(setupLevel.setupResources); 
 
 			// Creamos el nivel
 			JsonLevel level = PCBuilder.crearLevel();
@@ -150,7 +150,7 @@ public class UmbralAngulos extends Umbral {
 			dinamicaExperimento.trialsPorNivel = setupLevel.trialsPorNivel;
 
 			// Creamos las series 
-			for (double variacion : setupLevel.fluctuacionesLocalesReferenciaSeries) {
+			for (double variacion : setupLevel.setupResources.fluctuacionesLocalesReferenciaSeries) {
 				double anguloFijo = setupLevel.referencia + variacion;
 
 				// Creamos la serie
@@ -216,7 +216,7 @@ public class UmbralAngulos extends Umbral {
 			}
 				
 			// Creamos el conjunto de estimulos cero
-			for (Double variacion : setupLevel.fluctuacionesLocalesReferenciaEstimuloCero) {
+			for (Double variacion : setupLevel.setupResources.fluctuacionesLocalesReferenciaEstimuloCero) {
 				// Creamos el trial
 				// Seleccionamos el recurso
 				EstimuloAngulo recurso;
@@ -237,7 +237,7 @@ public class UmbralAngulos extends Umbral {
 
 			level.dinamicaExperimento = dinamicaExperimento;
 			level.setupLevel = setupLevel;
-			level.setupLevel.estimulos.clear();
+			level.setupLevel.setupResources.estimulos.clear();
 			// Extraemos los niveles y los recursos a la carpeta que corresponda
 			PCBuilder.extract(level);
 			PCBuilder.buildJsons(level);
@@ -275,7 +275,6 @@ public class UmbralAngulos extends Umbral {
 	
 	
 	private SetupResources makeResourceSetupTutorial() {
-		//TODO Debuguear que todo se complete
 		
 		// Hacemos el setup para el tutorial
 		SetupResources setupResources = new SetupResources();
@@ -308,7 +307,6 @@ public class UmbralAngulos extends Umbral {
 	}
 
 	private SetupResources makeResourceTransferencia() {
-		//TODO Debuguear que todo se complete
 
 		// Hacemos el setup para el tutorial
 		SetupResources setupResources = new SetupResources();
@@ -346,7 +344,7 @@ public class UmbralAngulos extends Umbral {
 	
 	@Override
 	public String getResourcesName() {
-		return this.setupActivo.SetupResourcesName;
+		return this.setupActivo.setupResources.SetupResourcesName;
 	}
 
 	@Override
@@ -358,6 +356,9 @@ public class UmbralAngulos extends Umbral {
 	void makeSetup() {
 		this.setupsResources.add(this.makeResourceSetupTutorial());
 		this.setupsResources.add(this.makeResourceTransferencia());
+		for (SetupResources setup : this.setupsResources) {
+			this.generarDesviaciones(setup);
+		}
 	}
 
 	@Override
@@ -367,13 +368,20 @@ public class UmbralAngulos extends Umbral {
 
 	@Override
 	public void makeLevels() {
+		// cargamos los archivos con el setup guardados durante la creacion de recursos
+		String path = Resources.Paths.ResourcesBuilder + "/extras/" + this.getExpName() + "SetupResources.meta";
+		String savedData = FileHelper.readLocalFile(path);
+		Json json = new Json();
+		json.setUsePrototypes(false);
+		this.setupsResources = json.fromJson(this.setupsResources.getClass(), savedData);
 		this.setupsLevels.add(this.makeLevelTutorial());
 		this.buildLevels();
 	}
 
 	private SetupLevel makeLevelTutorial() {
 		// Creamos el setup desde la super clase
-		SetupLevel setup = (SetupLevel) this.makeResourceSetupTutorial();
+		SetupLevel setup = new SetupLevel();
+		setup.setupResources = this.searchByName("Tutorial");
 		setup.allTestsConfianza = false;
 		setup.confianceProbability = 0.3f;
 		setup.feedback = true;
@@ -382,7 +390,18 @@ public class UmbralAngulos extends Umbral {
 		setup.SetupLevelName = "NivelTutorial";
 		setup.testProbability = 0.2f;
 		setup.tagButton = "Tutorial Angulos";
+		setup.trialsPorNivel = 10;
 		return setup;
+	}
+	
+	private SetupResources searchByName (String name) {
+		for (SetupResources setup : this.setupsResources) {
+			if (setup.SetupResourcesName.equals(name)) {
+				return setup;
+			}
+		}
+		Gdx.app.debug(TAG, "Se esta buscando un setupResource llamado "+ name + " que no existe");
+		return null;
 	}
 
 }

@@ -10,6 +10,7 @@ import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.experiments.Experiment.GenericExp;
 import com.turin.tur.main.experiments.Experiments.ExperimentLog;
+import com.turin.tur.main.experiments.Umbral.SetupResources;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Internet;
 import com.turin.tur.main.util.Constants.Resources;
@@ -112,7 +113,8 @@ public abstract class Umbral extends GenericExp {
 		boolean logscale = true;
 	}
 	
-	public static class SetupLevel extends SetupResources {
+	public static class SetupLevel {
+		public SetupResources setupResources;
 		public double referencia;
 		public String SetupLevelName; // Identifica el setup en cuestion
 		public int trialsPorNivel; // Numero de trial que conforman un nivel
@@ -128,8 +130,8 @@ public abstract class Umbral extends GenericExp {
 	}
 	
 	// Cosas generales
-	protected Array<SetupLevel> setupsLevels;
-	protected Array<SetupResources> setupsResources;
+	protected Array<SetupLevel> setupsLevels = new Array<SetupLevel>();
+	protected Array<SetupResources> setupsResources = new Array<SetupResources>();
 	protected SetupLevel setupActivo;
 	protected DinamicaExperimento dinamicaExperimento;
 	
@@ -175,7 +177,7 @@ public abstract class Umbral extends GenericExp {
 		// Cargamos los datos especificos del nivel
 		this.dinamicaExperimento = (DinamicaExperimento) level.jsonLevel.dinamicaExperimento;
 		this.setupActivo = level.jsonLevel.setupLevel;
-		this.dinamicaExperimento.nivelEstimulo = this.setupActivo.numeroDeEstimulosPorSerie - 1;
+		this.dinamicaExperimento.nivelEstimulo = this.setupActivo.setupResources.numeroDeEstimulosPorSerie - 1;
 		this.makeSpeudoRandom();
 	}
 	
@@ -186,10 +188,10 @@ public abstract class Umbral extends GenericExp {
 		if (trialConfig.trialType==TrialType.Test) { // Caso en que se mande un test
 			this.dinamicaExperimento.trialType = TrialType.Test;
 			int base = this.dinamicaExperimento.nivelEstimulo *2;
-			if (base>this.setupActivo.numeroDeEstimulosPorSerie-1 - this.setupActivo.numeroDeEstimulosPorSerie/5) {
-				base = this.setupActivo.numeroDeEstimulosPorSerie-1 - this.setupActivo.numeroDeEstimulosPorSerie/5;
+			if (base>this.setupActivo.setupResources.numeroDeEstimulosPorSerie-1 - this.setupActivo.setupResources.numeroDeEstimulosPorSerie/5) {
+				base = this.setupActivo.setupResources.numeroDeEstimulosPorSerie-1 - this.setupActivo.setupResources.numeroDeEstimulosPorSerie/5;
 			}
-			int nivel = MathUtils.random(base, this.setupActivo.numeroDeEstimulosPorSerie-1);
+			int nivel = MathUtils.random(base, this.setupActivo.setupResources.numeroDeEstimulosPorSerie-1);
 			this.dinamicaExperimento.estimuloActivo = this.dinamicaExperimento.seriesEstimulos.random().listaEstimulos.get(nivel);
 		}
 		if (trialConfig.trialType==TrialType.Estimulo) {
@@ -247,7 +249,7 @@ public abstract class Umbral extends GenericExp {
 		// Setea el salto entre nivel y nivel
 		float avanceHastaUNOs = (float) this.dinamicaExperimento.historial.size / (this.setupActivo.trialsPorNivel * (1 - 1f/this.setupActivo.saltoColaUNOFraccion));
 		if (avanceHastaUNOs<1) {
-			int saltoMaximo = this.setupActivo.numeroDeEstimulosPorSerie/this.setupActivo.saltoInicialFraccion;
+			int saltoMaximo = this.setupActivo.setupResources.numeroDeEstimulosPorSerie/this.setupActivo.saltoInicialFraccion;
 			this.dinamicaExperimento.saltosActivos = MathUtils.ceil(saltoMaximo*(1-avanceHastaUNOs));
 		} else {
 			this.dinamicaExperimento.saltosActivos = 1;
@@ -260,7 +262,7 @@ public abstract class Umbral extends GenericExp {
 		}
 		if (disminuirDificultad) {
 			this.dinamicaExperimento.nivelEstimulo=this.dinamicaExperimento.nivelEstimulo+this.dinamicaExperimento.saltosActivos;
-			if (this.dinamicaExperimento.nivelEstimulo>this.setupActivo.numeroDeEstimulosPorSerie-1) {this.dinamicaExperimento.nivelEstimulo=this.setupActivo.numeroDeEstimulosPorSerie-1;}
+			if (this.dinamicaExperimento.nivelEstimulo>this.setupActivo.setupResources.numeroDeEstimulosPorSerie-1) {this.dinamicaExperimento.nivelEstimulo=this.setupActivo.setupResources.numeroDeEstimulosPorSerie-1;}
 		}
 		
 		// Nos fijamos si ya se completo la dinamica o no.

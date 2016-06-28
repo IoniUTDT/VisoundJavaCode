@@ -38,7 +38,7 @@ public interface Experiment {
 		final static String TAG = GenericExp.class.getName();
 
 		// Cosas generales
-		public Array<LevelStatus> levelsStatus;
+		public Array<LevelStatus> levelsStatus = new Array<LevelStatus>();
 		
 		// Cosas que manejan la dinamica en cada ejecucion
 		protected Level level;
