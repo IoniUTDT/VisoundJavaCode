@@ -9,9 +9,7 @@ import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.main.diseno.Level.JsonLevel;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.experiments.Experiment.GenericExp;
-import com.turin.tur.main.experiments.Experiments.ExpSettings;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
-import com.turin.tur.main.experiments.Experiments.TIPOdeEXPERIMENTO;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
@@ -25,7 +23,6 @@ public class Tutorial extends GenericExp implements Experiment {
 
 	String expName = "Tutorial";
 	private Setup setup;
-	TIPOdeEXPERIMENTO tipoDeExperimento = TIPOdeEXPERIMENTO.TutorialBasico;
 	private DinamicaTutorial dinamicaTutorial;
 	
 	
@@ -48,11 +45,6 @@ public class Tutorial extends GenericExp implements Experiment {
 		Array<Linea> lineas = new Array<Linea>();
 	}
 	
-	@Override
-	public String getName() {
-		return this.expName;
-	}
-
 	@Override
 	public void makeResources() {
 		
@@ -486,8 +478,7 @@ public class Tutorial extends GenericExp implements Experiment {
 		this.setup = json.fromJson(Tutorial.Setup.class, savedData);
 
 		// Inicializamos el expSettings;
-		this.expSettings = new ExpSettings();
-		this.expSettings.tipoDeExperimento = this.tipoDeExperimento;
+		this.levelsStatus = new Array<LevelStatus>();
 
 		// Creamos un map con todos los recursos
 		ArrayMap<String, Recurso> recursosTag = new ArrayMap<String, Recurso>();
@@ -556,13 +547,13 @@ public class Tutorial extends GenericExp implements Experiment {
 		levelStatus.expName = this.expName;
 		levelStatus.alreadyPlayed = false;
 		levelStatus.priority = 0;
-		this.expSettings.levels.add(levelStatus);
+		this.levelsStatus.add(levelStatus);
 
 		// Creamos un archivo con la info del experimento
 		String path2 = Resources.Paths.finalInternalPath + "/" + this.getClass().getSimpleName() + ".settings/";
 		Json json2 = new Json();
 		json2.setUsePrototypes(false);
-		FileHelper.writeLocalFile(path2, json.toJson(this.expSettings));
+		FileHelper.writeLocalFile(path2, json.toJson(this.levelsStatus));
 
 	}
 
@@ -648,6 +639,16 @@ public class Tutorial extends GenericExp implements Experiment {
 	@Override
 	public boolean goConfiance() {
 		return false;
+	}
+
+	@Override
+	public String getResourcesName() {
+		return this.expName;
+	}
+
+	@Override
+	public String getLevelName() {
+		return this.expName;
 	}
 	
 }

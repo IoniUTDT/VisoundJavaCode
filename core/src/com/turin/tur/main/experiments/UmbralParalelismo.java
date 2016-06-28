@@ -5,9 +5,7 @@ import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.Level.JsonLevel;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
-import com.turin.tur.main.experiments.Experiments.ExpSettings;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
-import com.turin.tur.main.experiments.Experiments.TIPOdeEXPERIMENTO;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
 import com.turin.tur.main.util.Constants.Resources;
@@ -16,7 +14,7 @@ import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.builder.Imagenes;
 import com.turin.tur.main.util.builder.PCBuilder;
 
-public abstract class UmbralParalelismo extends Umbral {
+public class UmbralParalelismo extends Umbral {
 
 	
 	private static class ImageInfoParalelismo extends Umbral.ImageInfo {
@@ -36,7 +34,7 @@ public abstract class UmbralParalelismo extends Umbral {
 		this.setup = json.fromJson(UmbralParalelismo.Setup.class, savedData);
 
 		// Creamos el setting del experimento
-		this.expSettings = new ExpSettings();
+		this.expSettings = new LevelsStatus();
 		this.expSettings.tipoDeExperimento = TIPOdeEXPERIMENTO.TestParalelismo;
 
 		// Categorizamos los recursos en un mapa
@@ -228,13 +226,8 @@ public abstract class UmbralParalelismo extends Umbral {
 		this.setup.estimulos.add(estimulo);
 	}
 
-	abstract void makeSetup();
-
-
-	abstract public String getName();
-
-	@Override
-	abstract protected String getNameTag();
+	void makeSetup();
+	public String getName();
 
 	float getDesviacionCero() {
 		return 0;

@@ -8,7 +8,6 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.turin.tur.main.diseno.Level;
 import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.diseno.Trial;
-import com.turin.tur.main.experiments.Experiments.ExpSettings;
 import com.turin.tur.main.experiments.Experiments.ExperimentLog;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
 import com.turin.tur.main.util.FileHelper;
@@ -18,7 +17,8 @@ import com.turin.tur.main.util.Internet.TIPO_ENVIO;
 
 public interface Experiment {
 	// Cosas offline
-	String getName();
+	String getResourcesName();
+	String getLevelName();
 	void makeResources(); // Se encarga de crear los recuros
 	void makeLevels(); // Se encarga de armar la estructura de niveles
 	// Cosas online de control de flujo de informacion
@@ -29,7 +29,6 @@ public interface Experiment {
 	void levelCompleted(); // Se ejecuta cuando se detiene un nivel (la idea es que aca se generen todos los logs y se envien al servidor)
 	boolean islevelCompleted (); // Devuelve la variable levelCompleted (hay que hacerlo asi porque sino no esta en la interfaz
 	// Cosas de interfaz general
-	Array<LevelStatus> levelsStatus(); // Pasa la info para que la pantalla menu pueda armarse como corresponde
 	void interrupt(); // Sirve para ejecutar acciones cuando se interrumpe el experimento porque el usuario decide salir del nivel
 	int trialsLeft(); // Indica cuantos trials quedan como maximo (sievr para mostrar indicadores en la interfaz
 	boolean goConfiance(); // Marca si tiene que ir a preguntar la confianza o no.
@@ -39,7 +38,7 @@ public interface Experiment {
 		final static String TAG = GenericExp.class.getName();
 
 		// Cosas generales
-		protected ExpSettings expSettings;
+		public Array<LevelStatus> levelsStatus;
 		
 		// Cosas que manejan la dinamica en cada ejecucion
 		protected Level level;
@@ -53,7 +52,6 @@ public interface Experiment {
 		
 		// Cosas que van mas alla de la interfaz pero que se diferencian en cada experimento
 		protected abstract void specificInitLevel(); // Se ejecuta cuando se inicial un nivel especifico (la idea es que aca se inicialicen todas las variables dependientes del nivel)
-		protected abstract String getNameTag();
 		protected abstract void sendDataLevel();
 		
 		public void initLevel(Level level) {
@@ -61,17 +59,14 @@ public interface Experiment {
 			this.expLog = new ExperimentLog();
 			this.expLog.levelInstance = TimeUtils.millis();
 			this.expLog.session = this.session;
-			this.expLog.expName = this.getName();
+			this.expLog.expName = this.getResourcesName();
+			this.expLog.levelName = this.getLevelName();
 			// Creamos el enviable
-			Internet.addDataToSend(this.expLog, TIPO_ENVIO.NEWLEVEL, this.getNameTag());
+			Internet.addDataToSend(this.expLog, TIPO_ENVIO.NEWLEVEL, this.getLevelName());
 			this.levelCompleted = false;
 			this.specificInitLevel();
 		}
 
-		public Array<LevelStatus> levelsStatus() {
-			return this.expSettings.levels;
-		}
-		
 		public void initGame(Session session) {
 			// Cargamos la info del experimento
 			if (!Gdx.files.local(Resources.Paths.LocalSettingsCopy + this.getClass().getSimpleName() + ".settings").exists()) { // hacemos una copia de la info guardada en internal
@@ -81,7 +76,7 @@ public interface Experiment {
 			}
 			String savedData = FileHelper.readLocalFile(Resources.Paths.LocalSettingsCopy + this.getClass().getSimpleName() + ".settings");
 			Json json = new Json();
-			this.expSettings = json.fromJson(Experiments.ExpSettings.class, savedData);
+			this.levelsStatus = json.fromJson(this.levelsStatus.getClass(), savedData);
 			this.session = session;
 		}
 		
@@ -90,13 +85,13 @@ public interface Experiment {
 		}
 		
 		public void levelCompleted() {
-			for (LevelStatus levelStatus : this.expSettings.levels) {
+			for (LevelStatus levelStatus : this.levelsStatus) {
 				if (levelStatus.id == this.level.Id) {
 					levelStatus.alreadyPlayed = true;
 				}
 			}
 			Json json = new Json();
-			FileHelper.writeLocalFile(Resources.Paths.LocalSettingsCopy + this.getClass().getSimpleName() + ".settings", json.toJson(this.expSettings));
+			FileHelper.writeLocalFile(Resources.Paths.LocalSettingsCopy + this.getClass().getSimpleName() + ".settings", json.toJson(this.levelsStatus));
 			this.sendDataLevel();
 		}
 	}

@@ -2,7 +2,7 @@ package com.turin.tur.main.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.turin.tur.main.experiments.Experiment;
+import com.turin.tur.main.experiments.Experiment.GenericExp;
 import com.turin.tur.Visound;
 import com.turin.tur.main.diseno.Level;
 import com.turin.tur.main.diseno.RunningSound.NEXT;
@@ -25,10 +25,10 @@ public class LevelScreen extends AbstractGameScreen  {
 	private int levelNumber;
 	private boolean paused;
 	
-	public LevelScreen (Visound game, int levelNumber, String expName) {
+	public LevelScreen (Visound game, int levelNumber, String levelName) {
 		super(game);
-		for (Experiment exp : this.game.exps) {
-			if (exp.getName().equals(expName)) {
+		for (GenericExp exp : this.game.exps) {
+			if (exp.getLevelName().equals(levelName)) {
 				this.game.expActivo = exp;
 			}
 		}

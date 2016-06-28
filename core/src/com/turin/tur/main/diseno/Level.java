@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
-import com.turin.tur.main.experiments.Umbral;
+import com.turin.tur.main.experiments.Umbral.SetupLevel;
 import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.LevelAsset;
@@ -60,7 +60,7 @@ public class Level {
 		public Array<JsonTrial> jsonTrials = new Array<JsonTrial>(); // Este se usa solamente en el proceso de creacion de niveles (pero por como esta dise�ado el codigo que graba y carga el json completo se guarda   
 		public int resourceVersion;
 		public Object dinamicaExperimento;
-		public Umbral.Setup setup;
+		public SetupLevel setupLevel;
 	}
 	
 }

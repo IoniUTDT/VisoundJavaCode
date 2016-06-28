@@ -3,6 +3,7 @@ package com.turin.tur.main.util.builder;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.turin.tur.main.experiments.Experiment;
+import com.turin.tur.main.experiments.Experiment.GenericExp;
 import com.turin.tur.main.util.Constants.Resources;
 
 public class Builder {
@@ -31,7 +32,7 @@ public class Builder {
 		
 	}
 	
-	public void build(Array<Experiment> exps) {
+	public void build(Array<GenericExp> exps) {
 
 		if (build) {
 			if (makeResources) {

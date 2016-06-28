@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.Array;
 import com.turin.tur.Visound;
 import com.turin.tur.Visound.TipoDeAplicacion;
 import com.turin.tur.main.experiments.Experiment;
+import com.turin.tur.main.experiments.Experiment.GenericExp;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.Internet;
@@ -123,7 +124,7 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 		shapeRenderer = new ShapeRenderer();
 		skin = new Skin(Gdx.files.internal(Constants.SKIN_LIBGDX_UI));
 		
-		if (this.game.tipoDeAplicacion == TipoDeAplicacion.Tutorial) {
+		if (this.game.session.tipoDeAplicacion == TipoDeAplicacion.Tutorial) {
 			// Creamos el boton de las instrucciones
 			TextButton instrucciones = new TextButton("Instrucciones", skin, "default");
 			instrucciones.addListener(new ClickListener() {
@@ -140,8 +141,8 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 		
 		// Cargamos los niveles
 		Array<LevelStatus> levels = new Array<LevelStatus>();
-		for (Experiment exp : this.game.exps) {
-			levels.addAll(exp.levelsStatus());
+		for (GenericExp exp : this.game.exps) {
+			levels.addAll(exp.levelsStatus);
 		}
 		
 		// Los ordenamos segun prioridad

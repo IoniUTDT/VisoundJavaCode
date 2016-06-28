@@ -1,13 +1,12 @@
 package com.turin.tur.main.experiments;
 
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.Level.JsonLevel;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
-import com.turin.tur.main.experiments.Experiments.ExpSettings;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
-import com.turin.tur.main.experiments.Experiments.TIPOdeEXPERIMENTO;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Constants.Resources;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
@@ -17,7 +16,7 @@ import com.turin.tur.main.util.builder.Imagenes;
 import com.turin.tur.main.util.builder.PCBuilder;
 
 
-public abstract class UmbralAngulos extends Umbral {
+public class UmbralAngulos extends Umbral {
 
 	static final String TAG = UmbralParalelismo.class.getName();
 	// Cosas generales
@@ -31,13 +30,12 @@ public abstract class UmbralAngulos extends Umbral {
 		
 	}
 
-	
 	private static class ImageInfoAngulo extends Umbral.ImageInfo {
 		double anguloLadoMovil;
 	}
 	
 	
-	protected void makeResource(double ladoFijo, double anguloAFormar) {
+	protected Estimulo makeResource(double ladoFijo, double anguloAFormar) {
 		// buscamos el tamaño del lienzo a dibujar
 		float tamano;
 		if (Resources.Display.width > Resources.Display.height) {
@@ -132,45 +130,29 @@ public abstract class UmbralAngulos extends Umbral {
 		estimulo.anguloLadoMovil = info.anguloLadoMovil;
 		estimulo.anguloFijo = info.referencia;
 		estimulo.desviacion = info.desviacion;
-		this.setup.estimulos.add(estimulo);
+		return estimulo;
 	}
 
-	abstract void makeSetup();
-
-	@Override
-	public void makeLevels() {
+	public void buildLevels() {
 		
-		// Cargamos los datos del setup
-		String path = Resources.Paths.ResourcesBuilder + "/extras/" + this.getName() + "Setup.meta";
-		String savedData = FileHelper.readLocalFile(path);
-		Json json = new Json();
-		json.setUsePrototypes(false);
-		this.setup = json.fromJson(Umbral.Setup.class, savedData);
+		for (SetupLevel setupLevel : this.setupsLevels) {
+			// Categorizamos los recursos una vez.
+			ArrayMap<Double, ArrayMap<Double, Estimulo>> estimulosByAngulos = this.indexToMap(setupLevel); 
 
-		// Creamos el setting del experimento
-		this.expSettings = new ExpSettings();
-		this.expSettings.tipoDeExperimento = TIPOdeEXPERIMENTO.TestAngulos;
-
-		
-		// Categorizamos los recursos una vez.
-		ArrayMap<Double, ArrayMap<Double, Estimulo>> estimulosByAngulos = this.indexToMap(); 
-		
-		// Hacemos un nivel para cada referencia
-		for (double referencia : this.setup.angulosReferencia) {
 			// Creamos el nivel
 			JsonLevel level = PCBuilder.crearLevel();
-			level.levelTitle = "Angulos: " + referencia;
+			level.levelTitle = "Angulos: " + setupLevel.referencia;
 
 			// Creamos el elemento de la info dinamica que corresponde al nivel
 			DinamicaExperimento dinamicaExperimento = new DinamicaExperimento();
-			dinamicaExperimento.identificador = "Dinamica, "+referencia+" grados";
-			dinamicaExperimento.referencia = referencia;
-			dinamicaExperimento.trialsPorNivel = this.setup.trialsPorNivel;
-			
+			dinamicaExperimento.identificador = "Dinamica, "+setupLevel.referencia+" grados";
+			dinamicaExperimento.referencia = setupLevel.referencia;
+			dinamicaExperimento.trialsPorNivel = setupLevel.trialsPorNivel;
+
 			// Creamos las series 
-			for (double variacion : this.setup.fluctuacionesLocalesReferenciaSeries) {
-				double anguloFijo = referencia + variacion;
-				
+			for (double variacion : setupLevel.fluctuacionesLocalesReferenciaSeries) {
+				double anguloFijo = setupLevel.referencia + variacion;
+
 				// Creamos la serie
 				SerieEstimulos serieAgudos = new SerieEstimulos();
 				SerieEstimulos serieObtusos = new SerieEstimulos();
@@ -181,17 +163,17 @@ public abstract class UmbralAngulos extends Umbral {
 				serieObtusos.desdeAgudosOPos = false;
 				serieObtusos.identificador = "Orientacion:"+anguloFijo+"ob";
 				serieObtusos.ladoFijo = anguloFijo;
-				
+
 				// Creamos los trials (uno para cada lado movil)
 				for (double anguloMovil : estimulosByAngulos.get(anguloFijo).keys()) { // Esto incluye a los estimulos con nivel de estimulo cero que tienen el lado fijo en la referencia, pero despues se los ignora.
 					// Seleccionamos el recurso
 					EstimuloAngulo recurso = (EstimuloAngulo) estimulosByAngulos.get(anguloFijo).get(anguloMovil);
 					JsonTrial trial = PCBuilder.crearTrial("Indique a que categoría pertenece el ángulo", "",
-								DISTRIBUCIONESenPANTALLA.LINEALx2,
-								new int[] {CategoriasImagenes.Recto.ID, CategoriasImagenes.NoRecto.ID},
-								TIPOdeTRIAL.TEST, recurso.idResource, false, true, this.setup.feedback);
+							DISTRIBUCIONESenPANTALLA.LINEALx2,
+							new int[] {CategoriasImagenes.Recto.ID, CategoriasImagenes.NoRecto.ID},
+							TIPOdeTRIAL.TEST, recurso.idResource, false, true, setupLevel.feedback);
 					recurso.idTrial = trial.Id;
-					
+
 					// Agregamos a la dinamica que correspondam (nota, aca se elimina de la lista de recursos a los que tienen estinulo 0, osea desviacion 90)
 					if ((recurso.desviacion < -270) & (recurso.desviacion > -360)){
 						serieAgudos.listaEstimulos.add(recurso);
@@ -208,17 +190,17 @@ public abstract class UmbralAngulos extends Umbral {
 					if ((recurso.desviacion > 270) & (recurso.desviacion < 360)){
 						serieAgudos.listaEstimulos.add(recurso);
 					}
-					
+
 					// Agregamos el trial creado al level
 					level.jsonTrials.add(trial);
 				}
-				
+
 				// Ordenamos las listas de estimulos segun dificultad decreciente y
 				// la numeramos
 				serieAgudos.listaEstimulos.sort();
 				serieObtusos.listaEstimulos.sort();
 				serieObtusos.listaEstimulos.reverse();
-				
+
 				// Numeramos los recursos por dificultad
 				for (int i = 1; i <= serieAgudos.listaEstimulos.size; i++) {
 					serieAgudos.listaEstimulos.get(i-1).nivelSenal = i;
@@ -230,32 +212,32 @@ public abstract class UmbralAngulos extends Umbral {
 				// Agregamos las dos series a la dinamica
 				dinamicaExperimento.seriesEstimulos.add(serieAgudos);
 				dinamicaExperimento.seriesEstimulos.add(serieObtusos);
-				
+
 			}
-			
+				
 			// Creamos el conjunto de estimulos cero
-			for (Double variacion : setup.fluctuacionesLocalesReferenciaEstimuloCero) {
+			for (Double variacion : setupLevel.fluctuacionesLocalesReferenciaEstimuloCero) {
 				// Creamos el trial
 				// Seleccionamos el recurso
 				EstimuloAngulo recurso;
-				if ((referencia+variacion) > 90) {  
-					recurso = (EstimuloAngulo) estimulosByAngulos.get(referencia+variacion).get(90d);
+				if ((setupLevel.referencia+variacion) > 90) {  
+					recurso = (EstimuloAngulo) estimulosByAngulos.get(setupLevel.referencia+variacion).get(90d);
 				} else {
-					recurso = (EstimuloAngulo) estimulosByAngulos.get(referencia+variacion).get(-90d);
+					recurso = (EstimuloAngulo) estimulosByAngulos.get(setupLevel.referencia+variacion).get(-90d);
 				}
 				JsonTrial trial = PCBuilder.crearTrial("Indique a que categoría pertenece el ángulo", "",
-							DISTRIBUCIONESenPANTALLA.LINEALx2,
-							new int[] {CategoriasImagenes.Recto.ID, CategoriasImagenes.NoRecto.ID},
-							TIPOdeTRIAL.TEST, recurso.idResource, false, true, this.setup.feedback);
+						DISTRIBUCIONESenPANTALLA.LINEALx2,
+						new int[] {CategoriasImagenes.Recto.ID, CategoriasImagenes.NoRecto.ID},
+						TIPOdeTRIAL.TEST, recurso.idResource, false, true, setupLevel.feedback);
 				recurso.idTrial = trial.Id;
 				dinamicaExperimento.estimulosCeros.add(recurso);
 				// Agregamos el trial creado al level
 				level.jsonTrials.add(trial);
 			}
-			
+
 			level.dinamicaExperimento = dinamicaExperimento;
-			level.setup = setup;
-			level.setup.estimulos.clear();
+			level.setupLevel = setupLevel;
+			level.setupLevel.estimulos.clear();
 			// Extraemos los niveles y los recursos a la carpeta que corresponda
 			PCBuilder.extract(level);
 			PCBuilder.buildJsons(level);
@@ -264,37 +246,143 @@ public abstract class UmbralAngulos extends Umbral {
 			LevelStatus levelStatus = new LevelStatus();
 			levelStatus.enabled = true;
 			levelStatus.id = level.Id;
-			levelStatus.publicName = this.setup.tagButton + "(" + level.Id + ")";
-			levelStatus.internalName = this.getName() + level.Id;
-			levelStatus.expName = this.getName();
+			levelStatus.publicName = setupLevel.tagButton + "(" + level.Id + ")";
+			levelStatus.internalName = setupLevel.SetupLevelName + level.Id;
+			levelStatus.expName = this.getExpName();
 			levelStatus.alreadyPlayed = false;
-			levelStatus.priority = this.setup.levelPriority;
-			this.expSettings.levels.add(levelStatus);
+			levelStatus.priority = setupLevel.levelPriority;
+			this.levelsStatus.add(levelStatus);
 		}
-		
-		// Creamos un archivo con la info del experimento
-		String path2 = Resources.Paths.finalInternalPath + "/" + this.getClass().getSimpleName() + ".settings/";
-		Json json2 = new Json();
-		json2.setUsePrototypes(false);
-		FileHelper.writeLocalFile(path2, json.toJson(this.expSettings));
 
-		
+		// Creamos un archivo con la info del experimento
+		String path = Resources.Paths.finalInternalPath + "/" + this.getClass().getSimpleName() + ".settings/";
+		Json json = new Json();
+		json.setUsePrototypes(false);
+		FileHelper.writeLocalFile(path, json.toJson(this.levelsStatus));
 	}
 
-	protected void generarDesviaciones (Setup setup) {
+	
+	protected void generarDesviaciones (SetupResources setup) {
 		super.generarDesviaciones(setup);
 		for (int i=0 ; i < setup.desviacionesAngulares.size; i++) {
 			setup.desviacionesAngulares.set(i, setup.desviacionesAngulares.get(i)+90);
 		}
 	}
-		
-	@Override
-	abstract public String getName();
-
-	@Override
-	abstract protected String getNameTag();
 	
 	float getDesviacionCero() {
 		return 90;
 	}
+	
+	
+	private SetupResources makeResourceSetupTutorial() {
+		//TODO Debuguear que todo se complete
+		
+		// Hacemos el setup para el tutorial
+		SetupResources setupResources = new SetupResources();
+				
+		// Definimos los angulos de referencia
+		setupResources.angulosReferencia.add(180d);
+		
+		// Definimos las fluctuaciones locales
+		setupResources.fluctuacionesLocalesReferenciaSeries.add(0f);
+		
+		// Definimos las fluctuaciones para el cero
+		setupResources.fluctuacionesLocalesReferenciaEstimuloCero.add(0d);
+		setupResources.fluctuacionesLocalesReferenciaEstimuloCero.add(2.5);
+		setupResources.fluctuacionesLocalesReferenciaEstimuloCero.add(-2.5);
+		setupResources.fluctuacionesLocalesReferenciaEstimuloCero.add(5d);
+		setupResources.fluctuacionesLocalesReferenciaEstimuloCero.add(-5d);
+		setupResources.fluctuacionesLocalesReferenciaEstimuloCero.add(7.5);
+		setupResources.fluctuacionesLocalesReferenciaEstimuloCero.add(-7.5);
+		setupResources.fluctuacionesLocalesReferenciaEstimuloCero.add(10d);
+		setupResources.fluctuacionesLocalesReferenciaEstimuloCero.add(-10d);
+		
+		// Definimos la cantidad de estimulos por serie
+		setupResources.numeroDeEstimulosPorSerie = 10;
+		
+		// Definimos cosas varias
+		setupResources.desvMax = 80;
+		setupResources.desvMin = 1;
+		setupResources.SetupResourcesName = "Tutorial";
+		return setupResources; 
+	}
+
+	private SetupResources makeResourceTransferencia() {
+		//TODO Debuguear que todo se complete
+
+		// Hacemos el setup para el tutorial
+		SetupResources setupResources = new SetupResources();
+				
+		// Definimos los angulos de referencia
+		setupResources.angulosReferencia.add(30d);
+		setupResources.angulosReferencia.add(60d);
+		setupResources.angulosReferencia.add(120d);
+		setupResources.angulosReferencia.add(150d);
+
+		// Definimos las fluctuaciones locales
+		setupResources.fluctuacionesLocalesReferenciaSeries.add(0f);
+		setupResources.fluctuacionesLocalesReferenciaSeries.add(5f);
+		setupResources.fluctuacionesLocalesReferenciaSeries.add(-5f);
+		
+		// Definimos las fluctuaciones para el cero
+		setupResources.fluctuacionesLocalesReferenciaEstimuloCero.add(0d);
+		setupResources.fluctuacionesLocalesReferenciaEstimuloCero.add(2.5);
+		setupResources.fluctuacionesLocalesReferenciaEstimuloCero.add(-2.5);
+		setupResources.fluctuacionesLocalesReferenciaEstimuloCero.add(5d);
+		setupResources.fluctuacionesLocalesReferenciaEstimuloCero.add(-5d);
+		setupResources.fluctuacionesLocalesReferenciaEstimuloCero.add(7.5);
+		setupResources.fluctuacionesLocalesReferenciaEstimuloCero.add(-7.5);
+		setupResources.fluctuacionesLocalesReferenciaEstimuloCero.add(10d);
+		setupResources.fluctuacionesLocalesReferenciaEstimuloCero.add(-10d);
+		
+		// Definimos cosas varias
+		setupResources.numeroDeEstimulosPorSerie = 50;
+		setupResources.desvMin = 1;
+		setupResources.desvMax = 80;
+		setupResources.SetupResourcesName = "ExperimentoTransferencia";
+		return setupResources; 
+	}
+	
+	
+	@Override
+	public String getResourcesName() {
+		return this.setupActivo.SetupResourcesName;
+	}
+
+	@Override
+	public String getLevelName() {
+		return this.setupActivo.SetupLevelName;
+	}
+
+	@Override
+	void makeSetup() {
+		this.setupsResources.add(this.makeResourceSetupTutorial());
+		this.setupsResources.add(this.makeResourceTransferencia());
+	}
+
+	@Override
+	String getExpName() {
+		return "UmbralAngulo";
+	}
+
+	@Override
+	public void makeLevels() {
+		this.setupsLevels.add(this.makeLevelTutorial());
+		this.buildLevels();
+	}
+
+	private SetupLevel makeLevelTutorial() {
+		// Creamos el setup desde la super clase
+		SetupLevel setup = (SetupLevel) this.makeResourceSetupTutorial();
+		setup.allTestsConfianza = false;
+		setup.confianceProbability = 0.3f;
+		setup.feedback = true;
+		setup.levelPriority = 1;
+		setup.referencia = 180d;
+		setup.SetupLevelName = "NivelTutorial";
+		setup.testProbability = 0.2f;
+		setup.tagButton = "Tutorial Angulos";
+		return setup;
+	}
+
 }

@@ -99,30 +99,38 @@ public abstract class Umbral extends GenericExp {
 		double desviacion;
 	}
 	
-	public static class Setup {
+	public static class SetupResources {
+		public String SetupResourcesName; // Identifica el setup en cuestion
 		Array<Double> angulosReferencia = new Array<Double>(); // Referencias del experimento
 		Array<Float> fluctuacionesLocalesReferenciaSeries = new Array<Float>(); // Fluctuaciones dentro de cada referencia, en terminos relativos
 		Array<Double> desviacionesAngulares = new Array<Double>(); // Variaciones del lado movil o del angulo respecto a la referencia
-		Array<Double> fluctuacionesLocalesReferenciaEstimuloCero = new Array<Double>(); // angulos en los cuales se muestra a señal recta. 
-		Array<Estimulo> estimulos = new Array<Estimulo>(); // Lista de estimulos que se arman en la fse de generacion de recursos.
+		Array<Double> fluctuacionesLocalesReferenciaEstimuloCero = new Array<Double>(); // angulos en los cuales se muestra a señal recta.
+		Array<Estimulo> estimulos = new Array<Estimulo>(); // Lista de estimulos que se arman en la fase de generacion de recursos.
+		public int numeroDeEstimulosPorSerie;
+		double desvMin;
+		double desvMax;
+		boolean logscale = true;
+	}
+	
+	public static class SetupLevel extends SetupResources {
+		public double referencia;
+		public String SetupLevelName; // Identifica el setup en cuestion
 		public int trialsPorNivel; // Numero de trial que conforman un nivel
 		public int levelPriority; // Prioridad que tiene el nivel en la lista de niveles. Sirve para habilitar a que se tenga que completar un nivel antes que otro.
 		public String tagButton;
 		public boolean feedback;
 		public float testProbability = 0f; // Representa la inversa del numero de test que se dedica a testear al usuario enviandole trials faciles.
 		public float signalProbability = 0.5f; // Esto tiene sentido que sea asi, mitad y mitad para que ande bien el sistema de medicion. No puede ser mas proibable una opcion que la otra (enm principio)
-		public int numeroDeEstimulosPorSerie;
 		public int saltoInicialFraccion = 4;
-		public int saltoColaUNOFraccion = 5;
-		double desvMin;
-		double desvMax;
-		boolean logscale = true;
+		public int saltoColaUNOFraccion = 2;
 		boolean allTestsConfianza = true; // Esto esta condicionado a que testProbability sea diferente de cero en la generacion del pseudorandom
 		public float confianceProbability = 0;
 	}
 	
 	// Cosas generales
-	protected Setup setup;
+	protected Array<SetupLevel> setupsLevels;
+	protected Array<SetupResources> setupsResources;
+	protected SetupLevel setupActivo;
 	protected DinamicaExperimento dinamicaExperimento;
 	
 	
@@ -148,8 +156,6 @@ public abstract class Umbral extends GenericExp {
 		return this.dinamicaExperimento.trialsPorNivel - this.dinamicaExperimento.historial.size;
 	}
 
-	public abstract String getName();
-
 	protected void sendDataLevel () {	
 		// Hacemos un send para la data del nivel que acaba de detenerse.
 		LogConvergencia log = new LogConvergencia();
@@ -157,7 +163,7 @@ public abstract class Umbral extends GenericExp {
 		log.dinamica = dinamicaExperimento;
 		log.dinamica.seriesEstimulos.clear();
 		// Creamos el enviable
-		Internet.addDataToSend(log, TIPO_ENVIO.CONVERGENCIA, this.getNameTag());
+		Internet.addDataToSend(log, TIPO_ENVIO.CONVERGENCIA, this.getLevelName());
 	}
 	
 	public void interrupt() {
@@ -168,8 +174,8 @@ public abstract class Umbral extends GenericExp {
 	protected void specificInitLevel() {
 		// Cargamos los datos especificos del nivel
 		this.dinamicaExperimento = (DinamicaExperimento) level.jsonLevel.dinamicaExperimento;
-		this.setup = level.jsonLevel.setup;
-		this.dinamicaExperimento.nivelEstimulo = this.setup.numeroDeEstimulosPorSerie - 1;
+		this.setupActivo = level.jsonLevel.setupLevel;
+		this.dinamicaExperimento.nivelEstimulo = this.setupActivo.numeroDeEstimulosPorSerie - 1;
 		this.makeSpeudoRandom();
 	}
 	
@@ -180,10 +186,10 @@ public abstract class Umbral extends GenericExp {
 		if (trialConfig.trialType==TrialType.Test) { // Caso en que se mande un test
 			this.dinamicaExperimento.trialType = TrialType.Test;
 			int base = this.dinamicaExperimento.nivelEstimulo *2;
-			if (base>this.setup.numeroDeEstimulosPorSerie-1 - this.setup.numeroDeEstimulosPorSerie/5) {
-				base = this.setup.numeroDeEstimulosPorSerie-1 - this.setup.numeroDeEstimulosPorSerie/5;
+			if (base>this.setupActivo.numeroDeEstimulosPorSerie-1 - this.setupActivo.numeroDeEstimulosPorSerie/5) {
+				base = this.setupActivo.numeroDeEstimulosPorSerie-1 - this.setupActivo.numeroDeEstimulosPorSerie/5;
 			}
-			int nivel = MathUtils.random(base, this.setup.numeroDeEstimulosPorSerie-1);
+			int nivel = MathUtils.random(base, this.setupActivo.numeroDeEstimulosPorSerie-1);
 			this.dinamicaExperimento.estimuloActivo = this.dinamicaExperimento.seriesEstimulos.random().listaEstimulos.get(nivel);
 		}
 		if (trialConfig.trialType==TrialType.Estimulo) {
@@ -239,9 +245,9 @@ public abstract class Umbral extends GenericExp {
 		}
 		
 		// Setea el salto entre nivel y nivel
-		float avanceHastaUNOs = (float) this.dinamicaExperimento.historial.size / (this.setup.trialsPorNivel * (1 - 1f/this.setup.saltoColaUNOFraccion));
+		float avanceHastaUNOs = (float) this.dinamicaExperimento.historial.size / (this.setupActivo.trialsPorNivel * (1 - 1f/this.setupActivo.saltoColaUNOFraccion));
 		if (avanceHastaUNOs<1) {
-			int saltoMaximo = this.setup.numeroDeEstimulosPorSerie/this.setup.saltoInicialFraccion;
+			int saltoMaximo = this.setupActivo.numeroDeEstimulosPorSerie/this.setupActivo.saltoInicialFraccion;
 			this.dinamicaExperimento.saltosActivos = MathUtils.ceil(saltoMaximo*(1-avanceHastaUNOs));
 		} else {
 			this.dinamicaExperimento.saltosActivos = 1;
@@ -254,7 +260,7 @@ public abstract class Umbral extends GenericExp {
 		}
 		if (disminuirDificultad) {
 			this.dinamicaExperimento.nivelEstimulo=this.dinamicaExperimento.nivelEstimulo+this.dinamicaExperimento.saltosActivos;
-			if (this.dinamicaExperimento.nivelEstimulo>this.setup.numeroDeEstimulosPorSerie-1) {this.dinamicaExperimento.nivelEstimulo=this.setup.numeroDeEstimulosPorSerie-1;}
+			if (this.dinamicaExperimento.nivelEstimulo>this.setupActivo.numeroDeEstimulosPorSerie-1) {this.dinamicaExperimento.nivelEstimulo=this.setupActivo.numeroDeEstimulosPorSerie-1;}
 		}
 		
 		// Nos fijamos si ya se completo la dinamica o no.
@@ -280,13 +286,13 @@ public abstract class Umbral extends GenericExp {
 		int numberOfNoEstimulo;
 		int numberOfTest;
 		
-		numberOfTest = (int) (this.setup.trialsPorNivel*this.setup.testProbability);
-		if ((this.setup.trialsPorNivel - numberOfTest) % 2 != 0) {
+		numberOfTest = (int) (this.setupActivo.trialsPorNivel*this.setupActivo.testProbability);
+		if ((this.setupActivo.trialsPorNivel - numberOfTest) % 2 != 0) {
 			Gdx.app.debug(TAG, "WARNING: El numero de trials a asignar en señal o no señal no es par y no quedara bien balanceado. Se agrega un trial test para equilibrar");
 			numberOfTest ++;
 		}
-		numberOfEstimulo = ((this.setup.trialsPorNivel - numberOfTest) / 2);
-		numberOfNoEstimulo = ((this.setup.trialsPorNivel - numberOfTest) / 2);
+		numberOfEstimulo = ((this.setupActivo.trialsPorNivel - numberOfTest) / 2);
+		numberOfNoEstimulo = ((this.setupActivo.trialsPorNivel - numberOfTest) / 2);
 		
 		
 		Array <TrialConfig> trialsTest= new Array<TrialConfig> ();
@@ -306,8 +312,8 @@ public abstract class Umbral extends GenericExp {
 		int confianceCount;
 		
 		i = 0;
-		confianceCount = (int) (this.setup.confianceProbability * trialsTest.size);
-		if (this.setup.allTestsConfianza) {
+		confianceCount = (int) (this.setupActivo.confianceProbability * trialsTest.size);
+		if (this.setupActivo.allTestsConfianza) {
 			for (TrialConfig test : trialsTest) {
 				test.confiance = true;
 				test.trialType = TrialType.Test;
@@ -325,7 +331,7 @@ public abstract class Umbral extends GenericExp {
 		}
 		
 		i = 0;
-		confianceCount = (int) (this.setup.confianceProbability * trialsEstimulo.size);
+		confianceCount = (int) (this.setupActivo.confianceProbability * trialsEstimulo.size);
 		for (TrialConfig test : trialsEstimulo) {
 			i++;
 			if (i<=confianceCount) {
@@ -337,7 +343,7 @@ public abstract class Umbral extends GenericExp {
 		}
 		
 		i = 0;
-		confianceCount = (int) (this.setup.confianceProbability * trialsNoEstimulo.size);
+		confianceCount = (int) (this.setupActivo.confianceProbability * trialsNoEstimulo.size);
 		for (TrialConfig test : trialsNoEstimulo) {
 			i++;
 			if (i<=confianceCount) {
@@ -404,10 +410,9 @@ public abstract class Umbral extends GenericExp {
 	
 	
 	// Cosas relacionadas al makelevel
-	
-	protected ArrayMap<Double, ArrayMap<Double, Estimulo>> indexToMap() {
+	protected ArrayMap<Double, ArrayMap<Double, Estimulo>> indexToMap(SetupResources setup) {
 		ArrayMap<Double, ArrayMap<Double, Estimulo>> map = new ArrayMap<Double, ArrayMap<Double, Estimulo>>();
-		for (Estimulo estimulo : this.setup.estimulos) {
+		for (Estimulo estimulo : setup.estimulos) {
 			if (!map.containsKey(estimulo.anguloFijo)) {
 				map.put(estimulo.anguloFijo, new ArrayMap<Double, Estimulo>());
 			}
@@ -416,7 +421,7 @@ public abstract class Umbral extends GenericExp {
 		return map;
 	}
 	
-	protected void generarDesviaciones (Setup setup) {
+	protected void generarDesviaciones (SetupResources setup) {
 		// Generamos los lados moviles
 		double desvMinLog = Math.log(setup.desvMin);
 		double desvMaxLog = Math.log(setup.desvMax);
@@ -451,33 +456,34 @@ public abstract class Umbral extends GenericExp {
 	public void makeResources() {
 		// Inicializamos el setup segun parametros
 		this.makeSetup();
-		// Creamos un recurso para cada imagen necesaria en las series de estimulo variable
-		for (double referencia : this.setup.angulosReferencia) { // Asume que en esta variable estan los angulos de referencia
-			for (double ladoFijo : this.setup.fluctuacionesLocalesReferenciaSeries) {
-				ladoFijo = ladoFijo + referencia;
-				for (double desviacion : this.setup.desviacionesAngulares) { // Asume que en esta variable estan los angulos a formar para cada referencia, siempre positivos
-					makeResource(ladoFijo, desviacion);
+		for (SetupResources setupResource : this.setupsResources) {
+			// Creamos un recurso para cada imagen necesaria en las series de estimulo variable
+			for (double referencia : setupResource.angulosReferencia) { // Asume que en esta variable estan los angulos de referencia
+				for (double ladoFijo : setupResource.fluctuacionesLocalesReferenciaSeries) {
+					ladoFijo = ladoFijo + referencia;
+					for (double desviacion : setupResource.desviacionesAngulares) { // Asume que en esta variable estan los angulos a formar para cada referencia, siempre positivos
+						setupResource.estimulos.add(makeResource(ladoFijo, desviacion));
+					}
+				}
+			}
+			// Creamos los recursos correspondientes a cada estimulo de nivel cero
+			for (double referencia : setupResource.angulosReferencia) { // Asume que en esta variable estan los angulos de referencia
+				for (double ladoFijo : setupResource.fluctuacionesLocalesReferenciaEstimuloCero) {
+					ladoFijo = ladoFijo + referencia;
+					setupResource.estimulos.add(makeResource(ladoFijo, this.getDesviacionCero()));
 				}
 			}
 		}
-		// Creamos los recursos correspondientes a cada estimulo de nivel cero
-		for (double referencia : this.setup.angulosReferencia) { // Asume que en esta variable estan los angulos de referencia
-			for (double ladoFijo : this.setup.fluctuacionesLocalesReferenciaEstimuloCero) {
-				ladoFijo = ladoFijo + referencia;
-				makeResource(ladoFijo, this.getDesviacionCero());
-			}
-		}
 		// Guardamos el setup en la carpeta temporal
-		String path = Resources.Paths.ResourcesBuilder + "/extras/" + this.getName() + "Setup.meta";
+		String path = Resources.Paths.ResourcesBuilder + "/extras/" + this.getExpName() + "SetupResources.meta";
 		Json json = new Json();
 		json.setUsePrototypes(false);
-		FileHelper.writeLocalFile(path, json.toJson(this.setup));
+		FileHelper.writeLocalFile(path, json.toJson(this.setupsResources));
 	}
 	
+	abstract String getExpName();
 	abstract float getDesviacionCero();
 	abstract void makeSetup();
-	abstract void makeResource(double ladoFijo, double desviacion);
-	
-	protected abstract String getNameTag();
+	abstract Estimulo makeResource(double ladoFijo, double desviacion);
 	
 }

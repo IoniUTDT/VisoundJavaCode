@@ -15,47 +15,75 @@ import com.turin.tur.main.util.builder.Builder;
 public class Session {
 
 	private static final String TAG = Session.class.getName();
-	public long userId;
+	public User user;
 	public long sessionInstance = TimeUtils.millis();
 	public int codeVersion = Constants.CODEVERSION;
-	// public int levelVersion = Builder.levelVersionFinal;
 	public int resourcesVersion = Builder.ResourceVersion;
 	public ApplicationType plataforma = Gdx.app.getType();
 	public TipoDeAplicacion tipoDeAplicacion;
 
 	public Session() {
-		this.userId = userId();
+		this.user = loadUser();
+		this.tipoDeAplicacion = this.user.selectAppType(); 
 		Internet.addDataToSend(this, TIPO_ENVIO.NEWSESION, "Visound");
 	}
 	
 	public void saveUserId(Long id) {
-		//JsonUser jsonUser = new JsonUser();
-		//jsonUser.Id = this.id;
-		//jsonUser.save();
 		Json json = new Json();
 		json.setUsePrototypes(false);
 		FileHelper.writeLocalFile(Constants.USERFILE, id.toString());
 	}
 
-	public Long userId() {
+	public User loadUser() {
 		FileHandle userFile = Gdx.files.local(Constants.USERFILE);
 		if (userFile.exists()) {
 			String savedData = FileHelper.readLocalFile(Constants.USERFILE);
 			if (!savedData.isEmpty()) {
 				Json json = new Json();
 				json.setUsePrototypes(false);
-				Long data = json.fromJson(Long.class, savedData);
-				return data;
+				User user = json.fromJson(User.class, savedData);
+				return user;
 			} else { 
 				Gdx.app.error(TAG,"No se a podido encontrar la info del usuario");
 				return null;
 			}
 		} else {
 			Gdx.app.debug(TAG, "Creando nuevo usuario");
-			Long newId = TimeUtils.millis(); 
-			FileHelper.writeLocalFile(Constants.USERFILE, newId.toString());
-			return newId;
+			User user = new User(); 
+			Json json = new Json();
+			json.setUsePrototypes(false);
+			FileHelper.writeLocalFile(Constants.USERFILE, json.toJson(user));
+			return user;
 		}
 	}	
+	
+	public class User {
+		long id;
+		int numberOfLevelsPlayed;
+		User () {
+			this.id = TimeUtils.millis(); 
+			this.numberOfLevelsPlayed = 0;
+		}
+		
+		public TipoDeAplicacion selectAppType () {
+			switch (this.numberOfLevelsPlayed) {
+			case 1:
+				return TipoDeAplicacion.Tutorial;
+			case 2:
+				return TipoDeAplicacion.Test;
+			case 3:
+			case 4:
+			case 5:
+			case 6:
+			case 7:
+			case 8:
+				return TipoDeAplicacion.Entrenamiento;
+			case 9:
+				return TipoDeAplicacion.Test;
+			default:
+				return null;
+			}
+		}
+	}
 
 }

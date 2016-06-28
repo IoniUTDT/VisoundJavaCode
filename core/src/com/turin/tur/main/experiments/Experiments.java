@@ -1,6 +1,5 @@
 package com.turin.tur.main.experiments;
 
-import com.badlogic.gdx.utils.Array;
 import com.turin.tur.main.diseno.Session;
 
 
@@ -29,26 +28,11 @@ public class Experiments {
 		}
 	}
 	
-	public static class ExpSettings {
-		public TIPOdeEXPERIMENTO tipoDeExperimento;
-		public Array<LevelStatus> levels = new Array<LevelStatus>();
-	}
-	
-	public enum TIPOdeEXPERIMENTO {
-		TutorialBasico,
-		TurorialAngulos,
-		TutorialParalelismo,
-		TestAngulos,
-		TestParalelismo,
-		EntrenamientoAngulos,
-		EntrenamientoParalelismo
-	}
-	
-	
 	public static class ExperimentLog {
 		public Session session;
 		public long levelInstance;
 		public String expName;
+		public String levelName;
 	}
 
 }
