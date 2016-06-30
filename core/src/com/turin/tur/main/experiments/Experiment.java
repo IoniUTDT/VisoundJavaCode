@@ -5,7 +5,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
-import com.turin.tur.main.diseno.Level;
+import com.turin.tur.main.diseno.LevelOLD;
 import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.main.experiments.Experiments.ExperimentLog;
@@ -30,7 +30,7 @@ public interface Experiment {
 	Trial getNextTrial(); // Devuelve el proximo trial a usar
 	void returnAnswer (boolean answer, float confianza, float selectionTime, float confianceTime, int soundLoops); // Le indica al experimento como salio el trial
 	void initGame (Session session); // Se ejecuta cuando se inicial el juego (la idea es que aca se inicialicen todas las variables generales.
-	void initLevel (Level level); // Inicia cuestiones generales del nivel
+	void initLevel (LevelOLD level); // Inicia cuestiones generales del nivel
 	void levelCompleted(); // Se ejecuta cuando se detiene un nivel (la idea es que aca se generen todos los logs y se envien al servidor)
 	boolean islevelCompleted (); // Devuelve la variable levelCompleted (hay que hacerlo asi porque sino no esta en la interfaz
 	// Cosas de interfaz general
@@ -50,7 +50,7 @@ public interface Experiment {
 		public Array<LevelStatus> levelsStatus = new Array<LevelStatus>();
 		
 		// Cosas que manejan la dinamica en cada ejecucion
-		protected Level level;
+		protected LevelOLD level;
 		protected Session session;
 		protected Trial trial;
 		public boolean levelCompleted;
@@ -63,7 +63,7 @@ public interface Experiment {
 		
 		
 		// Aca van los metodos que son comunes a todos los experimentos
-		public void initLevel(Level level) {
+		public void initLevel(LevelOLD level) {
 			this.level = level;
 			this.expLog = new ExperimentLog();
 			this.expLog.levelInstance = TimeUtils.millis();
@@ -77,8 +77,8 @@ public interface Experiment {
 		}
 
 		public void initGame(Session session) {
-			// Cargamos la info del experimento
-			if (!Gdx.files.local(Resources.Paths.LocalSettingsCopy + this.getClass().getSimpleName() + ".settings").exists()) { // hacemos una copia de la info guardada en internal
+			// Si no hay una copia del estatus de los niveles en la carpeta local (editable) creamos una copia desde la carpeta interna
+			if (!Gdx.files.local(Resources.Paths.LocalSettingsCopy + this.getLevelName() + ".settings").exists()) { // hacemos una copia de la info guardada en internal
 				FileHandle from = Gdx.files.internal(Resources.Paths.InternalResources + this.getClass().getSimpleName() + ".settings");
 				FileHandle to = Gdx.files.local(Resources.Paths.LocalSettingsCopy + this.getClass().getSimpleName() + ".settings");
 				from.copyTo(to);

@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Json;
-import com.turin.tur.main.diseno.Level.JsonLevel;
+import com.turin.tur.main.diseno.LevelOLD.JsonLevel;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
 import com.turin.tur.main.util.FileHelper;

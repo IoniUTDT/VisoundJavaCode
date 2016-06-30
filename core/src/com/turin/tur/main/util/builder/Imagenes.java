@@ -12,7 +12,7 @@ import com.turin.tur.main.util.Constants.Resources;
 
 public class Imagenes {
 
-	private static int contadorDeRecursos=Resources.Reservados;
+	private static int contadorDeRecursos=Resources.NumeroDeRecursosReservadosPa;
 	
 	public ResourceId resourceId = new ResourceId();
 	public String name;

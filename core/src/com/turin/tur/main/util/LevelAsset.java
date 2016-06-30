@@ -8,6 +8,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Disposable;
+import com.turin.tur.main.diseno.Listas.LISTAdeNIVELES;
 import com.turin.tur.main.util.Constants.Resources;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
@@ -16,16 +17,16 @@ public class LevelAsset implements Disposable, AssetErrorListener {
 
 	public final String TAG = LevelAsset.class.getName();
 	private AssetManager assetManager;
-	TextureAtlas atlas;
-	int level;
+	private TextureAtlas atlas;
+	private LISTAdeNIVELES identificador;
 	
-	public LevelAsset (int levelId) {
-		this.level = levelId;
+	public LevelAsset (LISTAdeNIVELES identificadorNivel) {
+		this.identificador = identificadorNivel;
 		this.assetManager = new AssetManager();
 		// set asset manager error handler
 		assetManager.setErrorListener(this);
 		// load texture atlas
-		String atlasFilepath = Resources.Paths.InternalResources + "level" + levelId + "img.atlas";
+		String atlasFilepath = Resources.Paths.InternalResources + identificadorNivel.toString() + ".atlas";
 		assetManager.load(atlasFilepath, TextureAtlas.class);
 		// start loading assets and wait until finished
 		assetManager.finishLoading();
@@ -60,7 +61,7 @@ public class LevelAsset implements Disposable, AssetErrorListener {
 	}
 	
 	public Sound sound(int Id) {
-		String soundpath = Resources.Paths.InternalResources + "level" + this.level + "/" + Id + ".mp3";
+		String soundpath = Resources.Paths.InternalResources + this.identificador.toString() + "/" + Id + ".mp3";
 		assetManager.load(soundpath, Sound.class);
 		// start loading assets and wait until finished
 		assetManager.finishLoading();

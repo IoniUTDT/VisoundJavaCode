@@ -92,7 +92,7 @@ public abstract class Umbral extends GenericExp {
 		}
 	}
 	
-	static class ImageInfo {
+	public static class ImageInfo {
 		Linea linea1 = new Linea();
 		Linea linea2 = new Linea();
 		double referencia;

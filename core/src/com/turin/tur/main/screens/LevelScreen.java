@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.turin.tur.main.experiments.Experiment.GenericExp;
 import com.turin.tur.Visound;
-import com.turin.tur.main.diseno.Level;
+import com.turin.tur.main.diseno.LevelOLD;
 import com.turin.tur.main.diseno.RunningSound.NEXT;
 import com.turin.tur.main.logic.LevelController;
 import com.turin.tur.main.logic.LevelController.EstadoLoop;
@@ -19,20 +19,22 @@ public class LevelScreen extends AbstractGameScreen  {
 	// Clases que se crean para manipular el contenido
 	private LevelController levelController;
 	private LevelRenderer levelRenderer;
-	private Level level;
+	// private LevelOLD level;
 	
 	// Variables del level
-	private int levelNumber;
+	// private int levelNumber;
 	private boolean paused;
 	
-	public LevelScreen (Visound game, int levelNumber, String levelName) {
+	public LevelScreen (Visound game) {
 		super(game);
+		/*
 		for (GenericExp exp : this.game.exps) {
 			if (exp.getLevelName().equals(levelName)) {
 				this.game.expActivo = exp;
 			}
 		}
 		this.levelNumber=levelNumber;
+		*/
 	}
 
 	@Override
@@ -62,9 +64,10 @@ public class LevelScreen extends AbstractGameScreen  {
 
 	@Override
 	public void show () {
-		this.level = new Level(levelNumber);
-		level.levelAssets = new LevelAsset (this.levelNumber);
-	    this.levelController = new LevelController(game, level);
+		this.game.levelActivo.levelAssets = new LevelAsset (this.game.levelActivo.identificadorNivel);
+		// this.level = new LevelOLD(levelNumber);
+		// level.levelAssets = new LevelAsset (this.levelNumber);
+	    this.levelController = new LevelController(game);
 	    this.levelRenderer = new LevelRenderer(levelController);
 		Gdx.input.setCatchBackKey(true);
 	}
@@ -72,7 +75,7 @@ public class LevelScreen extends AbstractGameScreen  {
 	@Override
 	public void hide () {
 		levelRenderer.dispose();
-		this.level.levelAssets.dispose();
+		this.game.levelActivo.levelAssets.dispose();
 		Gdx.input.setCatchBackKey(false);
 	}
 	

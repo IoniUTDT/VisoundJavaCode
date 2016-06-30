@@ -197,10 +197,10 @@ public class Constants {
 			
 			public static String ExtraFldr = "extra/";
 			public static String ResourcesSetupExt = ".SetupRes";
-			public static String LevelSetupExt = ".SetupLvl";
-			public static String LevelStatusExt = ".LvlStat";
+//			public static String LevelSetupExt = ".SetupLvl";
+			public static String LevelInfo = ".LvlInfo";
 		}
 
-		public static final int Reservados = Resources.CategoriasImagenes.values().length;
+		public static final int NumeroDeRecursosReservadosPa = Resources.CategoriasImagenes.values().length;
 	}
 }

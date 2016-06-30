@@ -6,7 +6,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-import com.turin.tur.main.diseno.Level;
+import com.turin.tur.main.diseno.LevelOLD;
 import com.turin.tur.main.diseno.LevelInterfaz;
 import com.turin.tur.main.diseno.RunningSound;
 import com.turin.tur.main.diseno.TouchInfo;
@@ -52,7 +52,7 @@ public class LevelController implements InputProcessor {
 	// Copia de variables globales
 	public LevelInterfaz levelInterfaz;
 	private Visound game;
-	private Level level; //Informacion del nivel cargado
+	// private LevelOLD level; //Informacion del nivel cargado
 	public RunningSound runningSound; // Maneja el sonido
 	public MedidorDeConfianza confianza; // sirve para obtener el nivel de confianza
 	
@@ -67,19 +67,19 @@ public class LevelController implements InputProcessor {
 	private float timeSelecion;
 	private float timeConfiance;
 		
-	public LevelController(Visound game, Level level) {
+	public LevelController(Visound game) {
 	
 		this.estadoLoop = EstadoLoop.Iniciando;
 		this.game = game; // Hereda la info del game (cosa de ventanas y eso)
-		this.level = level; 
+		//this.level = level; 
 		this.initCamera();
-		this.game.expActivo.initLevel(this.level);
-		this.runningSound = new RunningSound(this.level.levelAssets);
+		//this.game.levelActivo.expActivo.initLevel(this.level);
+		this.runningSound = new RunningSound(this.game.levelActivo.levelAssets);
 		this.confianza = new MedidorDeConfianza();
 		
 		// Selecciona el trial que corresponda
-		this.trial = this.game.expActivo.getNextTrial();
-		this.levelInterfaz = new LevelInterfaz(this.level, this.trial, this.game.expActivo);
+		this.trial = this.game.levelActivo.getNextTrial();
+		this.levelInterfaz = new LevelInterfaz(this.game.levelActivo, this.trial);
 
 		// Indica que el programa esta listo para seleccionar un box
 		this.estadoLoop = EstadoLoop.EsperandoSeeleccionDeBox;
@@ -114,13 +114,13 @@ public class LevelController implements InputProcessor {
 		}
 			
 		if (this.estadoLoop == EstadoLoop.CambiarTrial) {
-			this.game.expActivo.returnAnswer(this.boxTocada.answerCorrect, this.confianzaReportada, this.timeSelecion, this.timeConfiance, this.runningSound.loopsCount);
-			if (this.game.expActivo.islevelCompleted()) {
+			this.game.levelActivo.returnAnswer(this.boxTocada.answerCorrect, this.confianzaReportada, this.timeSelecion, this.timeConfiance, this.runningSound.loopsCount);
+			if (this.game.levelActivo.islevelCompleted()) {
 				this.estadoLoop = EstadoLoop.LevelFinalizado;
-				this.game.expActivo.levelCompleted();
+				this.game.levelActivo.levelCompleted();
 				this.goToResults();
 			} else {
-				this.trial = this.game.expActivo.getNextTrial();
+				this.trial = this.game.levelActivo.getNextTrial();
 				this.confianzaReportada = -1;
 				//Gdx.app.debug(TAG, this.timeInTrial+"Tiempo a resetaer");
 				this.timeInTrial = 0;
@@ -141,7 +141,7 @@ public class LevelController implements InputProcessor {
 		// Back to Menu
 		if (keycode == Keys.ESCAPE || keycode == Keys.BACK) {
 			this.estadoLoop = EstadoLoop.TrialInterrumpido;
-			this.game.expActivo.interrupt();
+			this.game.levelActivo.interrupt();
 			goToResults();
 		}
 		if (keycode == Keys.DPAD_DOWN) {
@@ -164,7 +164,7 @@ public class LevelController implements InputProcessor {
 	
 	private void goToResults() {
 		runningSound.stop();
-		game.setScreen(new ResultsScreen(game, this.level));
+		game.setScreen(new ResultsScreen(game));
 	}
 	
 	@Override
@@ -205,7 +205,7 @@ public class LevelController implements InputProcessor {
 				
 				if (elementoTocado) {
 					this.timeSelecion = this.timeInTrial;
-					if (this.game.expActivo.goConfiance()) {
+					if (this.game.levelActivo.goConfiance()) {
 						this.estadoLoop = EstadoLoop.EsperandoConfianza;
 						this.confianza.SetPosition(this.boxTocada.posicionCenter.x, this.boxTocada.posicionCenter.y-0.8f);
 						this.confianza.visible = true;

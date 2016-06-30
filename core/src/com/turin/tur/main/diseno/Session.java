@@ -5,7 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
-import com.turin.tur.Visound.TipoDeAplicacion;
+import com.turin.tur.main.diseno.Listas.FASEdeEXPERIMENTO;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Internet;
@@ -20,20 +20,12 @@ public class Session {
 	public int codeVersion = Constants.CODEVERSION;
 	public int resourcesVersion = Builder.ResourceVersion;
 	public ApplicationType plataforma = Gdx.app.getType();
-	public TipoDeAplicacion tipoDeAplicacion;
 
 	public Session() {
-		this.user = loadUser();
-		this.tipoDeAplicacion = this.user.selectAppType(); 
+		this.user = loadUser(); 
 		Internet.addDataToSend(this, TIPO_ENVIO.NEWSESION, "Visound");
 	}
 	
-	public void saveUserId(Long id) {
-		Json json = new Json();
-		json.setUsePrototypes(false);
-		FileHelper.writeLocalFile(Constants.USERFILE, id.toString());
-	}
-
 	public User loadUser() {
 		FileHandle userFile = Gdx.files.local(Constants.USERFILE);
 		if (userFile.exists()) {
@@ -58,13 +50,15 @@ public class Session {
 	}	
 	
 	public static class User {
-		long id;
-		int numberOfLevelsPlayed;
+		public long id;
+		public FASEdeEXPERIMENTO faseDeExperimento;
+		
 		User () {
 			this.id = TimeUtils.millis(); 
-			this.numberOfLevelsPlayed = 0;
+			this.faseDeExperimento = FASEdeEXPERIMENTO.Intro;
 		}
 		
+		/*
 		public TipoDeAplicacion selectAppType () {
 			switch (this.numberOfLevelsPlayed) {
 			case 1:
@@ -84,6 +78,11 @@ public class Session {
 				return null;
 			}
 		}
+		*/
+		
+		
 	}
+	
+	
 
 }

@@ -6,7 +6,7 @@ import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.ExperimentalObject;
 import com.turin.tur.main.diseno.Trial;
-import com.turin.tur.main.diseno.Level.JsonLevel;
+import com.turin.tur.main.diseno.LevelOLD.JsonLevel;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.experiments.Experiment.GenericExp;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
@@ -550,7 +550,7 @@ public class Tutorial extends GenericExp implements Experiment {
 		this.levelsStatus.add(levelStatus);
 
 		// Creamos un archivo con la info del experimento
-		String path2 = Resources.Paths.finalInternalPath + "/" + this.getExpName() + Resources.Paths.LevelStatusExt;
+		String path2 = Resources.Paths.finalInternalPath + "/" + this.getExpName() + Resources.Paths.LevelInfo;
 		Json json2 = new Json();
 		json2.setUsePrototypes(false);
 		FileHelper.writeLocalFile(path2, json.toJson(this.levelsStatus));

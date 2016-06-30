@@ -10,15 +10,17 @@ import com.turin.tur.main.experiments.Experiment;
 import com.turin.tur.main.experiments.Experiment.GenericExp;
 import com.turin.tur.main.experiments.Tutorial;
 import com.turin.tur.main.experiments.UmbralAngulos;
-import com.turin.tur.main.experiments.UmbralParalelismo;
+import com.turin.tur.main.levelsDesign.Level;
 import com.turin.tur.main.screens.MenuScreen;
 import com.turin.tur.main.util.Internet;
 import com.turin.tur.main.util.builder.Builder;
 
 public class Visound extends Game {
 
-	public Array<GenericExp> exps = new Array<GenericExp>();
-	public GenericExp expActivo;
+	// public Array<GenericExp> exps = new Array<GenericExp>();
+	public Array<Level> levelList = new Array<Level>();
+	// public GenericExp expActivo;
+	public Level levelActivo;
 	
 	@SuppressWarnings("unused")
 	private static final String TAG = Visound.class.getName();
@@ -36,12 +38,12 @@ public class Visound extends Game {
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 		
 		// Create the experiment class
-		exps.add(new Tutorial());
-		exps.add(new UmbralAngulos());
+		// exps.add(new Tutorial());
+		// exps.add(new UmbralAngulos());
 		// exps.add(new UmbralParalelismo());
 		
-		if ((buildResources) & (Gdx.app.getType() == ApplicationType.Desktop)) {
-			
+		/*
+		if ((buildResources) & (Gdx.app.getType() == ApplicationType.Desktop)) {	
 			Builder builder = new Builder();
 			builder.build(exps);
 		}
@@ -51,10 +53,17 @@ public class Visound extends Game {
 		for (Experiment exp : this.exps) {
 			exp.initGame(this.session);
 		}
+		*/
+		
+		this.session = new Session();
 		setScreen(new MenuScreen(this));
 	}	
 	
+	/*
 	public enum TipoDeAplicacion {
 		Tutorial, Test, Entrenamiento
 	}
+	*/
+	
+
 }

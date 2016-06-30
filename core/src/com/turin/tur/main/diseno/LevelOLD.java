@@ -10,10 +10,10 @@ import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.LevelAsset;
 
 
-public class Level {
+public class LevelOLD {
 
 	// Constantes
-	private static final String TAG = Level.class.getName();
+	private static final String TAG = LevelOLD.class.getName();
 	public int Id;
 
 	// variable del nivel
@@ -21,7 +21,7 @@ public class Level {
 	public JsonLevel jsonLevel;
 	public LevelAsset levelAssets;
 
-	public Level(int level) {
+	public LevelOLD(int level) {
 		Gdx.app.debug(TAG, "Cargando informacion del nivel " + level);
 		this.initlevel(level);
 	}

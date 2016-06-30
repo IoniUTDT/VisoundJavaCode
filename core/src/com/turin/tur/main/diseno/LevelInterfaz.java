@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.turin.tur.main.experiments.Experiment;
+import com.turin.tur.main.levelsDesign.Level;
 import com.turin.tur.main.util.Assets;
 
 
@@ -11,11 +12,11 @@ import com.turin.tur.main.util.Assets;
 public class LevelInterfaz {
 	
 	private static final String TAG = LevelInterfaz.class.getName();
-	private Level levelInfo;   
+	private LevelOLD levelInfo;   
 	private Trial trial;
 	private Experiment exp;
 	
-	public LevelInterfaz (Level levelInfo, Trial trial, Experiment exp){
+	public LevelInterfaz (Level levelActivo, Trial trial){
 		this.exp = exp;
 		this.trial = trial;
 		this.levelInfo = levelInfo;		

@@ -19,10 +19,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.turin.tur.Visound;
-import com.turin.tur.Visound.TipoDeAplicacion;
+import com.turin.tur.main.diseno.Listas.FASEdeEXPERIMENTO;
 import com.turin.tur.main.experiments.Experiment;
 import com.turin.tur.main.experiments.Experiment.GenericExp;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
+import com.turin.tur.main.levelsDesign.Level;
+import com.turin.tur.main.levelsDesign.LevelInfo;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.Internet;
 
@@ -124,7 +126,7 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 		shapeRenderer = new ShapeRenderer();
 		skin = new Skin(Gdx.files.internal(Constants.SKIN_LIBGDX_UI));
 		
-		if (this.game.session.tipoDeAplicacion == TipoDeAplicacion.Tutorial) {
+		if (this.game.session.user.faseDeExperimento == FASEdeEXPERIMENTO.Intro) {
 			// Creamos el boton de las instrucciones
 			TextButton instrucciones = new TextButton("Instrucciones", skin, "default");
 			instrucciones.addListener(new ClickListener() {
@@ -138,11 +140,11 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 		}
 		
 		// Crea los botones de los niveles
-		
+/*		
 		// Cargamos los niveles
-		Array<LevelStatus> levels = new Array<LevelStatus>();
-		for (GenericExp exp : this.game.exps) {
-			levels.addAll(exp.levelsStatus);
+		Array<LevelInfo> levels = new Array<LevelInfo>();
+		for (Level level : this.game.levelList) {
+			levels.addAll(level.levelInfo);
 		}
 		
 		// Los ordenamos segun prioridad
@@ -203,7 +205,7 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 				table.row();
 			}
 		}
-
+*/
 		Gdx.app.debug(TAG, "Menu cargado");
 
 	}

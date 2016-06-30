@@ -14,14 +14,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.turin.tur.Visound;
-import com.turin.tur.main.diseno.Level;
+import com.turin.tur.main.diseno.LevelOLD;
 import com.turin.tur.main.util.Constants;
 
 public class ResultsScreen extends AbstractGameScreen {
 
 	private static final String TAG = ResultsScreen.class.getName();
 
-	private Level level;
+	private LevelOLD level;
 	
 	private SpriteBatch batch;
 	private OrthographicCamera cameraGUI;
@@ -31,7 +31,7 @@ public class ResultsScreen extends AbstractGameScreen {
 	private Stage stage;
 	private Table table;
 		
-	public ResultsScreen(Visound game, Level level) {
+	public ResultsScreen(Visound game) {
 		super(game);
 		this.level = level;
 	}
