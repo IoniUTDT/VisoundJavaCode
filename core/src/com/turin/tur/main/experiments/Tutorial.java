@@ -70,7 +70,7 @@ public class Tutorial extends GenericExp implements Experiment {
 		}
 		
 		// Guardamos el setup
-		String path = Resources.Paths.ResourcesBuilder + "extras/" + this.expName + "Setup.meta";
+		String path = Resources.Paths.ResourcesBuilder + Resources.Paths.ExtraFldr + this.expName + Resources.Paths.ResourcesSetupExt;
 		Json json = new Json();
 		json.setUsePrototypes(false);
 		FileHelper.writeLocalFile(path, json.toJson(this.setup));
@@ -471,7 +471,7 @@ public class Tutorial extends GenericExp implements Experiment {
 	@Override
 	public void makeLevels() {
 		// Cargamos los datos del setup
-		String path = Resources.Paths.ResourcesBuilder + "/extras/" + this.expName + "Setup.meta";
+		String path = Resources.Paths.ResourcesBuilder + Resources.Paths.ExtraFldr + this.expName + Resources.Paths.LevelSetupExt;
 		String savedData = FileHelper.readLocalFile(path);
 		Json json = new Json();
 		json.setUsePrototypes(false);
@@ -550,7 +550,7 @@ public class Tutorial extends GenericExp implements Experiment {
 		this.levelsStatus.add(levelStatus);
 
 		// Creamos un archivo con la info del experimento
-		String path2 = Resources.Paths.finalInternalPath + "/" + this.getClass().getSimpleName() + ".settings/";
+		String path2 = Resources.Paths.finalInternalPath + "/" + this.getExpName() + Resources.Paths.LevelStatusExt;
 		Json json2 = new Json();
 		json2.setUsePrototypes(false);
 		FileHelper.writeLocalFile(path2, json.toJson(this.levelsStatus));

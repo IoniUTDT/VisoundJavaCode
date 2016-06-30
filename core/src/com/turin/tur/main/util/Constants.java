@@ -185,12 +185,6 @@ public class Constants {
 		}
 		
 		public static class Paths {
-			// public static String tempPath = "/temp/resourcesbuild/";
-			// public static String fullTempPath = "." + tempPath;
-			// public static String fullCurrentVersionPath = "." + currentVersionPath;
-			// public static String fullLevelsPath = fullTempPath + "tempLevels/";
-			// public static String levelsPath = tempPath + "tempLevels/";
-			// public static String ProcessingPath = fullTempPath + "tempProcessing/";
 			
 			// Carpetas para el builder			
 			public static String ResourcesBuilder = "./resourcesbuild/" + Builder.ResourceVersion + "/";
@@ -200,6 +194,11 @@ public class Constants {
 			// Carpetas para el tiempo de ejecucion
 			public static String InternalResources = "resources/";
 			public static String LocalSettingsCopy = "settings/";
+			
+			public static String ExtraFldr = "extra/";
+			public static String ResourcesSetupExt = ".SetupRes";
+			public static String LevelSetupExt = ".SetupLvl";
+			public static String LevelStatusExt = ".LvlStat";
 		}
 
 		public static final int Reservados = Resources.CategoriasImagenes.values().length;

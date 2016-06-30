@@ -17,8 +17,13 @@ import com.turin.tur.main.util.Internet.TIPO_ENVIO;
 
 public interface Experiment {
 	// Cosas offline
-	String getResourcesName();
+	String getExpName();
 	String getLevelName();
+	void saveSetupExp();
+	void loadSetupExp();
+	void saveLevelSetup();
+	void loadLevelSetup();
+	
 	void makeResources(); // Se encarga de crear los recuros
 	void makeLevels(); // Se encarga de armar la estructura de niveles
 	// Cosas online de control de flujo de informacion
@@ -32,9 +37,13 @@ public interface Experiment {
 	void interrupt(); // Sirve para ejecutar acciones cuando se interrumpe el experimento porque el usuario decide salir del nivel
 	int trialsLeft(); // Indica cuantos trials quedan como maximo (sievr para mostrar indicadores en la interfaz
 	boolean goConfiance(); // Marca si tiene que ir a preguntar la confianza o no.
+	void specificInitLevel();
+	void sendDataLevel();
+
 	
 	public abstract class GenericExp implements Experiment {
 
+		// Aca creamos las variables que son comunes a todos los experimentos
 		final static String TAG = GenericExp.class.getName();
 
 		// Cosas generales
@@ -50,18 +59,18 @@ public interface Experiment {
 		protected ExperimentLog expLog;
 
 		
-		// Cosas que van mas alla de la interfaz pero que se diferencian en cada experimento
-		protected abstract void specificInitLevel(); // Se ejecuta cuando se inicial un nivel especifico (la idea es que aca se inicialicen todas las variables dependientes del nivel)
-		protected abstract void sendDataLevel();
 		
+		
+		
+		// Aca van los metodos que son comunes a todos los experimentos
 		public void initLevel(Level level) {
 			this.level = level;
 			this.expLog = new ExperimentLog();
 			this.expLog.levelInstance = TimeUtils.millis();
 			this.expLog.session = this.session;
-			this.expLog.expName = this.getResourcesName();
+			this.expLog.expName = this.getExpName();
 			this.expLog.levelName = this.getLevelName();
-			// Creamos el enviable
+			// Hacemos un envio
 			Internet.addDataToSend(this.expLog, TIPO_ENVIO.NEWLEVEL, this.getLevelName());
 			this.levelCompleted = false;
 			this.specificInitLevel();

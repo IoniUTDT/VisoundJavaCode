@@ -57,7 +57,7 @@ public class Session {
 		}
 	}	
 	
-	public class User {
+	public static class User {
 		long id;
 		int numberOfLevelsPlayed;
 		User () {
