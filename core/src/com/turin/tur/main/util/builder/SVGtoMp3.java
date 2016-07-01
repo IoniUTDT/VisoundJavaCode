@@ -13,7 +13,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.badlogic.gdx.Gdx;
-import com.turin.tur.main.util.Constants.Resources;
+import com.turin.tur.main.util.Constants.ResourcesCategorias;
 import com.turin.tur.wave.WavFile;
 import com.turin.tur.wave.WavFileException;
 
@@ -265,7 +265,7 @@ public class SVGtoMp3 {
 			secuence[i] = secuence[i] / max;
 		}
 
-		File file = new File(Resources.Paths.processingTempFolder, info.nombre + ".wav");
+		File file = new File(ResourcesCategorias.Paths.processingTempFolder, info.nombre + ".wav");
 		// Create a wav file with the name specified as the first argument
 		try {
 			WavFile wavFile = WavFile.newWavFile(file, 1, secuence.length, 16, fs);

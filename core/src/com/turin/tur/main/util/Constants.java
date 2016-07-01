@@ -130,7 +130,7 @@ public class Constants {
 	public static final String SPANISH_FONT_NAME = "fonts/goodfish rg.ttf";
 	
 	// Constantes relacionadas a IDs de cosas fijas
-	public static class Resources {
+	public static class ResourcesCategorias {
 
 		public enum CategoriasImagenes {
 			Nada(0,""), 
@@ -201,6 +201,6 @@ public class Constants {
 			public static String LevelInfo = ".LvlInfo";
 		}
 
-		public static final int NumeroDeRecursosReservadosPa = Resources.CategoriasImagenes.values().length;
+		public static final int NumeroDeRecursosReservados = ResourcesCategorias.CategoriasImagenes.values().length;
 	}
 }

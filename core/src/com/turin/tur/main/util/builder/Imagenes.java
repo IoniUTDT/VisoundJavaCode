@@ -7,17 +7,17 @@ import com.turin.tur.main.diseno.ExperimentalObject.JsonResourcesMetaData;
 import com.turin.tur.main.diseno.Trial.ResourceId;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.FileHelper;
-import com.turin.tur.main.util.Constants.Resources;
+import com.turin.tur.main.util.Constants.ResourcesCategorias;
 
 
 public class Imagenes {
 
-	private static int contadorDeRecursos=Resources.NumeroDeRecursosReservadosPa;
+	private static int contadorDeRecursos=ResourcesCategorias.NumeroDeRecursosReservados;
 	
 	public ResourceId resourceId = new ResourceId();
 	public String name;
 	public String comments;
-	public Array<Constants.Resources.CategoriasImagenes> categories = new Array<Constants.Resources.CategoriasImagenes>();
+	public Array<Constants.ResourcesCategorias.CategoriasImagenes> categories = new Array<Constants.ResourcesCategorias.CategoriasImagenes>();
 	public Array<Linea> lineas = new Array<Linea>();
 		
 	// public ResourceInfo infoConceptualAngulos = new ResourceInfo();
@@ -36,12 +36,12 @@ public class Imagenes {
 				+ ". Este elementos es el numero "
 				+ this.resourceId.id
 				+ " de la serie " + this.resourceId.resourceVersion + " -->"); // Comentario inicial
-		add("<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"" + Resources.Display.height
-				+ "\" width=\"" + Resources.Display.width + "\">"); // Inicializa el SVG
+		add("<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"" + ResourcesCategorias.Display.height
+				+ "\" width=\"" + ResourcesCategorias.Display.width + "\">"); // Inicializa el SVG
 		add("<rect stroke-width=\"5\" stroke=\"#ffffff\" fill=\"#ffffff\" height=\"100\" width=\"100\" y=\"0\" x=\"0\"/>"); // crea el fondo blanco
 		for (Linea linea : this.lineas) {
-			add("<line x1=\"" + linea.x1 + "\" y1=\"" + (Resources.Display.height - linea.y1) + "\" x2=\""
-					+ linea.x2 + "\" y2=\"" + (Resources.Display.height - linea.y2)
+			add("<line x1=\"" + linea.x1 + "\" y1=\"" + (ResourcesCategorias.Display.height - linea.y1) + "\" x2=\""
+					+ linea.x2 + "\" y2=\"" + (ResourcesCategorias.Display.height - linea.y2)
 					+ "\" stroke-width=\"2\" stroke=\"black\" />"); // Agrega
 																	// cada
 																	// linea
@@ -57,7 +57,7 @@ public class Imagenes {
 	}
 	
 	private void createSVGFile() {
-		FileHelper.writeLocalFile(Resources.Paths.ResourcesBuilder + this.resourceId.id + ".svg", contenido);
+		FileHelper.writeLocalFile(ResourcesCategorias.Paths.ResourcesBuilder + this.resourceId.id + ".svg", contenido);
 	}
 	
 	private void createMetadata() {
@@ -70,7 +70,7 @@ public class Imagenes {
 		jsonMetaData.infoLineas = this.lineas;
 		jsonMetaData.infoConceptual = this.infoConceptual;
 		// jsonMetaData.infoConceptualAngulos = this.infoConceptualAngulos;
-		ExperimentalObject.JsonResourcesMetaData.CreateJsonMetaData(jsonMetaData, Resources.Paths.ResourcesBuilder);
+		ExperimentalObject.JsonResourcesMetaData.CreateJsonMetaData(jsonMetaData, ResourcesCategorias.Paths.ResourcesBuilder);
 	}
 
 	

@@ -5,6 +5,7 @@ import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
+import com.turin.tur.main.diseno.Listas.LISTAdeRECURSOS;
 import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.experiments.Experiment;
 import com.turin.tur.main.experiments.Experiment.GenericExp;
@@ -42,12 +43,18 @@ public class Visound extends Game {
 		// exps.add(new UmbralAngulos());
 		// exps.add(new UmbralParalelismo());
 		
-		/*
-		if ((buildResources) & (Gdx.app.getType() == ApplicationType.Desktop)) {	
+		
+		if ((buildResources) & (Gdx.app.getType() == ApplicationType.Desktop)) {
+			Array<LISTAdeRECURSOS> identificadores = new Array<LISTAdeRECURSOS>();
+			identificadores.addAll(LISTAdeRECURSOS.ImagenesTutorial,LISTAdeRECURSOS.UmbralAngulosTutorial, LISTAdeRECURSOS.UmbralParalelismoTutorial, LISTAdeRECURSOS.UmbralAngulosTransferencia, LISTAdeRECURSOS.UmbralParalelismoTransferencia);
+			Builder.buildResources(identificadores);
+			/*
 			Builder builder = new Builder();
 			builder.build(exps);
+			*/
 		}
-
+		
+		/*
 		// Inicializa la session
 		this.session = new Session();
 		for (Experiment exp : this.exps) {

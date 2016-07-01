@@ -6,7 +6,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.Trial.ResourceId;
 import com.turin.tur.main.util.Constants;
-import com.turin.tur.main.util.Constants.Resources;
+import com.turin.tur.main.util.Constants.ResourcesCategorias;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.LevelAsset;
 import com.turin.tur.main.util.builder.Imagenes.Linea;
@@ -17,7 +17,7 @@ public class ExperimentalObject {
 	// public final int Id; 
 	public String name;
 	public String comments = "Aca va opcionalmente una descripcion del objeto";
-	public Array<Constants.Resources.CategoriasImagenes> categorias = new Array<Constants.Resources.CategoriasImagenes>();
+	public Array<Constants.ResourcesCategorias.CategoriasImagenes> categorias = new Array<Constants.ResourcesCategorias.CategoriasImagenes>();
 	public ResourceId resourceId;
 	public boolean noSound;
 	
@@ -47,7 +47,7 @@ public class ExperimentalObject {
 		public String name;
 		public String comments;
 		public ResourceId resourceId;
-		public Array<Constants.Resources.CategoriasImagenes> categories = new Array<Constants.Resources.CategoriasImagenes>();
+		public Array<Constants.ResourcesCategorias.CategoriasImagenes> categories = new Array<Constants.ResourcesCategorias.CategoriasImagenes>();
 		public Array<Linea> infoLineas;
 		public Object infoConceptual;
 		
@@ -65,7 +65,7 @@ public class ExperimentalObject {
 		}
 		
 		public static JsonResourcesMetaData Load(int Id, int levelId) {
-			String savedData = FileHelper.readInternalFile(Resources.Paths.InternalResources + "level"+ levelId + "/" + Id + ".meta");
+			String savedData = FileHelper.readInternalFile(ResourcesCategorias.Paths.InternalResources + "level"+ levelId + "/" + Id + ".meta");
 			if (!savedData.isEmpty()) {
 				Json json = new Json();
 				json.setUsePrototypes(false);

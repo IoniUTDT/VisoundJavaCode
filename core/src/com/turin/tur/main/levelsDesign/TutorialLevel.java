@@ -1,58 +1,68 @@
-package com.turin.tur.main.experiments;
+package com.turin.tur.main.levelsDesign;
 
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ArrayMap;
-import com.badlogic.gdx.utils.Json;
-import com.turin.tur.main.diseno.ExperimentalObject;
-import com.turin.tur.main.diseno.Trial;
-import com.turin.tur.main.diseno.LevelOLD.JsonLevel;
-import com.turin.tur.main.diseno.Trial.JsonTrial;
-import com.turin.tur.main.experiments.Experiment.GenericExp;
-import com.turin.tur.main.experiments.Experiments.LevelStatus;
+import com.turin.tur.main.diseno.Listas.LISTAdeNIVELES;
+import com.turin.tur.main.diseno.Listas.LISTAdeRECURSOS;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Constants.ResourcesCategorias;
-import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
-import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
 import com.turin.tur.main.util.Constants.ResourcesCategorias.CategoriasImagenes;
+import com.turin.tur.main.util.Constants.ResourcesCategorias.Paths;
 import com.turin.tur.main.util.builder.Imagenes;
 import com.turin.tur.main.util.builder.Imagenes.Linea;
-import com.turin.tur.main.util.builder.PCBuilder;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Json;
+import com.turin.tur.main.diseno.Trial;
 
-public class Tutorial extends GenericExp implements Experiment {
+public class TutorialLevel extends Level{
+	
+	public TutorialLevel(LISTAdeNIVELES identificador) {
+		this.identificadorNivel = identificador;
+		this.loadInfoLevel();
+	}
 
-	String expName = "Tutorial";
-	private Setup setup;
-	private DinamicaTutorial dinamicaTutorial;
-	
-	
-	private static class Setup {
-		private Array<Recurso> listaRecursos = new Array<Recurso>();
-	}
-	
-	private static class Recurso {
-		int idRecurso;
-		String tag;
-	}
-	
-	private static class DinamicaTutorial {
-		Array<Integer> listaDeTrials = new Array<Integer>();
-		int trialActivo;
-	}
-	
-	private static class Dibujo {
-		String tag;
-		Array<Linea> lineas = new Array<Linea>();
-	}
-	
 	@Override
-	public void makeResources() {
+	public Trial getNextTrial() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void returnAnswer(boolean answerCorrect, float confianzaReportada, float timeSelecion, float timeConfiance,
+			int loopsCount) {
+		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public boolean islevelCompleted() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void levelCompleted() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void interrupt() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean goConfiance() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public static void buildResources(LISTAdeRECURSOS identificador) {
 		// Creamos una lista de las lineas a dibujar
-		Array<Dibujo> dibujos = this.createDibujos();
+		Array<Dibujo> dibujos = createDibujos();
 		
 		// Inicializamos el setup
-		this.setup = new Setup();
+		Setup setup = new Setup();
 		
 		for (Dibujo dibujo : dibujos) {
 			// Creamos la imagen correspondiente
@@ -66,19 +76,30 @@ public class Tutorial extends GenericExp implements Experiment {
 			recurso.idRecurso = imagen.resourceId.id;
 			recurso.tag = dibujo.tag;
 			
-			this.setup.listaRecursos.add(recurso);
+			setup.listaRecursos.add(recurso);
 		}
 		
-		// Guardamos el setup
-		String path = ResourcesCategorias.Paths.ResourcesBuilder + ResourcesCategorias.Paths.ExtraFldr + this.expName + ResourcesCategorias.Paths.ResourcesSetupExt;
+		saveSetup(setup, identificador);
+	}
+	 
+	private static class Recurso {
+		int idRecurso;
+		String tag;
+	}
+	
+	private static class Setup {
+		private Array<Recurso> listaRecursos = new Array<Recurso>();
+	}
+	
+	private static void saveSetup(Setup setup, LISTAdeRECURSOS identificador) {
+		// Guardamos el setup en la carpeta temporal
+		String path = Paths.ResourcesBuilder + Paths.ExtraFldr + identificador.toString() + Paths.ResourcesSetupExt;
 		Json json = new Json();
 		json.setUsePrototypes(false);
-		FileHelper.writeLocalFile(path, json.toJson(this.setup));
-		
-
+		FileHelper.writeLocalFile(path, json.toJson(setup));
 	}
-
-	private Array<Dibujo> createDibujos() {
+	
+	private static Array<Dibujo> createDibujos() {
 		Array<Dibujo> dibujos = new Array<Dibujo>();
 		// buscamos el tamaño del lienzo a dibujar
 		float tamano;
@@ -465,190 +486,10 @@ public class Tutorial extends GenericExp implements Experiment {
 		dibujos.add(dibujo);
 		
 		return dibujos;
-		
 	}
 
-	@Override
-	public void makeLevels() {
-		// Cargamos los datos del setup
-		String path = ResourcesCategorias.Paths.ResourcesBuilder + ResourcesCategorias.Paths.ExtraFldr + this.expName + ResourcesCategorias.Paths.LevelSetupExt;
-		String savedData = FileHelper.readLocalFile(path);
-		Json json = new Json();
-		json.setUsePrototypes(false);
-		this.setup = json.fromJson(Tutorial.Setup.class, savedData);
-
-		// Inicializamos el expSettings;
-		this.levelsStatus = new Array<LevelStatus>();
-
-		// Creamos un map con todos los recursos
-		ArrayMap<String, Recurso> recursosTag = new ArrayMap<String, Recurso>();
-		for (Recurso recurso : this.setup.listaRecursos) {
-			recursosTag.put(recurso.tag, recurso);
-		}
-		
-		// Hacemos el Nivel 1 que contiene cosas basica (las cosas especificas estan en el tutorial parte dos)
-		JsonLevel tutorial = PCBuilder.crearLevel();
-		tutorial.levelTitle = "Tutorial básico";
-		
-		DinamicaTutorial dinamica = new DinamicaTutorial();
-		
-		// Creamos el trial uno, con segmentos rectos, horizontales y verticuales.
-		JsonTrial trial = PCBuilder.crearTrial("Seleccione la imagen que desea escuchar", "",
-				DISTRIBUCIONESenPANTALLA.BILINEALx7,
-				new int[] {recursosTag.get("HorizontalArriba").idRecurso, recursosTag.get("HorizontalMedio").idRecurso, recursosTag.get("HorizontalBajo").idRecurso,
-						recursosTag.get("VerticalArriba").idRecurso, recursosTag.get("VerticalCompleta").idRecurso, recursosTag.get("VerticalAbajo").idRecurso,
-						CategoriasImagenes.Siguiente.ID},
-				TIPOdeTRIAL.ENTRENAMIENTO, CategoriasImagenes.Siguiente.ID, false, false, false);
-		dinamica.listaDeTrials.add(trial.Id);
-		dinamica.trialActivo = trial.Id;
-		tutorial.jsonTrials.add(trial);
-		
-		// Creamos el trial dos, con segmentos rectos, pero en diagonal.
-		JsonTrial trial2 = PCBuilder.crearTrial("Seleccione la imagen que desea escuchar", "",
-				DISTRIBUCIONESenPANTALLA.BILINEALx7,
-				new int[] {recursosTag.get("DiagSuave").idRecurso, recursosTag.get("DiagMedio").idRecurso, recursosTag.get("DiagRapida").idRecurso,
-						recursosTag.get("DiagNegMuyLenta").idRecurso, recursosTag.get("DiagNegMedioRapida").idRecurso, recursosTag.get("DiagNegMuyRapido").idRecurso,
-						CategoriasImagenes.Siguiente.ID},
-				TIPOdeTRIAL.ENTRENAMIENTO, CategoriasImagenes.Siguiente.ID, false, false, false);
-		dinamica.listaDeTrials.add(trial2.Id);
-		tutorial.jsonTrials.add(trial2);
-		
-		// Creamos el trial tres, para escuchar paralelismo.
-		JsonTrial trial3 = PCBuilder.crearTrial("Seleccione la imagen que desea escuchar", "",
-				DISTRIBUCIONESenPANTALLA.BILINEALx7,
-				new int[] {recursosTag.get("Paralelas2P1").idRecurso, recursosTag.get("Paralelas2P2").idRecurso, recursosTag.get("Paralelas2").idRecurso,
-						recursosTag.get("Paralelas1").idRecurso, recursosTag.get("NoParalelas1").idRecurso, recursosTag.get("NoParalelas2").idRecurso,
-						CategoriasImagenes.Siguiente.ID},
-				TIPOdeTRIAL.ENTRENAMIENTO, CategoriasImagenes.Siguiente.ID, false, false, false);
-		dinamica.listaDeTrials.add(trial3.Id);
-		tutorial.jsonTrials.add(trial3);
-		
-		// Creamos el trial cuatro.
-		JsonTrial trial4 = PCBuilder.crearTrial("Seleccione la imagen que desea escuchar", "",
-				DISTRIBUCIONESenPANTALLA.BILINEALx7,
-				new int[] {recursosTag.get("AgudoFacil").idRecurso, recursosTag.get("RectoFacil").idRecurso, recursosTag.get("ObtusoFacil").idRecurso,
-						recursosTag.get("AgudoDificil").idRecurso, recursosTag.get("RectoDificil").idRecurso, recursosTag.get("ObtusoDificil").idRecurso,
-						CategoriasImagenes.Siguiente.ID},
-				TIPOdeTRIAL.ENTRENAMIENTO, CategoriasImagenes.Siguiente.ID, false, false, false);
-		dinamica.listaDeTrials.add(trial4.Id);
-		tutorial.jsonTrials.add(trial4);
-		
-		// Preparamos el level y lo exportamos
-		tutorial.dinamicaExperimento = dinamica;
-		// Extraemos los niveles y los recursos a la carpeta que corresponda
-		PCBuilder.extract(tutorial);
-		PCBuilder.buildJsons(tutorial);
-		// Agregamos el nivel al setting
-		LevelStatus levelStatus = new LevelStatus();
-		levelStatus.enabled = true;
-		levelStatus.id = tutorial.Id;
-		levelStatus.publicName = tutorial.levelTitle;
-		levelStatus.internalName = this.expName + tutorial.Id;
-		levelStatus.expName = this.expName;
-		levelStatus.alreadyPlayed = false;
-		levelStatus.priority = 0;
-		this.levelsStatus.add(levelStatus);
-
-		// Creamos un archivo con la info del experimento
-		String path2 = ResourcesCategorias.Paths.finalInternalPath + "/" + this.getExpName() + ResourcesCategorias.Paths.LevelInfo;
-		Json json2 = new Json();
-		json2.setUsePrototypes(false);
-		FileHelper.writeLocalFile(path2, json.toJson(this.levelsStatus));
-
+	private static class Dibujo {
+		String tag;
+		Array<Linea> lineas = new Array<Linea>();
 	}
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-	@Override
-	public void returnAnswer(boolean answer, float confianza, float selectionTime, float confianceTime, int soundLoops) {
-		// Cambiamos el trial al siguiente de la lista
-		if (this.trialsLeft()==0) { 
-			this.levelCompleted = true;
-		} else {
-			int thisTrialIndex = this.dinamicaTutorial.listaDeTrials.indexOf(this.dinamicaTutorial.trialActivo, false);
-			this.dinamicaTutorial.trialActivo = this.dinamicaTutorial.listaDeTrials.get(thisTrialIndex +1);
-		} 	
-	}
-
-	@Override
-	public void specificInitLevel() {
-		// Cargamos los datos especificos del nivel
-		this.dinamicaTutorial = (DinamicaTutorial) level.jsonLevel.dinamicaExperimento;
-	}
-
-	@Override
-	public void interrupt() {
-		// Ver que onda si hace falta hacer algo cuando se sale del nivel, por ahora no.
-	}
-
-	@Override
-	public int trialsLeft() {
-		int thisTrialIndex = this.dinamicaTutorial.listaDeTrials.indexOf(this.dinamicaTutorial.trialActivo, false);
-		return this.dinamicaTutorial.listaDeTrials.size - (thisTrialIndex + 1);
-	}
-	
-	public String getNameTag() {
-		return "Tutorial";
-	}
-
-	@Override
-	public Trial getNextTrial() {
-		// Creamos el trial correspondiente
-		String savedData = FileHelper.readInternalFile(ResourcesCategorias.Paths.InternalResources + "level" + level.Id + "/trial" + this.dinamicaTutorial.trialActivo + ".meta");
-		Json json = new Json();
-		JsonTrial jsonTrial = json.fromJson(JsonTrial.class, savedData);
-		// Cargamos la lista de objetos experimentales
-		Array<ExperimentalObject> elementos = new Array<ExperimentalObject>();
-		for (int idElemento : jsonTrial.elementosId) {
-			ExperimentalObject elemento = new ExperimentalObject(idElemento, this.level.levelAssets, level.Id);
-			elementos.add(elemento);
-		}
-		ExperimentalObject estimulo = new ExperimentalObject(jsonTrial.rtaCorrectaId, this.level.levelAssets, level.Id);
-		// Con la info del json del trial tenemos que crear un trial
-		return new Trial(elementos, jsonTrial, estimulo);		
-	}
-
-	@Override
-	protected void sendDataLevel() {
-		// En el caso del tutorial no enviamos datos del nivel cuando finaliza
-	}
-
-	@Override
-	public boolean goConfiance() {
-		return false;
-	}
-
-	@Override
-	public String getResourcesName() {
-		return this.expName;
-	}
-
-	@Override
-	public String getLevelName() {
-		return this.expName;
-	}
-	
 }

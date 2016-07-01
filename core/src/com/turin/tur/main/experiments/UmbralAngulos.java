@@ -8,10 +8,10 @@ import com.turin.tur.main.diseno.LevelOLD.JsonLevel;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
 import com.turin.tur.main.util.FileHelper;
-import com.turin.tur.main.util.Constants.Resources;
+import com.turin.tur.main.util.Constants.ResourcesCategorias;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
-import com.turin.tur.main.util.Constants.Resources.CategoriasImagenes;
+import com.turin.tur.main.util.Constants.ResourcesCategorias.CategoriasImagenes;
 import com.turin.tur.main.util.builder.Imagenes;
 import com.turin.tur.main.util.builder.PCBuilder;
 
@@ -38,10 +38,10 @@ public class UmbralAngulos extends Umbral {
 	protected Estimulo makeResource(double ladoFijo, double anguloAFormar) {
 		// buscamos el tamaño del lienzo a dibujar
 		float tamano;
-		if (Resources.Display.width > Resources.Display.height) {
-			tamano = Resources.Display.height;
+		if (ResourcesCategorias.Display.width > ResourcesCategorias.Display.height) {
+			tamano = ResourcesCategorias.Display.height;
 		} else {
-			tamano = Resources.Display.width;
+			tamano = ResourcesCategorias.Display.width;
 		}
 
 		// Creamos la info conceptual de la imagen
@@ -49,8 +49,8 @@ public class UmbralAngulos extends Umbral {
 
 		float largoLados = tamano * 0.4f;
 
-		float Xcenter = Resources.Display.width / 2;
-		float Ycenter = Resources.Display.height / 2;
+		float Xcenter = ResourcesCategorias.Display.width / 2;
+		float Ycenter = ResourcesCategorias.Display.height / 2;
 
 		// A partir del angulo a formar, lo orientamos segun haga falta. En este experimento el angulo se forma hacia la izq si es mayor que noventa el lado fijo y hacia derecha si es menor.
 		if (ladoFijo < 90) {anguloAFormar = -anguloAFormar;}
@@ -255,7 +255,7 @@ public class UmbralAngulos extends Umbral {
 		}
 
 		// Creamos un archivo con la info del experimento
-		String path = Resources.Paths.finalInternalPath + "/" + this.getClass().getSimpleName() + ".settings/";
+		String path = ResourcesCategorias.Paths.finalInternalPath + "/" + this.getClass().getSimpleName() + ".settings/";
 		Json json = new Json();
 		json.setUsePrototypes(false);
 		FileHelper.writeLocalFile(path, json.toJson(this.levelsStatus));
@@ -369,7 +369,7 @@ public class UmbralAngulos extends Umbral {
 	@Override
 	public void makeLevels() {
 		// cargamos los archivos con el setup guardados durante la creacion de recursos
-		String path = Resources.Paths.ResourcesBuilder + "/extras/" + this.getExpName() + "SetupResources.meta";
+		String path = ResourcesCategorias.Paths.ResourcesBuilder + "/extras/" + this.getExpName() + "SetupResources.meta";
 		String savedData = FileHelper.readLocalFile(path);
 		Json json = new Json();
 		json.setUsePrototypes(false);

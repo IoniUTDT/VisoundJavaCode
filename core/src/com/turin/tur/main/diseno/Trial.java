@@ -10,7 +10,7 @@ import com.turin.tur.main.logic.LevelController.EstadoLoop;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
-import com.turin.tur.main.util.Constants.Resources.CategoriasImagenes;
+import com.turin.tur.main.util.Constants.ResourcesCategorias.CategoriasImagenes;
 
 public class Trial {
 

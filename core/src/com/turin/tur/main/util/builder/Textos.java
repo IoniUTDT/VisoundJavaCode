@@ -6,15 +6,15 @@ import com.turin.tur.main.diseno.ExperimentalObject.JsonResourcesMetaData;
 import com.turin.tur.main.diseno.Trial.ResourceId;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.FileHelper;
-import com.turin.tur.main.util.Constants.Resources;
-import com.turin.tur.main.util.Constants.Resources.CategoriasImagenes;
+import com.turin.tur.main.util.Constants.ResourcesCategorias;
+import com.turin.tur.main.util.Constants.ResourcesCategorias.CategoriasImagenes;
 
 public class Textos {
 	
 	ResourceId resourceId = new ResourceId();
 	String name;
 	String comments;
-	Array<CategoriasImagenes> categories = new Array<Resources.CategoriasImagenes>();
+	Array<CategoriasImagenes> categories = new Array<ResourcesCategorias.CategoriasImagenes>();
 	String texto;
 	String contenido="";
 	
@@ -24,11 +24,11 @@ public class Textos {
 				+ ". Este elementos es el numero "
 				+ this.resourceId.id
 				+ " de la serie " + this.resourceId.resourceVersion + " de textos-->"); // Comentario inicial
-		add("<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"" + Resources.Display.height
-				+ "\" width=\"" + Resources.Display.width + "\">"); // Inicializa el SVG
+		add("<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"" + ResourcesCategorias.Display.height
+				+ "\" width=\"" + ResourcesCategorias.Display.width + "\">"); // Inicializa el SVG
 		add("<rect stroke-width=\"5\" stroke=\"#ffffff\" fill=\"#ffffff\" height=\"100\" width=\"100\" y=\"0\" x=\"0\"/>"); // crea el fondo blanco
 
-		add("<text text-anchor=\"middle\" x=\"" + Resources.Display.width / 2 + "\" y=\"" + Resources.Display.height / 2 + "\">" + this.texto + "</text>");
+		add("<text text-anchor=\"middle\" x=\"" + ResourcesCategorias.Display.width / 2 + "\" y=\"" + ResourcesCategorias.Display.height / 2 + "\">" + this.texto + "</text>");
 		add("</svg>"); // Finaliza el SVG
 		this.createSVGFile();
 		this.createMetadataText();
@@ -39,7 +39,7 @@ public class Textos {
 	}
 	
 	private void createSVGFile() {
-		FileHelper.writeLocalFile(Resources.Paths.ResourcesBuilder + this.resourceId.id + ".svg", contenido);
+		FileHelper.writeLocalFile(ResourcesCategorias.Paths.ResourcesBuilder + this.resourceId.id + ".svg", contenido);
 	}
 	
 	private void createMetadataText() {
@@ -49,7 +49,7 @@ public class Textos {
 		jsonMetaData.comments = this.comments;
 		jsonMetaData.categories = this.categories;
 		jsonMetaData.noSound = true;
-		ExperimentalObject.JsonResourcesMetaData.CreateJsonMetaData(jsonMetaData, Resources.Paths.ResourcesBuilder);
+		ExperimentalObject.JsonResourcesMetaData.CreateJsonMetaData(jsonMetaData, ResourcesCategorias.Paths.ResourcesBuilder);
 	}
 	
 	/**
@@ -57,7 +57,7 @@ public class Textos {
 	 */
 	public static void crearTextos() {
 		// Crea un recurso para cada categoria
-		for (Constants.Resources.CategoriasImagenes categoria : Constants.Resources.CategoriasImagenes.values()) {
+		for (Constants.ResourcesCategorias.CategoriasImagenes categoria : Constants.ResourcesCategorias.CategoriasImagenes.values()) {
 			Textos texto = new Textos();
 			texto.resourceId.id = categoria.ID;
 			texto.comments = "Texto correspondiente a la categoria: " + categoria.nombre;

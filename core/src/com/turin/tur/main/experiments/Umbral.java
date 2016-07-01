@@ -12,7 +12,7 @@ import com.turin.tur.main.experiments.Experiment.GenericExp;
 import com.turin.tur.main.experiments.Experiments.ExperimentLog;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Internet;
-import com.turin.tur.main.util.Constants.Resources;
+import com.turin.tur.main.util.Constants.ResourcesCategorias;
 import com.turin.tur.main.util.Internet.TIPO_ENVIO;
 import com.turin.tur.main.util.builder.Imagenes.Linea;
 
@@ -203,7 +203,7 @@ public abstract class Umbral extends GenericExp {
 		}
 		
 		// leemos el json del trial
-		String savedData = FileHelper.readInternalFile(Resources.Paths.InternalResources + "level" + level.Id + "/trial" + this.dinamicaExperimento.estimuloActivo.idTrial + ".meta");
+		String savedData = FileHelper.readInternalFile(ResourcesCategorias.Paths.InternalResources + "level" + level.Id + "/trial" + this.dinamicaExperimento.estimuloActivo.idTrial + ".meta");
 		
 		Json json = new Json();
 		JsonTrial jsonTrial = json.fromJson(JsonTrial.class, savedData);
@@ -476,7 +476,7 @@ public abstract class Umbral extends GenericExp {
 			}
 		}
 		// Guardamos el setup en la carpeta temporal
-		String path = Resources.Paths.ResourcesBuilder + Resources.Paths.ExtraFldr + this.getExpName() + Resources.Paths.ResourcesSetupExt;
+		String path = ResourcesCategorias.Paths.ResourcesBuilder + ResourcesCategorias.Paths.ExtraFldr + this.getExpName() + ResourcesCategorias.Paths.ResourcesSetupExt;
 		Json json = new Json();
 		json.setUsePrototypes(false);
 		FileHelper.writeLocalFile(path, json.toJson(this.setupsResources));

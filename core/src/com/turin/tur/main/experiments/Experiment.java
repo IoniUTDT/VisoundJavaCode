@@ -12,7 +12,7 @@ import com.turin.tur.main.experiments.Experiments.ExperimentLog;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Internet;
-import com.turin.tur.main.util.Constants.Resources;
+import com.turin.tur.main.util.Constants.ResourcesCategorias;
 import com.turin.tur.main.util.Internet.TIPO_ENVIO;
 
 public interface Experiment {
@@ -78,12 +78,12 @@ public interface Experiment {
 
 		public void initGame(Session session) {
 			// Si no hay una copia del estatus de los niveles en la carpeta local (editable) creamos una copia desde la carpeta interna
-			if (!Gdx.files.local(Resources.Paths.LocalSettingsCopy + this.getLevelName() + ".settings").exists()) { // hacemos una copia de la info guardada en internal
-				FileHandle from = Gdx.files.internal(Resources.Paths.InternalResources + this.getClass().getSimpleName() + ".settings");
-				FileHandle to = Gdx.files.local(Resources.Paths.LocalSettingsCopy + this.getClass().getSimpleName() + ".settings");
+			if (!Gdx.files.local(ResourcesCategorias.Paths.LocalSettingsCopy + this.getLevelName() + ".settings").exists()) { // hacemos una copia de la info guardada en internal
+				FileHandle from = Gdx.files.internal(ResourcesCategorias.Paths.InternalResources + this.getClass().getSimpleName() + ".settings");
+				FileHandle to = Gdx.files.local(ResourcesCategorias.Paths.LocalSettingsCopy + this.getClass().getSimpleName() + ".settings");
 				from.copyTo(to);
 			}
-			String savedData = FileHelper.readLocalFile(Resources.Paths.LocalSettingsCopy + this.getClass().getSimpleName() + ".settings");
+			String savedData = FileHelper.readLocalFile(ResourcesCategorias.Paths.LocalSettingsCopy + this.getClass().getSimpleName() + ".settings");
 			Json json = new Json();
 			this.levelsStatus = json.fromJson(this.levelsStatus.getClass(), savedData);
 			this.session = session;
@@ -100,7 +100,7 @@ public interface Experiment {
 				}
 			}
 			Json json = new Json();
-			FileHelper.writeLocalFile(Resources.Paths.LocalSettingsCopy + this.getClass().getSimpleName() + ".settings", json.toJson(this.levelsStatus));
+			FileHelper.writeLocalFile(ResourcesCategorias.Paths.LocalSettingsCopy + this.getClass().getSimpleName() + ".settings", json.toJson(this.levelsStatus));
 			this.sendDataLevel();
 		}
 	}

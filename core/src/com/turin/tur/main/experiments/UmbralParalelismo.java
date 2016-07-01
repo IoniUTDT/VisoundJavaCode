@@ -8,8 +8,8 @@ import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
-import com.turin.tur.main.util.Constants.Resources;
-import com.turin.tur.main.util.Constants.Resources.CategoriasImagenes;
+import com.turin.tur.main.util.Constants.ResourcesCategorias;
+import com.turin.tur.main.util.Constants.ResourcesCategorias.CategoriasImagenes;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.builder.Imagenes;
 import com.turin.tur.main.util.builder.PCBuilder;
@@ -27,7 +27,7 @@ public class UmbralParalelismo extends Umbral {
 	public void makeLevels() {
 
 		// Cargamos los datos del setup
-		String path = Resources.Paths.ResourcesBuilder + "/extras/" + this.getName() + "Setup.meta";
+		String path = ResourcesCategorias.Paths.ResourcesBuilder + "/extras/" + this.getName() + "Setup.meta";
 		String savedData = FileHelper.readLocalFile(path);
 		Json json = new Json();
 		json.setUsePrototypes(false);
@@ -147,7 +147,7 @@ public class UmbralParalelismo extends Umbral {
 		
 		}
 		// Creamos un archivo con la info del experimento
-		String path2 = Resources.Paths.finalInternalPath + "/" + this.getClass().getSimpleName() + ".settings/";
+		String path2 = ResourcesCategorias.Paths.finalInternalPath + "/" + this.getClass().getSimpleName() + ".settings/";
 		Json json2 = new Json();
 		json2.setUsePrototypes(false);
 		FileHelper.writeLocalFile(path2, json.toJson(this.expSettings));
@@ -156,10 +156,10 @@ public class UmbralParalelismo extends Umbral {
 	protected void makeResource(double referencia, double desviacion) {
 		// buscamos el tamaño del lienzo a dibujar
 		float tamano;
-		if (Resources.Display.width > Resources.Display.height) {
-			tamano = Resources.Display.height;
+		if (ResourcesCategorias.Display.width > ResourcesCategorias.Display.height) {
+			tamano = ResourcesCategorias.Display.height;
 		} else {
-			tamano = Resources.Display.width;
+			tamano = ResourcesCategorias.Display.width;
 		}
 
 		// Creamos la info conceptual de la imagen
@@ -168,8 +168,8 @@ public class UmbralParalelismo extends Umbral {
 		float largo = tamano * 0.8f;
 		float separacion = tamano * 0.4f;
 
-		float Xcenter = Resources.Display.width / 2;
-		float Ycenter = Resources.Display.height / 2;
+		float Xcenter = ResourcesCategorias.Display.width / 2;
+		float Ycenter = ResourcesCategorias.Display.height / 2;
 
 		// Calculamos los centros de manera que esten separados en funcion del
 		// angulo

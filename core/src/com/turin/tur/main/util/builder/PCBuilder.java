@@ -27,7 +27,7 @@ import com.turin.tur.main.diseno.LevelOLD.JsonLevel;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
-import com.turin.tur.main.util.Constants.Resources;
+import com.turin.tur.main.util.Constants.ResourcesCategorias;
 import com.turin.tur.main.util.FileHelper;
 
 public class PCBuilder {
@@ -39,7 +39,7 @@ public class PCBuilder {
 	 */
 	public static void verifyResourcesVersion() {
 		// Verifica que no haya recursos ya numerados con la version marcada
-		File file = new File(Resources.Paths.ResourcesBuilder);
+		File file = new File(ResourcesCategorias.Paths.ResourcesBuilder);
 		Gdx.app.debug(TAG, file.getAbsolutePath());
 		if (file.exists()) {
 			System.out.println("Modifique la version de los recursos porque ya existe una carpeta con la version actual");
@@ -53,9 +53,9 @@ public class PCBuilder {
 	 * @param folder
 	 */ 
 	static void moveMeta(File file, String folder){
-		file = new File(Resources.Paths.ResourcesBuilder + file.getName().substring(0, file.getName().lastIndexOf(".")) + ".meta");
+		file = new File(ResourcesCategorias.Paths.ResourcesBuilder + file.getName().substring(0, file.getName().lastIndexOf(".")) + ".meta");
 		Path FROM = Paths.get(file.getAbsolutePath());
-		File out = new File(Resources.Paths.finalInternalPath + "/" + folder + "/" + file.getName());
+		File out = new File(ResourcesCategorias.Paths.finalInternalPath + "/" + folder + "/" + file.getName());
 		Path TO = Paths.get(out.getAbsolutePath());
 		//overwrite existing file, if exists
 		CopyOption[] options = new CopyOption[] {
@@ -91,7 +91,7 @@ public class PCBuilder {
 			TranscoderInput input_svg_image = new TranscoderInput(svg_URI_input);
 			//Step-2: Define OutputStream to PNG Image and attach to TranscoderOutput
 			OutputStream png_ostream;
-			file = new File(Resources.Paths.processingTempFolder + file.getName().substring(0, file.getName().lastIndexOf(".")) + ".png");
+			file = new File(ResourcesCategorias.Paths.processingTempFolder + file.getName().substring(0, file.getName().lastIndexOf(".")) + ".png");
 			png_ostream = new FileOutputStream(file);
 	
 			TranscoderOutput output_png_image = new TranscoderOutput(png_ostream);
@@ -146,14 +146,14 @@ public class PCBuilder {
 
 	public static void buildJsons (JsonLevel level) {
 		// If resources already exported, the the folder was cleaned.
-		String path = Resources.Paths.finalInternalPath + "/level" + level.Id + "/";
+		String path = ResourcesCategorias.Paths.finalInternalPath + "/level" + level.Id + "/";
 		for (JsonTrial jsonTrial : level.jsonTrials) {
 			// level.trials.add(jsonTrial.Id);
 			CreateTrial(jsonTrial, path);
 			CreateTrial(jsonTrial, Builder.pathLevelsBackUp);
 		}
 		level.jsonTrials.clear();
-		writeLevelJson(level,Resources.Paths.finalInternalPath);
+		writeLevelJson(level,ResourcesCategorias.Paths.finalInternalPath);
 		writeLevelJson(level,Builder.pathLevelsBackUp);
 	}
 
@@ -193,7 +193,7 @@ public class PCBuilder {
 	static void export(Array<Integer> ids, String folderName){
 		Gdx.app.debug(Builder.TAG, "Exportando los recursos correspondientes a " + folderName);
 		// We clean the destiny folder
-		File folder = new File(Resources.Paths.finalInternalPath+folderName+"/");
+		File folder = new File(ResourcesCategorias.Paths.finalInternalPath+folderName+"/");
 		if (folder.exists()) {
 			// clean the folder from old stuff
 			try {
@@ -206,7 +206,7 @@ public class PCBuilder {
 			folder.mkdir();
 		}
 		// clean the temp folder
-		File tempDirectory = new File(Resources.Paths.processingTempFolder);
+		File tempDirectory = new File(ResourcesCategorias.Paths.processingTempFolder);
 		try {
 			FileUtils.cleanDirectory(tempDirectory);
 		} catch (IOException e) {
@@ -214,10 +214,10 @@ public class PCBuilder {
 		} 
 		// Then we convert all files to PNG into a temp folder and copy the metadata to assets folder
 		for (int id : ids){
-			File resource = new File (Resources.Paths.ResourcesBuilder+id+".svg");
+			File resource = new File (ResourcesCategorias.Paths.ResourcesBuilder+id+".svg");
 			convertirSVGtoPNG(resource);
-			if (id > Resources.Reservados) { // Means that is not a category with no audio
-				SVGtoMp3 converter = new SVGtoMp3(resource, Resources.Paths.finalInternalPath+folderName+"/");
+			if (id > ResourcesCategorias.NumeroDeRecursosReservados) { // Means that is not a category with no audio
+				SVGtoMp3 converter = new SVGtoMp3(resource, ResourcesCategorias.Paths.finalInternalPath+folderName+"/");
 			}
 			moveMeta(resource,folderName);
 		}
@@ -228,28 +228,28 @@ public class PCBuilder {
 		settings.maxHeight = 1024;
 		settings.duplicatePadding = false;
 		settings.debug = false;
-		TexturePacker.process(settings, Resources.Paths.processingTempFolder, Resources.Paths.finalInternalPath, folderName + "img");
+		TexturePacker.process(settings, ResourcesCategorias.Paths.processingTempFolder, ResourcesCategorias.Paths.finalInternalPath, folderName + "img");
 		Gdx.app.debug(Builder.TAG, "Recursos correctamente exportados: " + folderName+".");
 	}
 
 	public static void cleanAssets () {
 		// borramos la carptea destino interna
-		File internalPath = new File(Resources.Paths.finalInternalPath);
+		File internalPath = new File(ResourcesCategorias.Paths.finalInternalPath);
 		try {
 			FileUtils.cleanDirectory(internalPath);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} 
 		// Borramos la carptea destino local donde se guardan los cambios en los niveles y las configuraciones
-		FileHandle to = Gdx.files.local(Resources.Paths.LocalSettingsCopy);
+		FileHandle to = Gdx.files.local(ResourcesCategorias.Paths.LocalSettingsCopy);
 		to.emptyDirectory();
 	}
 
 	public static void verifyResources(){
 		// Se fija q exista el paquete de recursos de la version actual
-		File file = new File(Resources.Paths.ResourcesBuilder);
+		File file = new File(ResourcesCategorias.Paths.ResourcesBuilder);
 		
-		if (!new File(Resources.Paths.ResourcesBuilder).exists()) {
+		if (!new File(ResourcesCategorias.Paths.ResourcesBuilder).exists()) {
 			System.out.println("Primero debe crear los recursos version:" + Builder.ResourceVersion);
 			System.exit(0);
 		}
@@ -257,7 +257,7 @@ public class PCBuilder {
 
 	public static void verifyLevelVersion(){
 		// Verifica que no haya niveles ya numerados con la version marcada
-		FileHandle file = Gdx.files.internal(Resources.Paths.finalInternalPath + "level" + 1 + ".meta");
+		FileHandle file = Gdx.files.internal(ResourcesCategorias.Paths.finalInternalPath + "level" + 1 + ".meta");
 		if (file.exists()) {
 			String savedData = file.readString();
 			if (!savedData.isEmpty()) {

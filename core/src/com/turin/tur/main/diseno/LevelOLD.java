@@ -5,7 +5,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.experiments.Umbral.SetupLevel;
-import com.turin.tur.main.util.Constants.Resources;
+import com.turin.tur.main.util.Constants.ResourcesCategorias;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.LevelAsset;
 
@@ -42,7 +42,7 @@ public class LevelOLD {
 	 */
 
 	private JsonLevel loadLevel(int level) {
-		String savedData = FileHelper.readInternalFile(Resources.Paths.InternalResources + "level" + level + ".meta");
+		String savedData = FileHelper.readInternalFile(ResourcesCategorias.Paths.InternalResources + "level" + level + ".meta");
 		if (!savedData.isEmpty()) {
 			Json json = new Json();
 			json.setUsePrototypes(false);
