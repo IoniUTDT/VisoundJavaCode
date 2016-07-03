@@ -1,13 +1,16 @@
 package com.turin.tur.main.diseno;
 
+import com.turin.tur.main.util.builder.Builder;
+
 public class Listas {
 
 	public enum LISTAdeNIVELES {
-		Tutorial(LISTAdeRECURSOS.ImagenesTutorial, TIPOdeNivel.Tutorial);
-		
+		Tutorial(LISTAdeRECURSOS.ImagenesTutorial, TIPOdeNivel.Tutorial),
+		TestAngulos30(LISTAdeRECURSOS.UmbralAngulosTutorial, TIPOdeNivel.Umbral)
+		;
 		public LISTAdeRECURSOS listaDeRecursos;
 		public TIPOdeNivel tipoDeNivel;
-		
+		public static final int levelVersion = Builder.levelVersionFinal;
 		private LISTAdeNIVELES(LISTAdeRECURSOS listaDeRecursos, TIPOdeNivel tipoDeNivel) {
 			this.listaDeRecursos = listaDeRecursos;
 			this.tipoDeNivel = tipoDeNivel;
@@ -33,7 +36,8 @@ public class Listas {
 	}
 	
 	public enum TIPOSdeRECURSOS {
-		ImagenesTutorial, Paralelismo, Angulos
+		ImagenesTutorial, Paralelismo, Angulos;
+		public static final int ResourceVersion = Builder.ResourceVersion;
 	}
 	
 	public enum FASEdeEXPERIMENTO {

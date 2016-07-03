@@ -548,7 +548,7 @@ public class Tutorial extends GenericExp implements Experiment {
 		levelStatus.alreadyPlayed = false;
 		levelStatus.priority = 0;
 		this.levelsStatus.add(levelStatus);
-
+//TODO hasta aca copiado
 		// Creamos un archivo con la info del experimento
 		String path2 = ResourcesCategorias.Paths.finalInternalPath + "/" + this.getExpName() + ResourcesCategorias.Paths.LevelInfo;
 		Json json2 = new Json();

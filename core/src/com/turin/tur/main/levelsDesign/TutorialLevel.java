@@ -1,60 +1,108 @@
 package com.turin.tur.main.levelsDesign;
 
-import com.turin.tur.main.diseno.Listas.LISTAdeNIVELES;
-import com.turin.tur.main.diseno.Listas.LISTAdeRECURSOS;
-import com.turin.tur.main.util.FileHelper;
-import com.turin.tur.main.util.Constants.ResourcesCategorias;
-import com.turin.tur.main.util.Constants.ResourcesCategorias.CategoriasImagenes;
-import com.turin.tur.main.util.Constants.ResourcesCategorias.Paths;
-import com.turin.tur.main.util.builder.Imagenes;
-import com.turin.tur.main.util.builder.Imagenes.Linea;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Json;
+import com.turin.tur.main.diseno.Listas.LISTAdeNIVELES;
+import com.turin.tur.main.diseno.Listas.LISTAdeRECURSOS;
+import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.diseno.Trial;
+import com.turin.tur.main.util.Constants.ResourcesCategorias;
+import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
+import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
+import com.turin.tur.main.util.Constants.ResourcesCategorias.CategoriasImagenes;
+import com.turin.tur.main.util.Constants.ResourcesCategorias.Paths;
+import com.turin.tur.main.util.FileHelper;
+import com.turin.tur.main.util.builder.Imagenes;
+import com.turin.tur.main.util.builder.PCBuilder;
+import com.turin.tur.main.util.builder.Imagenes.Linea;
 
 public class TutorialLevel extends Level{
 	
-	public TutorialLevel(LISTAdeNIVELES identificador) {
-		this.identificadorNivel = identificador;
-		this.loadInfoLevel();
+	DinamicaTutorial dinamica = new DinamicaTutorial();
+	
+	private static class DinamicaTutorial {
+		Array<Integer> listaDeTrials = new Array<Integer>();
+		int trialActivo;
+	}
+	
+	private static class Dibujo {
+		Array<Linea> lineas = new Array<Linea>();
+		String tag;
 	}
 
-	@Override
-	public Trial getNextTrial() {
-		// TODO Auto-generated method stub
-		return null;
+	private static class Recurso {
+		int idRecurso;
+		String tag;
 	}
 
-	@Override
-	public void returnAnswer(boolean answerCorrect, float confianzaReportada, float timeSelecion, float timeConfiance,
-			int loopsCount) {
-		// TODO Auto-generated method stub
+	private static class Setup {
+		private Array<Recurso> listaRecursos = new Array<Recurso>();
+	}
+
+	public static void buildLevel(LISTAdeNIVELES identificador) {
 		
-	}
-
-	@Override
-	public boolean islevelCompleted() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void levelCompleted() {
-		// TODO Auto-generated method stub
+		Setup setup = loadSetup(identificador.listaDeRecursos);
 		
-	}
-
-	@Override
-	public void interrupt() {
-		// TODO Auto-generated method stub
+		// Creamos un map con todos los recursos
+		ArrayMap<String, Recurso> recursosTag = new ArrayMap<String, Recurso>();
+		for (Recurso recurso : setup.listaRecursos) {
+			recursosTag.put(recurso.tag, recurso);
+		}
 		
-	}
+		// Creamos el level para que despues se pueda guardar.
+		TutorialLevel level = new TutorialLevel();
+		level.identificadorNivel = identificador;
+		
+		
+		Array<JsonTrial> jsonTrials = new Array<JsonTrial>();
 
-	@Override
-	public boolean goConfiance() {
-		// TODO Auto-generated method stub
-		return false;
+		// Creamos el trial uno, con segmentos rectos, horizontales y verticuales.
+		JsonTrial trial = PCBuilder.crearTrial("Seleccione la imagen que desea escuchar", "",
+				DISTRIBUCIONESenPANTALLA.BILINEALx7,
+				new int[] {recursosTag.get("HorizontalArriba").idRecurso, recursosTag.get("HorizontalMedio").idRecurso, recursosTag.get("HorizontalBajo").idRecurso,
+						recursosTag.get("VerticalArriba").idRecurso, recursosTag.get("VerticalCompleta").idRecurso, recursosTag.get("VerticalAbajo").idRecurso,
+						CategoriasImagenes.Siguiente.ID},
+				TIPOdeTRIAL.ENTRENAMIENTO, CategoriasImagenes.Siguiente.ID, false, false, false);
+		level.dinamica.listaDeTrials.add(trial.Id);
+		level.dinamica.trialActivo = trial.Id;
+		jsonTrials.add(trial);
+		
+		// Creamos el trial dos, con segmentos rectos, pero en diagonal.
+		JsonTrial trial2 = PCBuilder.crearTrial("Seleccione la imagen que desea escuchar", "",
+				DISTRIBUCIONESenPANTALLA.BILINEALx7,
+				new int[] {recursosTag.get("DiagSuave").idRecurso, recursosTag.get("DiagMedio").idRecurso, recursosTag.get("DiagRapida").idRecurso,
+						recursosTag.get("DiagNegMuyLenta").idRecurso, recursosTag.get("DiagNegMedioRapida").idRecurso, recursosTag.get("DiagNegMuyRapido").idRecurso,
+						CategoriasImagenes.Siguiente.ID},
+				TIPOdeTRIAL.ENTRENAMIENTO, CategoriasImagenes.Siguiente.ID, false, false, false);
+		level.dinamica.listaDeTrials.add(trial2.Id);
+		jsonTrials.add(trial2);
+		
+		// Creamos el trial tres, para escuchar paralelismo.
+		JsonTrial trial3 = PCBuilder.crearTrial("Seleccione la imagen que desea escuchar", "",
+				DISTRIBUCIONESenPANTALLA.BILINEALx7,
+				new int[] {recursosTag.get("Paralelas2P1").idRecurso, recursosTag.get("Paralelas2P2").idRecurso, recursosTag.get("Paralelas2").idRecurso,
+						recursosTag.get("Paralelas1").idRecurso, recursosTag.get("NoParalelas1").idRecurso, recursosTag.get("NoParalelas2").idRecurso,
+						CategoriasImagenes.Siguiente.ID},
+				TIPOdeTRIAL.ENTRENAMIENTO, CategoriasImagenes.Siguiente.ID, false, false, false);
+		level.dinamica.listaDeTrials.add(trial3.Id);
+		jsonTrials.add(trial3);
+		
+		// Creamos el trial cuatro.
+		JsonTrial trial4 = PCBuilder.crearTrial("Seleccione la imagen que desea escuchar", "",
+				DISTRIBUCIONESenPANTALLA.BILINEALx7,
+				new int[] {recursosTag.get("AgudoFacil").idRecurso, recursosTag.get("RectoFacil").idRecurso, recursosTag.get("ObtusoFacil").idRecurso,
+						recursosTag.get("AgudoDificil").idRecurso, recursosTag.get("RectoDificil").idRecurso, recursosTag.get("ObtusoDificil").idRecurso,
+						CategoriasImagenes.Siguiente.ID},
+				TIPOdeTRIAL.ENTRENAMIENTO, CategoriasImagenes.Siguiente.ID, false, false, false);
+		level.dinamica.listaDeTrials.add(trial4.Id);
+		jsonTrials.add(trial4);
+		
+		// Extraemos los niveles y los recursos a la carpeta que corresponda
+		PCBuilder.extract(jsonTrials, identificador);
+		PCBuilder.buildJsonsTrials(jsonTrials, identificador);
+		saveDinamica(level.dinamica, identificador);
 	}
 
 	public static void buildResources(LISTAdeRECURSOS identificador) {
@@ -81,24 +129,7 @@ public class TutorialLevel extends Level{
 		
 		saveSetup(setup, identificador);
 	}
-	 
-	private static class Recurso {
-		int idRecurso;
-		String tag;
-	}
-	
-	private static class Setup {
-		private Array<Recurso> listaRecursos = new Array<Recurso>();
-	}
-	
-	private static void saveSetup(Setup setup, LISTAdeRECURSOS identificador) {
-		// Guardamos el setup en la carpeta temporal
-		String path = Paths.ResourcesBuilder + Paths.ExtraFldr + identificador.toString() + Paths.ResourcesSetupExt;
-		Json json = new Json();
-		json.setUsePrototypes(false);
-		FileHelper.writeLocalFile(path, json.toJson(setup));
-	}
-	
+
 	private static Array<Dibujo> createDibujos() {
 		Array<Dibujo> dibujos = new Array<Dibujo>();
 		// buscamos el tamaño del lienzo a dibujar
@@ -488,8 +519,76 @@ public class TutorialLevel extends Level{
 		return dibujos;
 	}
 
-	private static class Dibujo {
-		String tag;
-		Array<Linea> lineas = new Array<Linea>();
+	private static Setup loadSetup (LISTAdeRECURSOS identificador) {
+		String path = Paths.ResourcesBuilder + Paths.ExtraFldr + identificador.toString() + Paths.ResourcesSetupExt;
+		String savedData = FileHelper.readLocalFile(path);
+		Json json = new Json();
+		json.setUsePrototypes(false);
+		return json.fromJson(Setup.class, savedData);
+	}
+
+	private static void saveSetup(Setup setup, LISTAdeRECURSOS identificador) {
+		// Guardamos el setup en la carpeta temporal
+		String path = Paths.ResourcesBuilder + Paths.ExtraFldr + identificador.toString() + Paths.ResourcesSetupExt;
+		Json json = new Json();
+		json.setUsePrototypes(false);
+		FileHelper.writeLocalFile(path, json.toJson(setup));
+	}
+	
+	private static void saveDinamica (DinamicaTutorial dinamica, LISTAdeNIVELES identificador) {
+		String path = Level.folderResources(identificador) + Level.dinamicaPathName;
+		Json json = new Json();
+		json.setUsePrototypes(false);
+		FileHelper.writeLocalFile(path, json.toJson(dinamica));
+	}
+	 
+	public TutorialLevel(LISTAdeNIVELES identificador) {
+		this.identificadorNivel = identificador;
+		this.loadInfoLevel();
+	}
+	
+	public TutorialLevel() {
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public Trial getNextTrial() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public boolean goConfiance() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	@Override
+	public void interrupt() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public boolean islevelCompleted() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void levelCompleted() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void returnAnswer(boolean answerCorrect, float confianzaReportada, float timeSelecion, float timeConfiance,
+			int loopsCount) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void loadDinamica() {
+		// TODO Auto-generated method stub
 	}
 }

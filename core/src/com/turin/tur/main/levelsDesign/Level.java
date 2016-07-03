@@ -12,6 +12,7 @@ import com.turin.tur.main.util.Constants.ResourcesCategorias.Paths;
 
 public abstract class Level {
 	
+	public static final String dinamicaPathName = "dinamica.meta";
 	// Info basica que todos los niveles tienen que tener y que se carga cuando se inicia el programa
 	public LevelInfo levelInfo;
 	public LevelAsset levelAssets;
@@ -24,14 +25,16 @@ public abstract class Level {
 	public abstract void levelCompleted();
 	public abstract void interrupt();
 	public abstract boolean goConfiance();
+	public abstract void loadDinamica();
 	
-	public Level() {
-		// TODO Auto-generated constructor stub
+	
+	Level() {
 	}
 	
 	Level (LISTAdeNIVELES identificador) {
 		this.identificadorNivel = identificador;
 		this.loadInfoLevel();
+		this.loadDinamica();
 	}
 	
 	protected void loadInfoLevel() {
@@ -44,6 +47,14 @@ public abstract class Level {
 		String savedData = FileHelper.readLocalFile(ResourcesCategorias.Paths.LocalSettingsCopy + this.identificadorNivel.toString() + Paths.LevelInfo);
 		Json json = new Json();
 		this.levelInfo = json.fromJson(this.levelInfo.getClass(), savedData);
+	}
+	
+	protected void saveInfoLevel() {
+		
+	}
+	
+	public static String folderResources(LISTAdeNIVELES identificador) {
+		return ResourcesCategorias.Paths.finalInternalPath+identificador.toString()+"/";
 	}
 	
 }
