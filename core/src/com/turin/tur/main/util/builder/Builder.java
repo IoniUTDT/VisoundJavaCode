@@ -20,7 +20,7 @@ public class Builder {
 	public static final int levelVersion = 22; 
 	public static int levelVersionFinal = levelVersion; // Se modifica mas adelante si corresponde
 	
-	static final Boolean makeLevels = true; 
+	static final Boolean makeLevels = false; 
 	static final Boolean makeResources = false;
 
 	public static void buildResources(Array<LISTAdeRECURSOS> identificadores) {

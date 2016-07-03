@@ -23,7 +23,6 @@ import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker.Settings;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
-import com.turin.tur.main.diseno.LevelOLD.JsonLevel;
 import com.turin.tur.main.diseno.Listas.LISTAdeNIVELES;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.levelsDesign.Level;
@@ -270,7 +269,7 @@ public class PCBuilder {
 					Gdx.app.error(Builder.TAG, "OJO! Deberia actualizar la version del level. Se modificara sola al numero: " + Builder.levelVersionFinal);
 				}
 			} catch (NumberFormatException e) {
-				Gdx.app.error(Builder.TAG, "Error leyendo la version de los niveles preexistentes. Se llevara la version " + Builder.levelVersionFinal);
+				Gdx.app.error(Builder.TAG, "Error leyendo la version de los niveles preexistentes("+ e.getMessage() +"). Se llevara la version " + Builder.levelVersionFinal);
 			}
 		} 
 		FileHelper.writeLocalFile(ResourcesCategorias.Paths.finalInternalPathSettings + fileLevelVersion, Builder.levelVersionFinal+"");

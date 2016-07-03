@@ -19,7 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.turin.tur.Visound;
-import com.turin.tur.main.diseno.Listas.FASEdeEXPERIMENTO;
+import com.turin.tur.main.diseno.Session.FASEdeEXPERIMENTO;
 import com.turin.tur.main.experiments.Experiment;
 import com.turin.tur.main.experiments.Experiment.GenericExp;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
@@ -136,6 +136,19 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 				}
 			});
 			table.add(instrucciones).width(Gdx.graphics.getWidth()/5f).space(Gdx.graphics.getHeight()/30f).colspan(3);
+			table.row();
+
+		}
+		
+		if (this.game.session.user.faseDeExperimento != FASEdeEXPERIMENTO.ExperimentoCompleto) {
+			TextButton Siguiente = new TextButton("Comenzar", skin, "default");
+			Siguiente.addListener(new ClickListener() {
+				@Override
+				public void clicked(InputEvent event, float x, float y) {
+					game.session.user.pasarFase();
+				}
+			});
+			table.add(Siguiente).width(Gdx.graphics.getWidth()/5f).space(Gdx.graphics.getHeight()/30f).colspan(3);
 			table.row();
 		}
 		

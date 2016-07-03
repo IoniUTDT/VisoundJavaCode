@@ -26,6 +26,8 @@ public class Visound extends Game {
 	public Session session;
 	public static float volumen = 0.5f;
 	public boolean sendingData;
+	Array<LISTAdeNIVELES> identificadoresLvl = new Array<LISTAdeNIVELES>();
+	
 	
 	@Override
 	public void create () {
@@ -35,12 +37,12 @@ public class Visound extends Game {
 		// Set Libgdx log level
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 		
+		identificadoresLvl.addAll(LISTAdeNIVELES.Tutorial);
+		
 		if ((buildResources) & (Gdx.app.getType() == ApplicationType.Desktop)) {
 			Array<LISTAdeRECURSOS> identificadoresRes = new Array<LISTAdeRECURSOS>();
 			identificadoresRes.addAll(LISTAdeRECURSOS.ImagenesTutorial,LISTAdeRECURSOS.UmbralAngulosTutorial, LISTAdeRECURSOS.UmbralParalelismoTutorial, LISTAdeRECURSOS.UmbralAngulosTransferencia, LISTAdeRECURSOS.UmbralParalelismoTransferencia);
 			Builder.buildResources(identificadoresRes);
-			Array<LISTAdeNIVELES> identificadoresLvl = new Array<LISTAdeNIVELES>();
-			identificadoresLvl.addAll(LISTAdeNIVELES.Tutorial);
 			Builder.buildLevels(identificadoresLvl);
 		}
 		
