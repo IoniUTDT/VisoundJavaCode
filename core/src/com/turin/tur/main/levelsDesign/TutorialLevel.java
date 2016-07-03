@@ -20,18 +20,16 @@ import com.turin.tur.main.util.builder.Imagenes.Linea;
 
 public class TutorialLevel extends Level{
 	
-	DinamicaTutorial dinamica = new DinamicaTutorial();
+	private static class Dibujo {
+		Array<Linea> lineas = new Array<Linea>();
+		String tag;
+	}
 	
 	private static class DinamicaTutorial {
 		Array<Integer> listaDeTrials = new Array<Integer>();
 		int trialActivo;
 	}
 	
-	private static class Dibujo {
-		Array<Linea> lineas = new Array<Linea>();
-		String tag;
-	}
-
 	private static class Recurso {
 		int idRecurso;
 		String tag;
@@ -99,10 +97,15 @@ public class TutorialLevel extends Level{
 		level.dinamica.listaDeTrials.add(trial4.Id);
 		jsonTrials.add(trial4);
 		
-		// Extraemos los niveles y los recursos a la carpeta que corresponda
+		// Extraemos los trials y los recursos a la carpeta que corresponda
 		PCBuilder.extract(jsonTrials, identificador);
 		PCBuilder.buildJsonsTrials(jsonTrials, identificador);
+		
+		// Guardamos la dinamica
 		saveDinamica(level.dinamica, identificador);
+		
+		// Guardamos el LevelInfo
+		LevelInfo.saveLevelInfo(identificador, level.levelInfo);
 	}
 
 	public static void buildResources(LISTAdeRECURSOS identificador) {
@@ -527,6 +530,13 @@ public class TutorialLevel extends Level{
 		return json.fromJson(Setup.class, savedData);
 	}
 
+	private static void saveDinamica (DinamicaTutorial dinamica, LISTAdeNIVELES identificador) {
+		String path = Level.folderResources(identificador) + Level.dinamicaPathName;
+		Json json = new Json();
+		json.setUsePrototypes(false);
+		FileHelper.writeLocalFile(path, json.toJson(dinamica));
+	}
+
 	private static void saveSetup(Setup setup, LISTAdeRECURSOS identificador) {
 		// Guardamos el setup en la carpeta temporal
 		String path = Paths.ResourcesBuilder + Paths.ExtraFldr + identificador.toString() + Paths.ResourcesSetupExt;
@@ -535,20 +545,14 @@ public class TutorialLevel extends Level{
 		FileHelper.writeLocalFile(path, json.toJson(setup));
 	}
 	
-	private static void saveDinamica (DinamicaTutorial dinamica, LISTAdeNIVELES identificador) {
-		String path = Level.folderResources(identificador) + Level.dinamicaPathName;
-		Json json = new Json();
-		json.setUsePrototypes(false);
-		FileHelper.writeLocalFile(path, json.toJson(dinamica));
-	}
+	DinamicaTutorial dinamica = new DinamicaTutorial();
 	 
-	public TutorialLevel(LISTAdeNIVELES identificador) {
-		this.identificadorNivel = identificador;
-		this.loadInfoLevel();
-	}
-	
 	public TutorialLevel() {
 		// TODO Auto-generated constructor stub
+	}
+	
+	public TutorialLevel(LISTAdeNIVELES identificador) {
+		super(identificador);
 	}
 
 	@Override
@@ -582,13 +586,18 @@ public class TutorialLevel extends Level{
 	}
 
 	@Override
+	public void loadDinamica() {
+		String path = Level.folderResources(this.identificadorNivel) + Level.dinamicaPathName;
+		String savedData = FileHelper.readLocalFile(path);
+		Json json = new Json();
+		json.setUsePrototypes(false);
+		this.dinamica = json.fromJson(this.dinamica.getClass(), savedData);
+	}
+
+	@Override
 	public void returnAnswer(boolean answerCorrect, float confianzaReportada, float timeSelecion, float timeConfiance,
 			int loopsCount) {
 		// TODO Auto-generated method stub
 		
-	}
-
-	public void loadDinamica() {
-		// TODO Auto-generated method stub
 	}
 }

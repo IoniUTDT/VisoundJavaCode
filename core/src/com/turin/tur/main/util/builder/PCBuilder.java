@@ -35,6 +35,7 @@ import com.turin.tur.main.util.FileHelper;
 public class PCBuilder {
 
 	static final String TAG = PCBuilder.class.getName();
+	private static final String fileLevelVersion = "levelVersion.meta";
 
 	/**
 	 * Funcion que verifica que no haya recursos creados con la misma version que la que se quiere crear
@@ -259,21 +260,20 @@ public class PCBuilder {
 
 	public static void verifyLevelVersion(){
 		// Verifica que no haya niveles ya numerados con la version marcada
-		FileHandle file = Gdx.files.internal(ResourcesCategorias.Paths.finalInternalPath + "level" + 1 + ".meta");
+		FileHandle file = Gdx.files.internal(ResourcesCategorias.Paths.finalInternalPathSettings + fileLevelVersion);
 		if (file.exists()) {
 			String savedData = file.readString();
-			if (!savedData.isEmpty()) {
-				Json json = new Json();
-				json.setUsePrototypes(false);
-				JsonLevel jsonLevel = json.fromJson(JsonLevel.class, savedData);
-				if (jsonLevel.levelVersion >= Builder.levelVersion) {
-					Gdx.app.error(Builder.TAG, "OJO! Deberia actualizar la version del level. Se modificara sola al numero: " + (jsonLevel.levelVersion+1));
-					Builder.levelVersionFinal=jsonLevel.levelVersion+1;
-				} else {
-					Builder.levelVersionFinal = Builder.levelVersion;
+			try {
+				int levelVersionReaded = Integer.valueOf(savedData);
+				if (levelVersionReaded >= Builder.levelVersion) {
+					Builder.levelVersionFinal=levelVersionReaded+1;
+					Gdx.app.error(Builder.TAG, "OJO! Deberia actualizar la version del level. Se modificara sola al numero: " + Builder.levelVersionFinal);
 				}
+			} catch (NumberFormatException e) {
+				Gdx.app.error(Builder.TAG, "Error leyendo la version de los niveles preexistentes. Se llevara la version " + Builder.levelVersionFinal);
 			}
 		} 
+		FileHelper.writeLocalFile(ResourcesCategorias.Paths.finalInternalPathSettings + fileLevelVersion, Builder.levelVersionFinal+"");
 	}
 
 }

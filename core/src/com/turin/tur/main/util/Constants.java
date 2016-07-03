@@ -190,6 +190,7 @@ public class Constants {
 			public static String ResourcesBuilder = "./resourcesbuild/" + Builder.ResourceVersion + "/";
 			public static String LevelsBackUp = "./resourcesbuild/levelsOlds/";
 			public static String finalInternalPath = "../android/assets/resources/";
+			public static String finalInternalPathSettings = "../android/assets/Settings/";
 			public static String processingTempFolder = "./resourcesbuild/temp/";
 			// Carpetas para el tiempo de ejecucion
 			public static String InternalResources = "resources/";
@@ -198,7 +199,6 @@ public class Constants {
 			public static String ExtraFldr = "extra/";
 			public static String ResourcesSetupExt = ".SetupRes";
 //			public static String LevelSetupExt = ".SetupLvl";
-			public static String LevelInfo = ".LvlInfo";
 		}
 
 		public static final int NumeroDeRecursosReservados = ResourcesCategorias.CategoriasImagenes.values().length;

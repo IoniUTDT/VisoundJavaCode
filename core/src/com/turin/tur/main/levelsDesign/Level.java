@@ -33,24 +33,8 @@ public abstract class Level {
 	
 	Level (LISTAdeNIVELES identificador) {
 		this.identificadorNivel = identificador;
-		this.loadInfoLevel();
+		this.levelInfo = LevelInfo.loadLevelInfo(identificador);
 		this.loadDinamica();
-	}
-	
-	protected void loadInfoLevel() {
-		// Se fija si existe el archivo en la copia externa (donde se puede modificar) y sino hace una copia desde los archivos internos 
-		if (!Gdx.files.local(ResourcesCategorias.Paths.LocalSettingsCopy + this.identificadorNivel.toString() + Paths.LevelInfo).exists()) { // hacemos una copia de la info guardada en internal
-			FileHandle from = Gdx.files.internal(ResourcesCategorias.Paths.InternalResources + this.identificadorNivel.toString() + Paths.LevelInfo);
-			FileHandle to = Gdx.files.local(ResourcesCategorias.Paths.LocalSettingsCopy + this.identificadorNivel.toString() + Paths.LevelInfo);
-			from.copyTo(to);
-		}
-		String savedData = FileHelper.readLocalFile(ResourcesCategorias.Paths.LocalSettingsCopy + this.identificadorNivel.toString() + Paths.LevelInfo);
-		Json json = new Json();
-		this.levelInfo = json.fromJson(this.levelInfo.getClass(), savedData);
-	}
-	
-	protected void saveInfoLevel() {
-		
 	}
 	
 	public static String folderResources(LISTAdeNIVELES identificador) {

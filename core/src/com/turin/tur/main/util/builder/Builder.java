@@ -18,7 +18,7 @@ public class Builder {
 
 	public static final int ResourceVersion = 22;
 	public static final int levelVersion = 22; 
-	public static int levelVersionFinal;
+	public static int levelVersionFinal = levelVersion; // Se modifica mas adelante si corresponde
 	
 	static final Boolean makeLevels = true; 
 	static final Boolean makeResources = false;
