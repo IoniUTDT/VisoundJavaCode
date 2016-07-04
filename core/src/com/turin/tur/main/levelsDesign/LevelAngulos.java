@@ -12,5 +12,5 @@ public class LevelAngulos extends LevelUmbral {
 	public static void buildLevel(LISTAdeNIVELES identificador) {
 		
 	}
-	
+ 	
 }
