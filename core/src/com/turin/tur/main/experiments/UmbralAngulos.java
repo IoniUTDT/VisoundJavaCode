@@ -7,6 +7,7 @@ import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.LevelOLD.JsonLevel;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
+import com.turin.tur.main.levelsDesign.LevelUmbral;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Constants.ResourcesCategorias;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
@@ -21,6 +22,7 @@ public class UmbralAngulos extends Umbral {
 	static final String TAG = UmbralParalelismo.class.getName();
 	// Cosas generales
 	
+	/*
 	private static class EstimuloAngulo extends Umbral.Estimulo implements Comparable<Estimulo> {
 		private double anguloLadoMovil; // Angulo absoluto del lado movil
 		
@@ -29,12 +31,15 @@ public class UmbralAngulos extends Umbral {
 		}
 		
 	}
-
+	*/
+	
+	/*
 	private static class ImageInfoAngulo extends Umbral.ImageInfo {
 		double anguloLadoMovil;
 	}
+	*/
 	
-	
+	/*
 	protected Estimulo makeResource(double ladoFijo, double anguloAFormar) {
 		// buscamos el tamaño del lienzo a dibujar
 		float tamano;
@@ -132,12 +137,13 @@ public class UmbralAngulos extends Umbral {
 		estimulo.desviacion = info.desviacion;
 		return estimulo;
 	}
+	*/
 
 	public void buildLevels() {
 		
 		for (SetupLevel setupLevel : this.setupsLevels) {
 			// Categorizamos los recursos una vez.
-			ArrayMap<Double, ArrayMap<Double, Estimulo>> estimulosByAngulos = this.indexToMap(setupLevel.setupResources); 
+			ArrayMap<Double, ArrayMap<Double, Estimulo>> estimulosByAngulos = LevelUmbral.indexToMap(LevelU setupLevel.setupResources); 
 
 			// Creamos el nivel
 			JsonLevel level = PCBuilder.crearLevel();

@@ -1,12 +1,14 @@
 package com.turin.tur.main.levelsDesign;
 
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Path;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.main.util.Constants.ResourcesCategorias;
+import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
 import com.turin.tur.main.util.Constants.ResourcesCategorias.CategoriasImagenes;
@@ -521,11 +523,16 @@ public class LevelEjemplos extends Level{
 	}
 
 	private static Setup loadSetup (LISTAdeRECURSOS identificador) {
-		String path = Paths.ResourcesBuilder + Paths.ExtraFldr + identificador.toString() + Paths.ResourcesSetupExt;
-		String savedData = FileHelper.readLocalFile(path);
+		String savedData = FileHelper.readLocalFile(Paths.SetupResourcesPath(identificador));
 		Json json = new Json();
 		json.setUsePrototypes(false);
 		return json.fromJson(Setup.class, savedData);
+	}
+	
+	private static void saveSetup(Setup setup, LISTAdeRECURSOS identificador) {
+		Json json = new Json();
+		json.setUsePrototypes(false);
+		FileHelper.writeLocalFile(Paths.SetupResourcesPath(identificador), json.toJson(setup));
 	}
 
 	private static void saveDinamica (DinamicaEjemplos dinamica, LISTAdeNIVELES identificador) {
@@ -535,13 +542,7 @@ public class LevelEjemplos extends Level{
 		FileHelper.writeLocalFile(path, json.toJson(dinamica));
 	}
 
-	private static void saveSetup(Setup setup, LISTAdeRECURSOS identificador) {
-		// Guardamos el setup en la carpeta temporal
-		String path = Paths.ResourcesBuilder + Paths.ExtraFldr + identificador.toString() + Paths.ResourcesSetupExt;
-		Json json = new Json();
-		json.setUsePrototypes(false);
-		FileHelper.writeLocalFile(path, json.toJson(setup));
-	}
+	
 	
 	DinamicaEjemplos dinamica = new DinamicaEjemplos();
 	 

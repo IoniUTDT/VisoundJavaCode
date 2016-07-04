@@ -155,7 +155,6 @@ public class PCBuilder {
 			CreateTrial(jsonTrial, path);
 		}
 		writeTrialsJson(jsonTrials, identificador);
-		//writeLevelJson(identificador,Builder.pathLevelsBackUp);
 	}
 
 	public static void extract(Array<JsonTrial> listaDeTrials, Level.LISTAdeNIVELES identificadorNivel) {

@@ -4,9 +4,9 @@ import com.badlogic.gdx.utils.Array;
 import com.turin.tur.main.levelsDesign.Level;
 import com.turin.tur.main.levelsDesign.Level.LISTAdeRECURSOS;
 import com.turin.tur.main.levelsDesign.Level.TIPOdeNivel;
-import com.turin.tur.main.levelsDesign.LevelAngulos;
 import com.turin.tur.main.levelsDesign.LevelEjemplos;
 import com.turin.tur.main.levelsDesign.LevelUmbral;
+import com.turin.tur.main.levelsDesign.LevelUmbralStatic;
 
 public class Builder {
 
@@ -33,7 +33,7 @@ public class Builder {
 				if (identificador== LISTAdeRECURSOS.ImagenesEjemplos) {
 					LevelEjemplos.buildResources (identificador);
 				} else {
-					LevelUmbral.buildResources (identificador);
+					LevelUmbralStatic.buildResources (identificador);
 				}
 			}
 			System.exit(0);
@@ -48,7 +48,10 @@ public class Builder {
 					LevelEjemplos.buildLevel (identificador);
 				}
 				if (identificador.tipoDeNivel == TIPOdeNivel.Angulos) {
-					LevelAngulos.buildLevel (identificador);
+					LevelUmbralStatic.buildLevel (identificador);
+				}
+				if (identificador.tipoDeNivel == TIPOdeNivel.Paralelismo) {
+					LevelUmbralStatic.buildLevel (identificador);
 				}
 			}
 			System.exit(0);

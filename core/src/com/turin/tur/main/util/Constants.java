@@ -2,6 +2,9 @@ package com.turin.tur.main.util;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
+import com.turin.tur.main.levelsDesign.Level.LISTAdeNIVELES;
+import com.turin.tur.main.levelsDesign.Level.LISTAdeRECURSOS;
+import com.turin.tur.main.util.Constants.ResourcesCategorias.Paths;
 import com.turin.tur.main.util.builder.Builder;
 
 public class Constants {
@@ -197,6 +200,10 @@ public class Constants {
 			public static String ExtraFldr = "extra/";
 			public static String ResourcesSetupExt = ".SetupRes";
 //			public static String LevelSetupExt = ".SetupLvl";
+			
+			public static String SetupResourcesPath (LISTAdeRECURSOS identificador) {
+				return ResourcesBuilder + ExtraFldr + identificador.toString() + ResourcesSetupExt;
+			}			  
 		}
 
 		public static final int NumeroDeRecursosReservados = ResourcesCategorias.CategoriasImagenes.values().length;

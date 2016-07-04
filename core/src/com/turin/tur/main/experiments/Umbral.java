@@ -409,7 +409,7 @@ public abstract class Umbral extends GenericExp {
 	
 	
 	
-	
+	/*
 	// Cosas relacionadas al makelevel
 	protected ArrayMap<Double, ArrayMap<Double, Estimulo>> indexToMap(SetupResources setup) {
 		ArrayMap<Double, ArrayMap<Double, Estimulo>> map = new ArrayMap<Double, ArrayMap<Double, Estimulo>>();
@@ -421,7 +421,8 @@ public abstract class Umbral extends GenericExp {
 		}
 		return map;
 	}
-	
+	*/
+	/*
 	protected void generarDesviaciones (SetupResources setup) {
 		// Generamos los lados moviles
 		double desvMinLog = Math.log(setup.desvMin);
@@ -452,7 +453,8 @@ public abstract class Umbral extends GenericExp {
 			setup.desviacionesAngulares.add(-desviacion);
 		}
 	}
-	
+	*/
+	/*
 	@Override
 	public void makeResources() {
 		// Inicializamos el setup segun parametros
@@ -481,7 +483,7 @@ public abstract class Umbral extends GenericExp {
 		json.setUsePrototypes(false);
 		FileHelper.writeLocalFile(path, json.toJson(this.setupsResources));
 	}
-	
+	*/
 	abstract String getExpName();
 	abstract float getDesviacionCero();
 	abstract void makeSetup();
