@@ -1,10 +1,11 @@
 package com.turin.tur.main.util.builder;
 
 import com.badlogic.gdx.utils.Array;
-import com.turin.tur.main.diseno.Listas.LISTAdeNIVELES;
-import com.turin.tur.main.diseno.Listas.LISTAdeRECURSOS;
+import com.turin.tur.main.levelsDesign.Level;
+import com.turin.tur.main.levelsDesign.Level.LISTAdeNIVELES;
 import com.turin.tur.main.levelsDesign.LevelMaker;
 import com.turin.tur.main.levelsDesign.Resources;
+import com.turin.tur.main.levelsDesign.Resources.LISTAdeRECURSOS;
 
 public class Builder {
 
@@ -23,21 +24,21 @@ public class Builder {
 	static final Boolean makeLevels = false; 
 	static final Boolean makeResources = false;
 
-	public static void buildResources(Array<LISTAdeRECURSOS> identificadores) {
+	public static void buildResources(Array<Resources.LISTAdeRECURSOS> identificadores) {
 		if (makeResources) {
 			PCBuilder.verifyResourcesVersion();
 			Textos.crearTextos();
-			for (LISTAdeRECURSOS identificador : identificadores) {
+			for (Resources.LISTAdeRECURSOS identificador : identificadores) {
 				Resources.makeResources(identificador);
 			}
 			System.exit(0);
 		}	
 	}
 	
-	public static void buildLevels (Array<LISTAdeNIVELES> identificadores) {
+	public static void buildLevels (Array<Level.LISTAdeNIVELES> identificadores) {
 		if (makeLevels) {
 			PCBuilder.CheckLevels();
-			for (LISTAdeNIVELES identificador : identificadores) {
+			for (Level.LISTAdeNIVELES identificador : identificadores) {
 				LevelMaker.make(identificador);
 			}
 			System.exit(0);

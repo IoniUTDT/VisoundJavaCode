@@ -23,9 +23,9 @@ import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker.Settings;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
-import com.turin.tur.main.diseno.Listas.LISTAdeNIVELES;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.levelsDesign.Level;
+import com.turin.tur.main.levelsDesign.Level.LISTAdeNIVELES;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
 import com.turin.tur.main.util.Constants.ResourcesCategorias;
@@ -54,7 +54,7 @@ public class PCBuilder {
 	 * @param file
 	 * @param identificadorNivel
 	 */ 
-	static void moveMeta(File file, LISTAdeNIVELES identificadorNivel){
+	static void moveMeta(File file, Level.LISTAdeNIVELES identificadorNivel){
 		file = new File(ResourcesCategorias.Paths.ResourcesBuilder + file.getName().substring(0, file.getName().lastIndexOf(".")) + ".meta");
 		Path FROM = Paths.get(file.getAbsolutePath());
 		File out = new File(ResourcesCategorias.Paths.finalInternalPath + "/" + identificadorNivel.toString() + "/" + file.getName());
@@ -134,7 +134,7 @@ public class PCBuilder {
 		return jsonTrial;
 	}
 
-	public static void writeTrialsJson(Array<JsonTrial> jsonTrials, LISTAdeNIVELES identificador) {
+	public static void writeTrialsJson(Array<JsonTrial> jsonTrials, Level.LISTAdeNIVELES identificador) {
 		Json json = new Json();
 		json.setUsePrototypes(false);
 		for (JsonTrial trial : jsonTrials) {
@@ -148,7 +148,7 @@ public class PCBuilder {
 		FileHelper.writeLocalFile(path + "trial" + jsonTrial.Id + ".meta", json.toJson(jsonTrial));
 	}
 
-	public static void buildJsonsTrials (Array<JsonTrial> jsonTrials, LISTAdeNIVELES identificador) {
+	public static void buildJsonsTrials (Array<JsonTrial> jsonTrials, Level.LISTAdeNIVELES identificador) {
 		// If resources already exported, the the folder was cleaned.
 		String path = Level.folderResources(identificador);
 		for (JsonTrial jsonTrial : jsonTrials) {
@@ -158,7 +158,7 @@ public class PCBuilder {
 		//writeLevelJson(identificador,Builder.pathLevelsBackUp);
 	}
 
-	public static void extract(Array<JsonTrial> listaDeTrials, LISTAdeNIVELES identificadorNivel) {
+	public static void extract(Array<JsonTrial> listaDeTrials, Level.LISTAdeNIVELES identificadorNivel) {
 		Gdx.app.debug(Builder.TAG,"Procesando nivel "+identificadorNivel.toString());
 		Array<Integer> listado = new Array<Integer>(); // Listado de ids de recursos utilizados
 		for (JsonTrial jsonTrial : listaDeTrials) {
@@ -193,7 +193,7 @@ public class PCBuilder {
 	 * This method transforms SVGs of a list of ids that must be in the same folder into PNG files, join it at a ATLAS file and copy the ATLAS, and the .meta files
 	 * to a folder in android's assets 
 	 */
-	static void export(Array<Integer> ids, LISTAdeNIVELES identificadorNivel){
+	static void export(Array<Integer> ids, Level.LISTAdeNIVELES identificadorNivel){
 		// Gdx.app.debug(Builder.TAG, "Exportando los recursos correspondientes a " + identificadorNivel.toString());
 		// We clean the destiny folder
 		File folder = new File(Level.folderResources(identificadorNivel)); 

@@ -8,7 +8,8 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Disposable;
-import com.turin.tur.main.diseno.Listas.LISTAdeNIVELES;
+import com.turin.tur.main.levelsDesign.Level;
+import com.turin.tur.main.levelsDesign.Level.LISTAdeNIVELES;
 import com.turin.tur.main.util.Constants.ResourcesCategorias;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
@@ -18,9 +19,9 @@ public class LevelAsset implements Disposable, AssetErrorListener {
 	public final String TAG = LevelAsset.class.getName();
 	private AssetManager assetManager;
 	private TextureAtlas atlas;
-	private LISTAdeNIVELES identificador;
+	private Level.LISTAdeNIVELES identificador;
 	
-	public LevelAsset (LISTAdeNIVELES identificadorNivel) {
+	public LevelAsset (Level.LISTAdeNIVELES identificadorNivel) {
 		this.identificador = identificadorNivel;
 		this.assetManager = new AssetManager();
 		// set asset manager error handler

@@ -3,14 +3,15 @@ package com.turin.tur.main.levelsDesign;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
-import com.turin.tur.main.diseno.Listas.LISTAdeRECURSOS;
-import com.turin.tur.main.diseno.Listas.TIPOSdeRECURSOS;
 import com.turin.tur.main.experiments.Umbral;
+import com.turin.tur.main.levelsDesign.Resources.LISTAdeRECURSOS;
+import com.turin.tur.main.levelsDesign.Resources.TIPOSdeRECURSOS;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Constants.ResourcesCategorias;
 import com.turin.tur.main.util.Constants.ResourcesCategorias.CategoriasImagenes;
 import com.turin.tur.main.util.Constants.ResourcesCategorias.Paths;
+import com.turin.tur.main.util.builder.Builder;
 import com.turin.tur.main.util.builder.Imagenes;
 import com.turin.tur.main.util.builder.Imagenes.Linea;
 
@@ -75,14 +76,33 @@ public class Resources {
 		}
 	}
 
+	public enum LISTAdeRECURSOS {
+		ImagenesTutorial (Resources.TIPOSdeRECURSOS.ImagenesTutorial),
+		UmbralAngulosTutorial (Resources.TIPOSdeRECURSOS.Angulos),
+		UmbralAngulosTransferencia (Resources.TIPOSdeRECURSOS.Angulos),
+		UmbralParalelismoTutorial (Resources.TIPOSdeRECURSOS.Paralelismo),
+		UmbralParalelismoTransferencia (Resources.TIPOSdeRECURSOS.Paralelismo);
+		
+		public Resources.TIPOSdeRECURSOS tipoDeRecursos;
+		
+		private LISTAdeRECURSOS(Resources.TIPOSdeRECURSOS tipoDeRecursos) {
+			this.tipoDeRecursos = tipoDeRecursos;
+		}
+	}
+
+	public enum TIPOSdeRECURSOS {
+		ImagenesTutorial, Paralelismo, Angulos;
+		public static final int ResourceVersion = Builder.ResourceVersion;
+	}
+
 	/**
 	 * Esta clase crea los recursos a partir de la informacion del tipo de 
 	 * recurso que se desea crear y guarda los archivos en la carpeta tenporal 
 	 * donde se almacenan los recursos y la info del setup 
 	 * @param identificadorNivel
 	 */
-	public static void makeResources (LISTAdeRECURSOS identificador) {
-		if (identificador!= LISTAdeRECURSOS.ImagenesTutorial) {
+	public static void makeResources (Resources.LISTAdeRECURSOS identificador) {
+		if (identificador!= Resources.LISTAdeRECURSOS.ImagenesTutorial) {
 			SetupResources setup = makeSetup(identificador);
 			buildResources (setup, identificador);
 		} else {
@@ -90,7 +110,7 @@ public class Resources {
 		}
 	}
 
-	private static void buildResources(SetupResources setup, LISTAdeRECURSOS identificador) {
+	private static void buildResources(SetupResources setup, Resources.LISTAdeRECURSOS identificador) {
 		// Creamos un recurso para cada imagen necesaria en las series de estimulo variable
 		for (double referencia : setup.angulosReferencia) { // Asume que en esta variable estan los angulos de referencia
 			for (double ladoFijo : setup.fluctuacionesLocalesReferenciaSeries) {
@@ -102,7 +122,7 @@ public class Resources {
 		}
 		// Creamos los recursos correspondientes a cada estimulo de nivel cero
 		float desviacionCero = 0;
-		if (identificador.tipoDeRecursos == TIPOSdeRECURSOS.Angulos) {
+		if (identificador.tipoDeRecursos == Resources.TIPOSdeRECURSOS.Angulos) {
 			desviacionCero = 90;
 		}
 		for (double referencia : setup.angulosReferencia) { // Asume que en esta variable estan los angulos de referencia
@@ -145,11 +165,11 @@ public class Resources {
 		}
 	}
 
-	private static Estimulo makeResource(double ladoFijo, double desviacion, LISTAdeRECURSOS identificador) {
-		if (identificador.tipoDeRecursos == TIPOSdeRECURSOS.Angulos) {
+	private static Estimulo makeResource(double ladoFijo, double desviacion, Resources.LISTAdeRECURSOS identificador) {
+		if (identificador.tipoDeRecursos == Resources.TIPOSdeRECURSOS.Angulos) {
 			return makeResourceAngulo(ladoFijo, desviacion);
 		}
-		if (identificador.tipoDeRecursos == TIPOSdeRECURSOS.Paralelismo) {
+		if (identificador.tipoDeRecursos == Resources.TIPOSdeRECURSOS.Paralelismo) {
 			return makeResourceParalelismo(ladoFijo, desviacion);
 		}
 		return null;
@@ -326,10 +346,10 @@ public class Resources {
 		return estimulo;
 	}
 	
-	private static SetupResources makeSetup(LISTAdeRECURSOS identificador) {
+	private static SetupResources makeSetup(Resources.LISTAdeRECURSOS identificador) {
 		SetupResources setup = new SetupResources();
 		
-		if (identificador == LISTAdeRECURSOS.UmbralAngulosTutorial) {
+		if (identificador == Resources.LISTAdeRECURSOS.UmbralAngulosTutorial) {
 			setup.angulosReferencia.add(180d);
 			setup.fluctuacionesLocalesReferenciaSeries.add(0f);
 			setup.fluctuacionesLocalesReferenciaEstimuloCero.addAll(0d,2.5d,-2.5d,5d,-5d,7.5d,-7.5d,10d,-10d);
@@ -337,7 +357,7 @@ public class Resources {
 			setup.desvMax = 80;
 			setup.desvMin = 1;
 		}
-		if (identificador == LISTAdeRECURSOS.UmbralAngulosTransferencia) {
+		if (identificador == Resources.LISTAdeRECURSOS.UmbralAngulosTransferencia) {
 			setup.angulosReferencia.addAll(30d,60d,120d,150d);
 			setup.fluctuacionesLocalesReferenciaSeries.addAll(0f,5f,-5f);
 			setup.fluctuacionesLocalesReferenciaEstimuloCero.addAll(0d,2.5d,-2.5d,5d,-5d,7.5d,-7.5d,10d,-10d);
@@ -345,7 +365,7 @@ public class Resources {
 			setup.desvMax = 80;
 			setup.desvMin = 1;
 		}
-		if (identificador == LISTAdeRECURSOS.UmbralParalelismoTutorial) {
+		if (identificador == Resources.LISTAdeRECURSOS.UmbralParalelismoTutorial) {
 			setup.angulosReferencia.addAll(0d);
 			setup.fluctuacionesLocalesReferenciaSeries.addAll(0f);
 			setup.fluctuacionesLocalesReferenciaEstimuloCero.addAll(0d,2.5d,-2.5d,5d,-5d,7.5d,-7.5d,10d,-10d);
@@ -353,7 +373,7 @@ public class Resources {
 			setup.desvMax = 50;
 			setup.desvMin = 0.1;
 		}
-		if (identificador == LISTAdeRECURSOS.UmbralParalelismoTransferencia) {
+		if (identificador == Resources.LISTAdeRECURSOS.UmbralParalelismoTransferencia) {
 			setup.angulosReferencia.addAll(30d,60d,120d,150d);
 			setup.fluctuacionesLocalesReferenciaSeries.addAll(0f,5f,-5f);
 			setup.fluctuacionesLocalesReferenciaEstimuloCero.addAll(0d,2.5d,-2.5d,5d,-5d,7.5d,-7.5d,10d,-10d);
@@ -365,7 +385,7 @@ public class Resources {
 		
 		generarDesviaciones(setup);
 		// Corrige la desviacion para que el cero este en 90 si es un angulo
-		if (identificador.tipoDeRecursos == TIPOSdeRECURSOS.Angulos) {
+		if (identificador.tipoDeRecursos == Resources.TIPOSdeRECURSOS.Angulos) {
 			for (int i=0 ; i < setup.desviacionesAngulares.size; i++) {
 				setup.desviacionesAngulares.set(i, setup.desviacionesAngulares.get(i)+90);
 			}
@@ -373,7 +393,7 @@ public class Resources {
 		return setup;
 	}
 	
-	private static void saveSetup(SetupResources setup, LISTAdeRECURSOS identificador) {
+	private static void saveSetup(SetupResources setup, Resources.LISTAdeRECURSOS identificador) {
 		// Guardamos el setup en la carpeta temporal
 		String path = Paths.ResourcesBuilder + Paths.ExtraFldr + identificador.toString() + Paths.ResourcesSetupExt;
 		Json json = new Json();

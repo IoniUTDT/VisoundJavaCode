@@ -138,19 +138,34 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 			table.add(instrucciones).width(Gdx.graphics.getWidth()/5f).space(Gdx.graphics.getHeight()/30f).colspan(3);
 			table.row();
 
+			TextButton siguiente = new TextButton("Comenzar", skin, "default");
+			siguiente.addListener(new ClickListener() {
+				@Override
+				public void clicked(InputEvent event, float x, float y) {
+					game.session.user.pasarFase();
+					game.setScreen(new MenuScreen(game));
+				}
+			});
+			table.add(siguiente).width(Gdx.graphics.getWidth()/5f).space(Gdx.graphics.getHeight()/30f).colspan(3);
+			table.row();
+		} else {
+			
 		}
 		
+		/*
 		if (this.game.session.user.faseDeExperimento != FASEdeEXPERIMENTO.ExperimentoCompleto) {
 			TextButton Siguiente = new TextButton("Comenzar", skin, "default");
 			Siguiente.addListener(new ClickListener() {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
 					game.session.user.pasarFase();
+					game.setScreen(new MenuScreen(game));
 				}
 			});
 			table.add(Siguiente).width(Gdx.graphics.getWidth()/5f).space(Gdx.graphics.getHeight()/30f).colspan(3);
 			table.row();
 		}
+		*/
 		
 		// Crea los botones de los niveles
 /*		

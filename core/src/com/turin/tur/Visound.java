@@ -5,10 +5,11 @@ import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
-import com.turin.tur.main.diseno.Listas.LISTAdeNIVELES;
-import com.turin.tur.main.diseno.Listas.LISTAdeRECURSOS;
 import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.levelsDesign.Level;
+import com.turin.tur.main.levelsDesign.Level.LISTAdeNIVELES;
+import com.turin.tur.main.levelsDesign.Resources;
+import com.turin.tur.main.levelsDesign.Resources.LISTAdeRECURSOS;
 import com.turin.tur.main.screens.MenuScreen;
 import com.turin.tur.main.util.Internet;
 import com.turin.tur.main.util.builder.Builder;
@@ -26,7 +27,7 @@ public class Visound extends Game {
 	public Session session;
 	public static float volumen = 0.5f;
 	public boolean sendingData;
-	Array<LISTAdeNIVELES> identificadoresLvl = new Array<LISTAdeNIVELES>();
+	Array<Level.LISTAdeNIVELES> identificadoresLvl = new Array<Level.LISTAdeNIVELES>();
 	
 	
 	@Override
@@ -37,11 +38,11 @@ public class Visound extends Game {
 		// Set Libgdx log level
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 		
-		identificadoresLvl.addAll(LISTAdeNIVELES.Tutorial);
+		identificadoresLvl.addAll(Level.LISTAdeNIVELES.Tutorial);
 		
 		if ((buildResources) & (Gdx.app.getType() == ApplicationType.Desktop)) {
-			Array<LISTAdeRECURSOS> identificadoresRes = new Array<LISTAdeRECURSOS>();
-			identificadoresRes.addAll(LISTAdeRECURSOS.ImagenesTutorial,LISTAdeRECURSOS.UmbralAngulosTutorial, LISTAdeRECURSOS.UmbralParalelismoTutorial, LISTAdeRECURSOS.UmbralAngulosTransferencia, LISTAdeRECURSOS.UmbralParalelismoTransferencia);
+			Array<Resources.LISTAdeRECURSOS> identificadoresRes = new Array<Resources.LISTAdeRECURSOS>();
+			identificadoresRes.addAll(Resources.LISTAdeRECURSOS.ImagenesTutorial,Resources.LISTAdeRECURSOS.UmbralAngulosTutorial, Resources.LISTAdeRECURSOS.UmbralParalelismoTutorial, Resources.LISTAdeRECURSOS.UmbralAngulosTransferencia, Resources.LISTAdeRECURSOS.UmbralParalelismoTransferencia);
 			Builder.buildResources(identificadoresRes);
 			Builder.buildLevels(identificadoresLvl);
 		}

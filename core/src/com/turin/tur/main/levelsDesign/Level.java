@@ -1,32 +1,39 @@
 package com.turin.tur.main.levelsDesign;
 
-import com.turin.tur.main.diseno.Listas.LISTAdeNIVELES;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.Trial;
-import com.turin.tur.main.util.FileHelper;
+import com.turin.tur.main.levelsDesign.Resources.LISTAdeRECURSOS;
 import com.turin.tur.main.util.LevelAsset;
+import com.turin.tur.main.util.builder.Builder;
 import com.turin.tur.main.util.Constants.ResourcesCategorias;
-import com.turin.tur.main.util.Constants.ResourcesCategorias.Paths;
 
 public abstract class Level {
 	
+	public enum LISTAdeNIVELES {
+		TestAngulos30(LISTAdeRECURSOS.UmbralAngulosTutorial, TIPOdeNivel.Umbral),
+		Tutorial(LISTAdeRECURSOS.ImagenesTutorial, TIPOdeNivel.Tutorial)
+		;
+		public static final int levelVersion = Builder.levelVersionFinal;
+		public LISTAdeRECURSOS listaDeRecursos;
+		public TIPOdeNivel tipoDeNivel;
+		private LISTAdeNIVELES(LISTAdeRECURSOS listaDeRecursos, TIPOdeNivel tipoDeNivel) {
+			this.listaDeRecursos = listaDeRecursos;
+			this.tipoDeNivel = tipoDeNivel;
+		}
+	}
+
+	public enum TIPOdeNivel {
+		Tutorial, Umbral;
+	}
+
 	public static final String dinamicaPathName = "dinamica.meta";
+	public static String folderResources(LISTAdeNIVELES identificador) {
+		return ResourcesCategorias.Paths.finalInternalPath+identificador.toString()+"/";
+	}
+	public LISTAdeNIVELES identificadorNivel;
+	public LevelAsset levelAssets;
+	
 	// Info basica que todos los niveles tienen que tener y que se carga cuando se inicia el programa
 	public LevelInfo levelInfo;
-	public LevelAsset levelAssets;
-	public LISTAdeNIVELES identificadorNivel;
-	
-	public abstract Trial getNextTrial();
-	public abstract void returnAnswer(boolean answerCorrect, float confianzaReportada, float timeSelecion, float timeConfiance,
-			int loopsCount);
-	public abstract boolean islevelCompleted();
-	public abstract void levelCompleted();
-	public abstract void interrupt();
-	public abstract boolean goConfiance();
-	public abstract void loadDinamica();
-	
 	
 	Level() {
 	}
@@ -36,9 +43,17 @@ public abstract class Level {
 		this.levelInfo = LevelInfo.loadLevelInfo(identificador);
 		this.loadDinamica();
 	}
+	public abstract Trial getNextTrial();
+	public abstract boolean goConfiance();
+	public abstract void interrupt();
+	public abstract boolean islevelCompleted();
 	
-	public static String folderResources(LISTAdeNIVELES identificador) {
-		return ResourcesCategorias.Paths.finalInternalPath+identificador.toString()+"/";
-	}
+	
+	public abstract void levelCompleted();
+	
+	public abstract void loadDinamica();
+	
+	public abstract void returnAnswer(boolean answerCorrect, float confianzaReportada, float timeSelecion, float timeConfiance,
+			int loopsCount);
 	
 }

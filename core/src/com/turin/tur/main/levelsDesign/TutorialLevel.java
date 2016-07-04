@@ -4,8 +4,6 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Json;
-import com.turin.tur.main.diseno.Listas.LISTAdeNIVELES;
-import com.turin.tur.main.diseno.Listas.LISTAdeRECURSOS;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.main.util.Constants.ResourcesCategorias;
@@ -108,7 +106,7 @@ public class TutorialLevel extends Level{
 		LevelInfo.saveLevelInfo(identificador, level.levelInfo);
 	}
 
-	public static void buildResources(LISTAdeRECURSOS identificador) {
+	public static void buildResources(Resources.LISTAdeRECURSOS identificador) {
 		// Creamos una lista de las lineas a dibujar
 		Array<Dibujo> dibujos = createDibujos();
 		
@@ -522,7 +520,7 @@ public class TutorialLevel extends Level{
 		return dibujos;
 	}
 
-	private static Setup loadSetup (LISTAdeRECURSOS identificador) {
+	private static Setup loadSetup (Resources.LISTAdeRECURSOS identificador) {
 		String path = Paths.ResourcesBuilder + Paths.ExtraFldr + identificador.toString() + Paths.ResourcesSetupExt;
 		String savedData = FileHelper.readLocalFile(path);
 		Json json = new Json();
@@ -537,7 +535,7 @@ public class TutorialLevel extends Level{
 		FileHelper.writeLocalFile(path, json.toJson(dinamica));
 	}
 
-	private static void saveSetup(Setup setup, LISTAdeRECURSOS identificador) {
+	private static void saveSetup(Setup setup, Resources.LISTAdeRECURSOS identificador) {
 		// Guardamos el setup en la carpeta temporal
 		String path = Paths.ResourcesBuilder + Paths.ExtraFldr + identificador.toString() + Paths.ResourcesSetupExt;
 		Json json = new Json();

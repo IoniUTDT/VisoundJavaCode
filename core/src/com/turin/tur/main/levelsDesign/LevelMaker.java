@@ -1,7 +1,7 @@
 package com.turin.tur.main.levelsDesign;
 
-import com.turin.tur.main.diseno.Listas.LISTAdeNIVELES;
-import com.turin.tur.main.diseno.Listas.TIPOdeNivel;
+import com.turin.tur.main.levelsDesign.Level.LISTAdeNIVELES;
+import com.turin.tur.main.levelsDesign.Level.TIPOdeNivel;
 
 public class LevelMaker {
 

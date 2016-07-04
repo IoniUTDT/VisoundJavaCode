@@ -26,9 +26,9 @@ public class Session {
 	}
 	
 	public User loadUser() {
-		FileHandle userFile = Gdx.files.local(Constants.USERFILE);
+		FileHandle userFile = Gdx.files.local(User.USERFILE);
 		if (userFile.exists()) {
-			String savedData = FileHelper.readLocalFile(Constants.USERFILE);
+			String savedData = FileHelper.readLocalFile(User.USERFILE);
 			if (!savedData.isEmpty()) {
 				Json json = new Json();
 				json.setUsePrototypes(false);
@@ -40,15 +40,15 @@ public class Session {
 			}
 		} else {
 			Gdx.app.debug(TAG, "Creando nuevo usuario");
-			User user = new User(); 
-			Json json = new Json();
-			json.setUsePrototypes(false);
-			FileHelper.writeLocalFile(Constants.USERFILE, json.toJson(user));
+			User user = new User();
+			user.saveUserInfo();
 			return user;
 		}
 	}	
 	
 	public static class User {
+		public static final String USERFILE = "logs/user.txt";
+
 		public long id;
 		public FASEdeEXPERIMENTO faseDeExperimento;
 		
@@ -57,9 +57,15 @@ public class Session {
 			this.faseDeExperimento = FASEdeEXPERIMENTO.Intro;
 		}
 
+		public void saveUserInfo() {
+			Json json = new Json();
+			json.setUsePrototypes(false);
+			FileHelper.writeLocalFile(USERFILE, json.toJson(this));
+		}
+
 		public void pasarFase() {
-			// TODO Auto-generated method stub
-			
+			this.faseDeExperimento = this.faseDeExperimento.etapaSiguiente;
+			this.saveUserInfo();
 		}
 		
 	}
@@ -75,6 +81,7 @@ public class Session {
 			TestInicial.etapaSiguiente = Entrenamiento1;
 			Entrenamiento1.etapaSiguiente = TestFinal;
 			TestFinal.etapaSiguiente = ExperimentoCompleto;
+			ExperimentoCompleto.etapaSiguiente = ExperimentoCompleto;
 		}
 		
 		public FASEdeEXPERIMENTO etapaSiguiente() {
