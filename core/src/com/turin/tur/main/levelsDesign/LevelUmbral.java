@@ -5,10 +5,10 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.main.util.Constants;
-import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Constants.ResourcesCategorias;
 import com.turin.tur.main.util.Constants.ResourcesCategorias.CategoriasImagenes;
 import com.turin.tur.main.util.Constants.ResourcesCategorias.Paths;
+import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.builder.Imagenes;
 import com.turin.tur.main.util.builder.Imagenes.Linea;
 
@@ -73,56 +73,6 @@ public class LevelUmbral extends Level {
 		}
 	}
 
-	public LevelUmbral() {
-	}
-
-	public LevelUmbral(LISTAdeNIVELES identificador) {
-		super(identificador);
-	}
-
-	@Override
-	public Trial getNextTrial() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean goConfiance() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void interrupt() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public boolean islevelCompleted() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void levelCompleted() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void loadDinamica() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void returnAnswer(boolean answerCorrect, float confianzaReportada, float timeSelecion, float timeConfiance,
-			int loopsCount) {
-		// TODO Auto-generated method stub
-
-	}
-	
 	public static void buildResources(LISTAdeRECURSOS identificador) {
 		
 		SetupResources setup = makeSetup(identificador);
@@ -190,7 +140,7 @@ public class LevelUmbral extends Level {
 		}
 		return null;
 	}
-	
+
 	private static Estimulo makeResourceAngulo(double ladoFijo, double anguloAFormar) {
 		// buscamos el tamaño del lienzo a dibujar
 		float tamano;
@@ -288,7 +238,7 @@ public class LevelUmbral extends Level {
 		estimulo.desviacion = info.desviacion;
 		return estimulo;
 	}
-	
+
 	private static Estimulo makeResourceParalelismo(double referencia, double desviacion) {
 		// buscamos el tamaño del lienzo a dibujar
 		float tamano;
@@ -361,7 +311,7 @@ public class LevelUmbral extends Level {
 		estimulo.anguloFijo = info.referencia;
 		return estimulo;
 	}
-	
+
 	private static SetupResources makeSetup(LISTAdeRECURSOS identificador) {
 		SetupResources setup = new SetupResources();
 		
@@ -408,13 +358,63 @@ public class LevelUmbral extends Level {
 		}
 		return setup;
 	}
-	
+
 	private static void saveSetup(SetupResources setup, LISTAdeRECURSOS identificador) {
 		// Guardamos el setup en la carpeta temporal
 		String path = Paths.ResourcesBuilder + Paths.ExtraFldr + identificador.toString() + Paths.ResourcesSetupExt;
 		Json json = new Json();
 		json.setUsePrototypes(false);
 		FileHelper.writeLocalFile(path, json.toJson(setup));
+	}
+
+	public LevelUmbral() {
+	}
+
+	public LevelUmbral(LISTAdeNIVELES identificador) {
+		super(identificador);
+	}
+	
+	@Override
+	public Trial getNextTrial() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean goConfiance() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void interrupt() {
+		// TODO Auto-generated method stub
+
+	}
+	
+	@Override
+	public boolean islevelCompleted() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	@Override
+	public void levelCompleted() {
+		// TODO Auto-generated method stub
+
+	}
+	
+	@Override
+	public void loadDinamica() {
+		// TODO Auto-generated method stub
+
+	}
+	
+	@Override
+	public void returnAnswer(boolean answerCorrect, float confianzaReportada, float timeSelecion, float timeConfiance,
+			int loopsCount) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

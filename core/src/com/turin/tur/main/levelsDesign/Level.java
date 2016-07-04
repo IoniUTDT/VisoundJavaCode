@@ -58,14 +58,14 @@ public abstract class Level {
 
 	public LISTAdeNIVELES identificadorNivel;
 	public LevelAsset levelAssets;
-	public LevelInfo levelInfo;
+	public InfoLevel infoLevel;
 
 	Level() {
 	}
 
 	Level(LISTAdeNIVELES identificador) {
 		this.identificadorNivel = identificador;
-		this.levelInfo = LevelInfo.loadLevelInfo(identificador);
+		this.infoLevel = InfoLevel.loadInfoLevel(identificador);
 		this.loadDinamica();
 	}
 

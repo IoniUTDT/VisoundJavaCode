@@ -103,7 +103,7 @@ public class LevelEjemplos extends Level{
 		saveDinamica(level.dinamica, identificador);
 		
 		// Guardamos el LevelInfo
-		LevelInfo.saveLevelInfo(identificador, level.levelInfo);
+		InfoLevel.saveInfoLevel(identificador, level.infoLevel);
 	}
 
 	public static void buildResources(LISTAdeRECURSOS identificador) {

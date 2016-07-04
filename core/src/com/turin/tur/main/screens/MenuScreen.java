@@ -24,7 +24,7 @@ import com.turin.tur.main.experiments.Experiment;
 import com.turin.tur.main.experiments.Experiment.GenericExp;
 import com.turin.tur.main.experiments.Experiments.LevelStatus;
 import com.turin.tur.main.levelsDesign.Level;
-import com.turin.tur.main.levelsDesign.LevelInfo;
+import com.turin.tur.main.levelsDesign.InfoLevel;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.Internet;
 

@@ -3,8 +3,9 @@ package com.turin.tur.main.util.builder;
 import com.badlogic.gdx.utils.Array;
 import com.turin.tur.main.levelsDesign.Level;
 import com.turin.tur.main.levelsDesign.Level.LISTAdeRECURSOS;
+import com.turin.tur.main.levelsDesign.Level.TIPOdeNivel;
+import com.turin.tur.main.levelsDesign.LevelAngulos;
 import com.turin.tur.main.levelsDesign.LevelEjemplos;
-import com.turin.tur.main.levelsDesign.LevelMaker;
 import com.turin.tur.main.levelsDesign.LevelUmbral;
 
 public class Builder {
@@ -43,7 +44,12 @@ public class Builder {
 		if (makeLevels) {
 			PCBuilder.CheckLevels();
 			for (Level.LISTAdeNIVELES identificador : identificadores) {
-				LevelMaker.make(identificador);
+				if (identificador.tipoDeNivel == TIPOdeNivel.Ejemplos) {
+					LevelEjemplos.buildLevel (identificador);
+				}
+				if (identificador.tipoDeNivel == TIPOdeNivel.Angulos) {
+					LevelAngulos.buildLevel (identificador);
+				}
 			}
 			System.exit(0);
 		}

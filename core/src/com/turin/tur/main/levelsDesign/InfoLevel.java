@@ -7,22 +7,22 @@ import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.levelsDesign.Level.LISTAdeNIVELES;
 import com.turin.tur.main.util.Constants.ResourcesCategorias;
 
-public class LevelInfo {
+public class InfoLevel {
 	
 	public static String pathNameExt = ".LvlInfo";
 	
-	public static void saveLevelInfo (Level.LISTAdeNIVELES identificador, LevelInfo levelInfo) {
+	public static void saveInfoLevel (Level.LISTAdeNIVELES identificador, InfoLevel infoLevel) {
 		String path = pathLevelInfo(identificador);
 		Json json = new Json();
 		json.setUsePrototypes(false);
-		FileHelper.writeLocalFile(path, json.toJson(levelInfo));
+		FileHelper.writeLocalFile(path, json.toJson(infoLevel));
 	}
 	
 	private static String pathLevelInfo (Level.LISTAdeNIVELES identificador) {
 		return Level.folderResources(identificador) + identificador.toString() + pathNameExt;
 	}
 	
-	public static LevelInfo loadLevelInfo (Level.LISTAdeNIVELES identificador) {
+	public static InfoLevel loadInfoLevel (Level.LISTAdeNIVELES identificador) {
 		// Se fija si existe el archivo en la copia externa (donde se puede modificar) y sino hace una copia desde los archivos internos 
 		if (!Gdx.files.local(ResourcesCategorias.Paths.LocalSettingsCopy + identificador.toString() + pathNameExt).exists()) { // hacemos una copia de la info guardada en internal
 			FileHandle from = Gdx.files.internal(pathLevelInfo(identificador));
@@ -31,6 +31,6 @@ public class LevelInfo {
 		}
 		String savedData = FileHelper.readLocalFile(ResourcesCategorias.Paths.LocalSettingsCopy + identificador.toString() + pathNameExt);
 		Json json = new Json();
-		return json.fromJson(LevelInfo.class, savedData);
+		return json.fromJson(InfoLevel.class, savedData);
 	}
 }
