@@ -1,7 +1,6 @@
 package com.turin.tur.main.levelsDesign;
 
 import com.turin.tur.main.diseno.Trial;
-import com.turin.tur.main.levelsDesign.Resources.LISTAdeRECURSOS;
 import com.turin.tur.main.util.Constants.ResourcesCategorias;
 import com.turin.tur.main.util.LevelAsset;
 import com.turin.tur.main.util.builder.Builder;
@@ -13,11 +12,11 @@ import com.turin.tur.main.util.builder.Builder;
 public abstract class Level {
 
 	public enum LISTAdeNIVELES {
-		AngulosTutorial(LISTAdeRECURSOS.UmbralAngulosTutorial, TIPOdeNivel.Umbral),
-		ParalelismoTutorial(LISTAdeRECURSOS.UmbralParalelismoTutorial, TIPOdeNivel.Umbral),
+		AngulosTutorial(LISTAdeRECURSOS.UmbralAngulosTutorial, TIPOdeNivel.Angulos),
+		ParalelismoTutorial(LISTAdeRECURSOS.UmbralParalelismoTutorial, TIPOdeNivel.Paralelismo),
 		// TestAngulos30(LISTAdeRECURSOS.UmbralAngulosTutorial,
 		// TIPOdeNivel.Umbral),
-		Tutorial(LISTAdeRECURSOS.ImagenesTutorial, TIPOdeNivel.Tutorial);
+		Tutorial(LISTAdeRECURSOS.ImagenesEjemplos, TIPOdeNivel.Ejemplos);
 		public static final int levelVersion = Builder.levelVersionFinal;
 		public LISTAdeRECURSOS listaDeRecursos;
 		public TIPOdeNivel tipoDeNivel;
@@ -28,8 +27,27 @@ public abstract class Level {
 		}
 	}
 
+	public enum LISTAdeRECURSOS {
+		ImagenesEjemplos (TIPOSdeRECURSOS.ImagenesTutorial),
+		UmbralAngulosTransferencia (TIPOSdeRECURSOS.Angulos),
+		UmbralAngulosTutorial (TIPOSdeRECURSOS.Angulos),
+		UmbralParalelismoTransferencia (TIPOSdeRECURSOS.Paralelismo),
+		UmbralParalelismoTutorial (TIPOSdeRECURSOS.Paralelismo);
+		
+		public TIPOSdeRECURSOS tipoDeRecursos;
+		
+		private LISTAdeRECURSOS(TIPOSdeRECURSOS tipoDeRecursos) {
+			this.tipoDeRecursos = tipoDeRecursos;
+		}
+	}
+
 	public enum TIPOdeNivel {
-		Tutorial, Umbral;
+		Angulos, Ejemplos, Paralelismo;
+	}
+
+	public enum TIPOSdeRECURSOS {
+		Angulos, ImagenesTutorial, Paralelismo;
+		public static final int ResourceVersion = Builder.ResourceVersion;
 	}
 
 	public static final String dinamicaPathName = "dinamica.meta";

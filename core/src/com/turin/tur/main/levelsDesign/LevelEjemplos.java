@@ -16,14 +16,14 @@ import com.turin.tur.main.util.builder.Imagenes;
 import com.turin.tur.main.util.builder.PCBuilder;
 import com.turin.tur.main.util.builder.Imagenes.Linea;
 
-public class TutorialLevel extends Level{
+public class LevelEjemplos extends Level{
 	
 	private static class Dibujo {
 		Array<Linea> lineas = new Array<Linea>();
 		String tag;
 	}
 	
-	private static class DinamicaTutorial {
+	private static class DinamicaEjemplos {
 		Array<Integer> listaDeTrials = new Array<Integer>();
 		int trialActivo;
 	}
@@ -48,7 +48,7 @@ public class TutorialLevel extends Level{
 		}
 		
 		// Creamos el level para que despues se pueda guardar.
-		TutorialLevel level = new TutorialLevel();
+		LevelEjemplos level = new LevelEjemplos();
 		level.identificadorNivel = identificador;
 		
 		
@@ -106,7 +106,7 @@ public class TutorialLevel extends Level{
 		LevelInfo.saveLevelInfo(identificador, level.levelInfo);
 	}
 
-	public static void buildResources(Resources.LISTAdeRECURSOS identificador) {
+	public static void buildResources(LISTAdeRECURSOS identificador) {
 		// Creamos una lista de las lineas a dibujar
 		Array<Dibujo> dibujos = createDibujos();
 		
@@ -116,7 +116,7 @@ public class TutorialLevel extends Level{
 		for (Dibujo dibujo : dibujos) {
 			// Creamos la imagen correspondiente
 			Imagenes imagen = new Imagenes();
-			imagen.categories.add(CategoriasImagenes.Tutorial);
+			imagen.categories.add(CategoriasImagenes.Ejemplos);
 			imagen.infoConceptual = dibujo;
 			imagen.lineas.addAll(dibujo.lineas);
 			// Hacemos de la info de la imagen el SVG
@@ -520,7 +520,7 @@ public class TutorialLevel extends Level{
 		return dibujos;
 	}
 
-	private static Setup loadSetup (Resources.LISTAdeRECURSOS identificador) {
+	private static Setup loadSetup (LISTAdeRECURSOS identificador) {
 		String path = Paths.ResourcesBuilder + Paths.ExtraFldr + identificador.toString() + Paths.ResourcesSetupExt;
 		String savedData = FileHelper.readLocalFile(path);
 		Json json = new Json();
@@ -528,14 +528,14 @@ public class TutorialLevel extends Level{
 		return json.fromJson(Setup.class, savedData);
 	}
 
-	private static void saveDinamica (DinamicaTutorial dinamica, LISTAdeNIVELES identificador) {
+	private static void saveDinamica (DinamicaEjemplos dinamica, LISTAdeNIVELES identificador) {
 		String path = Level.folderResources(identificador) + Level.dinamicaPathName;
 		Json json = new Json();
 		json.setUsePrototypes(false);
 		FileHelper.writeLocalFile(path, json.toJson(dinamica));
 	}
 
-	private static void saveSetup(Setup setup, Resources.LISTAdeRECURSOS identificador) {
+	private static void saveSetup(Setup setup, LISTAdeRECURSOS identificador) {
 		// Guardamos el setup en la carpeta temporal
 		String path = Paths.ResourcesBuilder + Paths.ExtraFldr + identificador.toString() + Paths.ResourcesSetupExt;
 		Json json = new Json();
@@ -543,13 +543,12 @@ public class TutorialLevel extends Level{
 		FileHelper.writeLocalFile(path, json.toJson(setup));
 	}
 	
-	DinamicaTutorial dinamica = new DinamicaTutorial();
+	DinamicaEjemplos dinamica = new DinamicaEjemplos();
 	 
-	public TutorialLevel() {
-		// TODO Auto-generated constructor stub
+	public LevelEjemplos() {
 	}
 	
-	public TutorialLevel(LISTAdeNIVELES identificador) {
+	public LevelEjemplos(LISTAdeNIVELES identificador) {
 		super(identificador);
 	}
 

@@ -134,7 +134,7 @@ public class Constants {
 			Nada(0,""), 
 			Texto(1), 
 			Imagen(2),
-			Tutorial(3),
+			Ejemplos(3),
 			Siguiente(4),
 			
 			Lineax1(6,"Una Linea"), 

@@ -57,7 +57,7 @@ public class Tutorial extends GenericExp implements Experiment {
 		for (Dibujo dibujo : dibujos) {
 			// Creamos la imagen correspondiente
 			Imagenes imagen = new Imagenes();
-			imagen.categories.add(CategoriasImagenes.Tutorial);
+			imagen.categories.add(CategoriasImagenes.Ejemplos);
 			imagen.infoConceptual = dibujo;
 			imagen.lineas.addAll(dibujo.lineas);
 			// Hacemos de la info de la imagen el SVG

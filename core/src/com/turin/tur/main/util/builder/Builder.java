@@ -2,10 +2,10 @@ package com.turin.tur.main.util.builder;
 
 import com.badlogic.gdx.utils.Array;
 import com.turin.tur.main.levelsDesign.Level;
-import com.turin.tur.main.levelsDesign.Level.LISTAdeNIVELES;
+import com.turin.tur.main.levelsDesign.Level.LISTAdeRECURSOS;
+import com.turin.tur.main.levelsDesign.LevelEjemplos;
 import com.turin.tur.main.levelsDesign.LevelMaker;
-import com.turin.tur.main.levelsDesign.Resources;
-import com.turin.tur.main.levelsDesign.Resources.LISTAdeRECURSOS;
+import com.turin.tur.main.levelsDesign.LevelUmbral;
 
 public class Builder {
 
@@ -17,19 +17,23 @@ public class Builder {
 
 	static int contadorTrials = 0;
 
-	public static final int ResourceVersion = 22;
-	public static final int levelVersion = 22; 
+	public static final int ResourceVersion = 23;
+	public static final int levelVersion = 23; 
 	public static int levelVersionFinal = levelVersion; // Se modifica mas adelante si corresponde
 	
 	static final Boolean makeLevels = false; 
-	static final Boolean makeResources = false;
+	static final Boolean makeResources = true;
 
-	public static void buildResources(Array<Resources.LISTAdeRECURSOS> identificadores) {
+	public static void buildResources(Array<LISTAdeRECURSOS> identificadores) {
 		if (makeResources) {
 			PCBuilder.verifyResourcesVersion();
 			Textos.crearTextos();
-			for (Resources.LISTAdeRECURSOS identificador : identificadores) {
-				Resources.makeResources(identificador);
+			for (LISTAdeRECURSOS identificador : identificadores) {
+				if (identificador== LISTAdeRECURSOS.ImagenesEjemplos) {
+					LevelEjemplos.buildResources (identificador);
+				} else {
+					LevelUmbral.buildResources (identificador);
+				}
 			}
 			System.exit(0);
 		}	
