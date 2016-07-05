@@ -29,6 +29,7 @@ import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
 import com.turin.tur.main.util.Constants.ResourcesCategorias;
 import com.turin.tur.main.util.FileHelper;
+import com.turin.tur.main.util.LevelAsset;
 
 public class PCBuilder {
 
@@ -174,19 +175,6 @@ public class PCBuilder {
 		PCBuilder.export(listado,identificadorNivel);
 	}
 
-	/*
-	public static JsonLevel crearLevel() {
-		// Crea un JsonLevel y aumenta en 1 el contador de niveles
-		Builder.contadorLevels += 1;
-		JsonLevel jsonLevel = new JsonLevel();
-		// jsonLevel.appVersion = AppVersion;
-		jsonLevel.Id = Builder.contadorLevels;
-		jsonLevel.resourceVersion = Builder.ResourceVersion;
-		jsonLevel.levelVersion = Builder.levelVersionFinal;
-		return jsonLevel;
-	}
-	*/
-
 	/**
 	 * This method transforms SVGs of a list of ids that must be in the same folder into PNG files, join it at a ATLAS file and copy the ATLAS, and the .meta files
 	 * to a folder in android's assets 
@@ -229,7 +217,7 @@ public class PCBuilder {
 		settings.maxHeight = 1024;
 		settings.duplicatePadding = false;
 		settings.debug = false;
-		TexturePacker.process(settings, ResourcesCategorias.Paths.processingTempFolder, Level.folderResources(identificadorNivel), "Imagenes"); 
+		TexturePacker.process(settings, ResourcesCategorias.Paths.processingTempFolder, Level.folderResources(identificadorNivel), LevelAsset.atlasName); 
 		Gdx.app.debug(Builder.TAG, "Recursos correctamente exportados: " + identificadorNivel.toString()+".");
 	}
 

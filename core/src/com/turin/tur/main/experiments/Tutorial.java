@@ -616,10 +616,13 @@ public class Tutorial extends GenericExp implements Experiment {
 
 	@Override
 	public Trial getNextTrial() {
+		
+		//Trasladado
 		// Creamos el trial correspondiente
 		String savedData = FileHelper.readInternalFile(ResourcesCategorias.Paths.InternalResources + "level" + level.Id + "/trial" + this.dinamicaTutorial.trialActivo + ".meta");
 		Json json = new Json();
 		JsonTrial jsonTrial = json.fromJson(JsonTrial.class, savedData);
+		JsonTrial jsonTrial = this.loadJsonTrial(dinamica.trialActivo);
 		// Cargamos la lista de objetos experimentales
 		Array<ExperimentalObject> elementos = new Array<ExperimentalObject>();
 		for (int idElemento : jsonTrial.elementosId) {
@@ -638,6 +641,7 @@ public class Tutorial extends GenericExp implements Experiment {
 
 	@Override
 	public boolean goConfiance() {
+		// Trasladado
 		return false;
 	}
 

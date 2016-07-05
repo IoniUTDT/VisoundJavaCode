@@ -117,7 +117,7 @@ public class LevelController implements InputProcessor {
 			this.game.levelActivo.returnAnswer(this.boxTocada.answerCorrect, this.confianzaReportada, this.timeSelecion, this.timeConfiance, this.runningSound.loopsCount);
 			if (this.game.levelActivo.islevelCompleted()) {
 				this.estadoLoop = EstadoLoop.LevelFinalizado;
-				this.game.levelActivo.levelCompleted();
+				this.game.levelActivo.levelCompletedAction();
 				this.goToResults();
 			} else {
 				this.trial = this.game.levelActivo.getNextTrial();

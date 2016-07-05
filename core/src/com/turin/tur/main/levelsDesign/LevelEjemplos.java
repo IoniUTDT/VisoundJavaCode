@@ -1,22 +1,21 @@
 package com.turin.tur.main.levelsDesign;
 
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Path;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Json;
-import com.turin.tur.main.diseno.Trial.JsonTrial;
+import com.turin.tur.main.diseno.ExperimentalObject;
 import com.turin.tur.main.diseno.Trial;
-import com.turin.tur.main.util.Constants.ResourcesCategorias;
-import com.turin.tur.main.util.Constants;
+import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
+import com.turin.tur.main.util.Constants.ResourcesCategorias;
 import com.turin.tur.main.util.Constants.ResourcesCategorias.CategoriasImagenes;
 import com.turin.tur.main.util.Constants.ResourcesCategorias.Paths;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.builder.Imagenes;
-import com.turin.tur.main.util.builder.PCBuilder;
 import com.turin.tur.main.util.builder.Imagenes.Linea;
+import com.turin.tur.main.util.builder.PCBuilder;
 
 public class LevelEjemplos extends Level{
 	
@@ -51,7 +50,7 @@ public class LevelEjemplos extends Level{
 		
 		// Creamos el level para que despues se pueda guardar.
 		LevelEjemplos level = new LevelEjemplos();
-		level.identificadorNivel = identificador;
+		level.identificador = identificador;
 		
 		
 		Array<JsonTrial> jsonTrials = new Array<JsonTrial>();
@@ -539,8 +538,6 @@ public class LevelEjemplos extends Level{
 		FileHelper.writeLocalFile(path, json.toJson(dinamica));
 	}
 
-	
-	
 	DinamicaEjemplos dinamica = new DinamicaEjemplos();
 	 
 	public LevelEjemplos() {
@@ -552,37 +549,30 @@ public class LevelEjemplos extends Level{
 
 	@Override
 	public Trial getNextTrial() {
-		// TODO Auto-generated method stub
-		return null;
+		JsonTrial jsonTrial = this.loadJsonTrial(dinamica.trialActivo);
+		// Cargamos la lista de objetos experimentales
+		Array<ExperimentalObject> elementos = new Array<ExperimentalObject>();
+		for (int idElemento : jsonTrial.elementosId) {
+			ExperimentalObject elemento = new ExperimentalObject(idElemento, levelAssets, Level.folderResources(identificador));
+			elementos.add(elemento);
+		}
+		ExperimentalObject estimulo = new ExperimentalObject(jsonTrial.rtaCorrectaId, levelAssets, Level.folderResources(identificador));
+		// Con la info del json del trial tenemos que crear un trial
+		return new Trial(elementos, jsonTrial, estimulo);			
 	}
 	
 	@Override
 	public boolean goConfiance() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 	
 	@Override
 	public void interrupt() {
-		// TODO Auto-generated method stub
-		
+		// Ver que onda si hace falta hacer algo cuando se sale del nivel, por ahora no.
 	}
 	
-	@Override
-	public boolean islevelCompleted() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void levelCompleted() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void loadDinamica() {
-		String path = Level.folderResources(this.identificadorNivel) + Level.dinamicaPathName;
+		String path = Level.folderResources(this.identificador) + Level.dinamicaPathName;
 		String savedData = FileHelper.readLocalFile(path);
 		Json json = new Json();
 		json.setUsePrototypes(false);
@@ -592,7 +582,28 @@ public class LevelEjemplos extends Level{
 	@Override
 	public void returnAnswer(boolean answerCorrect, float confianzaReportada, float timeSelecion, float timeConfiance,
 			int loopsCount) {
-		// TODO Auto-generated method stub
-		
+		// Cambiamos el trial al siguiente de la lista
+		if (this.trialsLeft()==0) { 
+			this.levelCompleted = true;
+		} else {
+			int thisTrialIndex = dinamica.listaDeTrials.indexOf(dinamica.trialActivo, false);
+			dinamica.trialActivo = dinamica.listaDeTrials.get(thisTrialIndex +1);
+		} 	
+	}
+
+	@Override
+	void sendDataLevel() {
+		// En el caso del tutorial no enviamos datos del nivel cuando finaliza
+	}
+
+	@Override
+	public int trialsLeft() {
+		int thisTrialIndex = dinamica.listaDeTrials.indexOf(dinamica.trialActivo, false);
+		return dinamica.listaDeTrials.size - (thisTrialIndex + 1);
+	}
+
+	@Override
+	void specificLoads() {
+		loadDinamica();
 	}
 }

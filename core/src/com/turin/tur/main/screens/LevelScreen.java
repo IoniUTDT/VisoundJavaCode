@@ -2,9 +2,7 @@ package com.turin.tur.main.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.turin.tur.main.experiments.Experiment.GenericExp;
 import com.turin.tur.Visound;
-import com.turin.tur.main.diseno.LevelOLD;
 import com.turin.tur.main.diseno.RunningSound.NEXT;
 import com.turin.tur.main.logic.LevelController;
 import com.turin.tur.main.logic.LevelController.EstadoLoop;
@@ -64,9 +62,6 @@ public class LevelScreen extends AbstractGameScreen  {
 
 	@Override
 	public void show () {
-		this.game.levelActivo.levelAssets = new LevelAsset (this.game.levelActivo.identificadorNivel);
-		// this.level = new LevelOLD(levelNumber);
-		// level.levelAssets = new LevelAsset (this.levelNumber);
 	    this.levelController = new LevelController(game);
 	    this.levelRenderer = new LevelRenderer(levelController);
 		Gdx.input.setCatchBackKey(true);

@@ -170,13 +170,7 @@ public class LevelUmbral extends Level {
 	}
 	
 	@Override
-	public void levelCompleted() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void loadDinamica() {
+	public void levelCompletedAction() {
 		// TODO Auto-generated method stub
 
 	}
@@ -186,5 +180,23 @@ public class LevelUmbral extends Level {
 			int loopsCount) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	void sendDataLevel() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int trialsLeft() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	void specificLoads() {
+		// TODO Auto-generated method stub
+		
 	}
 }

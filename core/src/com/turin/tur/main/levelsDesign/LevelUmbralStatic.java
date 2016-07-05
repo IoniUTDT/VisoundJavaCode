@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Json;
-import com.turin.tur.main.diseno.LevelOLD.JsonLevel;
 import com.turin.tur.main.diseno.Session.FASEdeEXPERIMENTO;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.util.Constants;

@@ -24,16 +24,13 @@ public class ExperimentalObject {
 	// Constantes
 	private static final String TAG = ExperimentalObject.class.getName();
 	
-	public ExperimentalObject (int Id, LevelAsset asset, int levelId){ // Esto carga la info desde archivo
-		
-		// Carga ma metadata
-		this.loadMetaData(Id, levelId);
-		// Crea los recursos graficos y sonoros
-		this.imagen = asset.imagen(Id); 
+	public ExperimentalObject (int Id, LevelAsset asset, String levelPath){ // Esto carga la info desde archivo
+		this.imagen = asset.imagen(Id);
+		this.loadMetaData(Id, levelPath);
 	}
 
-	private void loadMetaData(int Id, int levelId) {
-		JsonResourcesMetaData jsonMetaData = JsonResourcesMetaData.Load(Id, levelId);
+	private void loadMetaData(int Id, String levelPath) {
+		JsonResourcesMetaData jsonMetaData = JsonResourcesMetaData.Load(Id, levelPath);
 		this.comments = jsonMetaData.comments;
 		this.name = jsonMetaData.name;
 		this.categorias = jsonMetaData.categories;
@@ -64,8 +61,8 @@ public class ExperimentalObject {
 			FileHelper.writeLocalFile("experimentalsource/" + Constants.version() + "/" + resourceId.id + ".meta", json.toJson(this));
 		}
 		
-		public static JsonResourcesMetaData Load(int Id, int levelId) {
-			String savedData = FileHelper.readInternalFile(ResourcesCategorias.Paths.InternalResources + "level"+ levelId + "/" + Id + ".meta");
+		public static JsonResourcesMetaData Load(int Id, String levelPath) {
+			String savedData = FileHelper.readInternalFile(levelPath + "/" + Id + ".meta");
 			if (!savedData.isEmpty()) {
 				Json json = new Json();
 				json.setUsePrototypes(false);

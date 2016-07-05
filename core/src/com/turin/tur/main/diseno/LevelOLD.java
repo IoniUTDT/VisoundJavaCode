@@ -12,6 +12,7 @@ import com.turin.tur.main.util.LevelAsset;
 
 public class LevelOLD {
 
+	/*
 	// Constantes
 	private static final String TAG = LevelOLD.class.getName();
 	public int Id;
@@ -40,7 +41,7 @@ public class LevelOLD {
 	/*
 	 * Aca empieza info accesoria para el load
 	 */
-
+	/*
 	private JsonLevel loadLevel(int level) {
 		String savedData = FileHelper.readInternalFile(ResourcesCategorias.Paths.InternalResources + "level" + level + ".meta");
 		if (!savedData.isEmpty()) {
@@ -62,5 +63,5 @@ public class LevelOLD {
 		public Object dinamicaExperimento;
 		public SetupLevel setupLevel;
 	}
-	
+	*/
 }

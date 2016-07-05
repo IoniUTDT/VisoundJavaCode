@@ -167,6 +167,7 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
 					game.levelActivo = Level.createLevel(nivel);
+					game.levelActivo.initLevel(game.session);
 					game.setScreen(new LevelScreen(game));
 				}
 			});
