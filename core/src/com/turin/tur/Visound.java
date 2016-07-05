@@ -6,6 +6,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.turin.tur.main.diseno.Session;
+import com.turin.tur.main.levelsDesign.InfoLevel;
 import com.turin.tur.main.levelsDesign.Level;
 import com.turin.tur.main.levelsDesign.Level.LISTAdeNIVELES;
 import com.turin.tur.main.levelsDesign.Level.LISTAdeRECURSOS;
@@ -27,7 +28,7 @@ public class Visound extends Game {
 	public static float volumen = 0.5f;
 	public boolean sendingData;
 	Array<LISTAdeNIVELES> identificadoresLvl = new Array<LISTAdeNIVELES>();
-	
+	public Array<InfoLevel> infoLevels = new Array<InfoLevel>();
 	
 	@Override
 	public void create () {
@@ -46,15 +47,12 @@ public class Visound extends Game {
 			Builder.buildLevels(identificadoresLvl);
 		}
 		
+		for (LISTAdeNIVELES identificador : identificadoresLvl) {
+			infoLevels.add(InfoLevel.loadInfoLevel(identificador));
+		}
+		
 		this.session = new Session();
 		setScreen(new MenuScreen(this));
 	}	
 	
-	/*
-	public enum TipoDeAplicacion {
-		Tutorial, Test, Entrenamiento
-	}
-	*/
-	
-
 }

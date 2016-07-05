@@ -19,7 +19,7 @@ public class Session {
 	public int codeVersion = Constants.CODEVERSION;
 	public int resourcesVersion = Builder.ResourceVersion;
 	public ApplicationType plataforma = Gdx.app.getType();
-
+	
 	public Session() {
 		this.user = loadUser(); 
 		Internet.addDataToSend(this, TIPO_ENVIO.NEWSESION, "Visound");
@@ -50,11 +50,11 @@ public class Session {
 		public static final String USERFILE = "logs/user.txt";
 
 		public long id;
-		public FASEdeEXPERIMENTO faseDeExperimento;
+		public FASEdeEXPERIMENTO faseDeExperimentoActiva;
 		
 		User () {
 			this.id = TimeUtils.millis(); 
-			this.faseDeExperimento = FASEdeEXPERIMENTO.Intro;
+			this.faseDeExperimentoActiva = FASEdeEXPERIMENTO.Intro;
 		}
 
 		public void saveUserInfo() {
@@ -64,7 +64,7 @@ public class Session {
 		}
 
 		public void pasarFase() {
-			this.faseDeExperimento = this.faseDeExperimento.etapaSiguiente;
+			this.faseDeExperimentoActiva = this.faseDeExperimentoActiva.etapaSiguiente;
 			this.saveUserInfo();
 		}
 		

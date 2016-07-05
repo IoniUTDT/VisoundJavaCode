@@ -126,7 +126,7 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 		shapeRenderer = new ShapeRenderer();
 		skin = new Skin(Gdx.files.internal(Constants.SKIN_LIBGDX_UI));
 		
-		if (this.game.session.user.faseDeExperimento == FASEdeEXPERIMENTO.Intro) {
+		if (this.game.session.user.faseDeExperimentoActiva == FASEdeEXPERIMENTO.Intro) {
 			// Creamos el boton de las instrucciones
 			TextButton instrucciones = new TextButton("Instrucciones", skin, "default");
 			instrucciones.addListener(new ClickListener() {
@@ -149,34 +149,20 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 			table.add(siguiente).width(Gdx.graphics.getWidth()/5f).space(Gdx.graphics.getHeight()/30f).colspan(3);
 			table.row();
 		} else {
-			
-		}
-		
-		/*
-		if (this.game.session.user.faseDeExperimento != FASEdeEXPERIMENTO.ExperimentoCompleto) {
-			TextButton Siguiente = new TextButton("Comenzar", skin, "default");
-			Siguiente.addListener(new ClickListener() {
-				@Override
-				public void clicked(InputEvent event, float x, float y) {
-					game.session.user.pasarFase();
-					game.setScreen(new MenuScreen(game));
+			Array<InfoLevel> levelsToShow = new Array<InfoLevel>();
+			for (InfoLevel infoLevel : game.infoLevels) {
+				if (infoLevel.fases.contains(game.session.user.faseDeExperimentoActiva, false)) {
+					levelsToShow.add(infoLevel);
 				}
-			});
-			table.add(Siguiente).width(Gdx.graphics.getWidth()/5f).space(Gdx.graphics.getHeight()/30f).colspan(3);
-			table.row();
+			}
+			
+			// Crea los botones de los niveles
+			// Los ordenamos segun prioridad
+			levelsToShow.sort();
 		}
-		*/
+
 		
-		// Crea los botones de los niveles
-/*		
-		// Cargamos los niveles
-		Array<LevelInfo> levels = new Array<LevelInfo>();
-		for (Level level : this.game.levelList) {
-			levels.addAll(level.levelInfo);
-		}
-		
-		// Los ordenamos segun prioridad
-		levels.sort();
+		//TODO seguir aca!
 		
 		// Seleccionamos solo los no jugados
 		Array<LevelStatus> levelsToPlay = new Array<LevelStatus>();
