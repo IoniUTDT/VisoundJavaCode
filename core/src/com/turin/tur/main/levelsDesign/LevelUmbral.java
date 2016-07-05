@@ -1,16 +1,14 @@
 package com.turin.tur.main.levelsDesign;
 
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.Trial;
-import com.turin.tur.main.util.Constants.ResourcesCategorias.Paths;
 import com.turin.tur.main.util.FileHelper;
-import com.turin.tur.main.util.builder.Imagenes.Linea;
+
 
 public class LevelUmbral extends Level {
 
-	private static class Dinamica {
+	static class Dinamica {
 		protected Estimulo estimuloActivo;
 		protected Array<TrialConfig> pseudorandom = new Array<TrialConfig>();
 		Array<Estimulo> estimulosCeros = new Array<Estimulo>();
@@ -24,6 +22,25 @@ public class LevelUmbral extends Level {
 		Array<SerieEstimulos> seriesEstimulos = new Array<SerieEstimulos>();
 		int trialsPorNivel;
 		TrialType trialType; // Distinguimos si se trata de un trial que busca medir de verdad o si es un trial facil para verificar que el usuario esta entendiendo la consigna
+		
+		public static String pathNameExt = ".Dinamica";
+		
+		public static void saveDinamica (LISTAdeNIVELES identificador, Dinamica dinamica) {
+			String path = pathLevelInfo(identificador);
+			Json json = new Json();
+			json.setUsePrototypes(false);
+			FileHelper.writeLocalFile(path, json.toJson(dinamica));
+		}
+		
+		private static String pathLevelInfo (LISTAdeNIVELES identificador) {
+			return Level.folderResources(identificador) + identificador.toString() + pathNameExt;
+		}
+		
+		public static Dinamica loadDinamica (LISTAdeNIVELES identificador) {
+			String savedData = FileHelper.readLocalFile(pathLevelInfo(identificador));
+			Json json = new Json();
+			return json.fromJson(Dinamica.class, savedData);
+		}
 	}
 	
 	private static class Respuesta {
@@ -47,7 +64,7 @@ public class LevelUmbral extends Level {
 		}
 	}
 
-	private static class SerieEstimulos {
+	static class SerieEstimulos {
 		boolean desdeAgudosOPos;
 		String identificador; // Algo para indentificar cual convergencia es cual.
 		double ladoFijo;
@@ -58,14 +75,33 @@ public class LevelUmbral extends Level {
 		public float confianceProbability = 0;
 		public boolean feedback;
 		public LISTAdeNIVELES identificadorLevel;
-		public int levelPriority; // Prioridad que tiene el nivel en la lista de niveles. Sirve para habilitar a que se tenga que completar un nivel antes que otro.
 		public int saltoColaUNOFraccion = 2;
 		public int saltoInicialFraccion = 4;
 		public float signalProbability = 0.5f; // Esto tiene sentido que sea asi, mitad y mitad para que ande bien el sistema de medicion. No puede ser mas proibable una opcion que la otra (enm principio)
-		public String tagButton;
 		public float testProbability = 0f; // Representa la inversa del numero de test que se dedica a testear al usuario enviandole trials faciles.
 		public int trialsPorNivel; // Numero de trial que conforman un nivel
 		boolean allTestsConfianza = true; // Esto esta condicionado a que testProbability sea diferente de cero en la generacion del pseudorandom
+		public double referencia; // Angulo de refrencia del nivel
+		public boolean restartEstimulo; // Indica si hay que reiniciar el nivel de estimulo o se hereda del nivel anterior
+		
+		public static String pathNameExt = ".LvlSetup";
+		
+		public static void saveInfoLevel (LISTAdeNIVELES identificador, SetupLevel setup) {
+			String path = pathLevelInfo(identificador);
+			Json json = new Json();
+			json.setUsePrototypes(false);
+			FileHelper.writeLocalFile(path, json.toJson(setup));
+		}
+		
+		private static String pathLevelInfo (LISTAdeNIVELES identificador) {
+			return Level.folderResources(identificador) + identificador.toString() + pathNameExt;
+		}
+		
+		public static SetupLevel loadInfoLevel (LISTAdeNIVELES identificador) {
+			String savedData = FileHelper.readLocalFile(pathLevelInfo(identificador));
+			Json json = new Json();
+			return json.fromJson(SetupLevel.class, savedData);
+		}
 	}
 	
 	private class TrialConfig {
@@ -99,10 +135,8 @@ public class LevelUmbral extends Level {
 		
 	}
 	
-	
-	
-	
-	
+	SetupLevel setupLevel;
+	Dinamica dinamica;
 	
 	public LevelUmbral() {
 	}

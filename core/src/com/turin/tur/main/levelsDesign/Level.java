@@ -16,7 +16,7 @@ public abstract class Level {
 		ParalelismoTutorial(LISTAdeRECURSOS.UmbralParalelismoTutorial, TIPOdeNivel.Paralelismo),
 		// TestAngulos30(LISTAdeRECURSOS.UmbralAngulosTutorial,
 		// TIPOdeNivel.Umbral),
-		Tutorial(LISTAdeRECURSOS.ImagenesEjemplos, TIPOdeNivel.Ejemplos);
+		Ejemplos(LISTAdeRECURSOS.ImagenesEjemplos, TIPOdeNivel.Ejemplos);
 		public static final int levelVersion = Builder.levelVersionFinal;
 		public LISTAdeRECURSOS listaDeRecursos;
 		public TIPOdeNivel tipoDeNivel;
@@ -65,7 +65,7 @@ public abstract class Level {
 
 	Level(LISTAdeNIVELES identificador) {
 		this.identificadorNivel = identificador;
-		this.infoLevel = InfoLevel.loadInfoLevel(identificador);
+		//this.infoLevel = InfoLevel.loadInfoLevel(identificador);
 		this.loadDinamica();
 	}
 

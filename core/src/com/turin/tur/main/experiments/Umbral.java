@@ -30,7 +30,7 @@ public abstract class Umbral extends GenericExp {
 	 * necesaria para tomar desiciones acerca de que trial seleccionar o si
 	 * continuar el experimento o terminarlo
 	 * 
-	 * @author ionatan
+	 * @author ionatan 
 	 *
 	 */
 	public static class DinamicaExperimento {
@@ -51,10 +51,10 @@ public abstract class Umbral extends GenericExp {
 	}
 
 	public static class SerieEstimulos {
-		String identificador; // Algo para indentificar cual convergencia es cual.
-		double ladoFijo;
-		boolean desdeAgudosOPos;
-		Array<Estimulo> listaEstimulos = new Array<Estimulo>(); // Lista de estimulos ordenados de menor a mayor dificultad
+		public String identificador; // Algo para indentificar cual convergencia es cual.
+		public double ladoFijo;
+		public boolean desdeAgudosOPos;
+		public Array<Estimulo> listaEstimulos = new Array<Estimulo>(); // Lista de estimulos ordenados de menor a mayor dificultad
 	}
 	
 	static class Estimulo implements Comparable<Estimulo> {

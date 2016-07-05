@@ -5,7 +5,6 @@ import com.turin.tur.main.levelsDesign.Level;
 import com.turin.tur.main.levelsDesign.Level.LISTAdeRECURSOS;
 import com.turin.tur.main.levelsDesign.Level.TIPOdeNivel;
 import com.turin.tur.main.levelsDesign.LevelEjemplos;
-import com.turin.tur.main.levelsDesign.LevelUmbral;
 import com.turin.tur.main.levelsDesign.LevelUmbralStatic;
 
 public class Builder {
@@ -22,8 +21,8 @@ public class Builder {
 	public static final int levelVersion = 23; 
 	public static int levelVersionFinal = levelVersion; // Se modifica mas adelante si corresponde
 	
-	static final Boolean makeLevels = false; 
-	static final Boolean makeResources = true;
+	static final Boolean makeLevels = true; 
+	static final Boolean makeResources = false;
 
 	public static void buildResources(Array<LISTAdeRECURSOS> identificadores) {
 		if (makeResources) {

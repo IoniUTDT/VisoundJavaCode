@@ -37,7 +37,7 @@ public class Visound extends Game {
 		// Set Libgdx log level
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 		
-		identificadoresLvl.addAll(LISTAdeNIVELES.Tutorial, LISTAdeNIVELES.AngulosTutorial, LISTAdeNIVELES.ParalelismoTutorial);
+		identificadoresLvl.addAll(LISTAdeNIVELES.Ejemplos, LISTAdeNIVELES.AngulosTutorial, LISTAdeNIVELES.ParalelismoTutorial);
 		
 		if ((buildResources) & (Gdx.app.getType() == ApplicationType.Desktop)) {
 			Array<LISTAdeRECURSOS> identificadoresRes = new Array<LISTAdeRECURSOS>();
