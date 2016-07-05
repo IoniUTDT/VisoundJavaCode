@@ -23,6 +23,7 @@ import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker.Settings;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
+import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.levelsDesign.Level;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
@@ -138,7 +139,8 @@ public class PCBuilder {
 		Json json = new Json();
 		json.setUsePrototypes(false);
 		for (JsonTrial trial : jsonTrials) {
-			FileHelper.writeLocalFile(Level.folderResources(identificador) + trial.Id + ".trial", json.toJson(trial));
+			Trial.saveJsonTrial(Level.folderResources(identificador), trial);
+			// FileHelper.writeLocalFile(Level.folderResources(identificador) + trial.Id + ".trial", json.toJson(trial));
 		}
 	}
 

@@ -164,6 +164,7 @@ public class LevelController implements InputProcessor {
 	
 	private void goToResults() {
 		runningSound.stop();
+		game.session.user.levelFinished(game.levelActivo.identificador);
 		game.setScreen(new ResultsScreen(game));
 	}
 	

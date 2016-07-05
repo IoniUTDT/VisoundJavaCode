@@ -127,10 +127,7 @@ public abstract class Level {
 	abstract void specificLoads();
 
 	public JsonTrial loadJsonTrial (int id) {
-		String savedData = FileHelper.readInternalFile(Level.folderResources(identificador) + id + ".meta");
-		Json json = new Json();
-		json.setUsePrototypes(false);
-		return json.fromJson(JsonTrial.class, savedData);	
+		return Trial.loadJsonTrial(Level.folderResources(identificador), id);	
 	}
 
 	public abstract void returnAnswer(boolean answerCorrect, float confianzaReportada, float timeSelecion,

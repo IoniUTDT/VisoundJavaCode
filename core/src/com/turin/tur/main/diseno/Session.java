@@ -92,6 +92,17 @@ public class Session {
 			
 			return null;
 		}
+
+		public void levelFinished(LISTAdeNIVELES identificador) {
+			LevelsJugados levelFinalizado = new LevelsJugados();
+			levelFinalizado.identificador = identificador;
+			levelFinalizado.contexto = this.faseDeExperimentoActiva;
+			this.levelsJugados.add(levelFinalizado);
+			this.saveUserInfo();
+			if (this.nextLevelToPlay() == null) {
+				this.pasarFase();
+			}
+		}
 	}
 	
 	public enum FASEdeEXPERIMENTO {
@@ -117,7 +128,7 @@ public class Session {
 		
 	}
 	
-	public class LevelsJugados {
+	public static class LevelsJugados {
 		LISTAdeNIVELES identificador;
 		FASEdeEXPERIMENTO contexto;
 		long Instance = TimeUtils.millis();

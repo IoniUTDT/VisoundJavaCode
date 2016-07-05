@@ -6,13 +6,14 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.Trial.ResourceId;
 import com.turin.tur.main.util.Constants;
-import com.turin.tur.main.util.Constants.ResourcesCategorias;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.LevelAsset;
 import com.turin.tur.main.util.builder.Imagenes.Linea;
 
 public class ExperimentalObject {
 
+	public static final String objectExt = ".meta";
+	
 	public final Sprite imagen;
 	// public final int Id; 
 	public String name;
@@ -58,11 +59,11 @@ public class ExperimentalObject {
 		public void save() {
 			Json json = new Json();
 			json.setUsePrototypes(false);
-			FileHelper.writeLocalFile("experimentalsource/" + Constants.version() + "/" + resourceId.id + ".meta", json.toJson(this));
+			FileHelper.writeLocalFile("experimentalsource/" + Constants.version() + "/" + resourceId.id + objectExt, json.toJson(this));
 		}
 		
 		public static JsonResourcesMetaData Load(int Id, String levelPath) {
-			String savedData = FileHelper.readInternalFile(levelPath + "/" + Id + ".meta");
+			String savedData = FileHelper.readInternalFile(levelPath + "/" + Id + objectExt);
 			if (!savedData.isEmpty()) {
 				Json json = new Json();
 				json.setUsePrototypes(false);

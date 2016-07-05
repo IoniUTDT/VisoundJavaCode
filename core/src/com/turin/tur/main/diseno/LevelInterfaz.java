@@ -12,14 +12,16 @@ import com.turin.tur.main.util.Assets;
 public class LevelInterfaz {
 	
 	private static final String TAG = LevelInterfaz.class.getName();
-	private LevelOLD levelInfo;   
+	// private LevelOLD levelInfo;   
 	private Trial trial;
-	private Experiment exp;
+	private Level levelActivo;
+	// private Experiment exp;
 	
 	public LevelInterfaz (Level levelActivo, Trial trial){
-		this.exp = exp;
+		// this.exp = exp;
 		this.trial = trial;
-		this.levelInfo = levelInfo;		
+		this.levelActivo = levelActivo;
+		// this.levelInfo = levelInfo;		
 	}
 	
 	/*
@@ -54,6 +56,6 @@ public class LevelInterfaz {
 	//	font.draw(batch, trial.jsonTrial.title , cameraGUI.viewportWidth*2/5 , cameraGUI.viewportHeight*1/10);
 		font.draw(batch, trial.jsonTrial.title, cameraGUI.viewportWidth/2, cameraGUI.viewportHeight*1/10, 10, 1, false);
 		// Assets.fonts.defaultFont.draw(batch, trial.jsonTrial.caption , cameraGUI.viewportWidth*1/5 , cameraGUI.viewportHeight*9/10);
-		font.draw(batch, "Trials restantes: " + this.exp.trialsLeft(), cameraGUI.viewportWidth/2, cameraGUI.viewportHeight*9/10, 10, 1, false);
+		font.draw(batch, "Trials restantes: " + this.levelActivo.trialsLeft(), cameraGUI.viewportWidth/2, cameraGUI.viewportHeight*9/10, 10, 1, false);
 	}
 }

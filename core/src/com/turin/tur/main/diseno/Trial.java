@@ -1,13 +1,14 @@
 package com.turin.tur.main.diseno;
 
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.Boxes.OptionsBox;
 import com.turin.tur.main.diseno.Boxes.Box;
 import com.turin.tur.main.diseno.Boxes.StimuliBox;
 import com.turin.tur.main.diseno.Boxes.TrainingBox;
 import com.turin.tur.main.logic.LevelController;
-import com.turin.tur.main.logic.LevelController.EstadoLoop;
 import com.turin.tur.main.util.Constants;
+import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
 import com.turin.tur.main.util.Constants.ResourcesCategorias.CategoriasImagenes;
@@ -15,7 +16,8 @@ import com.turin.tur.main.util.Constants.ResourcesCategorias.CategoriasImagenes;
 public class Trial {
 
 	public static final String TAG = Trial.class.getName();
-
+	public static final String trialExt = ".trial";
+	
 	public JsonTrial jsonTrial; // Toda la info del json del trial
 	private Array<ExperimentalObject> elementos = new Array<ExperimentalObject>(); // Esto debe ser cargado antes de ejecutarse la creacion de los elementos
 	
@@ -26,6 +28,19 @@ public class Trial {
 	public StimuliBox stimuliBox;
 	public Array<Box> allBox = new Array<Box>();
 	// boolean somethingTouched = false; // almacena si ya se respondio el trial o no 
+	
+	public static void saveJsonTrial (String path, JsonTrial jsonTrial) {
+		Json json = new Json();
+		json.setUsePrototypes(false);
+		FileHelper.writeLocalFile(path + jsonTrial.Id + trialExt, json.toJson(jsonTrial));
+	}
+	
+	public static JsonTrial loadJsonTrial (String path, int id) {
+		String savedData = FileHelper.readInternalFile(path + id + trialExt);
+		Json json = new Json();
+		json.setUsePrototypes(false);
+		return json.fromJson(JsonTrial.class, savedData);
+	}
 	
 	public Trial (Array<ExperimentalObject> elementos, JsonTrial jsonTrial, ExperimentalObject estimulo) {
 		this.elementos = elementos;
