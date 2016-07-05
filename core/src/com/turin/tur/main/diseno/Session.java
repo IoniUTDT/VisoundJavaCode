@@ -3,8 +3,10 @@ package com.turin.tur.main.diseno;
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.turin.tur.main.levelsDesign.Level.LISTAdeNIVELES;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Internet;
@@ -21,36 +23,16 @@ public class Session {
 	public ApplicationType plataforma = Gdx.app.getType();
 	
 	public Session() {
-		this.user = loadUser(); 
+		this.user = User.loadUser(); 
 		Internet.addDataToSend(this, TIPO_ENVIO.NEWSESION, "Visound");
 	}
-	
-	public User loadUser() {
-		FileHandle userFile = Gdx.files.local(User.USERFILE);
-		if (userFile.exists()) {
-			String savedData = FileHelper.readLocalFile(User.USERFILE);
-			if (!savedData.isEmpty()) {
-				Json json = new Json();
-				json.setUsePrototypes(false);
-				User user = json.fromJson(User.class, savedData);
-				return user;
-			} else { 
-				Gdx.app.error(TAG,"No se a podido encontrar la info del usuario");
-				return null;
-			}
-		} else {
-			Gdx.app.debug(TAG, "Creando nuevo usuario");
-			User user = new User();
-			user.saveUserInfo();
-			return user;
-		}
-	}	
 	
 	public static class User {
 		public static final String USERFILE = "logs/user.txt";
 
 		public long id;
 		public FASEdeEXPERIMENTO faseDeExperimentoActiva;
+		private Array<LevelsJugados> levelsJugados = new Array<LevelsJugados>();
 		
 		User () {
 			this.id = TimeUtils.millis(); 
@@ -68,12 +50,56 @@ public class Session {
 			this.saveUserInfo();
 		}
 		
+		public static User loadUser() {
+			FileHandle userFile = Gdx.files.local(User.USERFILE);
+			if (userFile.exists()) {
+				String savedData = FileHelper.readLocalFile(User.USERFILE);
+				if (!savedData.isEmpty()) {
+					Json json = new Json();
+					json.setUsePrototypes(false);
+					User user = json.fromJson(User.class, savedData);
+					return user;
+				} else { 
+					Gdx.app.error(TAG,"No se a podido encontrar la info del usuario");
+					return null;
+				}
+			} else {
+				Gdx.app.debug(TAG, "Creando nuevo usuario");
+				User user = new User();
+				user.saveUserInfo();
+				return user;
+			}
+		}	
+		
+		public boolean alreadyPlayed (LISTAdeNIVELES identificador) {
+			for (LevelsJugados jugado : levelsJugados) {
+				if (jugado.contexto == faseDeExperimentoActiva) {
+					if (jugado.identificador == identificador) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+		
+		public LISTAdeNIVELES nextLevelToPlay () {
+			for (LISTAdeNIVELES identificador : faseDeExperimentoActiva.niveles) {
+				if (alreadyPlayed(identificador)) {
+				} else {
+					return identificador;
+				}
+			}
+			
+			return null;
+		}
 	}
 	
 	public enum FASEdeEXPERIMENTO {
-		Intro, Tutorial, TestInicial, Entrenamiento1, TestFinal, ExperimentoCompleto;
+		Intro(), Tutorial(), TestInicial(), Entrenamiento1(), TestFinal(), ExperimentoCompleto()
+		;
 		
 		private FASEdeEXPERIMENTO etapaSiguiente;
+		public Array<LISTAdeNIVELES> niveles = new Array<LISTAdeNIVELES>();
 		
 		static {
 			Intro.etapaSiguiente = Tutorial;
@@ -82,12 +108,19 @@ public class Session {
 			Entrenamiento1.etapaSiguiente = TestFinal;
 			TestFinal.etapaSiguiente = ExperimentoCompleto;
 			ExperimentoCompleto.etapaSiguiente = ExperimentoCompleto;
+			Tutorial.niveles.addAll(LISTAdeNIVELES.Ejemplos, LISTAdeNIVELES.ParalelismoTutorial, LISTAdeNIVELES.AngulosTutorial);
 		}
 		
 		public FASEdeEXPERIMENTO etapaSiguiente() {
 			return this.etapaSiguiente;
 		}
+		
 	}
 	
+	public class LevelsJugados {
+		LISTAdeNIVELES identificador;
+		FASEdeEXPERIMENTO contexto;
+		long Instance = TimeUtils.millis();
+	}
 
 }

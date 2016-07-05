@@ -1,5 +1,6 @@
 package com.turin.tur.main.levelsDesign;
 
+import com.badlogic.gdx.Gdx;
 import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.main.util.Constants.ResourcesCategorias;
 import com.turin.tur.main.util.LevelAsset;
@@ -11,12 +12,13 @@ import com.turin.tur.main.util.builder.Builder;
  */
 public abstract class Level {
 
+	private static final String TAG = Level.class.getName();
+
 	public enum LISTAdeNIVELES {
+		Ejemplos(LISTAdeRECURSOS.ImagenesEjemplos, TIPOdeNivel.Ejemplos),
 		AngulosTutorial(LISTAdeRECURSOS.UmbralAngulosTutorial, TIPOdeNivel.Angulos),
 		ParalelismoTutorial(LISTAdeRECURSOS.UmbralParalelismoTutorial, TIPOdeNivel.Paralelismo),
-		// TestAngulos30(LISTAdeRECURSOS.UmbralAngulosTutorial,
-		// TIPOdeNivel.Umbral),
-		Ejemplos(LISTAdeRECURSOS.ImagenesEjemplos, TIPOdeNivel.Ejemplos);
+		;
 		public static final int levelVersion = Builder.levelVersionFinal;
 		public LISTAdeRECURSOS listaDeRecursos;
 		public TIPOdeNivel tipoDeNivel;
@@ -52,23 +54,32 @@ public abstract class Level {
 
 	public static final String dinamicaPathName = "dinamica.meta";
 
+	public Level () {}
+	
+	public Level(LISTAdeNIVELES identificador) {
+		this.identificadorNivel = identificador;
+	}
+
 	public static String folderResources(LISTAdeNIVELES identificador) {
 		return ResourcesCategorias.Paths.finalInternalPath + identificador.toString() + "/";
+	}
+	
+	public static Level createLevel(LISTAdeNIVELES identificador) {
+		switch (identificador.tipoDeNivel) {
+		case Ejemplos:
+			return new LevelEjemplos(identificador);
+		case Angulos:
+		case Paralelismo:
+			return new LevelUmbral(identificador);
+			default:
+				Gdx.app.error(TAG, "Se intento crear un nivel de un tipo desconocido!");
+				return null;
+		}
 	}
 
 	public LISTAdeNIVELES identificadorNivel;
 	public LevelAsset levelAssets;
-	public InfoLevel infoLevel;
-
-	Level() {
-	}
-
-	Level(LISTAdeNIVELES identificador) {
-		this.identificadorNivel = identificador;
-		//this.infoLevel = InfoLevel.loadInfoLevel(identificador);
-		this.loadDinamica();
-	}
-
+	
 	public abstract Trial getNextTrial();
 
 	public abstract boolean goConfiance();
@@ -84,4 +95,5 @@ public abstract class Level {
 	public abstract void returnAnswer(boolean answerCorrect, float confianzaReportada, float timeSelecion,
 			float timeConfiance, int loopsCount);
 
+	
 }

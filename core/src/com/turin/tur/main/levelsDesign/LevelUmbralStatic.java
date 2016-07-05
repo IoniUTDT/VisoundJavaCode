@@ -28,7 +28,6 @@ public class LevelUmbralStatic extends LevelUmbral {
 		private static void buildLevelAngulos(LISTAdeNIVELES identificador) {
 			SetupResource setupResources = SetupResource.loadSetupResources(identificador.listaDeRecursos);
 			SetupLevel setupLevel = makeSetupLevel(identificador);
-			InfoLevel infoLevel = makeInfoLevel(identificador);
 			Dinamica dinamica = new Dinamica();
 			Array<JsonTrial> jsonTrials = new Array<JsonTrial>();
 			
@@ -129,9 +128,6 @@ public class LevelUmbralStatic extends LevelUmbral {
 			
 			// Guardamos la dinamica
 			Dinamica.saveDinamica(identificador, dinamica);
-			
-			// Guardamos el LevelInfo
-			InfoLevel.saveInfoLevel(identificador, infoLevel);
 			
 			// Guardamos el setupLevel
 			SetupLevel.saveInfoLevel(identificador, setupLevel);
@@ -252,7 +248,6 @@ public class LevelUmbralStatic extends LevelUmbral {
 			
 			SetupResource setupResources = SetupResource.loadSetupResources(identificador.listaDeRecursos);
 			SetupLevel setupLevel = makeSetupLevel(identificador);
-			InfoLevel infoLevel = makeInfoLevel(identificador);
 			Dinamica dinamica = new Dinamica();
 			Array<JsonTrial> jsonTrials = new Array<JsonTrial>();
 			
@@ -339,9 +334,6 @@ public class LevelUmbralStatic extends LevelUmbral {
 			
 			// Guardamos la dinamica
 			Dinamica.saveDinamica(identificador, dinamica);
-			
-			// Guardamos el LevelInfo
-			InfoLevel.saveInfoLevel(identificador, infoLevel);
 			
 			// Guardamos el setupLevel
 			SetupLevel.saveInfoLevel(identificador, setupLevel);
@@ -542,21 +534,6 @@ public class LevelUmbralStatic extends LevelUmbral {
 		}
 		
 		return setup;
-	}
-	
-	private static InfoLevel makeInfoLevel (LISTAdeNIVELES identificador) {
-		InfoLevel infoLevel = new InfoLevel();
-		if (identificador == LISTAdeNIVELES.AngulosTutorial) {
-			infoLevel.indentificadorLevel = identificador;
-			infoLevel.prioridad = 1;
-			infoLevel.fases.addAll(FASEdeEXPERIMENTO.Tutorial);
-		}
-		if (identificador == LISTAdeNIVELES.ParalelismoTutorial) {
-			infoLevel.indentificadorLevel = identificador;
-			infoLevel.prioridad = 1;
-			infoLevel.fases.addAll(FASEdeEXPERIMENTO.Tutorial);
-		}
-		return infoLevel;
 	}
 	
 	private static SetupResource makeSetupResources(LISTAdeRECURSOS identificador) {

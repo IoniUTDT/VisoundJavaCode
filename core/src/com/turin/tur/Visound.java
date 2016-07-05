@@ -6,7 +6,6 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.turin.tur.main.diseno.Session;
-import com.turin.tur.main.levelsDesign.InfoLevel;
 import com.turin.tur.main.levelsDesign.Level;
 import com.turin.tur.main.levelsDesign.Level.LISTAdeNIVELES;
 import com.turin.tur.main.levelsDesign.Level.LISTAdeRECURSOS;
@@ -23,12 +22,11 @@ public class Visound extends Game {
 	
 	@SuppressWarnings("unused")
 	private static final String TAG = Visound.class.getName();
-	private static boolean buildResources = true;
+	public static boolean mododesarrollo = true;
 	public Session session;
 	public static float volumen = 0.5f;
 	public boolean sendingData;
 	Array<LISTAdeNIVELES> identificadoresLvl = new Array<LISTAdeNIVELES>();
-	public Array<InfoLevel> infoLevels = new Array<InfoLevel>();
 	
 	@Override
 	public void create () {
@@ -40,15 +38,11 @@ public class Visound extends Game {
 		
 		identificadoresLvl.addAll(LISTAdeNIVELES.Ejemplos, LISTAdeNIVELES.AngulosTutorial, LISTAdeNIVELES.ParalelismoTutorial);
 		
-		if ((buildResources) & (Gdx.app.getType() == ApplicationType.Desktop)) {
+		if ((mododesarrollo) & (Gdx.app.getType() == ApplicationType.Desktop)) {
 			Array<LISTAdeRECURSOS> identificadoresRes = new Array<LISTAdeRECURSOS>();
 			identificadoresRes.addAll(LISTAdeRECURSOS.ImagenesEjemplos,LISTAdeRECURSOS.UmbralAngulosTutorial, LISTAdeRECURSOS.UmbralParalelismoTutorial, LISTAdeRECURSOS.UmbralAngulosTransferencia, LISTAdeRECURSOS.UmbralParalelismoTransferencia);
 			Builder.buildResources(identificadoresRes);
 			Builder.buildLevels(identificadoresLvl);
-		}
-		
-		for (LISTAdeNIVELES identificador : identificadoresLvl) {
-			infoLevels.add(InfoLevel.loadInfoLevel(identificador));
 		}
 		
 		this.session = new Session();

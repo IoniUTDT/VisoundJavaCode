@@ -2,8 +2,8 @@ package com.turin.tur.main.screens;
 
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -20,11 +20,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.turin.tur.Visound;
 import com.turin.tur.main.diseno.Session.FASEdeEXPERIMENTO;
-import com.turin.tur.main.experiments.Experiment;
-import com.turin.tur.main.experiments.Experiment.GenericExp;
-import com.turin.tur.main.experiments.Experiments.LevelStatus;
 import com.turin.tur.main.levelsDesign.Level;
-import com.turin.tur.main.levelsDesign.InfoLevel;
+import com.turin.tur.main.levelsDesign.Level.LISTAdeNIVELES;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.Internet;
 
@@ -33,26 +30,67 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 
 	private static final String TAG = MenuScreen.class.getName();
 
+	public SpriteBatch batch;
+
+	public OrthographicCamera cameraGUI;
+	private Array<TextButton> FaseButtons = new Array<TextButton>();
 	// For debug drawing
 	private ShapeRenderer shapeRenderer;
-
 	// Elementos graficos
 	private Skin skin;
-	private Stage stage;
-	private Table table;
-	private Array<TextButton> levelButtons = new Array<TextButton>();
 
+	private Stage stage;
+
+	private Table table;
 	// Variables para funcionamiento interno
 	int levelIterator;
-
-	public SpriteBatch batch;
-	public OrthographicCamera cameraGUI;
 
 
 	public MenuScreen(Visound game) {
 		super(game);
 	}
 
+	@Override
+	public void hide() {
+		stage.dispose();
+		shapeRenderer.dispose();
+	}
+
+	@Override
+	public boolean keyDown(int keycode) {
+		// Back to Menu
+		if (keycode == Keys.ESCAPE || keycode == Keys.Q) {
+			if (!game.sendingData) {
+				Gdx.app.exit();
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean keyTyped(char character) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean keyUp(int keycode) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+	@Override
+	public boolean mouseMoved(int screenX, int screenY) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void pause() {
+		// TODO Auto-generated method stub
+	}
+	
 	@Override
 	public void render(float deltaTime) {
 
@@ -73,48 +111,20 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 		}
 	}
 
-	private void guiRender() {
-		batch.setProjectionMatrix(cameraGUI.combined);
-		batch.begin();
-		renderServerStatus();
-		batch.end();
-	}
-
-	private void renderServerStatus() {
-		BitmapFont fpsFont = this.assets.fonts.defaultFont;
-		fpsFont.getData().setScale(Constants.factorEscala());
-		if (Internet.serverOk) {
-			// show up in green
-			fpsFont.setColor(0, 1, 0, 1);
-		} else {
-			// show up in red
-			fpsFont.setColor(1, 0, 0, 1);
-			fpsFont.draw(batch, "Servidor offline", cameraGUI.viewportWidth*1/5, cameraGUI.viewportHeight - cameraGUI.viewportHeight*1/20);
-		}
-		if (game.sendingData) {
-			fpsFont.draw(batch, "Enviando datos...", cameraGUI.viewportWidth - cameraGUI.viewportWidth*1/5, cameraGUI.viewportHeight - cameraGUI.viewportHeight*1/20);
-		}
-		fpsFont.setColor(1, 1, 1, 1); // white
-		
-	}
-
-	private void guiRenderInit() {
-		batch = new SpriteBatch();
-		cameraGUI = new OrthographicCamera(Constants.VIEWPORT_GUI_WIDTH,
-				Constants.VIEWPORT_GUI_HEIGHT);
-		cameraGUI.position.set(0, 0, 0);
-		cameraGUI.setToOrtho(true); // flip y-axis
-		cameraGUI.update();
-	}
-
-
 	@Override
 	public void resize(int width, int height) {
 		stage.getViewport().update(width, height, true);
 	}
 
 	@Override
+	public boolean scrolled(int amount) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
 	public void show() {
+		
 		guiRenderInit();
 		// Crea las cosas que tienen que ver con los graficos.
 		stage = new Stage();
@@ -148,70 +158,50 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 			});
 			table.add(siguiente).width(Gdx.graphics.getWidth()/5f).space(Gdx.graphics.getHeight()/30f).colspan(3);
 			table.row();
-		} else {
-			Array<InfoLevel> levelsToShow = new Array<InfoLevel>();
-			for (InfoLevel infoLevel : game.infoLevels) {
-				if (infoLevel.fases.contains(game.session.user.faseDeExperimentoActiva, false)) {
-					levelsToShow.add(infoLevel);
-				}
-			}
-			
-			// Crea los botones de los niveles
-			// Los ordenamos segun prioridad
-			levelsToShow.sort();
-		}
-
-		
-		//TODO seguir aca!
-		
-		// Seleccionamos solo los no jugados
-		Array<LevelStatus> levelsToPlay = new Array<LevelStatus>();
-		for (LevelStatus level : levels) {
-			if (!level.alreadyPlayed) {levelsToPlay.add(level);}
-		}
-		levelsToPlay.sort();
-		
-		// Buscamos que nivel de prioridad es la primera no jugada
-		int priorityGoal = 100; // Asumimos que 100 nunca va a ser una prioridad de un nivel en juego
-		if (levelsToPlay.size != 0) {
-			priorityGoal = levelsToPlay.first().priority;
 		}
 		
-		
-		
-		for (final LevelStatus level : levels) {
-			TextButton button = new TextButton(level.publicName, skin, "default");
+		final LISTAdeNIVELES nextLevel = game.session.user.nextLevelToPlay();
+		for (final LISTAdeNIVELES nivel : game.session.user.faseDeExperimentoActiva.niveles) {
+			TextButton button = new TextButton(nivel.toString(), skin, "default");
 			button.addListener(new ClickListener() {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
-					game.setScreen(new LevelScreen(game,level.id, level.expName));
+					game.levelActivo = Level.createLevel(nivel);
+					game.setScreen(new LevelScreen(game));
 				}
 			});
-			if (level.alreadyPlayed) {
-				button.setColor(0, 1, 0, 0.5f); // Green
-			} else {
-				//	button.setColor(1, 1, 0, 1); //Yellow
-				button.setColor(1, 0, 0, 0.5f); //Red
-			}
 			
-			if (level.priority == priorityGoal) { // Significa que esta en el nivel de opciones a jugar
-				if (level.alreadyPlayed) {
-					button.setColor(0, 1, 0, 1); // Green
-				} else {
-					button.setColor(1, 0, 0, 1); //Red
-				}	
+			if (game.session.user.alreadyPlayed(nivel)) {
+				button.setColor(0, 1, 0, 0.5f); // Green
+				if (!Visound.mododesarrollo) { button.setTouchable(Touchable.disabled); }
 			} else {
-				if (level.priority > priorityGoal) {
-					button.setTouchable(Touchable.disabled);
+				if (nextLevel == nivel) {
+					button.setColor(0, 1, 0, 1); // Green
+				} else { 
+					button.setColor(1, 0, 0, 0.5f); // Green
+					if (!Visound.mododesarrollo) {button.setTouchable(Touchable.disabled);}
 				}
 			}
-			levelButtons.add(button);
-			//Gdx.app.debug(TAG, "agregado boton" + button.getText());
+			
+			FaseButtons.add(button);
 		}
+		
+		if (Visound.mododesarrollo) {
+			TextButton siguiente = new TextButton("Comenzar", skin, "default");
+			siguiente.addListener(new ClickListener() {
+				@Override
+				public void clicked(InputEvent event, float x, float y) {
+					game.session.user.pasarFase();
+					game.setScreen(new MenuScreen(game));
+				}
+			});
+			FaseButtons.add(siguiente);
+		}
+		
 		
 		// Arma el menu
 		int n=0;
-		for (TextButton button : levelButtons) {
+		for (TextButton button : FaseButtons) {
 			//button.getStyle().font.getData().setScale(Constants.factorEscala()*3,Constants.factorEscala()*3);
 			table.add(button).width(Gdx.graphics.getWidth()/5f).space(Gdx.graphics.getHeight()/30f);
 			n=n+1;
@@ -219,53 +209,11 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 				table.row();
 			}
 		}
-*/
-		Gdx.app.debug(TAG, "Menu cargado");
-
-	}
-
-	@Override
-	public void hide() {
-		stage.dispose();
-		shapeRenderer.dispose();
-	}
-
-	@Override
-	public void pause() {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public boolean keyDown(int keycode) {
-		// Back to Menu
-		if (keycode == Keys.ESCAPE || keycode == Keys.Q) {
-			if (!game.sendingData) {
-				Gdx.app.exit();
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public boolean keyUp(int keycode) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean keyTyped(char character) {
-		// TODO Auto-generated method stub
-		return false;
+		//Gdx.app.debug(TAG, "Menu cargado");
 	}
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -277,14 +225,42 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 	}
 
 	@Override
-	public boolean mouseMoved(int screenX, int screenY) {
+	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	@Override
-	public boolean scrolled(int amount) {
-		// TODO Auto-generated method stub
-		return false;
+	private void guiRender() {
+		batch.setProjectionMatrix(cameraGUI.combined);
+		batch.begin();
+		renderServerStatus();
+		batch.end();
+	}
+
+	private void guiRenderInit() {
+		batch = new SpriteBatch();
+		cameraGUI = new OrthographicCamera(Constants.VIEWPORT_GUI_WIDTH,
+				Constants.VIEWPORT_GUI_HEIGHT);
+		cameraGUI.position.set(0, 0, 0);
+		cameraGUI.setToOrtho(true); // flip y-axis
+		cameraGUI.update();
+	}
+
+	private void renderServerStatus() {
+		BitmapFont fpsFont = this.assets.fonts.defaultFont;
+		fpsFont.getData().setScale(Constants.factorEscala());
+		if (Internet.serverOk) {
+			// show up in green
+			fpsFont.setColor(0, 1, 0, 1);
+		} else {
+			// show up in red
+			fpsFont.setColor(1, 0, 0, 1);
+			fpsFont.draw(batch, "Servidor offline", cameraGUI.viewportWidth*1/5, cameraGUI.viewportHeight - cameraGUI.viewportHeight*1/20);
+		}
+		if (game.sendingData) {
+			fpsFont.draw(batch, "Enviando datos...", cameraGUI.viewportWidth - cameraGUI.viewportWidth*1/5, cameraGUI.viewportHeight - cameraGUI.viewportHeight*1/20);
+		}
+		fpsFont.setColor(1, 1, 1, 1); // white
+		
 	}
 }
