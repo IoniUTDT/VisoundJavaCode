@@ -1,14 +1,12 @@
 package com.turin.tur.main.levelsDesign;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.util.Constants.ResourcesCategorias;
 import com.turin.tur.main.util.Internet.TIPO_ENVIO;
-import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.Internet;
 import com.turin.tur.main.util.LevelAsset;
 import com.turin.tur.main.util.builder.Builder;
@@ -97,7 +95,7 @@ public abstract class Level {
 	public LISTAdeNIVELES identificador;
 	public LevelAsset levelAssets;
 	protected boolean levelCompleted;
-	private LevelLog log;
+	protected LevelLog log;
 
 	public Level () {}
 	public Level(LISTAdeNIVELES identificador) {

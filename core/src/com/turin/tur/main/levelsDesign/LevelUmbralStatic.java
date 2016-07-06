@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Json;
-import com.turin.tur.main.diseno.Session.FASEdeEXPERIMENTO;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.FileHelper;
@@ -27,6 +26,7 @@ public class LevelUmbralStatic extends LevelUmbral {
 		private static void buildLevelAngulos(LISTAdeNIVELES identificador) {
 			SetupResource setupResources = SetupResource.loadSetupResources(identificador.listaDeRecursos);
 			SetupLevel setupLevel = makeSetupLevel(identificador);
+			setupLevel.numeroDeEstimulosPorSerie = setupResources.numeroDeEstimulosPorSerie;
 			Dinamica dinamica = new Dinamica();
 			Array<JsonTrial> jsonTrials = new Array<JsonTrial>();
 			
@@ -247,6 +247,7 @@ public class LevelUmbralStatic extends LevelUmbral {
 			
 			SetupResource setupResources = SetupResource.loadSetupResources(identificador.listaDeRecursos);
 			SetupLevel setupLevel = makeSetupLevel(identificador);
+			setupLevel.numeroDeEstimulosPorSerie = setupResources.numeroDeEstimulosPorSerie;
 			Dinamica dinamica = new Dinamica();
 			Array<JsonTrial> jsonTrials = new Array<JsonTrial>();
 			
@@ -531,7 +532,6 @@ public class LevelUmbralStatic extends LevelUmbral {
 			setup.referencia = 0d;
 			setup.restartEstimulo = false;
 		}
-		
 		return setup;
 	}
 	

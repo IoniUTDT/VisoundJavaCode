@@ -1,13 +1,21 @@
 package com.turin.tur.main.levelsDesign;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
+import com.turin.tur.main.diseno.ExperimentalObject;
 import com.turin.tur.main.diseno.Trial;
+import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.util.FileHelper;
+import com.turin.tur.main.util.Internet;
+import com.turin.tur.main.util.Internet.TIPO_ENVIO;
 
 
 public class LevelUmbral extends Level {
 
+	public static final String TAG = LevelUmbral.class.getName();
+	
 	static class Dinamica {
 		protected Estimulo estimuloActivo;
 		protected Array<TrialConfig> pseudorandom = new Array<TrialConfig>();
@@ -83,6 +91,7 @@ public class LevelUmbral extends Level {
 		boolean allTestsConfianza = true; // Esto esta condicionado a que testProbability sea diferente de cero en la generacion del pseudorandom
 		public double referencia; // Angulo de refrencia del nivel
 		public boolean restartEstimulo; // Indica si hay que reiniciar el nivel de estimulo o se hereda del nivel anterior
+		public int numeroDeEstimulosPorSerie;
 		
 		public static String pathNameExt = ".LvlSetup";
 		
@@ -135,6 +144,11 @@ public class LevelUmbral extends Level {
 		
 	}
 	
+	static class LogConvergencia {
+		LevelLog levelLog; 
+		Dinamica dinamica; 
+	}
+	
 	SetupLevel setupLevel;
 	Dinamica dinamica;
 	
@@ -147,56 +161,207 @@ public class LevelUmbral extends Level {
 
 	@Override
 	public Trial getNextTrial() {
-		// TODO Auto-generated method stub
-		return null;
+		// Obtiene lo que deberia pasar de la lista speudorando
+		TrialConfig trialConfig = this.dinamica.pseudorandom.get(this.dinamica.historial.size);
+		// Decide si manda una señal para medir de verdad o un test para probar al usuario
+		if (trialConfig.trialType==TrialType.Test) { // Caso en que se mande un test
+			this.dinamica.trialType = TrialType.Test;
+			int base = this.dinamica.nivelEstimulo *2;
+			if (base>setupLevel.numeroDeEstimulosPorSerie-1 - setupLevel.numeroDeEstimulosPorSerie/5) {
+				base = setupLevel.numeroDeEstimulosPorSerie-1 - setupLevel.numeroDeEstimulosPorSerie/5;
+			}
+			int nivel = MathUtils.random(base, setupLevel.numeroDeEstimulosPorSerie-1);
+			dinamica.estimuloActivo = dinamica.seriesEstimulos.random().listaEstimulos.get(nivel);
+		}
+		if (trialConfig.trialType==TrialType.Estimulo) {
+			dinamica.trialType = TrialType.Estimulo;
+			dinamica.estimuloActivo = dinamica.seriesEstimulos.random().listaEstimulos.get(dinamica.nivelEstimulo);
+		}
+		if (trialConfig.trialType==TrialType.NoEstimulo) {
+			dinamica.trialType = TrialType.NoEstimulo;
+			dinamica.estimuloActivo = dinamica.estimulosCeros.random();
+		}
+		JsonTrial jsonTrial = Trial.loadJsonTrial(Level.folderResources(identificador), dinamica.estimuloActivo.idTrial);
+		
+		Array<ExperimentalObject> elementos = new Array<ExperimentalObject>();
+		for (int idElemento : jsonTrial.elementosId) {
+			ExperimentalObject elemento = new ExperimentalObject(idElemento, levelAssets, Level.folderResources(identificador));
+			elementos.add(elemento);
+		}
+		ExperimentalObject estimulo = new ExperimentalObject(jsonTrial.rtaCorrectaId, levelAssets, Level.folderResources(identificador));
+		// Con la info del json del trial tenemos que crear un trial
+		return new Trial(elementos, jsonTrial, estimulo);
 	}
 	
 	@Override
 	public boolean goConfiance() {
-		// TODO Auto-generated method stub
-		return false;
+		return dinamica.pseudorandom.get(dinamica.historial.size).confiance;
 	}
 	
 	@Override
 	public void interrupt() {
-		// TODO Auto-generated method stub
-
-	}
-	
-	@Override
-	public boolean islevelCompleted() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	
-	@Override
-	public void levelCompletedAction() {
-		// TODO Auto-generated method stub
-
+		this.sendDataLevel();
 	}
 	
 	@Override
 	public void returnAnswer(boolean answerCorrect, float confianzaReportada, float timeSelecion, float timeConfiance,
 			int loopsCount) {
-		// TODO Auto-generated method stub
+		// Almacenamos en el historial lo que paso
+		dinamica.historial.add(new Respuesta (dinamica.estimuloActivo, answerCorrect, confianzaReportada, dinamica.trialType, dinamica.nivelEstimulo, timeSelecion, timeConfiance, loopsCount));
+		// Elije si hay que incrementar la dificultad, disminuirla o no hacer nada.
+		boolean incrementarDificultad=false;
+		boolean disminuirDificultad=false;
+		if (dinamica.historial.peek().acertado) { 
+			if (dinamica.historial.size >= dinamica.proporcionAciertos) { // Estamos en el caso en que hay que mirar el historial
+				// Nos fijamos si hay algun desacierdo en los ultimos datos
+				int contadorAciertos=0;
+				for (int i=1; i<=(dinamica.proporcionAciertos); i++){
+					if (dinamica.historial.get(dinamica.historial.size-i).acertado==true){
+						contadorAciertos++;
+					}
+				}
+				if (contadorAciertos>= dinamica.proporcionAciertos) {
+					incrementarDificultad=true;
+				}
+			} else { // Si no hay historial suficiente
+				incrementarDificultad=true;
+			}
+		} else { // Significa q hubo un desacierto en este caso siempre se disminuye la dificultad
+			disminuirDificultad = true;
+		}
+				
+		// Setea el salto entre nivel y nivel
+		float avanceHastaUNOs = (float) dinamica.historial.size / (setupLevel.trialsPorNivel * (1 - 1f/setupLevel.saltoColaUNOFraccion));
+		if (avanceHastaUNOs<1) {
+			int saltoMaximo = setupLevel.numeroDeEstimulosPorSerie/setupLevel.saltoInicialFraccion;
+			dinamica.saltosActivos = MathUtils.ceil(saltoMaximo*(1-avanceHastaUNOs));
+		} else {
+			dinamica.saltosActivos = 1;
+		}
+		// Aqui ya se determino si hay que incrementar o dosminuir la dificultad y por lo tanto se aplica, cuidando que no exceda los limites
+		if (incrementarDificultad) {
+			dinamica.nivelEstimulo=dinamica.nivelEstimulo-dinamica.saltosActivos;
+			if (dinamica.nivelEstimulo<1) {dinamica.nivelEstimulo=1;}
+		}
+		if (disminuirDificultad) {
+			dinamica.nivelEstimulo=dinamica.nivelEstimulo+dinamica.saltosActivos;
+			if (dinamica.nivelEstimulo>setupLevel.numeroDeEstimulosPorSerie-1) {dinamica.nivelEstimulo=setupLevel.numeroDeEstimulosPorSerie-1;}
+		}
+				
+		// Nos fijamos si ya se completo la dinamica o no.
+		if (this.trialsLeft() == 0) {
+			dinamica.levelFinalizadoCorrectamente=true;
+			this.levelCompleted = true;
+		}
 
 	}
 
 	@Override
 	void sendDataLevel() {
-		// TODO Auto-generated method stub
-		
+		// Hacemos un send para la data del nivel que acaba de detenerse.
+		LogConvergencia log = new LogConvergencia();
+		log.levelLog = this.log;
+		log.dinamica = dinamica;
+		log.dinamica.seriesEstimulos.clear();
+		log.dinamica.estimulosCeros.clear();
+		// Creamos el enviable
+		Internet.addDataToSend(log, TIPO_ENVIO.CONVERGENCIA, identificador.toString());
 	}
 
 	@Override
 	public int trialsLeft() {
-		// TODO Auto-generated method stub
-		return 0;
+		return dinamica.trialsPorNivel - dinamica.historial.size;
 	}
 
 	@Override
 	void specificLoads() {
-		// TODO Auto-generated method stub
+		setupLevel = SetupLevel.loadInfoLevel(identificador);
+		dinamica = Dinamica.loadDinamica(identificador); 
+		if (setupLevel.restartEstimulo) {
+			dinamica.nivelEstimulo = setupLevel.numeroDeEstimulosPorSerie - 1;
+		} else {
+			// TODO  
+		}
+		makeSpeudoRandom();		
+	}
+
+	private void makeSpeudoRandom() {
+		int numberOfEstimulo;
+		int numberOfNoEstimulo;
+		int numberOfTest;
+		
+		numberOfTest = (int) (setupLevel.trialsPorNivel*setupLevel.testProbability);
+		if ((setupLevel.trialsPorNivel - numberOfTest) % 2 != 0) {
+			Gdx.app.debug(TAG, "WARNING: El numero de trials a asignar en señal o no señal no es par y no quedara bien balanceado. Se agrega un trial test para equilibrar");
+			numberOfTest ++;
+		}
+		numberOfEstimulo = ((setupLevel.trialsPorNivel - numberOfTest) / 2);
+		numberOfNoEstimulo = ((setupLevel.trialsPorNivel - numberOfTest) / 2);
+		
+		
+		Array <TrialConfig> trialsTest= new Array<TrialConfig> ();
+		Array <TrialConfig> trialsEstimulo= new Array<TrialConfig> ();
+		Array <TrialConfig> trialsNoEstimulo= new Array<TrialConfig> ();
+		for (int i=0 ; i < numberOfTest; i++) {
+			trialsTest.add(new TrialConfig());
+		}
+		for (int i=0 ; i < numberOfEstimulo; i++) {
+			trialsEstimulo.add(new TrialConfig());
+		}
+		for (int i=0 ; i < numberOfNoEstimulo; i++) {
+			trialsNoEstimulo.add(new TrialConfig());
+		}
+		
+		int i;
+		int confianceCount;
+		
+		i = 0;
+		confianceCount = (int) (setupLevel.confianceProbability * trialsTest.size);
+		if (setupLevel.allTestsConfianza) {
+			for (TrialConfig test : trialsTest) {
+				test.confiance = true;
+				test.trialType = TrialType.Test;
+			}
+		} else {
+			for (TrialConfig test : trialsTest) {
+				i++;
+				if (i<=confianceCount) {
+					test.confiance = true;
+				} else {
+					test.confiance = false;
+				}
+				test.trialType = TrialType.Test;
+			}
+		}
+		
+		i = 0;
+		confianceCount = (int) (setupLevel.confianceProbability * trialsEstimulo.size);
+		for (TrialConfig test : trialsEstimulo) {
+			i++;
+			if (i<=confianceCount) {
+				test.confiance = true;
+			} else {
+				test.confiance = false;
+			}
+			test.trialType = TrialType.Estimulo;
+		}
+		
+		i = 0;
+		confianceCount = (int) (setupLevel.confianceProbability * trialsNoEstimulo.size);
+		for (TrialConfig test : trialsNoEstimulo) {
+			i++;
+			if (i<=confianceCount) {
+				test.confiance = true;
+			} else {
+				test.confiance = false;
+			}
+			test.trialType = TrialType.NoEstimulo;
+		}
+		
+		dinamica.pseudorandom.addAll(trialsTest);
+		dinamica.pseudorandom.addAll(trialsEstimulo);
+		dinamica.pseudorandom.addAll(trialsNoEstimulo);
+		dinamica.pseudorandom.shuffle();
 		
 	}
 }
