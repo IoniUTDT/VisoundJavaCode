@@ -514,10 +514,10 @@ public class LevelUmbralStatic extends LevelUmbral {
 			setup.saltoColaUNOFraccion = 0;
 			setup.saltoInicialFraccion = 4;
 			setup.signalProbability = 0.5f;
-			setup.testProbability = 0.5f;
+			setup.testProbability = 0.2f;
 			setup.trialsPorNivel = 10;
 			setup.referencia = 180d;
-			setup.restartEstimulo = false;
+			setup.restartEstimulo = true;
 		}
 		if (identificador == LISTAdeNIVELES.ParalelismoTutorial) {
 			setup.allTestsConfianza=true;
@@ -527,10 +527,10 @@ public class LevelUmbralStatic extends LevelUmbral {
 			setup.saltoColaUNOFraccion = 0;
 			setup.saltoInicialFraccion = 4;
 			setup.signalProbability = 0.5f;
-			setup.testProbability = 0.5f;
+			setup.testProbability = 0.2f;
 			setup.trialsPorNivel = 10;
 			setup.referencia = 0d;
-			setup.restartEstimulo = false;
+			setup.restartEstimulo = true;
 		}
 		return setup;
 	}
