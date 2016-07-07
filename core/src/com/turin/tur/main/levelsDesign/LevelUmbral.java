@@ -109,6 +109,7 @@ public class LevelUmbral extends Level {
 		public static SetupLevel loadInfoLevel (LISTAdeNIVELES identificador) {
 			String savedData = FileHelper.readLocalFile(pathLevelInfo(identificador));
 			Json json = new Json();
+			json.setUsePrototypes(false);
 			return json.fromJson(SetupLevel.class, savedData);
 		}
 	}

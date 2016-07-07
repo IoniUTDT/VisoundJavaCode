@@ -11,6 +11,7 @@ import com.turin.tur.main.levelsDesign.Level.LISTAdeNIVELES;
 import com.turin.tur.main.levelsDesign.Level.LISTAdeRECURSOS;
 import com.turin.tur.main.screens.MenuScreen;
 import com.turin.tur.main.util.Internet;
+import com.turin.tur.main.util.InternetNuevo;
 import com.turin.tur.main.util.builder.Builder;
 
 public class Visound extends Game {
@@ -22,6 +23,7 @@ public class Visound extends Game {
 	
 	@SuppressWarnings("unused")
 	private static final String TAG = Visound.class.getName();
+	public static final String pathLogs = "logs";
 	public static boolean mododesarrollo = true;
 	public Session session;
 	public static float volumen = 0.5f;
@@ -33,6 +35,8 @@ public class Visound extends Game {
 
 		// Hacemos aca el chequeo porque sino se activan envios de internet y es un problema
 		Internet.checkInternet();
+		
+		InternetNuevo internet = new InternetNuevo();
 		// Set Libgdx log level
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 		

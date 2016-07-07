@@ -6,6 +6,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.turin.tur.Visound;
 import com.turin.tur.main.levelsDesign.Level.LISTAdeNIVELES;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.FileHelper;
@@ -28,7 +29,7 @@ public class Session {
 	}
 	
 	public static class User {
-		public static final String USERFILE = "logs/user.txt";
+		public static final String USERFILE = Visound.pathLogs + "/user.txt";
 
 		public long id;
 		public FASEdeEXPERIMENTO faseDeExperimentoActiva;
