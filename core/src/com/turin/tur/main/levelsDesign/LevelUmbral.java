@@ -314,7 +314,7 @@ public class LevelUmbral extends Level {
 		
 		int i;
 		int confianceCount;
-		
+		 
 		i = 0;
 		confianceCount = (int) (setupLevel.confianceProbability * trialsTest.size);
 		if (setupLevel.allTestsConfianza) {
