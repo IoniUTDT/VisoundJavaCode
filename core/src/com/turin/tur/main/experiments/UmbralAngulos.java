@@ -1,5 +1,5 @@
 package com.turin.tur.main.experiments;
-
+/*
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.ArrayMap;
@@ -138,7 +138,7 @@ public class UmbralAngulos extends Umbral {
 		return estimulo;
 	}
 	*/
-
+/*
 	public void buildLevels() {
 		
 		for (SetupLevel setupLevel : this.setupsLevels) {
@@ -410,4 +410,4 @@ public class UmbralAngulos extends Umbral {
 		return null;
 	}
 
-}
+}*/

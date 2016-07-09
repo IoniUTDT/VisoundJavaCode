@@ -6,8 +6,8 @@ import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.util.Constants.ResourcesCategorias;
-import com.turin.tur.main.util.Internet.TIPO_ENVIO;
-import com.turin.tur.main.util.Internet;
+import com.turin.tur.main.util.InternetNuevo;
+import com.turin.tur.main.util.InternetNuevo.TIPOdeENVIO;
 import com.turin.tur.main.util.LevelAsset;
 import com.turin.tur.main.util.builder.Builder;
 
@@ -66,7 +66,8 @@ public abstract class Level {
 			this.sesion = sesion;
 			this.identificadorNivel = identificador;
 			// Hacemos un envio
-			Internet.addDataToSend(this, TIPO_ENVIO.NEWLEVEL, identificador.toString());			
+			InternetNuevo.agregarEnvio(this, TIPOdeENVIO.NIVEL, identificador.toString());
+			// Internet.addDataToSend(this, TIPO_ENVIO.NEWLEVEL, identificador.toString());			
 		}
 		
 	}

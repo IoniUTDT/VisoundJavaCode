@@ -1,5 +1,5 @@
 package com.turin.tur.main.experiments;
-
+/*
 public class UmbralAngulosTutorialOLD extends UmbralAngulos{
 /*
 	static final String TAG = UmbralAngulosTutorial.class.getName();
@@ -54,4 +54,6 @@ public class UmbralAngulosTutorialOLD extends UmbralAngulos{
 		return this.expName;
 	}
 */
+/*
 }
+*/

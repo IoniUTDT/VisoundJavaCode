@@ -1,5 +1,5 @@
 package com.turin.tur.main.experiments;
-
+/*
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
@@ -33,6 +33,8 @@ public abstract class Umbral extends GenericExp {
 	 * @author ionatan 
 	 *
 	 */
+
+/*
 	public static class DinamicaExperimento {
 		TrialType trialType; // Distinguimos si se trata de un trial que busca medir de verdad o si es un trial facil para verificar que el usuario esta entendiendo la consigna
 		String identificador; // Algo para indentificar la dinamica
@@ -483,10 +485,11 @@ public abstract class Umbral extends GenericExp {
 		json.setUsePrototypes(false);
 		FileHelper.writeLocalFile(path, json.toJson(this.setupsResources));
 	}
-	*/
+
 	abstract String getExpName();
 	abstract float getDesviacionCero();
 	abstract void makeSetup();
 	abstract Estimulo makeResource(double ladoFijo, double desviacion);
 	
 }
+*/

@@ -1,5 +1,5 @@
 package com.turin.tur.main.util;
-
+/*
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.Net.HttpMethods;
@@ -303,3 +303,4 @@ public class Internet {
         }
     }
 }
+*/

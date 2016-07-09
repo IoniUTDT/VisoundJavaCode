@@ -1,5 +1,5 @@
 package com.turin.tur.main.experiments;
-
+/*
 import com.badlogic.gdx.utils.Array;
 
 public class UmbralParalelismoTest extends UmbralParalelismo{
@@ -62,3 +62,4 @@ public class UmbralParalelismoTest extends UmbralParalelismo{
 		return "expUmbralParalelismoPiloto";
 	}
 }
+*/

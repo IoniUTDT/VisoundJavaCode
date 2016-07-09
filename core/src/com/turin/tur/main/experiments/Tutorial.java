@@ -1,5 +1,5 @@
 package com.turin.tur.main.experiments;
-
+/*
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
@@ -656,3 +656,4 @@ public class Tutorial extends GenericExp implements Experiment {
 	}
 	
 }
+*/

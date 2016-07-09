@@ -10,8 +10,8 @@ import com.turin.tur.Visound;
 import com.turin.tur.main.levelsDesign.Level.LISTAdeNIVELES;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.FileHelper;
-import com.turin.tur.main.util.Internet;
-import com.turin.tur.main.util.Internet.TIPO_ENVIO;
+import com.turin.tur.main.util.InternetNuevo;
+import com.turin.tur.main.util.InternetNuevo.TIPOdeENVIO;
 import com.turin.tur.main.util.builder.Builder;
 
 public class Session {
@@ -25,7 +25,8 @@ public class Session {
 	
 	public Session() {
 		this.user = User.loadUser(); 
-		Internet.addDataToSend(this, TIPO_ENVIO.NEWSESION, "Visound");
+		// Internet.addDataToSend(this, TIPO_ENVIO.NEWSESION, "Visound");
+		InternetNuevo.agregarEnvio(this, TIPOdeENVIO.SESION, Long.toString(user.id));
 	}
 	
 	public static class User {

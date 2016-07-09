@@ -21,6 +21,7 @@ public class InternetNuevo {
 		Object objeto;
 		TIPOdeENVIO tipo;
 		long instance = TimeUtils.millis();
+		public String origen;
 	}
 	
 	public class Envio {   
@@ -85,6 +86,7 @@ public class InternetNuevo {
 	public enum ESTADOInternet {
 		ENVIOSPendientes, ESPERANDO, PROCESANDOEnvios, SINConexion   
 	}
+	
 	public class InternetStatus implements HttpResponseListener {   
 
         HttpRequest request;
@@ -96,7 +98,7 @@ public class InternetNuevo {
             request.setMethod(Net.HttpMethods.GET); //or POST
             request.setContent(""); //you can put here some PUT/GET content
             request.setUrl(url);
-            Gdx.net.sendHttpRequest(request, this);
+            Gdx.net.sendHttpRequest(request,this);
         }
 
         @Override
@@ -132,6 +134,8 @@ public class InternetNuevo {
         	if (serverStatus == 200) {
         		String servercontent = httpResponse.getResultAsString();
         		if (servercontent.contains("\"on\"")) {
+        			Gdx.app.debug(TAG, "Servidor Online");
+        			InternetNuevo.afterEnvio();
         			// estadoInternet = ESTADOInternet.ESPERANDO;
         		} else {
         			estadoInternet = ESTADOInternet.SINConexion;
@@ -151,6 +155,7 @@ public class InternetNuevo {
     }
 	
 	public enum TIPOdeENVIO {
+		SESION, NIVEL, LEVEL
 	}
 	
 	static long instance = TimeUtils.millis();
@@ -160,10 +165,9 @@ public class InternetNuevo {
 	public static final String pathBackup = Visound.pathLogs + "/" + filename + instance + fileExt;
 	public static final String serverBackUP = "http://172.18.19.6:3000/";
 	public static final String serverMAIN = "http://turintur.dynu.com/";
-	private static final String TAG = Internet.class.getName();
+	private static final String TAG = InternetNuevo.class.getName();
 	private static Array<Enviable> CadenaEnvios = new Array<Enviable>();
 	private static ESTADOInternet estadoInternet = ESTADOInternet.ENVIOSPendientes;
-
 
 	protected static void afterEnvio() {
 		for (Enviable envio : CadenaEnvios) {
@@ -177,17 +181,23 @@ public class InternetNuevo {
 				return;
 			}
 		}
+		// saveDataToDisk();
 		estadoInternet = ESTADOInternet.ESPERANDO;
 	}
 
 	
+	private static void saveDataToDisk() {
+		Json json = new Json();
+		json.setUsePrototypes(false);
+		FileHelper.writeLocalFile(path, json.toJson(CadenaEnvios));
+	}
+
+
 	private static String server=serverMAIN;
 
 	private static int serverStatus=0;
 
 	public InternetNuevo() {
-		checkConectividad ();
-		loadSavedData();
 	}
 	
 	public void update() {
@@ -196,17 +206,19 @@ public class InternetNuevo {
 		}
 	}
 	
-	private void agregarEnvio(Object objeto, TIPOdeENVIO tipo) {
+	public static void agregarEnvio(Object objeto, TIPOdeENVIO tipo, String origen) {
 		Enviable envio = new Enviable();
 		envio.objeto = objeto;
 		envio.tipo = tipo;
+		envio.origen = origen;
 		envio.estadoEnvio = ESTADOEnvio.ENVIAR;
 		if (estadoInternet == ESTADOInternet.ESPERANDO) {
 			estadoInternet = ESTADOInternet.ENVIOSPendientes;
 		}
+		CadenaEnvios.add(envio);
 	}
 	
-	private void checkConectividad() {
+	public void checkConectividad() {
 		estadoInternet = ESTADOInternet.PROCESANDOEnvios;
 		new Thread(new Runnable() {
 
@@ -220,7 +232,7 @@ public class InternetNuevo {
 	}
 	
 	
-	private void loadSavedData() {
+	public void loadSavedData() {
 		FileHandle dataFile = Gdx.files.local(path);
 		if (dataFile.exists()) {
 			FileHandle backUp = Gdx.files.local(pathBackup);
@@ -231,10 +243,10 @@ public class InternetNuevo {
 			Array<Enviable> logsLeidos =  json.fromJson(this.CadenaEnvios.getClass(), savedData);
 			for (Enviable entrada : logsLeidos) {
 				if (entrada.estadoEnvio == ESTADOEnvio.ENVIAR) {
-					agregarEnvio (entrada.objeto, entrada.tipo);
+					agregarEnvio (entrada.objeto, entrada.tipo, entrada.origen);
 				}
 				if (entrada.estadoEnvio == ESTADOEnvio.ENVIANDO) {
-					agregarEnvio (entrada.objeto, entrada.tipo);
+					agregarEnvio (entrada.objeto, entrada.tipo, entrada.origen);
 				}
 			}
 		}
@@ -255,5 +267,13 @@ public class InternetNuevo {
 				}).start();
 			}
 		}
+	}
+
+	public boolean procesandoCosas() {
+		return (estadoInternet == ESTADOInternet.PROCESANDOEnvios);
+	}
+
+	public boolean offline() {
+		return (estadoInternet == ESTADOInternet.SINConexion);
 	}
 }

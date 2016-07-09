@@ -1,5 +1,5 @@
 package com.turin.tur.main.experiments;
-
+/*
 
 public class UmbralParalelismoTutorial extends UmbralParalelismo{
 
@@ -59,3 +59,4 @@ public class UmbralParalelismoTutorial extends UmbralParalelismo{
 	}
 
 }
+*/

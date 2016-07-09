@@ -10,7 +10,6 @@ import com.turin.tur.main.levelsDesign.Level;
 import com.turin.tur.main.levelsDesign.Level.LISTAdeNIVELES;
 import com.turin.tur.main.levelsDesign.Level.LISTAdeRECURSOS;
 import com.turin.tur.main.screens.MenuScreen;
-import com.turin.tur.main.util.Internet;
 import com.turin.tur.main.util.InternetNuevo;
 import com.turin.tur.main.util.builder.Builder;
 
@@ -27,16 +26,16 @@ public class Visound extends Game {
 	public static boolean mododesarrollo = true;
 	public Session session;
 	public static float volumen = 0.5f;
-	public boolean sendingData;
+	// public boolean sendingData;
 	Array<LISTAdeNIVELES> identificadoresLvl = new Array<LISTAdeNIVELES>();
+	public InternetNuevo internet = new InternetNuevo();
 	
 	@Override
 	public void create () {
 
 		// Hacemos aca el chequeo porque sino se activan envios de internet y es un problema
-		Internet.checkInternet();
+		// Internet.checkInternet();
 		
-		InternetNuevo internet = new InternetNuevo();
 		// Set Libgdx log level
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 		
@@ -48,7 +47,9 @@ public class Visound extends Game {
 			Builder.buildResources(identificadoresRes);
 			Builder.buildLevels(identificadoresLvl);
 		}
-		
+		 
+		internet.checkConectividad();
+		internet.loadSavedData();
 		this.session = new Session();
 		setScreen(new MenuScreen(this));
 	}	

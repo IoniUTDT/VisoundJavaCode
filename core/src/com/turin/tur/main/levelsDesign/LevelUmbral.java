@@ -8,8 +8,8 @@ import com.turin.tur.main.diseno.ExperimentalObject;
 import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.util.FileHelper;
-import com.turin.tur.main.util.Internet;
-import com.turin.tur.main.util.Internet.TIPO_ENVIO;
+import com.turin.tur.main.util.InternetNuevo.TIPOdeENVIO;
+import com.turin.tur.main.util.InternetNuevo;
 
 
 public class LevelUmbral extends Level {
@@ -266,7 +266,8 @@ public class LevelUmbral extends Level {
 		log.dinamica.seriesEstimulos.clear();
 		log.dinamica.estimulosCeros.clear();
 		// Creamos el enviable
-		Internet.addDataToSend(log, TIPO_ENVIO.CONVERGENCIA, identificador.toString());
+		InternetNuevo.agregarEnvio(log, TIPOdeENVIO.LEVEL, identificador.toString());
+		//Internet.addDataToSend(log, TIPO_ENVIO.CONVERGENCIA, identificador.toString());
 	}
 
 	@Override
@@ -282,6 +283,8 @@ public class LevelUmbral extends Level {
 			dinamica.nivelEstimulo = setupLevel.numeroDeEstimulosPorSerie - 1;
 		} else {
 			// TODO  
+			
+			// Queda pendiente hacer que se herede el nivel
 		}
 		makeSpeudoRandom();		
 	}

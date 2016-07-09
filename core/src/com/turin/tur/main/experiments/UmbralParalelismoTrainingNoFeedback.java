@@ -1,5 +1,5 @@
 package com.turin.tur.main.experiments;
-
+/*
 import com.badlogic.gdx.utils.Array;
 
 public class UmbralParalelismoTrainingNoFeedback extends UmbralParalelismo{
@@ -59,3 +59,4 @@ public class UmbralParalelismoTrainingNoFeedback extends UmbralParalelismo{
 		return "UmbralParalelismoFranTransferenciaTrainingNoFeedback";
 	}
 }
+*/

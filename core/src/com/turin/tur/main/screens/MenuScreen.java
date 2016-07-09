@@ -1,10 +1,8 @@
 package com.turin.tur.main.screens;
 
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -23,7 +21,6 @@ import com.turin.tur.main.diseno.Session.FASEdeEXPERIMENTO;
 import com.turin.tur.main.levelsDesign.Level;
 import com.turin.tur.main.levelsDesign.Level.LISTAdeNIVELES;
 import com.turin.tur.main.util.Constants;
-import com.turin.tur.main.util.Internet;
 
 
 public class MenuScreen extends AbstractGameScreen implements InputProcessor{
@@ -58,9 +55,9 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 
 	@Override
 	public boolean keyDown(int keycode) {
-		// Back to Menu
+		// exit app
 		if (keycode == Keys.ESCAPE || keycode == Keys.Q) {
-			if (!game.sendingData) {
+			if (!game.internet.procesandoCosas()) {
 				Gdx.app.exit();
 			}
 		}
@@ -100,15 +97,17 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 		stage.draw();
 		table.drawDebug(shapeRenderer); // This is optional, but enables debug
 										// lines for tables.
+		game.internet.update();
 		guiRender();
-		
 		// Verificamos el estatus de envio de datos
+		/*
 		FileHandle[] files = Gdx.files.local(Internet.pathSending).list();
 		if (files.length>1) { // Hay que considerar que esta la carpeta tags. Si se mejora y esa carpeta vuela entonces hayq ue cambiar la comparacion a 0
 			game.sendingData = true;
 		} else {
 			game.sendingData = false;
 		}
+		*/
 	}
 
 	@Override
@@ -250,15 +249,12 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 	private void renderServerStatus() {
 		BitmapFont fpsFont = this.assets.fonts.defaultFont;
 		fpsFont.getData().setScale(Constants.factorEscala());
-		if (Internet.serverOk) {
-			// show up in green
-			fpsFont.setColor(0, 1, 0, 1);
-		} else {
+		if (game.internet.offline()) {
 			// show up in red
 			fpsFont.setColor(1, 0, 0, 1);
 			fpsFont.draw(batch, "Servidor offline", cameraGUI.viewportWidth*1/5, cameraGUI.viewportHeight - cameraGUI.viewportHeight*1/20);
 		}
-		if (game.sendingData) {
+		if (game.internet.procesandoCosas()) {
 			fpsFont.draw(batch, "Enviando datos...", cameraGUI.viewportWidth - cameraGUI.viewportWidth*1/5, cameraGUI.viewportHeight - cameraGUI.viewportHeight*1/20);
 		}
 		fpsFont.setColor(1, 1, 1, 1); // white

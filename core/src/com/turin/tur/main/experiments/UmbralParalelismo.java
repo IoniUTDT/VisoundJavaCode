@@ -1,5 +1,5 @@
 package com.turin.tur.main.experiments;
-
+/*
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Json;
@@ -233,3 +233,4 @@ public class UmbralParalelismo extends Umbral {
 		return 0;
 	}
 }
+*/
