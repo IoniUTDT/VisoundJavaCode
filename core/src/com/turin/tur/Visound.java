@@ -28,7 +28,7 @@ public class Visound extends Game {
 	public Session session;
 	public static float volumen = 0.5f;
 	// public boolean sendingData;
-	Array<LISTAdeNIVELES> identificadoresLvl = new Array<LISTAdeNIVELES>();
+	// Array<LISTAdeNIVELES> identificadoresLvl = new Array<LISTAdeNIVELES>();
 	public InternetNuevo internet = new InternetNuevo();
 	public InputMultiplexer im = new InputMultiplexer();
 	
@@ -42,13 +42,13 @@ public class Visound extends Game {
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 		Gdx.input.setInputProcessor(im);
 		
-		identificadoresLvl.addAll(LISTAdeNIVELES.Ejemplos, LISTAdeNIVELES.AngulosTutorial, LISTAdeNIVELES.ParalelismoTutorial);
+		// dentificadoresLvl.addAll(LISTAdeNIVELES.Ejemplos, LISTAdeNIVELES.AngulosTutorial, LISTAdeNIVELES.ParalelismoTutorial);
 		
 		if ((mododesarrollo) & (Gdx.app.getType() == ApplicationType.Desktop)) {
 			Array<LISTAdeRECURSOS> identificadoresRes = new Array<LISTAdeRECURSOS>();
 			identificadoresRes.addAll(LISTAdeRECURSOS.ImagenesEjemplos,LISTAdeRECURSOS.UmbralAngulosTutorial, LISTAdeRECURSOS.UmbralParalelismoTutorial, LISTAdeRECURSOS.UmbralAngulosTransferencia, LISTAdeRECURSOS.UmbralParalelismoTransferencia);
 			Builder.buildResources(identificadoresRes);
-			Builder.buildLevels(identificadoresLvl);
+			Builder.buildLevels(LISTAdeNIVELES.values());
 		}
 		 
 		internet.checkConectividad();

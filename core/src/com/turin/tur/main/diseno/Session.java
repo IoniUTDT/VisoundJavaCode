@@ -122,6 +122,8 @@ public class Session {
 			TestFinal.etapaSiguiente = ExperimentoCompleto;
 			ExperimentoCompleto.etapaSiguiente = ExperimentoCompleto;
 			Tutorial.niveles.addAll(LISTAdeNIVELES.Ejemplos, LISTAdeNIVELES.ParalelismoTutorial, LISTAdeNIVELES.AngulosTutorial);
+			TestInicial.niveles.addAll(LISTAdeNIVELES.TESTP30, LISTAdeNIVELES.TESTP60, LISTAdeNIVELES.TESTP120, LISTAdeNIVELES.TESTP150,
+					LISTAdeNIVELES.TESTA30, LISTAdeNIVELES.TESTA60, LISTAdeNIVELES.TESTA120, LISTAdeNIVELES.TESTA150);
 		}
 		
 		public FASEdeEXPERIMENTO etapaSiguiente() {

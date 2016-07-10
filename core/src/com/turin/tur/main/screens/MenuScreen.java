@@ -131,8 +131,8 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 		this.game.im.addProcessor(stage);
 		this.game.im.addProcessor(this);
 
-		table = new Table();
-		table.setFillParent(true);
+		table = new Table(); 
+		table.setFillParent(true); 
 		stage.addActor(table);
 		shapeRenderer = new ShapeRenderer();
 		skin = new Skin(Gdx.files.internal(Constants.SKIN_LIBGDX_UI));
@@ -188,6 +188,21 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 			FaseButtons.add(button);
 		}
 		
+		if (this.game.session.user.faseDeExperimentoActiva == FASEdeEXPERIMENTO.ExperimentoCompleto) {
+			TextButton siguiente = new TextButton("Salir", skin, "default");
+			siguiente.addListener(new ClickListener() {
+				@Override
+				public void clicked(InputEvent event, float x, float y) {
+					//game.session.user.pasarFase();
+					//game.setScreen(new MenuScreen(game));
+					if (!game.internet.procesandoCosas()){
+						Gdx.app.exit();
+					}
+				}
+			});
+			FaseButtons.add(siguiente);
+		}
+		
 		if (Visound.mododesarrollo) {
 			TextButton siguiente = new TextButton("Comenzar", skin, "default");
 			siguiente.addListener(new ClickListener() {
@@ -199,6 +214,7 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 			});
 			FaseButtons.add(siguiente);
 		}
+		
 		
 		
 		// Arma el menu

@@ -139,7 +139,7 @@ public class PCBuilder {
 		Json json = new Json();
 		json.setUsePrototypes(false);
 		for (JsonTrial trial : jsonTrials) {
-			Trial.saveJsonTrial(Level.folderResources(identificador), trial);
+			Trial.saveJsonTrial(Level.folderResourcesBuild(identificador), trial);
 			// FileHelper.writeLocalFile(Level.folderResources(identificador) + trial.Id + ".trial", json.toJson(trial));
 		}
 	}
@@ -152,7 +152,7 @@ public class PCBuilder {
 
 	public static void buildJsonsTrials (Array<JsonTrial> jsonTrials, Level.LISTAdeNIVELES identificador) {
 		// If resources already exported, the the folder was cleaned.
-		String path = Level.folderResources(identificador);
+		String path = Level.folderResourcesBuild(identificador);
 		for (JsonTrial jsonTrial : jsonTrials) {
 			CreateTrial(jsonTrial, path);
 		}
@@ -184,7 +184,7 @@ public class PCBuilder {
 	static void export(Array<Integer> ids, Level.LISTAdeNIVELES identificadorNivel){
 		// Gdx.app.debug(Builder.TAG, "Exportando los recursos correspondientes a " + identificadorNivel.toString());
 		// We clean the destiny folder
-		File folder = new File(Level.folderResources(identificadorNivel)); 
+		File folder = new File(Level.folderResourcesBuild(identificadorNivel)); 
 		if (folder.exists()) {
 			// clean the folder from old stuff
 			try {
@@ -219,7 +219,7 @@ public class PCBuilder {
 		settings.maxHeight = 1024;
 		settings.duplicatePadding = false;
 		settings.debug = false;
-		TexturePacker.process(settings, ResourcesCategorias.Paths.processingTempFolder, Level.folderResources(identificadorNivel), LevelAsset.atlasName); 
+		TexturePacker.process(settings, ResourcesCategorias.Paths.processingTempFolder, Level.folderResourcesBuild(identificadorNivel), LevelAsset.atlasName); 
 		Gdx.app.debug(Builder.TAG, "Recursos correctamente exportados: " + identificadorNivel.toString()+".");
 	}
 

@@ -34,18 +34,22 @@ public class LevelUmbral extends Level {
 		public static String pathNameExt = ".Dinamica";
 		
 		public static void saveDinamica (LISTAdeNIVELES identificador, Dinamica dinamica) {
-			String path = pathLevelInfo(identificador);
+			String path = pathLevelInfoBuild(identificador);
 			Json json = new Json();
 			json.setUsePrototypes(false);
 			FileHelper.writeLocalFile(path, json.toJson(dinamica));
 		}
 		
-		private static String pathLevelInfo (LISTAdeNIVELES identificador) {
-			return Level.folderResources(identificador) + identificador.toString() + pathNameExt;
+		private static String pathLevelInfoLocal (LISTAdeNIVELES identificador) {
+			return Level.folderResourcesLocal(identificador) + identificador.toString() + pathNameExt;
+		}
+		
+		private static String pathLevelInfoBuild (LISTAdeNIVELES identificador) {
+			return Level.folderResourcesBuild(identificador) + identificador.toString() + pathNameExt;
 		}
 		
 		public static Dinamica loadDinamica (LISTAdeNIVELES identificador) {
-			String savedData = FileHelper.readLocalFile(pathLevelInfo(identificador));
+			String savedData = FileHelper.readInternalFile(pathLevelInfoLocal(identificador));
 			Json json = new Json();
 			return json.fromJson(Dinamica.class, savedData);
 		}
@@ -96,18 +100,22 @@ public class LevelUmbral extends Level {
 		public static String pathNameExt = ".LvlSetup";
 		
 		public static void saveInfoLevel (LISTAdeNIVELES identificador, SetupLevel setup) {
-			String path = pathLevelInfo(identificador);
+			String path = pathLevelInfoBuild(identificador);
 			Json json = new Json();
 			json.setUsePrototypes(false);
 			FileHelper.writeLocalFile(path, json.toJson(setup));
 		}
 		
-		private static String pathLevelInfo (LISTAdeNIVELES identificador) {
-			return Level.folderResources(identificador) + identificador.toString() + pathNameExt;
+		private static String pathLevelInfoLocal (LISTAdeNIVELES identificador) {
+			return Level.folderResourcesLocal(identificador) + identificador.toString() + pathNameExt;
+		}
+		
+		private static String pathLevelInfoBuild (LISTAdeNIVELES identificador) {
+			return Level.folderResourcesBuild(identificador) + identificador.toString() + pathNameExt;
 		}
 		
 		public static SetupLevel loadInfoLevel (LISTAdeNIVELES identificador) {
-			String savedData = FileHelper.readLocalFile(pathLevelInfo(identificador));
+			String savedData = FileHelper.readInternalFile(pathLevelInfoLocal(identificador));
 			Json json = new Json();
 			json.setUsePrototypes(false);
 			return json.fromJson(SetupLevel.class, savedData);
@@ -182,14 +190,14 @@ public class LevelUmbral extends Level {
 			dinamica.trialType = TrialType.NoEstimulo;
 			dinamica.estimuloActivo = dinamica.estimulosCeros.random();
 		}
-		JsonTrial jsonTrial = Trial.loadJsonTrial(Level.folderResources(identificador), dinamica.estimuloActivo.idTrial);
+		JsonTrial jsonTrial = Trial.loadJsonTrial(Level.folderResourcesLocal(identificador), dinamica.estimuloActivo.idTrial);
 		
 		Array<ExperimentalObject> elementos = new Array<ExperimentalObject>();
 		for (int idElemento : jsonTrial.elementosId) {
-			ExperimentalObject elemento = new ExperimentalObject(idElemento, levelAssets, Level.folderResources(identificador));
+			ExperimentalObject elemento = new ExperimentalObject(idElemento, levelAssets, Level.folderResourcesLocal(identificador));
 			elementos.add(elemento);
 		}
-		ExperimentalObject estimulo = new ExperimentalObject(jsonTrial.rtaCorrectaId, levelAssets, Level.folderResources(identificador));
+		ExperimentalObject estimulo = new ExperimentalObject(jsonTrial.rtaCorrectaId, levelAssets, Level.folderResourcesLocal(identificador));
 		// Con la info del json del trial tenemos que crear un trial
 		return new Trial(elementos, jsonTrial, estimulo);
 	}

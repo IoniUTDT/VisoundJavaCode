@@ -20,7 +20,15 @@ public abstract class Level {
 	public enum LISTAdeNIVELES {
 		AngulosTutorial(LISTAdeRECURSOS.UmbralAngulosTutorial, TIPOdeNivel.Angulos),
 		Ejemplos(LISTAdeRECURSOS.ImagenesEjemplos, TIPOdeNivel.Ejemplos),
-		ParalelismoTutorial(LISTAdeRECURSOS.UmbralParalelismoTutorial, TIPOdeNivel.Paralelismo),
+		ParalelismoTutorial(LISTAdeRECURSOS.UmbralParalelismoTutorial, TIPOdeNivel.Paralelismo), 
+		TESTP30(LISTAdeRECURSOS.UmbralParalelismoTransferencia, TIPOdeNivel.Paralelismo),
+		TESTP60(LISTAdeRECURSOS.UmbralParalelismoTransferencia, TIPOdeNivel.Paralelismo),
+		TESTP120(LISTAdeRECURSOS.UmbralParalelismoTransferencia, TIPOdeNivel.Paralelismo),
+		TESTP150(LISTAdeRECURSOS.UmbralParalelismoTransferencia, TIPOdeNivel.Paralelismo),
+		TESTA30(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos),
+		TESTA60(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos),
+		TESTA120(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos),
+		TESTA150(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos),
 		;
 		public static final int levelVersion = Builder.levelVersionFinal;
 		public LISTAdeRECURSOS listaDeRecursos;
@@ -89,8 +97,12 @@ public abstract class Level {
 		}
 	}
 	
-	public static String folderResources(LISTAdeNIVELES identificador) {
+	public static String folderResourcesBuild(LISTAdeNIVELES identificador) {
 		return ResourcesCategorias.Paths.finalInternalPath + identificador.toString() + "/";
+	}
+	
+	public static String folderResourcesLocal (LISTAdeNIVELES identificador) {
+		return ResourcesCategorias.Paths.InternalResources + identificador.toString() + "/";
 	}
 
 	public LISTAdeNIVELES identificador;
@@ -126,7 +138,7 @@ public abstract class Level {
 	abstract void specificLoads();
 
 	public JsonTrial loadJsonTrial (int id) {
-		return Trial.loadJsonTrial(Level.folderResources(identificador), id);	
+		return Trial.loadJsonTrial(Level.folderResourcesLocal(identificador), id);	
 	}
 
 	public abstract void returnAnswer(boolean answerCorrect, float confianzaReportada, float timeSelecion,

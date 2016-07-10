@@ -2,6 +2,7 @@ package com.turin.tur.main.util.builder;
 
 import com.badlogic.gdx.utils.Array;
 import com.turin.tur.main.levelsDesign.Level;
+import com.turin.tur.main.levelsDesign.Level.LISTAdeNIVELES;
 import com.turin.tur.main.levelsDesign.Level.LISTAdeRECURSOS;
 import com.turin.tur.main.levelsDesign.Level.TIPOdeNivel;
 import com.turin.tur.main.levelsDesign.LevelEjemplos;
@@ -39,10 +40,10 @@ public class Builder {
 		}	
 	}
 	
-	public static void buildLevels (Array<Level.LISTAdeNIVELES> identificadores) {
+	public static void buildLevels (LISTAdeNIVELES[] listAdeNIVELESs) {
 		if (makeLevels) {
 			PCBuilder.CheckLevels();
-			for (Level.LISTAdeNIVELES identificador : identificadores) {
+			for (Level.LISTAdeNIVELES identificador : listAdeNIVELESs) {
 				if (identificador.tipoDeNivel == TIPOdeNivel.Ejemplos) {
 					LevelEjemplos.buildLevel (identificador);
 				}

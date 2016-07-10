@@ -532,6 +532,110 @@ public class LevelUmbralStatic extends LevelUmbral {
 			setup.referencia = 0d;
 			setup.restartEstimulo = true;
 		}
+		if (identificador == LISTAdeNIVELES.TESTP30) {
+			setup.allTestsConfianza=false;
+			setup.confianceProbability = 0.3f;
+			setup.feedback = false;
+			setup.identificadorLevel = identificador;
+			setup.saltoColaUNOFraccion = 2;
+			setup.saltoInicialFraccion = 4;
+			setup.signalProbability = 0.5f;
+			setup.testProbability = 0.2f;
+			setup.trialsPorNivel = 100;
+			setup.referencia = 30d;
+			setup.restartEstimulo = true;
+		}
+		if (identificador == LISTAdeNIVELES.TESTP60) {
+			setup.allTestsConfianza=false;
+			setup.confianceProbability = 0.3f;
+			setup.feedback = false;
+			setup.identificadorLevel = identificador;
+			setup.saltoColaUNOFraccion = 2;
+			setup.saltoInicialFraccion = 4;
+			setup.signalProbability = 0.5f;
+			setup.testProbability = 0.2f;
+			setup.trialsPorNivel = 100;
+			setup.referencia = 60d;
+			setup.restartEstimulo = true;
+		}
+		if (identificador == LISTAdeNIVELES.TESTP120) {
+			setup.allTestsConfianza=false;
+			setup.confianceProbability = 0.3f;
+			setup.feedback = false;
+			setup.identificadorLevel = identificador;
+			setup.saltoColaUNOFraccion = 2;
+			setup.saltoInicialFraccion = 4;
+			setup.signalProbability = 0.5f;
+			setup.testProbability = 0.2f;
+			setup.trialsPorNivel = 100;
+			setup.referencia = 120d;
+			setup.restartEstimulo = true;
+		}
+		if (identificador == LISTAdeNIVELES.TESTP150) {
+			setup.allTestsConfianza=false;
+			setup.confianceProbability = 0.3f;
+			setup.feedback = false;
+			setup.identificadorLevel = identificador;
+			setup.saltoColaUNOFraccion = 2;
+			setup.saltoInicialFraccion = 4;
+			setup.signalProbability = 0.5f;
+			setup.testProbability = 0.2f;
+			setup.trialsPorNivel = 100;
+			setup.referencia = 150d;
+			setup.restartEstimulo = true;
+		}
+		if (identificador == LISTAdeNIVELES.TESTA30) {
+			setup.allTestsConfianza=false;
+			setup.confianceProbability = 0.3f;
+			setup.feedback = false;
+			setup.identificadorLevel = identificador;
+			setup.saltoColaUNOFraccion = 2;
+			setup.saltoInicialFraccion = 4;
+			setup.signalProbability = 0.5f;
+			setup.testProbability = 0.2f;
+			setup.trialsPorNivel = 100;
+			setup.referencia = 30d;
+			setup.restartEstimulo = true;
+		}
+		if (identificador == LISTAdeNIVELES.TESTA60) {
+			setup.allTestsConfianza=false;
+			setup.confianceProbability = 0.3f;
+			setup.feedback = false;
+			setup.identificadorLevel = identificador;
+			setup.saltoColaUNOFraccion = 2;
+			setup.saltoInicialFraccion = 4;
+			setup.signalProbability = 0.5f;
+			setup.testProbability = 0.2f;
+			setup.trialsPorNivel = 100;
+			setup.referencia = 60d;
+			setup.restartEstimulo = true;
+		}
+		if (identificador == LISTAdeNIVELES.TESTA120) {
+			setup.allTestsConfianza=false;
+			setup.confianceProbability = 0.3f;
+			setup.feedback = false;
+			setup.identificadorLevel = identificador;
+			setup.saltoColaUNOFraccion = 2;
+			setup.saltoInicialFraccion = 4;
+			setup.signalProbability = 0.5f;
+			setup.testProbability = 0.2f;
+			setup.trialsPorNivel = 100;
+			setup.referencia = 120d;
+			setup.restartEstimulo = true;
+		}
+		if (identificador == LISTAdeNIVELES.TESTA150) {
+			setup.allTestsConfianza=false;
+			setup.confianceProbability = 0.3f;
+			setup.feedback = false;
+			setup.identificadorLevel = identificador;
+			setup.saltoColaUNOFraccion = 2;
+			setup.saltoInicialFraccion = 4;
+			setup.signalProbability = 0.5f;
+			setup.testProbability = 0.2f;
+			setup.trialsPorNivel = 100;
+			setup.referencia = 150d;
+			setup.restartEstimulo = true;
+		}
 		return setup;
 	}
 	
