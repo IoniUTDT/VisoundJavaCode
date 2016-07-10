@@ -21,7 +21,7 @@ public class ResultsScreen extends AbstractGameScreen {
 
 	private static final String TAG = ResultsScreen.class.getName();
 
-	private LevelOLD level;
+	//private LevelOLD level;
 	
 	private SpriteBatch batch;
 	private OrthographicCamera cameraGUI;
@@ -33,7 +33,7 @@ public class ResultsScreen extends AbstractGameScreen {
 		
 	public ResultsScreen(Visound game) {
 		super(game);
-		this.level = level;
+		//this.level = level;
 	}
 
 	@Override
@@ -81,7 +81,7 @@ public class ResultsScreen extends AbstractGameScreen {
 	public void show() {
 		// Crea las cosas que tienen que ver con los graficos.
 		stage = new Stage();
-		Gdx.input.setInputProcessor(stage);
+		game.im.addProcessor(stage);
 
 		table = new Table();
 		table.setFillParent(true);
@@ -113,6 +113,7 @@ public class ResultsScreen extends AbstractGameScreen {
 	@Override
 	public void hide() {
 		stage.dispose();
+		game.im.clear();
 	}
 
 	@Override

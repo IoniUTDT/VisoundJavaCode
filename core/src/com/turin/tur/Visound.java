@@ -4,6 +4,7 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.utils.Array;
 import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.levelsDesign.Level;
@@ -29,6 +30,7 @@ public class Visound extends Game {
 	// public boolean sendingData;
 	Array<LISTAdeNIVELES> identificadoresLvl = new Array<LISTAdeNIVELES>();
 	public InternetNuevo internet = new InternetNuevo();
+	public InputMultiplexer im = new InputMultiplexer();
 	
 	@Override
 	public void create () {
@@ -38,6 +40,7 @@ public class Visound extends Game {
 		
 		// Set Libgdx log level
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
+		Gdx.input.setInputProcessor(im);
 		
 		identificadoresLvl.addAll(LISTAdeNIVELES.Ejemplos, LISTAdeNIVELES.AngulosTutorial, LISTAdeNIVELES.ParalelismoTutorial);
 		

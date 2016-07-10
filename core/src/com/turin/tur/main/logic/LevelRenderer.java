@@ -42,7 +42,7 @@ public class LevelRenderer implements Disposable {
 		batch.setProjectionMatrix(cameraGUI.combined);
 		batch.begin();
 		// this.levelController.levelInterfaz.renderFps(batch,cameraGUI);
-		this.levelController.levelInterfaz.renderTitle(batch, cameraGUI);
+		// this.levelController.levelInterfaz.renderTitle(batch, cameraGUI);
 		batch.end();
 	}
 

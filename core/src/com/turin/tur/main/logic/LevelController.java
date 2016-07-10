@@ -6,8 +6,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-import com.turin.tur.main.diseno.LevelOLD;
-import com.turin.tur.main.diseno.LevelInterfaz;
+// import com.turin.tur.main.diseno.LevelInterfaz;
 import com.turin.tur.main.diseno.RunningSound;
 import com.turin.tur.main.diseno.TouchInfo;
 import com.turin.tur.main.diseno.Trial;
@@ -50,7 +49,7 @@ public class LevelController implements InputProcessor {
 	public CameraHelper cameraHelper;
 
 	// Copia de variables globales
-	public LevelInterfaz levelInterfaz;
+	// public LevelInterfaz levelInterfaz;
 	private Visound game;
 	// private LevelOLD level; //Informacion del nivel cargado
 	public RunningSound runningSound; // Maneja el sonido
@@ -68,9 +67,10 @@ public class LevelController implements InputProcessor {
 	private float timeConfiance;
 		
 	public LevelController(Visound game) {
-	
+		
 		this.estadoLoop = EstadoLoop.Iniciando;
 		this.game = game; // Hereda la info del game (cosa de ventanas y eso)
+		this.game.im.addProcessor(this);
 		//this.level = level; 
 		this.initCamera();
 		//this.game.levelActivo.expActivo.initLevel(this.level);
@@ -79,7 +79,7 @@ public class LevelController implements InputProcessor {
 		
 		// Selecciona el trial que corresponda
 		this.trial = this.game.levelActivo.getNextTrial();
-		this.levelInterfaz = new LevelInterfaz(this.game.levelActivo, this.trial);
+		// this.levelInterfaz = new LevelInterfaz(this.game.levelActivo, this.trial);
 
 		// Indica que el programa esta listo para seleccionar un box
 		this.estadoLoop = EstadoLoop.EsperandoSeeleccionDeBox;
@@ -87,7 +87,6 @@ public class LevelController implements InputProcessor {
 	}
 
 	private void initCamera() {
-		Gdx.input.setInputProcessor(this);
 		camera = new OrthographicCamera(Constants.VIEWPORT_WIDTH,
 				Constants.VIEWPORT_HEIGHT);
 		cameraHelper = new CameraHelper();
@@ -165,6 +164,7 @@ public class LevelController implements InputProcessor {
 	private void goToResults() {
 		runningSound.stop();
 		game.session.user.levelFinished(game.levelActivo.identificador);
+		game.im.clear();
 		game.setScreen(new ResultsScreen(game));
 	}
 	

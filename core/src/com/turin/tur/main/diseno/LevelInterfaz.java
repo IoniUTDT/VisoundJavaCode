@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.turin.tur.main.levelsDesign.Level;
 import com.turin.tur.main.util.Assets;
 
-
+/*
 
 public class LevelInterfaz {
 	
@@ -44,7 +44,7 @@ public class LevelInterfaz {
 		fpsFont.setColor(1, 1, 1, 1); // white
 		
 	}
-	*/
+	
 	
 	public void renderTitle (SpriteBatch batch, OrthographicCamera cameraGUI) {
 		
@@ -58,3 +58,4 @@ public class LevelInterfaz {
 		font.draw(batch, "Trials restantes: " + this.levelActivo.trialsLeft(), cameraGUI.viewportWidth/2, cameraGUI.viewportHeight*9/10, 10, 1, false);
 	}
 }
+*/

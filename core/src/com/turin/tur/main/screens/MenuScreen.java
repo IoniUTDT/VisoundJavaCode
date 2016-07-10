@@ -51,6 +51,7 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 	public void hide() {
 		stage.dispose();
 		shapeRenderer.dispose();
+		this.game.im.clear();
 	}
 
 	@Override
@@ -127,7 +128,8 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 		guiRenderInit();
 		// Crea las cosas que tienen que ver con los graficos.
 		stage = new Stage();
-		Gdx.input.setInputProcessor(stage);
+		this.game.im.addProcessor(stage);
+		this.game.im.addProcessor(this);
 
 		table = new Table();
 		table.setFillParent(true);

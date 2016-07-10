@@ -7,7 +7,6 @@ import com.turin.tur.main.diseno.RunningSound.NEXT;
 import com.turin.tur.main.logic.LevelController;
 import com.turin.tur.main.logic.LevelController.EstadoLoop;
 import com.turin.tur.main.logic.LevelRenderer;
-import com.turin.tur.main.util.LevelAsset;
 
 public class LevelScreen extends AbstractGameScreen  {
 	
