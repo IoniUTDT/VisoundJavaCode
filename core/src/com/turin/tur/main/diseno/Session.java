@@ -7,7 +7,10 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.turin.tur.Visound;
+import com.turin.tur.main.levelsDesign.Level.ELECCION;
 import com.turin.tur.main.levelsDesign.Level.LISTAdeNIVELES;
+import com.turin.tur.main.levelsDesign.Level.LISTAdeRECURSOS;
+import com.turin.tur.main.levelsDesign.Level.TIPOdeNivel;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.InternetNuevo;
@@ -108,7 +111,9 @@ public class Session {
 	}
 	
 	public enum FASEdeEXPERIMENTO {
-		Intro(), Tutorial(), TestInicial(), Entrenamiento1(), TestFinal(), ExperimentoCompleto()
+		Intro(), Tutorial(), TestInicial(), 
+		Entrenamiento1(), Entrenamiento2(), Entrenamiento3(), Entrenamiento4(), 
+		TestFinal(), ExperimentoCompleto()
 		;
 		
 		private FASEdeEXPERIMENTO etapaSiguiente;
@@ -118,12 +123,57 @@ public class Session {
 			Intro.etapaSiguiente = Tutorial;
 			Tutorial.etapaSiguiente = TestInicial;
 			TestInicial.etapaSiguiente = Entrenamiento1;
-			Entrenamiento1.etapaSiguiente = TestFinal;
+			Entrenamiento1.etapaSiguiente = Entrenamiento2;
+			Entrenamiento2.etapaSiguiente = Entrenamiento3;
+			Entrenamiento3.etapaSiguiente = Entrenamiento4;
+			Entrenamiento4.etapaSiguiente = TestFinal;
 			TestFinal.etapaSiguiente = ExperimentoCompleto;
 			ExperimentoCompleto.etapaSiguiente = ExperimentoCompleto;
+			
 			Tutorial.niveles.addAll(LISTAdeNIVELES.Ejemplos, LISTAdeNIVELES.ParalelismoTutorial, LISTAdeNIVELES.AngulosTutorial);
 			TestInicial.niveles.addAll(LISTAdeNIVELES.TESTP30, LISTAdeNIVELES.TESTP60, LISTAdeNIVELES.TESTP120, LISTAdeNIVELES.TESTP150,
 					LISTAdeNIVELES.TESTA30, LISTAdeNIVELES.TESTA60, LISTAdeNIVELES.TESTA120, LISTAdeNIVELES.TESTA150);
+			Entrenamiento1.niveles.addAll(
+					LISTAdeNIVELES.ENTRENAMIENTOA30INICIAL,
+					LISTAdeNIVELES.ENTRENAMIENTOA30MEDIO,
+					LISTAdeNIVELES.ENTRENAMIENTOA30FINAL,
+					LISTAdeNIVELES.ENTRENAMIENTOP30INICIAL,
+					LISTAdeNIVELES.ENTRENAMIENTOP30MEDIO,
+					LISTAdeNIVELES.ENTRENAMIENTOP30FINAL,
+					LISTAdeNIVELES.ENTRENAMIENTOA60INICIAL,
+					LISTAdeNIVELES.ENTRENAMIENTOA60MEDIO,
+					LISTAdeNIVELES.ENTRENAMIENTOA60FINAL,
+					LISTAdeNIVELES.ENTRENAMIENTOP60INICIAL,
+					LISTAdeNIVELES.ENTRENAMIENTOP60MEDIO,
+					LISTAdeNIVELES.ENTRENAMIENTOP60FINAL,
+					LISTAdeNIVELES.ENTRENAMIENTOA120INICIAL,
+					LISTAdeNIVELES.ENTRENAMIENTOA120MEDIO,
+					LISTAdeNIVELES.ENTRENAMIENTOA120FINAL,
+					LISTAdeNIVELES.ENTRENAMIENTOP120INICIAL,
+					LISTAdeNIVELES.ENTRENAMIENTOP120MEDIO,
+					LISTAdeNIVELES.ENTRENAMIENTOP120FINAL,
+					LISTAdeNIVELES.ENTRENAMIENTOA150INICIAL,
+					LISTAdeNIVELES.ENTRENAMIENTOA150MEDIO,
+					LISTAdeNIVELES.ENTRENAMIENTOA150FINAL,
+					LISTAdeNIVELES.ENTRENAMIENTOP150INICIAL,
+					LISTAdeNIVELES.ENTRENAMIENTOP150MEDIO,
+					LISTAdeNIVELES.ENTRENAMIENTOP150FINAL
+					);
+			Entrenamiento2.niveles.addAll(Entrenamiento1.niveles);
+			Entrenamiento3.niveles.addAll(Entrenamiento1.niveles);
+			Entrenamiento4.niveles.addAll(Entrenamiento1.niveles);
+			TestFinal.niveles.addAll(LISTAdeNIVELES.TESTP30, LISTAdeNIVELES.TESTP60, LISTAdeNIVELES.TESTP120, LISTAdeNIVELES.TESTP150,
+					LISTAdeNIVELES.TESTA30, LISTAdeNIVELES.TESTA60, LISTAdeNIVELES.TESTA120, LISTAdeNIVELES.TESTA150);
+		}
+		
+		public Array<LISTAdeNIVELES> listaDeNivelesFiltrados (ELECCION eleccion) {
+			Array<LISTAdeNIVELES> listaNiveles = new Array<LISTAdeNIVELES>();
+			for (LISTAdeNIVELES nivel : niveles) {
+				if ((nivel.eleccion == eleccion) || (nivel.eleccion == ELECCION.TODAS)) {
+					listaNiveles.add(nivel);
+				}
+			}
+			return listaNiveles;
 		}
 		
 		public FASEdeEXPERIMENTO etapaSiguiente() {

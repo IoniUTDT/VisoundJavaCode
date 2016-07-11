@@ -18,28 +18,59 @@ import com.turin.tur.main.util.builder.Builder;
 public abstract class Level {
 
 	public enum LISTAdeNIVELES {
-		AngulosTutorial(LISTAdeRECURSOS.UmbralAngulosTutorial, TIPOdeNivel.Angulos),
-		Ejemplos(LISTAdeRECURSOS.ImagenesEjemplos, TIPOdeNivel.Ejemplos),
-		ParalelismoTutorial(LISTAdeRECURSOS.UmbralParalelismoTutorial, TIPOdeNivel.Paralelismo), 
-		TESTP30(LISTAdeRECURSOS.UmbralParalelismoTransferencia, TIPOdeNivel.Paralelismo),
-		TESTP60(LISTAdeRECURSOS.UmbralParalelismoTransferencia, TIPOdeNivel.Paralelismo),
-		TESTP120(LISTAdeRECURSOS.UmbralParalelismoTransferencia, TIPOdeNivel.Paralelismo),
-		TESTP150(LISTAdeRECURSOS.UmbralParalelismoTransferencia, TIPOdeNivel.Paralelismo),
-		TESTA30(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos),
-		TESTA60(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos),
-		TESTA120(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos),
-		TESTA150(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos),
+		Ejemplos(LISTAdeRECURSOS.ImagenesEjemplos, TIPOdeNivel.Ejemplos, ELECCION.TODAS),
+		AngulosTutorial(LISTAdeRECURSOS.UmbralAngulosTutorial, TIPOdeNivel.Angulos, ELECCION.TODAS),
+		ParalelismoTutorial(LISTAdeRECURSOS.UmbralParalelismoTutorial, TIPOdeNivel.Paralelismo, ELECCION.TODAS), 
+		TESTP30(LISTAdeRECURSOS.UmbralParalelismoTransferencia, TIPOdeNivel.Paralelismo, ELECCION.TODAS),
+		TESTP60(LISTAdeRECURSOS.UmbralParalelismoTransferencia, TIPOdeNivel.Paralelismo, ELECCION.TODAS),
+		TESTP120(LISTAdeRECURSOS.UmbralParalelismoTransferencia, TIPOdeNivel.Paralelismo, ELECCION.TODAS),
+		TESTP150(LISTAdeRECURSOS.UmbralParalelismoTransferencia, TIPOdeNivel.Paralelismo, ELECCION.TODAS),
+		TESTA30(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.TODAS),
+		TESTA60(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.TODAS),
+		TESTA120(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.TODAS),
+		TESTA150(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.TODAS), 
+		ENTRENAMIENTOA30INICIAL(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A30),
+		ENTRENAMIENTOA30MEDIO(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A30),
+		ENTRENAMIENTOA30FINAL(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A30),
+		ENTRENAMIENTOP30INICIAL(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P30),
+		ENTRENAMIENTOP30MEDIO(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P30),
+		ENTRENAMIENTOP30FINAL(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P30),
+		ENTRENAMIENTOA60INICIAL(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A60),
+		ENTRENAMIENTOA60MEDIO(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A60),
+		ENTRENAMIENTOA60FINAL(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A60),
+		ENTRENAMIENTOP60INICIAL(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P60),
+		ENTRENAMIENTOP60MEDIO(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P60),
+		ENTRENAMIENTOP60FINAL(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P60),
+		ENTRENAMIENTOA120INICIAL(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A120),
+		ENTRENAMIENTOA120MEDIO(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A120),
+		ENTRENAMIENTOA120FINAL(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A120),
+		ENTRENAMIENTOP120INICIAL(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P120),
+		ENTRENAMIENTOP120MEDIO(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P120),
+		ENTRENAMIENTOP120FINAL(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P120),
+		ENTRENAMIENTOA150INICIAL(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A150),
+		ENTRENAMIENTOA150MEDIO(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A150),
+		ENTRENAMIENTOA150FINAL(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A150),
+		ENTRENAMIENTOP150INICIAL(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P150),
+		ENTRENAMIENTOP150MEDIO(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P150),
+		ENTRENAMIENTOP150FINAL(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P150),
 		;
+		
 		public static final int levelVersion = Builder.levelVersionFinal;
 		public LISTAdeRECURSOS listaDeRecursos;
 		public TIPOdeNivel tipoDeNivel;
+		public ELECCION eleccion;
 
-		private LISTAdeNIVELES(LISTAdeRECURSOS listaDeRecursos, TIPOdeNivel tipoDeNivel) {
+		private LISTAdeNIVELES(LISTAdeRECURSOS listaDeRecursos, TIPOdeNivel tipoDeNivel, ELECCION eleccion) {
 			this.listaDeRecursos = listaDeRecursos;
 			this.tipoDeNivel = tipoDeNivel;
+			this.eleccion = eleccion;
 		}
 	}
 
+	public enum ELECCION {
+		TODAS, A30, A60, A120, A150, P30, P60, P120, P150
+	}
+	
 	public enum LISTAdeRECURSOS {
 		ImagenesEjemplos (TIPOSdeRECURSOS.ImagenesTutorial),
 		UmbralAngulosTransferencia (TIPOSdeRECURSOS.Angulos),

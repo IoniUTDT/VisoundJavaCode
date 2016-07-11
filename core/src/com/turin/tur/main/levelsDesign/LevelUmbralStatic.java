@@ -502,143 +502,194 @@ public class LevelUmbralStatic extends LevelUmbral {
 		return null;
 	}
 
-	
 	private static SetupLevel makeSetupLevel (LISTAdeNIVELES identificador) {
-		SetupLevel setup = new SetupLevel();
-		
 		if (identificador == LISTAdeNIVELES.AngulosTutorial) {
-			setup.allTestsConfianza=true;
-			setup.confianceProbability = 0.3f;
-			setup.feedback = true;
-			setup.identificadorLevel = identificador;
-			setup.saltoColaUNOFraccion = 0;
-			setup.saltoInicialFraccion = 4;
-			setup.signalProbability = 0.5f;
-			setup.testProbability = 0.2f;
-			setup.trialsPorNivel = 10;
-			setup.referencia = 180d;
-			setup.restartEstimulo = true;
+			return makeSetupLevelTutorial(identificador,180d);
 		}
 		if (identificador == LISTAdeNIVELES.ParalelismoTutorial) {
-			setup.allTestsConfianza=true;
-			setup.confianceProbability = 0.3f;
-			setup.feedback = true;
-			setup.identificadorLevel = identificador;
-			setup.saltoColaUNOFraccion = 0;
-			setup.saltoInicialFraccion = 4;
-			setup.signalProbability = 0.5f;
-			setup.testProbability = 0.2f;
-			setup.trialsPorNivel = 10;
-			setup.referencia = 0d;
-			setup.restartEstimulo = true;
+			return makeSetupLevelTutorial(identificador,0d);
 		}
 		if (identificador == LISTAdeNIVELES.TESTP30) {
-			setup.allTestsConfianza=false;
-			setup.confianceProbability = 0.3f;
-			setup.feedback = false;
-			setup.identificadorLevel = identificador;
-			setup.saltoColaUNOFraccion = 2;
-			setup.saltoInicialFraccion = 4;
-			setup.signalProbability = 0.5f;
-			setup.testProbability = 0.2f;
-			setup.trialsPorNivel = 100;
-			setup.referencia = 30d;
-			setup.restartEstimulo = true;
+			return makeSetupLevelTEST(identificador, 30d);
 		}
 		if (identificador == LISTAdeNIVELES.TESTP60) {
-			setup.allTestsConfianza=false;
-			setup.confianceProbability = 0.3f;
-			setup.feedback = false;
-			setup.identificadorLevel = identificador;
-			setup.saltoColaUNOFraccion = 2;
-			setup.saltoInicialFraccion = 4;
-			setup.signalProbability = 0.5f;
-			setup.testProbability = 0.2f;
-			setup.trialsPorNivel = 100;
-			setup.referencia = 60d;
-			setup.restartEstimulo = true;
+			return makeSetupLevelTEST(identificador, 60d);
 		}
 		if (identificador == LISTAdeNIVELES.TESTP120) {
-			setup.allTestsConfianza=false;
-			setup.confianceProbability = 0.3f;
-			setup.feedback = false;
-			setup.identificadorLevel = identificador;
-			setup.saltoColaUNOFraccion = 2;
-			setup.saltoInicialFraccion = 4;
-			setup.signalProbability = 0.5f;
-			setup.testProbability = 0.2f;
-			setup.trialsPorNivel = 100;
-			setup.referencia = 120d;
-			setup.restartEstimulo = true;
+			return makeSetupLevelTEST(identificador, 120d);
 		}
 		if (identificador == LISTAdeNIVELES.TESTP150) {
-			setup.allTestsConfianza=false;
-			setup.confianceProbability = 0.3f;
-			setup.feedback = false;
-			setup.identificadorLevel = identificador;
-			setup.saltoColaUNOFraccion = 2;
-			setup.saltoInicialFraccion = 4;
-			setup.signalProbability = 0.5f;
-			setup.testProbability = 0.2f;
-			setup.trialsPorNivel = 100;
-			setup.referencia = 150d;
-			setup.restartEstimulo = true;
+			return makeSetupLevelTEST(identificador, 150d);
 		}
 		if (identificador == LISTAdeNIVELES.TESTA30) {
-			setup.allTestsConfianza=false;
-			setup.confianceProbability = 0.3f;
-			setup.feedback = false;
-			setup.identificadorLevel = identificador;
-			setup.saltoColaUNOFraccion = 2;
-			setup.saltoInicialFraccion = 4;
-			setup.signalProbability = 0.5f;
-			setup.testProbability = 0.2f;
-			setup.trialsPorNivel = 100;
-			setup.referencia = 30d;
-			setup.restartEstimulo = true;
+			return makeSetupLevelTEST(identificador, 30d);
 		}
 		if (identificador == LISTAdeNIVELES.TESTA60) {
-			setup.allTestsConfianza=false;
-			setup.confianceProbability = 0.3f;
-			setup.feedback = false;
-			setup.identificadorLevel = identificador;
-			setup.saltoColaUNOFraccion = 2;
-			setup.saltoInicialFraccion = 4;
-			setup.signalProbability = 0.5f;
-			setup.testProbability = 0.2f;
-			setup.trialsPorNivel = 100;
-			setup.referencia = 60d;
-			setup.restartEstimulo = true;
+			return makeSetupLevelTEST(identificador, 60d);
 		}
 		if (identificador == LISTAdeNIVELES.TESTA120) {
-			setup.allTestsConfianza=false;
-			setup.confianceProbability = 0.3f;
-			setup.feedback = false;
-			setup.identificadorLevel = identificador;
-			setup.saltoColaUNOFraccion = 2;
-			setup.saltoInicialFraccion = 4;
-			setup.signalProbability = 0.5f;
-			setup.testProbability = 0.2f;
-			setup.trialsPorNivel = 100;
-			setup.referencia = 120d;
-			setup.restartEstimulo = true;
+			return makeSetupLevelTEST(identificador, 120d);
 		}
 		if (identificador == LISTAdeNIVELES.TESTA150) {
-			setup.allTestsConfianza=false;
-			setup.confianceProbability = 0.3f;
-			setup.feedback = false;
-			setup.identificadorLevel = identificador;
-			setup.saltoColaUNOFraccion = 2;
-			setup.saltoInicialFraccion = 4;
-			setup.signalProbability = 0.5f;
-			setup.testProbability = 0.2f;
-			setup.trialsPorNivel = 100;
-			setup.referencia = 150d;
-			setup.restartEstimulo = true;
+			return makeSetupLevelTEST(identificador, 150d);
 		}
+		if (identificador == LISTAdeNIVELES.ENTRENAMIENTOA30INICIAL) {
+			return makeSetupLevelENTRENAMIENTOINICIAL(identificador, 30d);
+		}
+		if (identificador == LISTAdeNIVELES.ENTRENAMIENTOP30INICIAL) {
+			return makeSetupLevelENTRENAMIENTOINICIAL(identificador, 30d);
+		}
+		if (identificador == LISTAdeNIVELES.ENTRENAMIENTOA60INICIAL) {
+			return makeSetupLevelENTRENAMIENTOINICIAL(identificador, 60d);
+		}
+		if (identificador == LISTAdeNIVELES.ENTRENAMIENTOP60INICIAL) {
+			return makeSetupLevelENTRENAMIENTOINICIAL(identificador, 60d);
+		}
+		if (identificador == LISTAdeNIVELES.ENTRENAMIENTOA120INICIAL) {
+			return makeSetupLevelENTRENAMIENTOINICIAL(identificador, 120d);
+		}
+		if (identificador == LISTAdeNIVELES.ENTRENAMIENTOP120INICIAL) {
+			return makeSetupLevelENTRENAMIENTOINICIAL(identificador, 120d);
+		}
+		if (identificador == LISTAdeNIVELES.ENTRENAMIENTOA150INICIAL) {
+			return makeSetupLevelENTRENAMIENTOINICIAL(identificador, 150d);
+		}
+		if (identificador == LISTAdeNIVELES.ENTRENAMIENTOP150INICIAL) {
+			return makeSetupLevelENTRENAMIENTOINICIAL(identificador, 150d);
+		}
+		
+		if (identificador == LISTAdeNIVELES.ENTRENAMIENTOA30MEDIO) {
+			return makeSetupLevelENTRENAMIENTOMEDIO(identificador, 30d);
+		}
+		if (identificador == LISTAdeNIVELES.ENTRENAMIENTOP30MEDIO) {
+			return makeSetupLevelENTRENAMIENTOMEDIO(identificador, 30d);
+		}
+		if (identificador == LISTAdeNIVELES.ENTRENAMIENTOA60MEDIO) {
+			return makeSetupLevelENTRENAMIENTOMEDIO(identificador, 60d);
+		}
+		if (identificador == LISTAdeNIVELES.ENTRENAMIENTOP60MEDIO) {
+			return makeSetupLevelENTRENAMIENTOMEDIO(identificador, 60d);
+		}
+		if (identificador == LISTAdeNIVELES.ENTRENAMIENTOA120MEDIO) {
+			return makeSetupLevelENTRENAMIENTOMEDIO(identificador, 120d);
+		}
+		if (identificador == LISTAdeNIVELES.ENTRENAMIENTOP120MEDIO) {
+			return makeSetupLevelENTRENAMIENTOMEDIO(identificador, 120d);
+		}
+		if (identificador == LISTAdeNIVELES.ENTRENAMIENTOA150MEDIO) {
+			return makeSetupLevelENTRENAMIENTOMEDIO(identificador, 150d);
+		}
+		if (identificador == LISTAdeNIVELES.ENTRENAMIENTOP150MEDIO) {
+			return makeSetupLevelENTRENAMIENTOMEDIO(identificador, 150d);
+		}
+
+		if (identificador == LISTAdeNIVELES.ENTRENAMIENTOA30FINAL) {
+			return makeSetupLevelENTRENAMIENTOFINAL(identificador, 30d);
+		}
+		if (identificador == LISTAdeNIVELES.ENTRENAMIENTOP30FINAL) {
+			return makeSetupLevelENTRENAMIENTOFINAL(identificador, 30d);
+		}
+		if (identificador == LISTAdeNIVELES.ENTRENAMIENTOA60FINAL) {
+			return makeSetupLevelENTRENAMIENTOFINAL(identificador, 60d);
+		}
+		if (identificador == LISTAdeNIVELES.ENTRENAMIENTOP60FINAL) {
+			return makeSetupLevelENTRENAMIENTOFINAL(identificador, 60d);
+		}
+		if (identificador == LISTAdeNIVELES.ENTRENAMIENTOA120FINAL) {
+			return makeSetupLevelENTRENAMIENTOFINAL(identificador, 120d);
+		}
+		if (identificador == LISTAdeNIVELES.ENTRENAMIENTOP120FINAL) {
+			return makeSetupLevelENTRENAMIENTOFINAL(identificador, 120d);
+		}
+		if (identificador == LISTAdeNIVELES.ENTRENAMIENTOA150FINAL) {
+			return makeSetupLevelENTRENAMIENTOFINAL(identificador, 150d);
+		}
+		if (identificador == LISTAdeNIVELES.ENTRENAMIENTOP150FINAL) {
+			return makeSetupLevelENTRENAMIENTOFINAL(identificador, 150d);
+		}
+		return null;
+	}
+	
+	private static SetupLevel makeSetupLevelENTRENAMIENTOFINAL(LISTAdeNIVELES identificador, double referencia) {
+		SetupLevel setup = new SetupLevel();
+		setup.allTestsConfianza=true;
+		setup.confianceProbability = 0.3f;
+		setup.feedback = true;
+		setup.identificadorLevel = identificador;
+		setup.saltoColaUNOFraccion = 2;
+		setup.saltoInicialFraccion = 4;
+		setup.signalProbability = 0.5f;
+		setup.testProbability = 0.1f;
+		setup.trialsPorNivel = 100;
+		setup.referencia = referencia;
+		setup.restartEstimulo = false;
 		return setup;
 	}
 	
+	private static SetupLevel makeSetupLevelENTRENAMIENTOMEDIO(LISTAdeNIVELES identificador, double referencia) {
+		SetupLevel setup = new SetupLevel();
+		setup.allTestsConfianza=true;
+		setup.confianceProbability = 0.4f;
+		setup.feedback = false;
+		setup.identificadorLevel = identificador;
+		setup.saltoColaUNOFraccion = 2;
+		setup.saltoInicialFraccion = 4;
+		setup.signalProbability = 0.5f;
+		setup.testProbability = 0.1f;
+		setup.trialsPorNivel = 50;
+		setup.referencia = referencia;
+		setup.restartEstimulo = false;
+		return setup;
+	}
+	
+	private static SetupLevel makeSetupLevelENTRENAMIENTOINICIAL(LISTAdeNIVELES identificador, double referencia) {
+		SetupLevel setup = new SetupLevel();
+		setup.allTestsConfianza=true;
+		setup.confianceProbability = 0.3f;
+		setup.feedback = true;
+		setup.identificadorLevel = identificador;
+		setup.saltoColaUNOFraccion = 2;
+		setup.saltoInicialFraccion = 4;
+		setup.signalProbability = 0.5f;
+		setup.testProbability = 0.1f;
+		setup.trialsPorNivel = 100;
+		setup.referencia = referencia;
+		setup.restartEstimulo = true;
+		return setup;
+	}
+
+	private static SetupLevel makeSetupLevelTutorial(LISTAdeNIVELES identificador, double referencia) {
+		SetupLevel setup = new SetupLevel();
+		setup.allTestsConfianza=true;
+		setup.confianceProbability = 0.3f;
+		setup.feedback = true;
+		setup.identificadorLevel = identificador;
+		setup.saltoColaUNOFraccion = 0;
+		setup.saltoInicialFraccion = 4;
+		setup.signalProbability = 0.5f;
+		setup.testProbability = 0.2f;
+		setup.trialsPorNivel = 10;
+		setup.referencia = referencia;
+		setup.restartEstimulo = true;
+		return setup;
+	}
+
+	private static SetupLevel makeSetupLevelTEST(LISTAdeNIVELES identificador, double referencia) {
+		SetupLevel setup = new SetupLevel();
+		setup.allTestsConfianza=false;
+		setup.confianceProbability = 0.3f;
+		setup.feedback = false;
+		setup.identificadorLevel = identificador;
+		setup.saltoColaUNOFraccion = 2;
+		setup.saltoInicialFraccion = 4;
+		setup.signalProbability = 0.5f;
+		setup.testProbability = 0.2f;
+		setup.trialsPorNivel = 100;
+		setup.referencia = referencia;
+		setup.restartEstimulo = true;
+		return setup;
+	}
+
 	private static SetupResource makeSetupResources(LISTAdeRECURSOS identificador) {
 		SetupResource setup = new SetupResource();
 		
