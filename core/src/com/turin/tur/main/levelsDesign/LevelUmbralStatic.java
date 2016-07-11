@@ -123,7 +123,7 @@ public class LevelUmbralStatic extends LevelUmbral {
 
 			// Extraemos los trials y los recursos a la carpeta que corresponda
 			PCBuilder.extract(jsonTrials, identificador);
-			PCBuilder.buildJsonsTrials(jsonTrials, identificador);
+			PCBuilder.writeTrialsJson(jsonTrials, identificador);
 			
 			// Guardamos la dinamica
 			Dinamica.saveDinamica(identificador, dinamica);
@@ -330,7 +330,7 @@ public class LevelUmbralStatic extends LevelUmbral {
 				
 			// Extraemos los trials y los recursos a la carpeta que corresponda
 			PCBuilder.extract(jsonTrials, identificador);
-			PCBuilder.buildJsonsTrials(jsonTrials, identificador);
+			PCBuilder.writeTrialsJson(jsonTrials, identificador);
 			
 			// Guardamos la dinamica
 			Dinamica.saveDinamica(identificador, dinamica);
@@ -693,7 +693,7 @@ public class LevelUmbralStatic extends LevelUmbral {
 	private static SetupResource makeSetupResources(LISTAdeRECURSOS identificador) {
 		SetupResource setup = new SetupResource();
 		
-		if (identificador == LISTAdeRECURSOS.UmbralAngulosTutorial) {
+		if (identificador == LISTAdeRECURSOS.RecursosAngulosTutorial) {
 			setup.angulosReferencia.add(180d);
 			setup.fluctuacionesLocalesReferenciaSeries.add(0f);
 			setup.fluctuacionesLocalesReferenciaEstimuloCero.addAll(0d,2.5d,-2.5d,5d,-5d,7.5d,-7.5d,10d,-10d);
@@ -701,7 +701,7 @@ public class LevelUmbralStatic extends LevelUmbral {
 			setup.desvMax = 80;
 			setup.desvMin = 1;
 		}
-		if (identificador == LISTAdeRECURSOS.UmbralAngulosTransferencia) {
+		if (identificador == LISTAdeRECURSOS.RecursosAngulosTransferencia) {
 			setup.angulosReferencia.addAll(30d,60d,120d,150d);
 			setup.fluctuacionesLocalesReferenciaSeries.addAll(0f,5f,-5f);
 			setup.fluctuacionesLocalesReferenciaEstimuloCero.addAll(0d,2.5d,-2.5d,5d,-5d,7.5d,-7.5d,10d,-10d);
@@ -709,7 +709,7 @@ public class LevelUmbralStatic extends LevelUmbral {
 			setup.desvMax = 80;
 			setup.desvMin = 1;
 		}
-		if (identificador == LISTAdeRECURSOS.UmbralParalelismoTutorial) {
+		if (identificador == LISTAdeRECURSOS.RecursosParalelismoTutorial) {
 			setup.angulosReferencia.addAll(0d);
 			setup.fluctuacionesLocalesReferenciaSeries.addAll(0f);
 			setup.fluctuacionesLocalesReferenciaEstimuloCero.addAll(0d,2.5d,-2.5d,5d,-5d,7.5d,-7.5d,10d,-10d);
@@ -717,7 +717,7 @@ public class LevelUmbralStatic extends LevelUmbral {
 			setup.desvMax = 50;
 			setup.desvMin = 0.1;
 		}
-		if (identificador == LISTAdeRECURSOS.UmbralParalelismoTransferencia) {
+		if (identificador == LISTAdeRECURSOS.RecursosParalelismoTransferencia) {
 			setup.angulosReferencia.addAll(30d,60d,120d,150d);
 			setup.fluctuacionesLocalesReferenciaSeries.addAll(0f,5f,-5f);
 			setup.fluctuacionesLocalesReferenciaEstimuloCero.addAll(0d,2.5d,-2.5d,5d,-5d,7.5d,-7.5d,10d,-10d);

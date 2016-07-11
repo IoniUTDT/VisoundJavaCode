@@ -98,7 +98,7 @@ public class LevelEjemplos extends Level{
 		
 		// Extraemos los trials y los recursos a la carpeta que corresponda
 		PCBuilder.extract(jsonTrials, identificador);
-		PCBuilder.buildJsonsTrials(jsonTrials, identificador);
+		PCBuilder.writeTrialsJson(jsonTrials, identificador);
 		
 		// Guardamos la dinamica
 		saveDinamica(level.dinamica, identificador);
@@ -532,7 +532,7 @@ public class LevelEjemplos extends Level{
 	}
 
 	private static void saveDinamica (DinamicaEjemplos dinamica, LISTAdeNIVELES identificador) {
-		String path = Level.folderResourcesBuild(identificador) + Level.dinamicaPathName;
+		String path = Level.folderResourcesLevelBuild(identificador) + Level.dinamicaPathName;
 		Json json = new Json();
 		json.setUsePrototypes(false);
 		FileHelper.writeLocalFile(path, json.toJson(dinamica));
@@ -553,10 +553,10 @@ public class LevelEjemplos extends Level{
 		// Cargamos la lista de objetos experimentales
 		Array<ExperimentalObject> elementos = new Array<ExperimentalObject>();
 		for (int idElemento : jsonTrial.elementosId) {
-			ExperimentalObject elemento = new ExperimentalObject(idElemento, levelAssets, Level.folderResourcesLocal(identificador));
+			ExperimentalObject elemento = new ExperimentalObject(idElemento, levelAssets, Level.folderResourcesLocal(identificador.listaDeRecursos));
 			elementos.add(elemento);
 		}
-		ExperimentalObject estimulo = new ExperimentalObject(jsonTrial.rtaCorrectaId, levelAssets, Level.folderResourcesLocal(identificador));
+		ExperimentalObject estimulo = new ExperimentalObject(jsonTrial.rtaCorrectaId, levelAssets, Level.folderResourcesLocal(identificador.listaDeRecursos));
 		// Con la info del json del trial tenemos que crear un trial
 		return new Trial(elementos, jsonTrial, estimulo);			
 	}
@@ -572,7 +572,7 @@ public class LevelEjemplos extends Level{
 	}
 	
 	public void loadDinamica() {
-		String path = Level.folderResourcesLocal(this.identificador) + Level.dinamicaPathName;
+		String path = Level.folderResourcesLevelLocal(this.identificador) + Level.dinamicaPathName;
 		String savedData = FileHelper.readInternalFile(path);
 		Json json = new Json();
 		json.setUsePrototypes(false);

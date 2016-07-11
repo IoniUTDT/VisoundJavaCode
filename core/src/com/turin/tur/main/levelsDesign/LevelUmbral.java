@@ -41,11 +41,11 @@ public class LevelUmbral extends Level {
 		}
 		
 		private static String pathLevelInfoLocal (LISTAdeNIVELES identificador) {
-			return Level.folderResourcesLocal(identificador) + identificador.toString() + pathNameExt;
+			return Level.folderResourcesLevelLocal(identificador) + identificador.toString() + pathNameExt;
 		}
 		
 		private static String pathLevelInfoBuild (LISTAdeNIVELES identificador) {
-			return Level.folderResourcesBuild(identificador) + identificador.toString() + pathNameExt;
+			return Level.folderResourcesLevelBuild(identificador) + identificador.toString() + pathNameExt;
 		}
 		
 		public static Dinamica loadDinamica (LISTAdeNIVELES identificador) {
@@ -107,11 +107,11 @@ public class LevelUmbral extends Level {
 		}
 		
 		private static String pathLevelInfoLocal (LISTAdeNIVELES identificador) {
-			return Level.folderResourcesLocal(identificador) + identificador.toString() + pathNameExt;
+			return Level.folderResourcesLevelLocal(identificador) + identificador.toString() + pathNameExt;
 		}
 		
 		private static String pathLevelInfoBuild (LISTAdeNIVELES identificador) {
-			return Level.folderResourcesBuild(identificador) + identificador.toString() + pathNameExt;
+			return Level.folderResourcesLevelBuild(identificador) + identificador.toString() + pathNameExt;
 		}
 		
 		public static SetupLevel loadInfoLevel (LISTAdeNIVELES identificador) {
@@ -190,14 +190,14 @@ public class LevelUmbral extends Level {
 			dinamica.trialType = TrialType.NoEstimulo;
 			dinamica.estimuloActivo = dinamica.estimulosCeros.random();
 		}
-		JsonTrial jsonTrial = Trial.loadJsonTrial(Level.folderResourcesLocal(identificador), dinamica.estimuloActivo.idTrial);
+		JsonTrial jsonTrial = Trial.loadJsonTrial(Level.folderResourcesLevelLocal(identificador), dinamica.estimuloActivo.idTrial);
 		
 		Array<ExperimentalObject> elementos = new Array<ExperimentalObject>();
 		for (int idElemento : jsonTrial.elementosId) {
-			ExperimentalObject elemento = new ExperimentalObject(idElemento, levelAssets, Level.folderResourcesLocal(identificador));
+			ExperimentalObject elemento = new ExperimentalObject(idElemento, levelAssets, Level.folderResourcesLocal(identificador.listaDeRecursos));
 			elementos.add(elemento);
 		}
-		ExperimentalObject estimulo = new ExperimentalObject(jsonTrial.rtaCorrectaId, levelAssets, Level.folderResourcesLocal(identificador));
+		ExperimentalObject estimulo = new ExperimentalObject(jsonTrial.rtaCorrectaId, levelAssets, Level.folderResourcesLocal(identificador.listaDeRecursos));
 		// Con la info del json del trial tenemos que crear un trial
 		return new Trial(elementos, jsonTrial, estimulo);
 	}

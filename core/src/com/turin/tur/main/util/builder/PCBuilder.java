@@ -26,6 +26,8 @@ import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.levelsDesign.Level;
+import com.turin.tur.main.levelsDesign.Level.LISTAdeNIVELES;
+import com.turin.tur.main.levelsDesign.Level.LISTAdeRECURSOS;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
 import com.turin.tur.main.util.Constants.Diseno.TIPOdeTRIAL;
 import com.turin.tur.main.util.Constants.ResourcesCategorias;
@@ -55,10 +57,10 @@ public class PCBuilder {
 	 * @param file
 	 * @param identificadorNivel
 	 */ 
-	static void moveMeta(File file, Level.LISTAdeNIVELES identificadorNivel){
+	static void moveMeta(File file, LISTAdeRECURSOS identificadorRecursos){
 		file = new File(ResourcesCategorias.Paths.ResourcesBuilder + file.getName().substring(0, file.getName().lastIndexOf(".")) + ".meta");
 		Path FROM = Paths.get(file.getAbsolutePath());
-		File out = new File(ResourcesCategorias.Paths.finalInternalPath + "/" + identificadorNivel.toString() + "/" + file.getName());
+		File out = new File(ResourcesCategorias.Paths.finalInternalPath + "/" + identificadorRecursos.toString() + "/" + file.getName());
 		Path TO = Paths.get(out.getAbsolutePath());
 		//overwrite existing file, if exists
 		CopyOption[] options = new CopyOption[] {
@@ -135,15 +137,17 @@ public class PCBuilder {
 		return jsonTrial;
 	}
 
+	
 	public static void writeTrialsJson(Array<JsonTrial> jsonTrials, Level.LISTAdeNIVELES identificador) {
 		Json json = new Json();
 		json.setUsePrototypes(false);
 		for (JsonTrial trial : jsonTrials) {
-			Trial.saveJsonTrial(Level.folderResourcesBuild(identificador), trial);
+			Trial.saveJsonTrial(Level.folderResourcesLevelBuild(identificador), trial);
 			// FileHelper.writeLocalFile(Level.folderResources(identificador) + trial.Id + ".trial", json.toJson(trial));
 		}
 	}
 
+/*
 	public static void CreateTrial(JsonTrial jsonTrial, String path) {
 		Json json = new Json();
 		json.setUsePrototypes(false);
@@ -158,7 +162,7 @@ public class PCBuilder {
 		}
 		writeTrialsJson(jsonTrials, identificador);
 	}
-
+*/
 	public static void extract(Array<JsonTrial> listaDeTrials, Level.LISTAdeNIVELES identificadorNivel) {
 		Gdx.app.debug(Builder.TAG,"Procesando nivel "+identificadorNivel.toString());
 		Array<Integer> listado = new Array<Integer>(); // Listado de ids de recursos utilizados
@@ -184,7 +188,11 @@ public class PCBuilder {
 	static void export(Array<Integer> ids, Level.LISTAdeNIVELES identificadorNivel){
 		// Gdx.app.debug(Builder.TAG, "Exportando los recursos correspondientes a " + identificadorNivel.toString());
 		// We clean the destiny folder
-		File folder = new File(Level.folderResourcesBuild(identificadorNivel)); 
+		File folder = new File(Level.folderResourcesBuild(identificadorNivel.listaDeRecursos));
+		if (!folder.exists()) {
+			folder.mkdir();
+		}
+		/*
 		if (folder.exists()) {
 			// clean the folder from old stuff
 			try {
@@ -196,6 +204,8 @@ public class PCBuilder {
 			// create folder
 			folder.mkdir();
 		}
+		*/
+		
 		// clean the temp folder
 		File tempDirectory = new File(ResourcesCategorias.Paths.processingTempFolder);
 		try {
@@ -203,14 +213,15 @@ public class PCBuilder {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} 
+		
 		// Then we convert all files to PNG into a temp folder and copy the metadata to assets folder
 		for (int id : ids){
 			File resource = new File (ResourcesCategorias.Paths.ResourcesBuilder+id+".svg");
 			convertirSVGtoPNG(resource);
 			if (id > ResourcesCategorias.NumeroDeRecursosReservados) { // Means that is not a category with no audio
-				SVGtoMp3 converter = new SVGtoMp3(resource, ResourcesCategorias.Paths.finalInternalPath+identificadorNivel+"/");
+				SVGtoMp3 converter = new SVGtoMp3(resource, Level.folderResourcesBuild(identificadorNivel.listaDeRecursos));
 			}
-			moveMeta(resource,identificadorNivel);
+			moveMeta(resource,identificadorNivel.listaDeRecursos);
 		}
 		
 		// Create atlas
@@ -219,7 +230,7 @@ public class PCBuilder {
 		settings.maxHeight = 1024;
 		settings.duplicatePadding = false;
 		settings.debug = false;
-		TexturePacker.process(settings, ResourcesCategorias.Paths.processingTempFolder, Level.folderResourcesBuild(identificadorNivel), LevelAsset.atlasName); 
+		TexturePacker.process(settings, ResourcesCategorias.Paths.processingTempFolder, Level.folderResourcesLevelBuild(identificadorNivel), LevelAsset.atlasName); 
 		Gdx.app.debug(Builder.TAG, "Recursos correctamente exportados: " + identificadorNivel.toString()+".");
 	}
 

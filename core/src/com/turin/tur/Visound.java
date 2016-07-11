@@ -46,7 +46,7 @@ public class Visound extends Game {
 		
 		if ((mododesarrollo) & (Gdx.app.getType() == ApplicationType.Desktop)) {
 			Array<LISTAdeRECURSOS> identificadoresRes = new Array<LISTAdeRECURSOS>();
-			identificadoresRes.addAll(LISTAdeRECURSOS.ImagenesEjemplos,LISTAdeRECURSOS.UmbralAngulosTutorial, LISTAdeRECURSOS.UmbralParalelismoTutorial, LISTAdeRECURSOS.UmbralAngulosTransferencia, LISTAdeRECURSOS.UmbralParalelismoTransferencia);
+			identificadoresRes.addAll(LISTAdeRECURSOS.ImagenesEjemplos,LISTAdeRECURSOS.RecursosAngulosTutorial, LISTAdeRECURSOS.RecursosParalelismoTutorial, LISTAdeRECURSOS.RecursosAngulosTransferencia, LISTAdeRECURSOS.RecursosParalelismoTransferencia);
 			Builder.buildResources(identificadoresRes);
 			Builder.buildLevels(LISTAdeNIVELES.values());
 		}

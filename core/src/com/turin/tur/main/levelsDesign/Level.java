@@ -19,40 +19,40 @@ public abstract class Level {
 
 	public enum LISTAdeNIVELES {
 		Ejemplos(LISTAdeRECURSOS.ImagenesEjemplos, TIPOdeNivel.Ejemplos, ELECCION.TODAS),
-		AngulosTutorial(LISTAdeRECURSOS.UmbralAngulosTutorial, TIPOdeNivel.Angulos, ELECCION.TODAS),
-		ParalelismoTutorial(LISTAdeRECURSOS.UmbralParalelismoTutorial, TIPOdeNivel.Paralelismo, ELECCION.TODAS), 
-		TESTP30(LISTAdeRECURSOS.UmbralParalelismoTransferencia, TIPOdeNivel.Paralelismo, ELECCION.TODAS),
-		TESTP60(LISTAdeRECURSOS.UmbralParalelismoTransferencia, TIPOdeNivel.Paralelismo, ELECCION.TODAS),
-		TESTP120(LISTAdeRECURSOS.UmbralParalelismoTransferencia, TIPOdeNivel.Paralelismo, ELECCION.TODAS),
-		TESTP150(LISTAdeRECURSOS.UmbralParalelismoTransferencia, TIPOdeNivel.Paralelismo, ELECCION.TODAS),
-		TESTA30(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.TODAS),
-		TESTA60(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.TODAS),
-		TESTA120(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.TODAS),
-		TESTA150(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.TODAS), 
-		ENTRENAMIENTOA30INICIAL(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A30),
-		ENTRENAMIENTOA30MEDIO(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A30),
-		ENTRENAMIENTOA30FINAL(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A30),
-		ENTRENAMIENTOP30INICIAL(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P30),
-		ENTRENAMIENTOP30MEDIO(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P30),
-		ENTRENAMIENTOP30FINAL(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P30),
-		ENTRENAMIENTOA60INICIAL(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A60),
-		ENTRENAMIENTOA60MEDIO(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A60),
-		ENTRENAMIENTOA60FINAL(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A60),
-		ENTRENAMIENTOP60INICIAL(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P60),
-		ENTRENAMIENTOP60MEDIO(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P60),
-		ENTRENAMIENTOP60FINAL(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P60),
-		ENTRENAMIENTOA120INICIAL(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A120),
-		ENTRENAMIENTOA120MEDIO(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A120),
-		ENTRENAMIENTOA120FINAL(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A120),
-		ENTRENAMIENTOP120INICIAL(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P120),
-		ENTRENAMIENTOP120MEDIO(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P120),
-		ENTRENAMIENTOP120FINAL(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P120),
-		ENTRENAMIENTOA150INICIAL(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A150),
-		ENTRENAMIENTOA150MEDIO(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A150),
-		ENTRENAMIENTOA150FINAL(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A150),
-		ENTRENAMIENTOP150INICIAL(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P150),
-		ENTRENAMIENTOP150MEDIO(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P150),
-		ENTRENAMIENTOP150FINAL(LISTAdeRECURSOS.UmbralAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P150),
+		AngulosTutorial(LISTAdeRECURSOS.RecursosAngulosTutorial, TIPOdeNivel.Angulos, ELECCION.TODAS),
+		ParalelismoTutorial(LISTAdeRECURSOS.RecursosParalelismoTutorial, TIPOdeNivel.Paralelismo, ELECCION.TODAS), 
+		TESTP30(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, ELECCION.TODAS),
+		TESTP60(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, ELECCION.TODAS),
+		TESTP120(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, ELECCION.TODAS),
+		TESTP150(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, ELECCION.TODAS),
+		TESTA30(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.TODAS),
+		TESTA60(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.TODAS),
+		TESTA120(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.TODAS),
+		TESTA150(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.TODAS), 
+		ENTRENAMIENTOA30INICIAL(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A30),
+		ENTRENAMIENTOA30MEDIO(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A30),
+		ENTRENAMIENTOA30FINAL(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A30),
+		ENTRENAMIENTOP30INICIAL(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P30),
+		ENTRENAMIENTOP30MEDIO(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P30),
+		ENTRENAMIENTOP30FINAL(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P30),
+		ENTRENAMIENTOA60INICIAL(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A60),
+		ENTRENAMIENTOA60MEDIO(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A60),
+		ENTRENAMIENTOA60FINAL(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A60),
+		ENTRENAMIENTOP60INICIAL(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P60),
+		ENTRENAMIENTOP60MEDIO(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P60),
+		ENTRENAMIENTOP60FINAL(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P60),
+		ENTRENAMIENTOA120INICIAL(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A120),
+		ENTRENAMIENTOA120MEDIO(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A120),
+		ENTRENAMIENTOA120FINAL(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A120),
+		ENTRENAMIENTOP120INICIAL(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P120),
+		ENTRENAMIENTOP120MEDIO(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P120),
+		ENTRENAMIENTOP120FINAL(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P120),
+		ENTRENAMIENTOA150INICIAL(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A150),
+		ENTRENAMIENTOA150MEDIO(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A150),
+		ENTRENAMIENTOA150FINAL(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, ELECCION.A150),
+		ENTRENAMIENTOP150INICIAL(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P150),
+		ENTRENAMIENTOP150MEDIO(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P150),
+		ENTRENAMIENTOP150FINAL(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Paralelismo, ELECCION.P150),
 		;
 		
 		public static final int levelVersion = Builder.levelVersionFinal;
@@ -73,10 +73,10 @@ public abstract class Level {
 	
 	public enum LISTAdeRECURSOS {
 		ImagenesEjemplos (TIPOSdeRECURSOS.ImagenesTutorial),
-		UmbralAngulosTransferencia (TIPOSdeRECURSOS.Angulos),
-		UmbralAngulosTutorial (TIPOSdeRECURSOS.Angulos),
-		UmbralParalelismoTransferencia (TIPOSdeRECURSOS.Paralelismo),
-		UmbralParalelismoTutorial (TIPOSdeRECURSOS.Paralelismo);
+		RecursosAngulosTransferencia (TIPOSdeRECURSOS.Angulos),
+		RecursosAngulosTutorial (TIPOSdeRECURSOS.Angulos),
+		RecursosParalelismoTransferencia (TIPOSdeRECURSOS.Paralelismo),
+		RecursosParalelismoTutorial (TIPOSdeRECURSOS.Paralelismo);
 		
 		public TIPOSdeRECURSOS tipoDeRecursos;
 		
@@ -128,11 +128,19 @@ public abstract class Level {
 		}
 	}
 	
-	public static String folderResourcesBuild(LISTAdeNIVELES identificador) {
+	public static String folderResourcesBuild(LISTAdeRECURSOS identificador) {
 		return ResourcesCategorias.Paths.finalInternalPath + identificador.toString() + "/";
 	}
 	
-	public static String folderResourcesLocal (LISTAdeNIVELES identificador) {
+	public static String folderResourcesLocal(LISTAdeRECURSOS identificador) {
+		return ResourcesCategorias.Paths.InternalResources + identificador.toString() + "/";
+	}
+	
+	public static String folderResourcesLevelBuild(LISTAdeNIVELES identificador) {
+		return ResourcesCategorias.Paths.finalInternalPath + identificador.toString() + "/";
+	}
+	
+	public static String folderResourcesLevelLocal (LISTAdeNIVELES identificador) {
 		return ResourcesCategorias.Paths.InternalResources + identificador.toString() + "/";
 	}
 
@@ -169,7 +177,7 @@ public abstract class Level {
 	abstract void specificLoads();
 
 	public JsonTrial loadJsonTrial (int id) {
-		return Trial.loadJsonTrial(Level.folderResourcesLocal(identificador), id);	
+		return Trial.loadJsonTrial(Level.folderResourcesLevelLocal(identificador), id);	
 	}
 
 	public abstract void returnAnswer(boolean answerCorrect, float confianzaReportada, float timeSelecion,

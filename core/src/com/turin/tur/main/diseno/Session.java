@@ -133,6 +133,7 @@ public class Session {
 			Tutorial.niveles.addAll(LISTAdeNIVELES.Ejemplos, LISTAdeNIVELES.ParalelismoTutorial, LISTAdeNIVELES.AngulosTutorial);
 			TestInicial.niveles.addAll(LISTAdeNIVELES.TESTP30, LISTAdeNIVELES.TESTP60, LISTAdeNIVELES.TESTP120, LISTAdeNIVELES.TESTP150,
 					LISTAdeNIVELES.TESTA30, LISTAdeNIVELES.TESTA60, LISTAdeNIVELES.TESTA120, LISTAdeNIVELES.TESTA150);
+			/*
 			Entrenamiento1.niveles.addAll(
 					LISTAdeNIVELES.ENTRENAMIENTOA30INICIAL,
 					LISTAdeNIVELES.ENTRENAMIENTOA30MEDIO,
@@ -162,6 +163,7 @@ public class Session {
 			Entrenamiento2.niveles.addAll(Entrenamiento1.niveles);
 			Entrenamiento3.niveles.addAll(Entrenamiento1.niveles);
 			Entrenamiento4.niveles.addAll(Entrenamiento1.niveles);
+			*/
 			TestFinal.niveles.addAll(LISTAdeNIVELES.TESTP30, LISTAdeNIVELES.TESTP60, LISTAdeNIVELES.TESTP120, LISTAdeNIVELES.TESTP150,
 					LISTAdeNIVELES.TESTA30, LISTAdeNIVELES.TESTA60, LISTAdeNIVELES.TESTA120, LISTAdeNIVELES.TESTA150);
 		}

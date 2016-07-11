@@ -27,7 +27,7 @@ public class LevelAsset implements Disposable, AssetErrorListener {
 		// set asset manager error handler
 		assetManager.setErrorListener(this);
 		// load texture atlas
-		String atlasFilepath = Level.folderResourcesLocal(identificador) + atlasName + ".atlas";
+		String atlasFilepath = Level.folderResourcesLevelLocal(identificador) + atlasName + ".atlas";
 		assetManager.load(atlasFilepath, TextureAtlas.class);
 		// start loading assets and wait until finished
 		assetManager.finishLoading();
@@ -62,7 +62,7 @@ public class LevelAsset implements Disposable, AssetErrorListener {
 	}
 	
 	public Sound sound(int Id) {
-		String soundpath = Level.folderResourcesLocal(identificador) + "/" + Id + ".mp3";
+		String soundpath = Level.folderResourcesLocal(identificador.listaDeRecursos) + "/" + Id + ".mp3";
 		assetManager.load(soundpath, Sound.class);
 		// start loading assets and wait until finished
 		assetManager.finishLoading();
