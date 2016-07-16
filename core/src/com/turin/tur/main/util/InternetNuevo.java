@@ -155,7 +155,7 @@ public class InternetNuevo {
     }
 	
 	public enum TIPOdeENVIO {
-		SESION, NIVEL, LEVEL
+		SESION, INICIONIVEL, RESULTADOS
 	}
 	
 	static long instance = TimeUtils.millis();

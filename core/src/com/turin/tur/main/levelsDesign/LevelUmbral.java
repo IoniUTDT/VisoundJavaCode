@@ -274,7 +274,7 @@ public class LevelUmbral extends Level {
 		log.dinamica.seriesEstimulos.clear();
 		log.dinamica.estimulosCeros.clear();
 		// Creamos el enviable
-		InternetNuevo.agregarEnvio(log, TIPOdeENVIO.LEVEL, identificador.toString());
+		InternetNuevo.agregarEnvio(log, TIPOdeENVIO.RESULTADOS, identificador.toString());
 		//Internet.addDataToSend(log, TIPO_ENVIO.CONVERGENCIA, identificador.toString());
 	}
 

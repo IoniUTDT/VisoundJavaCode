@@ -106,7 +106,7 @@ public abstract class Level {
 			this.sesion = sesion;
 			this.identificadorNivel = identificador;
 			// Hacemos un envio
-			InternetNuevo.agregarEnvio(this, TIPOdeENVIO.NIVEL, identificador.toString());
+			InternetNuevo.agregarEnvio(this, TIPOdeENVIO.INICIONIVEL, identificador.toString());
 			// Internet.addDataToSend(this, TIPO_ENVIO.NEWLEVEL, identificador.toString());			
 		}
 		
