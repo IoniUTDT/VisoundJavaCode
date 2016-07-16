@@ -7,6 +7,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.utils.Array;
 import com.turin.tur.main.diseno.Session;
+import com.turin.tur.main.diseno.Session.FASEdeEXPERIMENTO;
 import com.turin.tur.main.levelsDesign.Level;
 import com.turin.tur.main.levelsDesign.Level.LISTAdeNIVELES;
 import com.turin.tur.main.levelsDesign.Level.LISTAdeRECURSOS;
@@ -17,18 +18,13 @@ import com.turin.tur.main.util.builder.Builder;
 public class Visound extends Game {
 
 	// public Array<GenericExp> exps = new Array<GenericExp>();
-	public Array<Level> levelList = new Array<Level>();
-	// public GenericExp expActivo;
 	public Level levelActivo;
 	
-	@SuppressWarnings("unused")
 	private static final String TAG = Visound.class.getName();
 	public static final String pathLogs = "logs";
 	public static boolean mododesarrollo = true;
 	public Session session;
 	public static float volumen = 0.5f;
-	// public boolean sendingData;
-	// Array<LISTAdeNIVELES> identificadoresLvl = new Array<LISTAdeNIVELES>();
 	public InternetNuevo internet = new InternetNuevo();
 	public InputMultiplexer im = new InputMultiplexer();
 	

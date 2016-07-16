@@ -48,10 +48,7 @@ public class LevelController implements InputProcessor {
 	public OrthographicCamera camera;
 	public CameraHelper cameraHelper;
 
-	// Copia de variables globales
-	// public LevelInterfaz levelInterfaz;
 	private Visound game;
-	// private LevelOLD level; //Informacion del nivel cargado
 	public RunningSound runningSound; // Maneja el sonido
 	public MedidorDeConfianza confianza; // sirve para obtener el nivel de confianza
 	
@@ -71,15 +68,11 @@ public class LevelController implements InputProcessor {
 		this.estadoLoop = EstadoLoop.Iniciando;
 		this.game = game; // Hereda la info del game (cosa de ventanas y eso)
 		this.game.im.addProcessor(this);
-		//this.level = level; 
 		this.initCamera();
-		//this.game.levelActivo.expActivo.initLevel(this.level);
 		this.runningSound = new RunningSound(this.game.levelActivo.levelAssets);
 		this.confianza = new MedidorDeConfianza();
 		
-		// Selecciona el trial que corresponda
 		this.trial = this.game.levelActivo.getNextTrial();
-		// this.levelInterfaz = new LevelInterfaz(this.game.levelActivo, this.trial);
 
 		// Indica que el programa esta listo para seleccionar un box
 		this.estadoLoop = EstadoLoop.EsperandoSeeleccionDeBox;

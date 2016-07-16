@@ -3,17 +3,17 @@ package com.turin.tur.main.diseno;
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.turin.tur.Visound;
 import com.turin.tur.main.levelsDesign.Level.ELECCION;
 import com.turin.tur.main.levelsDesign.Level.LISTAdeNIVELES;
-import com.turin.tur.main.levelsDesign.Level.LISTAdeRECURSOS;
-import com.turin.tur.main.levelsDesign.Level.TIPOdeNivel;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.InternetNuevo;
+import com.turin.tur.main.util.Constants.ResourcesCategorias;
 import com.turin.tur.main.util.InternetNuevo.TIPOdeENVIO;
 import com.turin.tur.main.util.builder.Builder;
 
@@ -28,20 +28,34 @@ public class Session {
 	
 	public Session() {
 		this.user = User.loadUser(); 
-		// Internet.addDataToSend(this, TIPO_ENVIO.NEWSESION, "Visound");
 		InternetNuevo.agregarEnvio(this, TIPOdeENVIO.SESION, Long.toString(user.id));
 	}
 	
 	public static class User {
 		public static final String USERFILE = Visound.pathLogs + "/user.txt";
+		public static final String eleccionFile = Visound.pathLogs + "/eleccion.txt";
 
 		public long id;
 		public FASEdeEXPERIMENTO faseDeExperimentoActiva;
 		private Array<LevelsJugados> levelsJugados = new Array<LevelsJugados>();
+		public ELECCION eleccion;
 		
 		User () {
 			this.id = TimeUtils.millis(); 
 			this.faseDeExperimentoActiva = FASEdeEXPERIMENTO.Intro;
+			// Se fija si hay una eleccion guardada
+			FileHandle file = Gdx.files.local(User.eleccionFile);
+			if (file.exists()) {
+				Json json = new Json();
+				json.setUsePrototypes(false);
+				String savedData = file.readString();
+				this.eleccion = json.fromJson(ELECCION.class, savedData);
+			} else {
+				this.eleccion = ELECCION.values()[(int) (MathUtils.random() * ELECCION.values().length)];
+				Json json = new Json();
+				json.setUsePrototypes(false);
+				file.writeString(json.toJson(this.eleccion), false);
+			}
 		}
 
 		public void saveUserInfo() {
@@ -113,8 +127,7 @@ public class Session {
 	public enum FASEdeEXPERIMENTO {
 		Intro(), Tutorial(), TestInicial(), 
 		Entrenamiento1(), Entrenamiento2(), Entrenamiento3(), Entrenamiento4(), 
-		TestFinal(), ExperimentoCompleto()
-		;
+		TestFinal(), ExperimentoCompleto();
 		
 		private FASEdeEXPERIMENTO etapaSiguiente;
 		public Array<LISTAdeNIVELES> niveles = new Array<LISTAdeNIVELES>();

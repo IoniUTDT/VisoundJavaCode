@@ -91,8 +91,6 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 	
 	@Override
 	public void render(float deltaTime) {
-
-		// Gdx.input.setInputProcessor(this);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		stage.act(deltaTime);
 		stage.draw();
@@ -100,15 +98,6 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 										// lines for tables.
 		game.internet.update();
 		guiRender();
-		// Verificamos el estatus de envio de datos
-		/*
-		FileHandle[] files = Gdx.files.local(Internet.pathSending).list();
-		if (files.length>1) { // Hay que considerar que esta la carpeta tags. Si se mejora y esa carpeta vuela entonces hayq ue cambiar la comparacion a 0
-			game.sendingData = true;
-		} else {
-			game.sendingData = false;
-		}
-		*/
 	}
 
 	@Override
@@ -162,7 +151,7 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 		}
 		
 		final LISTAdeNIVELES nextLevel = game.session.user.nextLevelToPlay();
-		for (final LISTAdeNIVELES nivel : game.session.user.faseDeExperimentoActiva.niveles) {
+		for (final LISTAdeNIVELES nivel : game.session.user.faseDeExperimentoActiva.listaDeNivelesFiltrados(game.session.user.eleccion)) {
 			TextButton button = new TextButton(nivel.toString(), skin, "default");
 			button.addListener(new ClickListener() {
 				@Override

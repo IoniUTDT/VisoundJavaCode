@@ -16,22 +16,10 @@ public class LevelScreen extends AbstractGameScreen  {
 	// Clases que se crean para manipular el contenido
 	private LevelController levelController;
 	private LevelRenderer levelRenderer;
-	// private LevelOLD level;
-	
-	// Variables del level
-	// private int levelNumber;
 	private boolean paused;
 	
 	public LevelScreen (Visound game) {
 		super(game);
-		/*
-		for (GenericExp exp : this.game.exps) {
-			if (exp.getLevelName().equals(levelName)) {
-				this.game.expActivo = exp;
-			}
-		}
-		this.levelNumber=levelNumber;
-		*/
 	}
 
 	@Override
