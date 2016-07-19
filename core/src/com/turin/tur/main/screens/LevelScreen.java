@@ -18,6 +18,7 @@ public class LevelScreen extends AbstractGameScreen  {
 	private LevelRenderer levelRenderer;
 	private boolean paused;
 	
+	
 	public LevelScreen (Visound game) {
 		super(game);
 	}
@@ -40,6 +41,7 @@ public class LevelScreen extends AbstractGameScreen  {
 		if (levelController.estadoLoop != EstadoLoop.PantallaBlanca) {
 			levelRenderer.render();
 		}
+		
 	}
 	
 	@Override

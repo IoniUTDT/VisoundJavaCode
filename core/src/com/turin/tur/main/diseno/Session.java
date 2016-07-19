@@ -37,7 +37,7 @@ public class Session {
 
 		public long id;
 		public FASEdeEXPERIMENTO faseDeExperimentoActiva;
-		private Array<LevelsJugados> levelsJugados = new Array<LevelsJugados>();
+		private Array<LevelJugado> levelJugado = new Array<LevelJugado>();
 		public ELECCION eleccion;
 		
 		User () {
@@ -91,7 +91,7 @@ public class Session {
 		}	
 		
 		public boolean alreadyPlayed (LISTAdeNIVELES identificador) {
-			for (LevelsJugados jugado : levelsJugados) {
+			for (LevelJugado jugado : levelJugado) {
 				if (jugado.contexto == faseDeExperimentoActiva) {
 					if (jugado.identificador == identificador) {
 						return true;
@@ -113,10 +113,10 @@ public class Session {
 		}
 
 		public void levelFinished(LISTAdeNIVELES identificador) {
-			LevelsJugados levelFinalizado = new LevelsJugados();
+			LevelJugado levelFinalizado = new LevelJugado();
 			levelFinalizado.identificador = identificador;
 			levelFinalizado.contexto = this.faseDeExperimentoActiva;
-			this.levelsJugados.add(levelFinalizado);
+			this.levelJugado.add(levelFinalizado);
 			this.saveUserInfo();
 			if (this.nextLevelToPlay() == null) {
 				this.pasarFase();
@@ -189,13 +189,15 @@ public class Session {
 			return listaNiveles;
 		}
 		
+		/*
 		public FASEdeEXPERIMENTO etapaSiguiente() {
 			return this.etapaSiguiente;
 		}
-		
+		*/
+		 
 	}
 	
-	public static class LevelsJugados {
+	public static class LevelJugado {
 		LISTAdeNIVELES identificador;
 		FASEdeEXPERIMENTO contexto;
 		long Instance = TimeUtils.millis();

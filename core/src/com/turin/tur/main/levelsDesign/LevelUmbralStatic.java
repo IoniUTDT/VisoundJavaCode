@@ -664,7 +664,7 @@ public class LevelUmbralStatic extends LevelUmbral {
 		setup.confianceProbability = 0.3f;
 		setup.feedback = true;
 		setup.identificadorLevel = identificador;
-		setup.saltoColaUNOFraccion = 0;
+		setup.saltoColaUNOFraccion = 2;
 		setup.saltoInicialFraccion = 4;
 		setup.signalProbability = 0.5f;
 		setup.testProbability = 0.2f;

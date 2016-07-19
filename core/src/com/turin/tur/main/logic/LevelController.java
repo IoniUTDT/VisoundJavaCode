@@ -48,7 +48,7 @@ public class LevelController implements InputProcessor {
 	public OrthographicCamera camera;
 	public CameraHelper cameraHelper;
 
-	private Visound game;
+	public Visound game;
 	public RunningSound runningSound; // Maneja el sonido
 	public MedidorDeConfianza confianza; // sirve para obtener el nivel de confianza
 	
@@ -121,6 +121,7 @@ public class LevelController implements InputProcessor {
 				this.estadoLoop = EstadoLoop.PantallaBlanca;
 			}
 		}
+		game.internet.update();
 	}
 	
 	@Override
@@ -155,6 +156,7 @@ public class LevelController implements InputProcessor {
 
 	
 	private void goToResults() {
+		game.internet.update();
 		runningSound.stop();
 		game.session.user.levelFinished(game.levelActivo.identificador);
 		game.im.clear();
