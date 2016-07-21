@@ -684,7 +684,7 @@ public class LevelUmbralStatic extends LevelUmbral {
 		setup.saltoInicialFraccion = 4;
 		setup.signalProbability = 0.5f;
 		setup.testProbability = 0.2f;
-		setup.trialsPorNivel = 100;
+		setup.trialsPorNivel = 60;
 		setup.referencia = referencia;
 		setup.restartEstimulo = true;
 		return setup;
