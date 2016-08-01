@@ -422,7 +422,7 @@ public class LevelUmbralStatic extends LevelUmbral {
 		Array<Estimulo> estimulos = new Array<Estimulo>(); // Lista de estimulos que se arman en la fase de generacion de recursos.
 		Array<Double> fluctuacionesLocalesReferenciaEstimuloCero = new Array<Double>(); // angulos en los cuales se muestra a señal recta.
 		Array<Float> fluctuacionesLocalesReferenciaSeries = new Array<Float>(); // Fluctuaciones dentro de cada referencia, en terminos relativos
-		boolean logscale = true;
+		boolean logscale = false;
 
 		private static SetupResource loadSetupResources (LISTAdeRECURSOS identificador) {
 			String savedData = FileHelper.readLocalFile(Paths.SetupResourcesPath(identificador));
@@ -697,15 +697,15 @@ public class LevelUmbralStatic extends LevelUmbral {
 			setup.angulosReferencia.add(180d);
 			setup.fluctuacionesLocalesReferenciaSeries.add(0f);
 			setup.fluctuacionesLocalesReferenciaEstimuloCero.addAll(0d,2.5d,-2.5d,5d,-5d,7.5d,-7.5d,10d,-10d);
-			setup.numeroDeEstimulosPorSerie = 10;
+			setup.numeroDeEstimulosPorSerie = 20;
 			setup.desvMax = 80;
 			setup.desvMin = 1;
 		}
 		if (identificador == LISTAdeRECURSOS.RecursosAngulosTransferencia) {
 			setup.angulosReferencia.addAll(30d,60d,120d,150d);
-			setup.fluctuacionesLocalesReferenciaSeries.addAll(0f,5f,-5f);
+			setup.fluctuacionesLocalesReferenciaSeries.addAll(0f,2.5f,-2.5f,5f,-5f);;
 			setup.fluctuacionesLocalesReferenciaEstimuloCero.addAll(0d,2.5d,-2.5d,5d,-5d,7.5d,-7.5d,10d,-10d);
-			setup.numeroDeEstimulosPorSerie = 50;
+			setup.numeroDeEstimulosPorSerie = 100;
 			setup.desvMax = 80;
 			setup.desvMin = 1;
 		}
@@ -713,15 +713,15 @@ public class LevelUmbralStatic extends LevelUmbral {
 			setup.angulosReferencia.addAll(0d);
 			setup.fluctuacionesLocalesReferenciaSeries.addAll(0f);
 			setup.fluctuacionesLocalesReferenciaEstimuloCero.addAll(0d,2.5d,-2.5d,5d,-5d,7.5d,-7.5d,10d,-10d);
-			setup.numeroDeEstimulosPorSerie = 10;
+			setup.numeroDeEstimulosPorSerie = 20;
 			setup.desvMax = 50;
 			setup.desvMin = 0.1;
 		}
 		if (identificador == LISTAdeRECURSOS.RecursosParalelismoTransferencia) {
 			setup.angulosReferencia.addAll(30d,60d,120d,150d);
-			setup.fluctuacionesLocalesReferenciaSeries.addAll(0f,5f,-5f);
+			setup.fluctuacionesLocalesReferenciaSeries.addAll(0f,2.5f,-2.5f,5f,-5f);
 			setup.fluctuacionesLocalesReferenciaEstimuloCero.addAll(0d,2.5d,-2.5d,5d,-5d,7.5d,-7.5d,10d,-10d);
-			setup.numeroDeEstimulosPorSerie = 50;
+			setup.numeroDeEstimulosPorSerie = 100;
 			setup.desvMax = 50;
 			setup.desvMin = 0.1;
 		}

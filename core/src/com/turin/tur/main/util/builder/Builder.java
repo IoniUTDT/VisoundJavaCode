@@ -18,7 +18,7 @@ public class Builder {
 
 	static int contadorTrials = 0;
 
-	public static final int ResourceVersion = 26;
+	public static final int ResourceVersion = 27;
 	public static final int levelVersion = 24; 
 	public static int levelVersionFinal = levelVersion; // Se modifica mas adelante si corresponde
 	
