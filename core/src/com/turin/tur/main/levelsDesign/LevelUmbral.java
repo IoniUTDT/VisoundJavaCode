@@ -24,8 +24,10 @@ public class LevelUmbral extends Level {
 		LISTAdeNIVELES identificadorNivel; // Algo para indentificar la dinamica
 		boolean levelFinalizadoCorrectamente = false;
 		int nivelEstimulo; // nivel de proxima señal a enviar
-		int erroresUp = 1;
-		int aciertosDown = 2; // Es la cantidad de aciertos que tiene que haber en el numero total de ultimas respuestas para que aumente la dificultad
+		final int erroresUp = 1;
+		final int aciertosDown = 2; // Es la cantidad de aciertos que tiene que haber en el numero total de ultimas respuestas para que aumente la dificultad
+		final int rebotesActivarProporciones = 3; // Es la cantidad de rebotes que tiene que haber para que se active la proporcion de aciertos y errores, hasta este numero un acierto baja 
+		int rebotesAcumulados = 0; // Es la cantidad de rebotes acumulados
 		double referencia;
 		int saltosActivos; // nivel del proximo salto (en numero de niveles de señal)
 		Array<SerieEstimulos> seriesEstimulos = new Array<SerieEstimulos>();
@@ -174,7 +176,6 @@ public class LevelUmbral extends Level {
 
 	@Override
 	public Trial getNextTrial() {
-		Gdx.app.debug(TAG, dinamica.nivelEstimulo +"Nivel de estimulo");
 		// Obtiene lo que deberia pasar de la lista speudorando
 		dinamica.trialConfig = this.dinamica.pseudorandom.get(this.dinamica.historial.size);
 		// Decide si manda una señal para medir de verdad o un test para probar al usuario
@@ -236,16 +237,31 @@ public class LevelUmbral extends Level {
 			dinamica.erroresAcumulados++;
 		}
 		
-		if (dinamica.aciertosAcumulados == dinamica.aciertosDown) {
-			incrementarDificultad = true;
-			dinamica.erroresAcumulados = 0;
-			dinamica.aciertosAcumulados = 0;
-		}
-		
-		if (dinamica.erroresAcumulados == dinamica.erroresUp) {
-			disminuirDificultad = true;
-			dinamica.erroresAcumulados = 0;
-			dinamica.aciertosAcumulados = 0;
+		if (dinamica.rebotesAcumulados>=dinamica.rebotesActivarProporciones) {
+			if (dinamica.aciertosAcumulados == dinamica.aciertosDown) {
+				incrementarDificultad = true;
+				dinamica.erroresAcumulados = 0;
+				dinamica.aciertosAcumulados = 0;
+			}
+			
+			if (dinamica.erroresAcumulados == dinamica.erroresUp) {
+				disminuirDificultad = true;
+				dinamica.erroresAcumulados = 0;
+				dinamica.aciertosAcumulados = 0;
+				dinamica.rebotesAcumulados ++;
+			}
+		} else {
+			if (dinamica.aciertosAcumulados == 1) {
+				incrementarDificultad = true;
+				dinamica.erroresAcumulados = 0;
+				dinamica.aciertosAcumulados = 0;
+			}
+			if (dinamica.erroresAcumulados == 1) {
+				disminuirDificultad = true;
+				dinamica.erroresAcumulados = 0;
+				dinamica.aciertosAcumulados = 0;
+				dinamica.rebotesAcumulados ++;
+			}
 		}
 
 		// Setea el salto entre nivel y nivel
@@ -267,7 +283,6 @@ public class LevelUmbral extends Level {
 			
 		dinamica.nivelEstimulo = MathUtils.clamp(dinamica.nivelEstimulo, 1, setupLevel.numeroDeEstimulosPorSerie-1);
 		
-		Gdx.app.debug(TAG, dinamica.nivelEstimulo + " nivek");
 		// Nos fijamos si ya se completo la dinamica o no.
 		if (this.trialsLeft() == 0) {
 			dinamica.levelFinalizadoCorrectamente=true;
