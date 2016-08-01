@@ -216,11 +216,14 @@ public class PCBuilder {
 		// Then we convert all files to PNG into a temp folder and copy the metadata to assets folder
 		for (int id : ids){
 			File resource = new File (ResourcesCategorias.Paths.ResourcesBuilder+id+".svg");
+			File fileOut = new File(Level.folderResourcesBuild(identificadorNivel.listaDeRecursos)+id+".mp3");
 			convertirSVGtoPNG(resource);
-			if (id > ResourcesCategorias.NumeroDeRecursosReservados) { // Means that is not a category with no audio
-				SVGtoMp3 converter = new SVGtoMp3(resource, Level.folderResourcesBuild(identificadorNivel.listaDeRecursos));
+			if (!fileOut.exists()) {
+				if (id > ResourcesCategorias.NumeroDeRecursosReservados) { // Means that is not a category with no audio
+					SVGtoMp3 converter = new SVGtoMp3(resource, Level.folderResourcesBuild(identificadorNivel.listaDeRecursos));
+				}
+				moveMeta(resource,identificadorNivel.listaDeRecursos);
 			}
-			moveMeta(resource,identificadorNivel.listaDeRecursos);
 		}
 		
 		// Create atlas

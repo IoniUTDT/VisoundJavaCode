@@ -24,12 +24,16 @@ public class LevelUmbral extends Level {
 		LISTAdeNIVELES identificadorNivel; // Algo para indentificar la dinamica
 		boolean levelFinalizadoCorrectamente = false;
 		int nivelEstimulo; // nivel de proxima señal a enviar
-		int proporcionAciertos = 3; // Es la cantidad de aciertos que tiene que haber en el numero total de ultimas respuestas para que aumente la dificultad
+		int erroresUp = 1;
+		int aciertosDown = 2; // Es la cantidad de aciertos que tiene que haber en el numero total de ultimas respuestas para que aumente la dificultad
 		double referencia;
 		int saltosActivos; // nivel del proximo salto (en numero de niveles de señal)
 		Array<SerieEstimulos> seriesEstimulos = new Array<SerieEstimulos>();
 		int trialsPorNivel;
 		TrialType trialType; // Distinguimos si se trata de un trial que busca medir de verdad o si es un trial facil para verificar que el usuario esta entendiendo la consigna
+		int aciertosAcumulados;
+		int erroresAcumulados;
+		TrialConfig trialConfig;
 		
 		public static String pathNameExt = ".Dinamica";
 		
@@ -88,7 +92,7 @@ public class LevelUmbral extends Level {
 		public boolean feedback;
 		public LISTAdeNIVELES identificadorLevel;
 		public int saltoColaUNOFraccion = 2;
-		public int saltoInicialFraccion = 4;
+		public int saltoInicialFraccion = 2;
 		public float signalProbability = 0.5f; // Esto tiene sentido que sea asi, mitad y mitad para que ande bien el sistema de medicion. No puede ser mas proibable una opcion que la otra (enm principio)
 		public float testProbability = 0f; // Representa la inversa del numero de test que se dedica a testear al usuario enviandole trials faciles.
 		public int trialsPorNivel; // Numero de trial que conforman un nivel
@@ -170,23 +174,23 @@ public class LevelUmbral extends Level {
 
 	@Override
 	public Trial getNextTrial() {
+		Gdx.app.debug(TAG, dinamica.nivelEstimulo +"Nivel de estimulo");
 		// Obtiene lo que deberia pasar de la lista speudorando
-		TrialConfig trialConfig = this.dinamica.pseudorandom.get(this.dinamica.historial.size);
+		dinamica.trialConfig = this.dinamica.pseudorandom.get(this.dinamica.historial.size);
 		// Decide si manda una señal para medir de verdad o un test para probar al usuario
-		if (trialConfig.trialType==TrialType.Test) { // Caso en que se mande un test
+		if (dinamica.trialConfig.trialType==TrialType.Test) { // Caso en que se mande un test
 			this.dinamica.trialType = TrialType.Test;
 			int base = this.dinamica.nivelEstimulo *2;
-			if (base>setupLevel.numeroDeEstimulosPorSerie-1 - setupLevel.numeroDeEstimulosPorSerie/5) {
-				base = setupLevel.numeroDeEstimulosPorSerie-1 - setupLevel.numeroDeEstimulosPorSerie/5;
-			}
+			base = MathUtils.clamp(base, setupLevel.numeroDeEstimulosPorSerie-1 - setupLevel.numeroDeEstimulosPorSerie*2/5, setupLevel.numeroDeEstimulosPorSerie-1);
+			Gdx.app.debug(TAG, base+"base");
 			int nivel = MathUtils.random(base, setupLevel.numeroDeEstimulosPorSerie-1);
 			dinamica.estimuloActivo = dinamica.seriesEstimulos.random().listaEstimulos.get(nivel);
 		}
-		if (trialConfig.trialType==TrialType.Estimulo) {
+		if (dinamica.trialConfig.trialType==TrialType.Estimulo) {
 			dinamica.trialType = TrialType.Estimulo;
 			dinamica.estimuloActivo = dinamica.seriesEstimulos.random().listaEstimulos.get(dinamica.nivelEstimulo);
 		}
-		if (trialConfig.trialType==TrialType.NoEstimulo) {
+		if (dinamica.trialConfig.trialType==TrialType.NoEstimulo) {
 			dinamica.trialType = TrialType.NoEstimulo;
 			dinamica.estimuloActivo = dinamica.estimulosCeros.random();
 		}
@@ -217,28 +221,33 @@ public class LevelUmbral extends Level {
 			int loopsCount) {
 		// Almacenamos en el historial lo que paso
 		dinamica.historial.add(new Respuesta (dinamica.estimuloActivo, answerCorrect, confianzaReportada, dinamica.trialType, dinamica.nivelEstimulo, timeSelecion, timeConfiance, loopsCount));
+		
+		if (dinamica.trialConfig.trialType==TrialType.Test) {
+			return;
+		}
+		
 		// Elije si hay que incrementar la dificultad, disminuirla o no hacer nada.
 		boolean incrementarDificultad=false;
 		boolean disminuirDificultad=false;
-		if (dinamica.historial.peek().acertado) { 
-			if (dinamica.historial.size >= dinamica.proporcionAciertos) { // Estamos en el caso en que hay que mirar el historial
-				// Nos fijamos si hay algun desacierdo en los ultimos datos
-				int contadorAciertos=0;
-				for (int i=1; i<=(dinamica.proporcionAciertos); i++){
-					if (dinamica.historial.get(dinamica.historial.size-i).acertado==true){
-						contadorAciertos++;
-					}
-				}
-				if (contadorAciertos>= dinamica.proporcionAciertos) {
-					incrementarDificultad=true;
-				}
-			} else { // Si no hay historial suficiente
-				incrementarDificultad=true;
-			}
-		} else { // Significa q hubo un desacierto en este caso siempre se disminuye la dificultad
-			disminuirDificultad = true;
+		
+		if (answerCorrect) {
+			dinamica.aciertosAcumulados++;
+		} else {
+			dinamica.erroresAcumulados++;
 		}
-				
+		
+		if (dinamica.aciertosAcumulados == dinamica.aciertosDown) {
+			incrementarDificultad = true;
+			dinamica.erroresAcumulados = 0;
+			dinamica.aciertosAcumulados = 0;
+		}
+		
+		if (dinamica.erroresAcumulados == dinamica.erroresUp) {
+			disminuirDificultad = true;
+			dinamica.erroresAcumulados = 0;
+			dinamica.aciertosAcumulados = 0;
+		}
+
 		// Setea el salto entre nivel y nivel
 		float avanceHastaUNOs = (float) dinamica.historial.size / (setupLevel.trialsPorNivel * (1 - 1f/setupLevel.saltoColaUNOFraccion));
 		if (avanceHastaUNOs<1) {
@@ -247,16 +256,18 @@ public class LevelUmbral extends Level {
 		} else {
 			dinamica.saltosActivos = 1;
 		}
+		
 		// Aqui ya se determino si hay que incrementar o dosminuir la dificultad y por lo tanto se aplica, cuidando que no exceda los limites
 		if (incrementarDificultad) {
 			dinamica.nivelEstimulo=dinamica.nivelEstimulo-dinamica.saltosActivos;
-			if (dinamica.nivelEstimulo<1) {dinamica.nivelEstimulo=1;}
 		}
 		if (disminuirDificultad) {
 			dinamica.nivelEstimulo=dinamica.nivelEstimulo+dinamica.saltosActivos;
-			if (dinamica.nivelEstimulo>setupLevel.numeroDeEstimulosPorSerie-1) {dinamica.nivelEstimulo=setupLevel.numeroDeEstimulosPorSerie-1;}
 		}
-				
+			
+		dinamica.nivelEstimulo = MathUtils.clamp(dinamica.nivelEstimulo, 1, setupLevel.numeroDeEstimulosPorSerie-1);
+		
+		Gdx.app.debug(TAG, dinamica.nivelEstimulo + " nivek");
 		// Nos fijamos si ya se completo la dinamica o no.
 		if (this.trialsLeft() == 0) {
 			dinamica.levelFinalizadoCorrectamente=true;

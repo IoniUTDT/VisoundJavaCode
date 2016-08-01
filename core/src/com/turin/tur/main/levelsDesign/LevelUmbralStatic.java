@@ -665,7 +665,7 @@ public class LevelUmbralStatic extends LevelUmbral {
 		setup.feedback = true;
 		setup.identificadorLevel = identificador;
 		setup.saltoColaUNOFraccion = 2;
-		setup.saltoInicialFraccion = 4;
+		setup.saltoInicialFraccion = 2;
 		setup.signalProbability = 0.5f;
 		setup.testProbability = 0.2f;
 		setup.trialsPorNivel = 10;
@@ -676,14 +676,14 @@ public class LevelUmbralStatic extends LevelUmbral {
 
 	private static SetupLevel makeSetupLevelTEST(LISTAdeNIVELES identificador, double referencia) {
 		SetupLevel setup = new SetupLevel();
-		setup.allTestsConfianza=false;
+		setup.allTestsConfianza=true;
 		setup.confianceProbability = 0.3f;
 		setup.feedback = false;
 		setup.identificadorLevel = identificador;
 		setup.saltoColaUNOFraccion = 2;
 		setup.saltoInicialFraccion = 4;
 		setup.signalProbability = 0.5f;
-		setup.testProbability = 0.2f;
+		setup.testProbability = 0.05f;
 		setup.trialsPorNivel = 60;
 		setup.referencia = referencia;
 		setup.restartEstimulo = true;
