@@ -158,7 +158,11 @@ public class LevelController implements InputProcessor {
 	private void goToResults() {
 		game.internet.update();
 		runningSound.stop();
-		game.session.user.levelFinished(game.levelActivo.identificador);
+		if (game.levelActivo.islevelCompleted()) {
+			game.session.user.levelFinished(game.levelActivo.identificador, game.levelActivo.getNivelSenalActual(), game.levelActivo.getDesviacionActual());
+		} else {
+			game.session.user.levelFinished(game.levelActivo.identificador, -1, -1);
+		}
 		game.im.clear();
 		game.setScreen(new ResultsScreen(game));
 	}

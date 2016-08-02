@@ -45,7 +45,7 @@ public class LevelRenderer implements Disposable {
 	private void renderGui(SpriteBatch batch) { 
 		batch.setProjectionMatrix(cameraGUI.combined);
 		batch.begin();
-		BitmapFont fpsFont = this.assets.fonts.defaultFont;
+		BitmapFont fpsFont = Assets.fonts.defaultFont;
 		fpsFont.getData().setScale(Constants.factorEscala());
 		fpsFont.draw(batch, this.levelController.game.levelActivo.trialsLeft() + " trials restantes.", cameraGUI.viewportWidth - cameraGUI.viewportWidth*3/5, cameraGUI.viewportHeight - cameraGUI.viewportHeight*1/20);
 		// this.levelController.levelInterfaz.renderFps(batch,cameraGUI);

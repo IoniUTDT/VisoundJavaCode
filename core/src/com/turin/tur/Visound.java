@@ -21,7 +21,8 @@ public class Visound extends Game {
 	
 	private static final String TAG = Visound.class.getName();
 	public static final String pathLogs = "logs";
-	public static boolean mododesarrollo = true;
+	public static final boolean mododesarrollo = true;
+	public static final boolean modoDebug = false;
 	public Session session;
 	public static float volumen = 0.5f;
 	public InternetNuevo internet = new InternetNuevo();
@@ -34,7 +35,10 @@ public class Visound extends Game {
 		// Internet.checkInternet();
 		
 		// Set Libgdx log level
-		Gdx.app.setLogLevel(Application.LOG_DEBUG);
+		if (mododesarrollo) {
+			Gdx.app.setLogLevel(Application.LOG_DEBUG);
+		}
+		
 		Gdx.input.setInputProcessor(im);
 		
 		// dentificadoresLvl.addAll(LISTAdeNIVELES.Ejemplos, LISTAdeNIVELES.AngulosTutorial, LISTAdeNIVELES.ParalelismoTutorial);

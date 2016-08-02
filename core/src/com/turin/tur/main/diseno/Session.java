@@ -13,7 +13,6 @@ import com.turin.tur.main.levelsDesign.Level.LISTAdeNIVELES;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.FileHelper;
 import com.turin.tur.main.util.InternetNuevo;
-import com.turin.tur.main.util.Constants.ResourcesCategorias;
 import com.turin.tur.main.util.InternetNuevo.TIPOdeENVIO;
 import com.turin.tur.main.util.builder.Builder;
 
@@ -37,7 +36,7 @@ public class Session {
 
 		public long id;
 		public FASEdeEXPERIMENTO faseDeExperimentoActiva;
-		private Array<LevelJugado> levelJugado = new Array<LevelJugado>();
+		private Array<LevelJugado> levelsJugados = new Array<LevelJugado>();
 		public ELECCION eleccion;
 		
 		User () {
@@ -91,7 +90,7 @@ public class Session {
 		}	
 		
 		public boolean alreadyPlayed (LISTAdeNIVELES identificador) {
-			for (LevelJugado jugado : levelJugado) {
+			for (LevelJugado jugado : levelsJugados) {
 				if (jugado.contexto == faseDeExperimentoActiva) {
 					if (jugado.identificador == identificador) {
 						return true;
@@ -111,12 +110,28 @@ public class Session {
 			
 			return null;
 		}
+		
+		public int lastNivel (LISTAdeNIVELES identificador) {
+			int lastnivel = -1;
+			for (LevelJugado level : levelsJugados) {
+				for (ELECCION eleccion : identificador.eleccionesIncluidas) {
+					if (level.identificador.eleccionesIncluidas.contains(eleccion, false)) {
+						if (level.identificador.listaDeRecursos == identificador.listaDeRecursos) {
+							lastnivel = level.nivelAlFinalizar;
+						}
+					}
+				}
+			}
+			return lastnivel;
+		}
 
-		public void levelFinished(LISTAdeNIVELES identificador) {
+		public void levelFinished(LISTAdeNIVELES identificador, int nivelSenal, double desviacion) {
 			LevelJugado levelFinalizado = new LevelJugado();
 			levelFinalizado.identificador = identificador;
 			levelFinalizado.contexto = this.faseDeExperimentoActiva;
-			this.levelJugado.add(levelFinalizado);
+			levelFinalizado.nivelAlFinalizar = nivelSenal;
+			levelFinalizado.desviacionAlFinalizar = desviacion;
+			levelsJugados.add(levelFinalizado);
 			this.saveUserInfo();
 			if (this.nextLevelToPlay() == null) {
 				this.pasarFase();
@@ -182,25 +197,21 @@ public class Session {
 		public Array<LISTAdeNIVELES> listaDeNivelesFiltrados (ELECCION eleccion) {
 			Array<LISTAdeNIVELES> listaNiveles = new Array<LISTAdeNIVELES>();
 			for (LISTAdeNIVELES nivel : niveles) {
-				if ((nivel.eleccion == eleccion) || (nivel.eleccion == ELECCION.TODAS)) {
+				if (nivel.eleccionesIncluidas.contains(eleccion, false) || (nivel.eleccionesIncluidas.contains(ELECCION.TODAS,false))) {
 					listaNiveles.add(nivel);
 				}
 			}
 			return listaNiveles;
 		}
 		
-		/*
-		public FASEdeEXPERIMENTO etapaSiguiente() {
-			return this.etapaSiguiente;
-		}
-		*/
-		 
 	}
 	
 	public static class LevelJugado {
 		LISTAdeNIVELES identificador;
 		FASEdeEXPERIMENTO contexto;
 		long Instance = TimeUtils.millis();
+		double desviacionAlFinalizar;
+		int nivelAlFinalizar;
 	}
 
 }

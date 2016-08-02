@@ -5,6 +5,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Json;
 import com.turin.tur.main.diseno.ExperimentalObject;
+import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.util.Constants.Diseno.DISTRIBUCIONESenPANTALLA;
@@ -603,7 +604,17 @@ public class LevelEjemplos extends Level{
 	}
 
 	@Override
-	void specificLoads() {
+	void specificLoads(Session sesion) {
 		loadDinamica();
+	}
+
+	@Override
+	public double getDesviacionActual() {
+		return -1;
+	}
+
+	@Override
+	public int getNivelSenalActual() {
+		return -1;
 	}
 }

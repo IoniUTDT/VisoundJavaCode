@@ -4,7 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
+import com.turin.tur.Visound;
 import com.turin.tur.main.diseno.ExperimentalObject;
+import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.util.FileHelper;
@@ -36,6 +38,7 @@ public class LevelUmbral extends Level {
 		int aciertosAcumulados;
 		int erroresAcumulados;
 		TrialConfig trialConfig;
+		boolean herenciaRecibida; // Determina si se heredo o no el nivel de señal del una experimento anterior. 
 		
 		public static String pathNameExt = ".Dinamica";
 		
@@ -270,13 +273,13 @@ public class LevelUmbral extends Level {
 		}
 
 		// Setea el salto entre nivel y nivel
-		float avanceHastaUNOs = (float) dinamica.historial.size / (setupLevel.trialsPorNivel * (1 - 1f/setupLevel.saltoColaUNOFraccion));
-		if (avanceHastaUNOs<1) {
-			int saltoMaximo = setupLevel.numeroDeEstimulosPorSerie/setupLevel.saltoInicialFraccion;
-			dinamica.saltosActivos = MathUtils.ceil(saltoMaximo*(1-avanceHastaUNOs));
-		} else {
-			dinamica.saltosActivos = 1;
-		}
+		if (!dinamica.herenciaRecibida) {
+			float avanceHastaUNOs = (float) dinamica.historial.size / (setupLevel.trialsPorNivel * (1 - 1f/setupLevel.saltoColaUNOFraccion));
+			if (avanceHastaUNOs<1) {
+				int saltoMaximo = setupLevel.numeroDeEstimulosPorSerie/setupLevel.saltoInicialFraccion;
+				dinamica.saltosActivos = MathUtils.ceil(saltoMaximo*(1-avanceHastaUNOs));
+			} else { dinamica.saltosActivos = 1;			}
+		} else { dinamica.saltosActivos = 1; }
 		
 		// Aqui ya se determino si hay que incrementar o dosminuir la dificultad y por lo tanto se aplica, cuidando que no exceda los limites
 		if (incrementarDificultad) {
@@ -308,15 +311,17 @@ public class LevelUmbral extends Level {
 	}
 
 	@Override
-	void specificLoads() {
+	void specificLoads(Session sesion) {
 		setupLevel = SetupLevel.loadInfoLevel(identificador);
 		dinamica = Dinamica.loadDinamica(identificador); 
-		if (setupLevel.restartEstimulo) {
+		if (!setupLevel.restartEstimulo) {
+			if (sesion.user.lastNivel(this.identificador)!= -1) {
+				dinamica.herenciaRecibida = true;
+				dinamica.nivelEstimulo = sesion.user.lastNivel(this.identificador);
+			}
+		}
+		if (!dinamica.herenciaRecibida) {
 			dinamica.nivelEstimulo = setupLevel.numeroDeEstimulosPorSerie - 1;
-		} else {
-			// TODO  
-			
-			// Queda pendiente hacer que se herede el nivel
 		}
 		makeSpeudoRandom();		
 	}
@@ -399,5 +404,23 @@ public class LevelUmbral extends Level {
 		dinamica.pseudorandom.addAll(trialsNoEstimulo);
 		dinamica.pseudorandom.shuffle();
 		
+	}
+
+	@Override
+	public double getDesviacionActual() {
+		if (dinamica.historial.size != 0) {
+			return dinamica.historial.peek().estimulo.desviacion; 
+		} else {
+			return -1;
+		}
+	}
+
+	@Override
+	public int getNivelSenalActual() {
+		if (dinamica.historial.size != 0) {
+			return dinamica.historial.peek().nivelEstimulo; 
+		} else {
+			return -1;
+		}
 	}
 }

@@ -20,6 +20,7 @@ import com.turin.tur.Visound;
 import com.turin.tur.main.diseno.Session.FASEdeEXPERIMENTO;
 import com.turin.tur.main.levelsDesign.Level;
 import com.turin.tur.main.levelsDesign.Level.LISTAdeNIVELES;
+import com.turin.tur.main.util.Assets;
 import com.turin.tur.main.util.Constants;
 
 
@@ -254,7 +255,7 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 	}
 
 	private void renderServerStatus() {
-		BitmapFont fpsFont = this.assets.fonts.defaultFont;
+		BitmapFont fpsFont = Assets.fonts.defaultFont;
 		fpsFont.getData().setScale(Constants.factorEscala());
 		if (game.internet.offline()) {
 			// show up in red

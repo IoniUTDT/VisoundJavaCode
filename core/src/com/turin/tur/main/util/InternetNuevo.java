@@ -240,7 +240,7 @@ public class InternetNuevo {
 			String savedData = FileHelper.readLocalFile(path);
 			Json json = new Json();
 			json.setUsePrototypes(false);
-			Array<Enviable> logsLeidos =  json.fromJson(this.CadenaEnvios.getClass(), savedData);
+			Array<Enviable> logsLeidos =  json.fromJson(InternetNuevo.CadenaEnvios.getClass(), savedData);
 			for (Enviable entrada : logsLeidos) {
 				if (entrada.estadoEnvio == ESTADOEnvio.ENVIAR) {
 					agregarEnvio (entrada.objeto, entrada.tipo, entrada.origen);
@@ -253,6 +253,9 @@ public class InternetNuevo {
 	}
 	
 	private void makeEnvio() {
+		if (Visound.modoDebug) {
+			return;
+		}
 		estadoInternet = ESTADOInternet.PROCESANDOEnvios;
 		for (final Enviable envio : CadenaEnvios) {
 			if (envio.estadoEnvio == ESTADOEnvio.ENVIAR) {

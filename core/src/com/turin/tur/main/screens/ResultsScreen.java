@@ -14,7 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.turin.tur.Visound;
-import com.turin.tur.main.diseno.LevelOLD;
+import com.turin.tur.main.util.Assets;
 import com.turin.tur.main.util.Constants;
 
 public class ResultsScreen extends AbstractGameScreen {
@@ -43,26 +43,30 @@ public class ResultsScreen extends AbstractGameScreen {
 		stage.act(deltaTime);
 		stage.draw();
 
-		// guiRender();
+		//guiRender();
 		
 	}
 
+	/*
 	private void guiRender() {
 		batch.setProjectionMatrix(cameraGUI.combined);
 		batch.begin();
 		// renderPage();
 		batch.end();
 	}
+	*/
 
+	/*
 	private void renderPage() {
 		// Muestra el contenido en funcion de la pagina
 		float x = cameraGUI.viewportWidth/10;
 		float y = cameraGUI.viewportHeight/8;
-		BitmapFont fpsFont = this.assets.fonts.defaultFont;
+		BitmapFont fpsFont = Assets.fonts.defaultFont;
 		fpsFont.getData().setScale(Constants.factorEscala()/2);
 		fpsFont.draw(batch, "Ha completado el nivel.", x, y);
 	}
-
+	*/
+	
 	private void guiRenderInit() {
 		batch = new SpriteBatch();
 		cameraGUI = new OrthographicCamera(Constants.VIEWPORT_GUI_WIDTH,
