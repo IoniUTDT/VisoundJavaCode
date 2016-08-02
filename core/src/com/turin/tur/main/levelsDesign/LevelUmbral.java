@@ -183,7 +183,6 @@ public class LevelUmbral extends Level {
 			this.dinamica.trialType = TrialType.Test;
 			int base = this.dinamica.nivelEstimulo *2;
 			base = MathUtils.clamp(base, setupLevel.numeroDeEstimulosPorSerie-1 - setupLevel.numeroDeEstimulosPorSerie*2/5, setupLevel.numeroDeEstimulosPorSerie-1);
-			Gdx.app.debug(TAG, base+"base");
 			int nivel = MathUtils.random(base, setupLevel.numeroDeEstimulosPorSerie-1);
 			dinamica.estimuloActivo = dinamica.seriesEstimulos.random().listaEstimulos.get(nivel);
 		}
@@ -222,6 +221,12 @@ public class LevelUmbral extends Level {
 			int loopsCount) {
 		// Almacenamos en el historial lo que paso
 		dinamica.historial.add(new Respuesta (dinamica.estimuloActivo, answerCorrect, confianzaReportada, dinamica.trialType, dinamica.nivelEstimulo, timeSelecion, timeConfiance, loopsCount));
+		
+		// Nos fijamos si ya se completo la dinamica o no. (antes de que salga si es un test trial)
+		if (this.trialsLeft() == 0) {
+			dinamica.levelFinalizadoCorrectamente=true;
+			this.levelCompleted = true;
+		}
 		
 		if (dinamica.trialConfig.trialType==TrialType.Test) {
 			return;
@@ -282,13 +287,6 @@ public class LevelUmbral extends Level {
 		}
 			
 		dinamica.nivelEstimulo = MathUtils.clamp(dinamica.nivelEstimulo, 1, setupLevel.numeroDeEstimulosPorSerie-1);
-		
-		// Nos fijamos si ya se completo la dinamica o no.
-		if (this.trialsLeft() == 0) {
-			dinamica.levelFinalizadoCorrectamente=true;
-			this.levelCompleted = true;
-		}
-
 	}
 
 	@Override
