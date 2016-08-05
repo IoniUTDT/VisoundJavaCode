@@ -73,7 +73,12 @@ public class LevelUmbral extends Level {
 		private float selectionTimeInTrial = -1;
 		private int soundLoops = -1;
 		private TrialType trialType;
-		Respuesta (Estimulo estimulo, Boolean rta, float confianza, TrialType trialType, int nivelEstimulo, float selectionTime, float confianceTime, int soundLoops) {
+		
+		public Respuesta () {
+			
+		}
+		
+		public Respuesta (Estimulo estimulo, Boolean rta, float confianza, TrialType trialType, int nivelEstimulo, float selectionTime, float confianceTime, int soundLoops) {
 			this.estimulo = estimulo;
 			this.acertado = rta;
 			this.confianza = confianza;
@@ -131,7 +136,7 @@ public class LevelUmbral extends Level {
 		}
 	}
 	
-	private class TrialConfig {
+	private static class TrialConfig {
 		boolean confiance;
 		TrialType trialType;
 	}

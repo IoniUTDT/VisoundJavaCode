@@ -181,10 +181,9 @@ public class InternetNuevo {
 				return;
 			}
 		}
-		// saveDataToDisk();
+		InternetNuevo.savePendiente = true;
 		estadoInternet = ESTADOInternet.ESPERANDO;
 	}
-
 	
 	private static void saveDataToDisk() {
 		Json json = new Json();
@@ -194,8 +193,8 @@ public class InternetNuevo {
 
 
 	private static String server=serverMAIN;
-
 	private static int serverStatus=0;
+	private static boolean savePendiente;
 
 	public InternetNuevo() {
 	}
@@ -203,6 +202,10 @@ public class InternetNuevo {
 	public void update() {
 		if (estadoInternet == ESTADOInternet.ENVIOSPendientes){
 			makeEnvio();
+		}
+		if (savePendiente) {
+			saveDataToDisk();
+			savePendiente = false;
 		}
 	}
 	
@@ -216,6 +219,9 @@ public class InternetNuevo {
 			estadoInternet = ESTADOInternet.ENVIOSPendientes;
 		}
 		CadenaEnvios.add(envio);
+		if (estadoInternet == ESTADOInternet.SINConexion) {
+			saveDataToDisk();
+		}
 	}
 	
 	public void checkConectividad() {

@@ -96,11 +96,15 @@ public abstract class Level {
 		public static final int ResourceVersion = Builder.ResourceVersion;
 	}
 
-	public class LevelLog {
+	public static class LevelLog {
 
 		Session sesion;
 		LISTAdeNIVELES identificadorNivel;
 		long instance;
+		
+		public LevelLog () {
+			
+		}
 		
 		public LevelLog(LISTAdeNIVELES identificador, Session sesion) {
 			this.instance = TimeUtils.millis();

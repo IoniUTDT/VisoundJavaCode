@@ -25,9 +25,11 @@ public class Session {
 	public int resourcesVersion = Builder.ResourceVersion;
 	public ApplicationType plataforma = Gdx.app.getType();
 	
-	public Session() {
-		this.user = User.loadUser(); 
-		InternetNuevo.agregarEnvio(this, TIPOdeENVIO.SESION, Long.toString(user.id));
+	public static Session newSession() {
+		Session session = new Session();
+		session.user = User.loadUser(); 
+		InternetNuevo.agregarEnvio(session, TIPOdeENVIO.SESION, Long.toString(session.user.id));
+		return session;
 	}
 	
 	public static class User {

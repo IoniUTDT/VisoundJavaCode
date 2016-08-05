@@ -52,7 +52,7 @@ public class Visound extends Game {
 		 
 		internet.checkConectividad();
 		internet.loadSavedData();
-		this.session = new Session();
+		this.session = Session.newSession();
 		setScreen(new MenuScreen(this));
 	}	
 	
