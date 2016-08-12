@@ -239,9 +239,9 @@ public class InternetNuevo {
 	
 	
 	public void loadSavedData() {
-		FileHandle dataFile = Gdx.files.local(path);
+		FileHandle dataFile = Gdx.files.external(path);
 		if (dataFile.exists()) {
-			FileHandle backUp = Gdx.files.local(pathBackup);
+			FileHandle backUp = Gdx.files.external(pathBackup);
 			dataFile.copyTo(backUp);
 			String savedData = FileHelper.readLocalFile(path);
 			Json json = new Json();
