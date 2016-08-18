@@ -18,11 +18,11 @@ public class Builder {
 
 	static int contadorTrials = 0;
 
-	public static final int ResourceVersion = 27;
-	public static final int levelVersion = 24; 
+	public static final int ResourceVersion = 40;
+	public static final int levelVersion = 40; 
 	public static int levelVersionFinal = levelVersion; // Se modifica mas adelante si corresponde
 	
-	static final Boolean makeLevels = false; 
+	static final Boolean makeLevels = true; 
 	static final Boolean makeResources = false;
 
 	public static void buildResources(Array<LISTAdeRECURSOS> identificadores) {

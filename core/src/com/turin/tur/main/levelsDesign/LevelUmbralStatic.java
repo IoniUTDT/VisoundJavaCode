@@ -616,13 +616,14 @@ public class LevelUmbralStatic extends LevelUmbral {
 		setup.confianceProbability = 0.3f;
 		setup.feedback = true;
 		setup.identificadorLevel = identificador;
-		setup.saltoColaUNOFraccion = 2;
+		setup.saltoGruesoFraccionNivel = 0.3f;
 		setup.saltoInicialFraccion = 4;
 		setup.signalProbability = 0.5f;
 		setup.testProbability = 0.1f;
 		setup.trialsPorNivel = 100;
 		setup.referencia = referencia;
 		setup.restartEstimulo = false;
+		setup.soundLoopLimit = 3;
 		return setup;
 	}
 	
@@ -632,13 +633,14 @@ public class LevelUmbralStatic extends LevelUmbral {
 		setup.confianceProbability = 0.4f;
 		setup.feedback = false;
 		setup.identificadorLevel = identificador;
-		setup.saltoColaUNOFraccion = 2;
+		setup.saltoGruesoFraccionNivel = 0.3f;
 		setup.saltoInicialFraccion = 4;
 		setup.signalProbability = 0.5f;
 		setup.testProbability = 0.1f;
 		setup.trialsPorNivel = 50;
 		setup.referencia = referencia;
 		setup.restartEstimulo = false;
+		setup.soundLoopLimit = 3;
 		return setup;
 	}
 	
@@ -648,13 +650,14 @@ public class LevelUmbralStatic extends LevelUmbral {
 		setup.confianceProbability = 0.3f;
 		setup.feedback = true;
 		setup.identificadorLevel = identificador;
-		setup.saltoColaUNOFraccion = 2;
+		setup.saltoGruesoFraccionNivel = 0.3f;
 		setup.saltoInicialFraccion = 4;
 		setup.signalProbability = 0.5f;
 		setup.testProbability = 0.1f;
 		setup.trialsPorNivel = 100;
 		setup.referencia = referencia;
 		setup.restartEstimulo = true;
+		setup.soundLoopLimit = 3;
 		return setup;
 	}
 
@@ -664,13 +667,14 @@ public class LevelUmbralStatic extends LevelUmbral {
 		setup.confianceProbability = 0.3f;
 		setup.feedback = true;
 		setup.identificadorLevel = identificador;
-		setup.saltoColaUNOFraccion = 2;
+		setup.saltoGruesoFraccionNivel = 0.3f;
 		setup.saltoInicialFraccion = 2;
 		setup.signalProbability = 0.5f;
 		setup.testProbability = 0.2f;
 		setup.trialsPorNivel = 10;
 		setup.referencia = referencia;
 		setup.restartEstimulo = true;
+		setup.soundLoopLimit = -1;
 		return setup;
 	}
 
@@ -680,13 +684,14 @@ public class LevelUmbralStatic extends LevelUmbral {
 		setup.confianceProbability = 0.3f;
 		setup.feedback = false;
 		setup.identificadorLevel = identificador;
-		setup.saltoColaUNOFraccion = 2;
+		setup.saltoGruesoFraccionNivel = 0.3f;
 		setup.saltoInicialFraccion = 4;
 		setup.signalProbability = 0.5f;
 		setup.testProbability = 0.05f;
-		setup.trialsPorNivel = 60;
+		setup.trialsPorNivel = 40;
 		setup.referencia = referencia;
 		setup.restartEstimulo = true;
+		setup.soundLoopLimit = 1;
 		return setup;
 	}
 
@@ -705,7 +710,7 @@ public class LevelUmbralStatic extends LevelUmbral {
 			setup.angulosReferencia.addAll(30d,60d,120d,150d);
 			setup.fluctuacionesLocalesReferenciaSeries.addAll(0f,2.5f,-2.5f,5f,-5f);;
 			setup.fluctuacionesLocalesReferenciaEstimuloCero.addAll(0d,2.5d,-2.5d,5d,-5d,7.5d,-7.5d,10d,-10d);
-			setup.numeroDeEstimulosPorSerie = 100;
+			setup.numeroDeEstimulosPorSerie = 200;
 			setup.desvMax = 80;
 			setup.desvMin = 1;
 		}
@@ -721,7 +726,7 @@ public class LevelUmbralStatic extends LevelUmbral {
 			setup.angulosReferencia.addAll(30d,60d,120d,150d);
 			setup.fluctuacionesLocalesReferenciaSeries.addAll(0f,2.5f,-2.5f,5f,-5f);
 			setup.fluctuacionesLocalesReferenciaEstimuloCero.addAll(0d,2.5d,-2.5d,5d,-5d,7.5d,-7.5d,10d,-10d);
-			setup.numeroDeEstimulosPorSerie = 100;
+			setup.numeroDeEstimulosPorSerie = 200;
 			setup.desvMax = 50;
 			setup.desvMin = 0.1;
 		}

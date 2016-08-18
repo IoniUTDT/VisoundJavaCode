@@ -38,7 +38,9 @@ public class LevelUmbral extends Level {
 		int erroresAcumulados;
 		int descensosAcumulados;
 		TrialConfig trialConfig;
-		boolean herenciaRecibida; // Determina si se heredo o no el nivel de señal del una experimento anterior. 
+		boolean herenciaRecibida; // Determina si se heredo o no el nivel de señal del una experimento anterior.
+		static int saltoUnitario = 1;
+		static int saltoIntermedio = 3;
 		
 		public static String pathNameExt = ".Dinamica";
 		
@@ -101,8 +103,8 @@ public class LevelUmbral extends Level {
 		public float confianceProbability = 0;
 		public boolean feedback;
 		public LISTAdeNIVELES identificadorLevel;
-		public int saltoColaUNOFraccion = 2;
-		public int saltoInicialFraccion = 2;
+		public float saltoGruesoFraccionNivel;
+		public int saltoInicialFraccion;
 		public float signalProbability = 0.5f; // Esto tiene sentido que sea asi, mitad y mitad para que ande bien el sistema de medicion. No puede ser mas proibable una opcion que la otra (enm principio)
 		public float testProbability = 0f; // Representa la inversa del numero de test que se dedica a testear al usuario enviandole trials faciles.
 		public int trialsPorNivel; // Numero de trial que conforman un nivel
@@ -110,6 +112,7 @@ public class LevelUmbral extends Level {
 		public double referencia; // Angulo de refrencia del nivel
 		public boolean restartEstimulo; // Indica si hay que reiniciar el nivel de estimulo o se hereda del nivel anterior
 		public int numeroDeEstimulosPorSerie;
+		public int soundLoopLimit;
 		
 		public static String pathNameExt = ".LvlSetup";
 		
@@ -281,30 +284,32 @@ public class LevelUmbral extends Level {
 
 		// Setea el salto entre nivel y nivel
 		if (!dinamica.herenciaRecibida) {
-			float avanceHastaUNOs = (float) dinamica.historial.size / (setupLevel.trialsPorNivel * (1 - 1f/setupLevel.saltoColaUNOFraccion));
-			if (avanceHastaUNOs<1) {
+			int saltosGruesos = (int) (setupLevel.trialsPorNivel  * setupLevel.saltoGruesoFraccionNivel);
+			float fraccionAvanceSaltoGrueso = (float) dinamica.historial.size / saltosGruesos;
+			if (fraccionAvanceSaltoGrueso<1) {
 				int saltoMaximo = setupLevel.numeroDeEstimulosPorSerie/setupLevel.saltoInicialFraccion;
-				dinamica.saltosActivos = MathUtils.ceil(saltoMaximo*(1-avanceHastaUNOs));
+				dinamica.saltosActivos = MathUtils.ceil(saltoMaximo*(1-fraccionAvanceSaltoGrueso)*Dinamica.saltoIntermedio);
 			} else { 
-				if (avanceHastaUNOs<2) {
+				float fraccionAvanceSaltoIntermedio = (float) (dinamica.historial.size - saltosGruesos) / (setupLevel.trialsPorNivel - saltosGruesos);
+				if (fraccionAvanceSaltoIntermedio<0.5) {
 					if (dinamica.descensosAcumulados>0) {
-						dinamica.saltosActivos = 2 * dinamica.descensosAcumulados;
+						dinamica.saltosActivos = Dinamica.saltoIntermedio * dinamica.descensosAcumulados;
 					} else {
-						dinamica.saltosActivos = 2;
+						dinamica.saltosActivos = Dinamica.saltoIntermedio;
 					}
 				} else {
 					if (dinamica.descensosAcumulados>0) {
-						dinamica.saltosActivos = 1 * dinamica.descensosAcumulados;
+						dinamica.saltosActivos = Dinamica.saltoUnitario * dinamica.descensosAcumulados;
 					} else {
-						dinamica.saltosActivos = 1;
+						dinamica.saltosActivos = Dinamica.saltoUnitario;
 					}
 				}
 			}
 		} else {
 			if (dinamica.descensosAcumulados>0) {
-				dinamica.saltosActivos = 1 * dinamica.descensosAcumulados;
+				dinamica.saltosActivos = Dinamica.saltoUnitario * dinamica.descensosAcumulados;
 			} else {
-				dinamica.saltosActivos = 1;
+				dinamica.saltosActivos = Dinamica.saltoUnitario;
 			}
 		}
 		
