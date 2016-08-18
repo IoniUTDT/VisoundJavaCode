@@ -3,7 +3,6 @@ package com.turin.tur.main.levelsDesign;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
-import com.turin.tur.Visound;
 import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
@@ -196,5 +195,7 @@ public abstract class Level {
 	public abstract double getDesviacionActual();
 
 	public abstract int getNivelSenalActual();
+
+	public abstract int getrepeatnumber();
 	
 }

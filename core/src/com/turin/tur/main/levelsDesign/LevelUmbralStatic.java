@@ -640,7 +640,7 @@ public class LevelUmbralStatic extends LevelUmbral {
 		setup.trialsPorNivel = 50;
 		setup.referencia = referencia;
 		setup.restartEstimulo = false;
-		setup.soundLoopLimit = 3;
+		setup.soundLoopLimit = 1;
 		return setup;
 	}
 	

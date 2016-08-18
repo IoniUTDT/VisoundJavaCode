@@ -36,11 +36,12 @@ public class LevelUmbral extends Level {
 		TrialType trialType; // Distinguimos si se trata de un trial que busca medir de verdad o si es un trial facil para verificar que el usuario esta entendiendo la consigna
 		int aciertosAcumulados;
 		int erroresAcumulados;
-		int descensosAcumulados;
 		TrialConfig trialConfig;
 		boolean herenciaRecibida; // Determina si se heredo o no el nivel de señal del una experimento anterior.
 		static int saltoUnitario = 1;
 		static int saltoIntermedio = 3;
+		int secuenciasAcumuladas=0;
+		boolean ascendiendo=false;
 		
 		public static String pathNameExt = ".Dinamica";
 		
@@ -256,14 +257,24 @@ public class LevelUmbral extends Level {
 		if (dinamica.rebotesAcumulados>=dinamica.rebotesActivarProporciones) {
 			if (dinamica.aciertosAcumulados == dinamica.aciertosDown) {
 				incrementarDificultad = true;
-				dinamica.descensosAcumulados++;
+				if (dinamica.ascendiendo) {
+					dinamica.secuenciasAcumuladas=1;
+					dinamica.ascendiendo = false;
+				} else {
+					dinamica.secuenciasAcumuladas ++;
+				}
 				dinamica.erroresAcumulados = 0;
 				dinamica.aciertosAcumulados = 0;
 			}
 			
 			if (dinamica.erroresAcumulados == dinamica.erroresUp) {
 				disminuirDificultad = true;
-				dinamica.descensosAcumulados = 0;
+				if (dinamica.ascendiendo) {
+					dinamica.secuenciasAcumuladas ++;
+				} else {
+					dinamica.secuenciasAcumuladas=1;
+					dinamica.ascendiendo = false;
+				}
 				dinamica.erroresAcumulados = 0;
 				dinamica.aciertosAcumulados = 0;
 				dinamica.rebotesAcumulados ++;
@@ -292,25 +303,13 @@ public class LevelUmbral extends Level {
 			} else { 
 				float fraccionAvanceSaltoIntermedio = (float) (dinamica.historial.size - saltosGruesos) / (setupLevel.trialsPorNivel - saltosGruesos);
 				if (fraccionAvanceSaltoIntermedio<0.5) {
-					if (dinamica.descensosAcumulados>0) {
-						dinamica.saltosActivos = Dinamica.saltoIntermedio * dinamica.descensosAcumulados;
-					} else {
-						dinamica.saltosActivos = Dinamica.saltoIntermedio;
-					}
+					dinamica.saltosActivos = Dinamica.saltoIntermedio * dinamica.secuenciasAcumuladas;
 				} else {
-					if (dinamica.descensosAcumulados>0) {
-						dinamica.saltosActivos = Dinamica.saltoUnitario * dinamica.descensosAcumulados;
-					} else {
-						dinamica.saltosActivos = Dinamica.saltoUnitario;
-					}
+					dinamica.saltosActivos = Dinamica.saltoUnitario * dinamica.secuenciasAcumuladas;
 				}
 			}
 		} else {
-			if (dinamica.descensosAcumulados>0) {
-				dinamica.saltosActivos = Dinamica.saltoUnitario * dinamica.descensosAcumulados;
-			} else {
-				dinamica.saltosActivos = Dinamica.saltoUnitario;
-			}
+			dinamica.saltosActivos = Dinamica.saltoUnitario * dinamica.secuenciasAcumuladas;
 		}
 		
 		// Aqui ya se determino si hay que incrementar o dosminuir la dificultad y por lo tanto se aplica, cuidando que no exceda los limites
@@ -453,6 +452,15 @@ public class LevelUmbral extends Level {
 			return dinamica.historial.peek().nivelEstimulo; 
 		} else {
 			return -1;
+		}
+	}
+
+	@Override
+	public int getrepeatnumber() {
+		if (this.setupLevel.soundLoopLimit == -1) {
+			return 100;
+		} else {
+			return this.setupLevel.soundLoopLimit;
 		}
 	}
 }

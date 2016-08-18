@@ -88,6 +88,11 @@ public class LevelController implements InputProcessor {
 	public void update(float deltaTime) {
 		//Gdx.app.debug(TAG, estadoLoop.toString());
 		this.timeInTrial = this.timeInTrial + deltaTime;
+		
+		if (this.game.levelActivo.getrepeatnumber()<=this.runningSound.loopsCount) {
+			this.runningSound.autoreproducir = false;
+		}
+		
 		if (this.estadoLoop == EstadoLoop.PantallaBlanca) {
 			if (this.timeInTrial > this.blankTime) {
 				this.estadoLoop = EstadoLoop.EsperandoSeeleccionDeBox;

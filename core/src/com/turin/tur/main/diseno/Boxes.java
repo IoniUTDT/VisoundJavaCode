@@ -308,17 +308,19 @@ public abstract class Boxes {
 			if (levelController.estadoLoop == EstadoLoop.EsperandoConfianza) {
 				levelController.runningSound.stop();
 			}
-			if (!this.contenido.noSound) {
-				if (!levelController.runningSound.running) {
-					this.delayAutoreproducir = this.delayAutoreproducir + deltaTime;
-				}
-				if (this.delayAutoreproducir > Constants.Box.DELAY_ESTIMULO_MODO_SELECCIONAR) { //TODO cambiar nombre a esta constante
-					if (levelController.estadoLoop == EstadoLoop.EsperandoSeeleccionDeBox) {
-						levelController.runningSound.action = NEXT.PLAY;
-						levelController.runningSound.nextContenido = this.contenido;
-						this.delayAutoreproducir = 0;
-						this.loopsCount++;
-						levelController.runningSound.loopsCount=this.loopsCount;
+			if (levelController.runningSound.autoreproducir) {
+				if (!this.contenido.noSound) {
+					if (!levelController.runningSound.running) {
+						this.delayAutoreproducir = this.delayAutoreproducir + deltaTime;
+					}
+					if (this.delayAutoreproducir > Constants.Box.DELAY_ESTIMULO_MODO_SELECCIONAR) { //TODO cambiar nombre a esta constante
+						if (levelController.estadoLoop == EstadoLoop.EsperandoSeeleccionDeBox) {
+							levelController.runningSound.action = NEXT.PLAY;
+							levelController.runningSound.nextContenido = this.contenido;
+							this.delayAutoreproducir = 0;
+							this.loopsCount++;
+							levelController.runningSound.loopsCount=this.loopsCount;
+						}
 					}
 				}
 			}

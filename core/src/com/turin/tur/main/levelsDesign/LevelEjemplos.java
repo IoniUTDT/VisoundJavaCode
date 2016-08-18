@@ -617,4 +617,9 @@ public class LevelEjemplos extends Level{
 	public int getNivelSenalActual() {
 		return -1;
 	}
+
+	@Override
+	public int getrepeatnumber() {
+		return 0;
+	}
 }

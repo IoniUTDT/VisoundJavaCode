@@ -24,6 +24,8 @@ public class RunningSound {
 	public NEXT action = NEXT.NADA;
 	public float playTime; 
 	public ExperimentalObject nextContenido;
+
+	public boolean autoreproducir = true;
 	
 
 	public RunningSound (LevelAsset assets) {
@@ -47,7 +49,7 @@ public class RunningSound {
 			}
 		}
 	}
-	
+
 	public void play() {
 		// Primer detiene cualquier reproduccion previa 
 		if (running) {
