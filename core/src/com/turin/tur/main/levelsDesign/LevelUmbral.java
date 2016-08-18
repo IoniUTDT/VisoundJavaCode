@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
-import com.turin.tur.Visound;
 import com.turin.tur.main.diseno.ExperimentalObject;
 import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.diseno.Trial;
@@ -37,6 +36,7 @@ public class LevelUmbral extends Level {
 		TrialType trialType; // Distinguimos si se trata de un trial que busca medir de verdad o si es un trial facil para verificar que el usuario esta entendiendo la consigna
 		int aciertosAcumulados;
 		int erroresAcumulados;
+		int descensosAcumulados;
 		TrialConfig trialConfig;
 		boolean herenciaRecibida; // Determina si se heredo o no el nivel de señal del una experimento anterior. 
 		
@@ -253,12 +253,14 @@ public class LevelUmbral extends Level {
 		if (dinamica.rebotesAcumulados>=dinamica.rebotesActivarProporciones) {
 			if (dinamica.aciertosAcumulados == dinamica.aciertosDown) {
 				incrementarDificultad = true;
+				dinamica.descensosAcumulados++;
 				dinamica.erroresAcumulados = 0;
 				dinamica.aciertosAcumulados = 0;
 			}
 			
 			if (dinamica.erroresAcumulados == dinamica.erroresUp) {
 				disminuirDificultad = true;
+				dinamica.descensosAcumulados = 0;
 				dinamica.erroresAcumulados = 0;
 				dinamica.aciertosAcumulados = 0;
 				dinamica.rebotesAcumulados ++;
@@ -283,8 +285,28 @@ public class LevelUmbral extends Level {
 			if (avanceHastaUNOs<1) {
 				int saltoMaximo = setupLevel.numeroDeEstimulosPorSerie/setupLevel.saltoInicialFraccion;
 				dinamica.saltosActivos = MathUtils.ceil(saltoMaximo*(1-avanceHastaUNOs));
-			} else { dinamica.saltosActivos = 1;			}
-		} else { dinamica.saltosActivos = 1; }
+			} else { 
+				if (avanceHastaUNOs<2) {
+					if (dinamica.descensosAcumulados>0) {
+						dinamica.saltosActivos = 2 * dinamica.descensosAcumulados;
+					} else {
+						dinamica.saltosActivos = 2;
+					}
+				} else {
+					if (dinamica.descensosAcumulados>0) {
+						dinamica.saltosActivos = 1 * dinamica.descensosAcumulados;
+					} else {
+						dinamica.saltosActivos = 1;
+					}
+				}
+			}
+		} else {
+			if (dinamica.descensosAcumulados>0) {
+				dinamica.saltosActivos = 1 * dinamica.descensosAcumulados;
+			} else {
+				dinamica.saltosActivos = 1;
+			}
+		}
 		
 		// Aqui ya se determino si hay que incrementar o dosminuir la dificultad y por lo tanto se aplica, cuidando que no exceda los limites
 		if (incrementarDificultad) {

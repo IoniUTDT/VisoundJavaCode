@@ -205,6 +205,7 @@ public class LevelController implements InputProcessor {
 				
 				if (elementoTocado) {
 					this.timeSelecion = this.timeInTrial;
+					/*  Esta parte la saco porque al final la idea no es medir confianza. Por ahora todo el sistema sigue activo, pero nunca se usa. Si en un tiempo es definitivo que no vale la pena medir confianza entonces habria que limpiar todo el codigo.
 					if (this.game.levelActivo.goConfiance()) {
 						this.estadoLoop = EstadoLoop.EsperandoConfianza;
 						this.confianza.SetPosition(this.boxTocada.posicionCenter.x, this.boxTocada.posicionCenter.y-0.8f);
@@ -212,6 +213,8 @@ public class LevelController implements InputProcessor {
 					} else {
 						this.estadoLoop = EstadoLoop.ListoParaProcesarBox;
 					}
+					*/
+					this.estadoLoop = EstadoLoop.ListoParaProcesarBox;
 				} else {
 					this.estadoLoop = EstadoLoop.EsperandoSeeleccionDeBox;
 				}
