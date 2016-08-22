@@ -273,7 +273,7 @@ public class LevelUmbral extends Level {
 					dinamica.secuenciasAcumuladas ++;
 				} else {
 					dinamica.secuenciasAcumuladas=1;
-					dinamica.ascendiendo = false;
+					dinamica.ascendiendo = true;
 				}
 				dinamica.erroresAcumulados = 0;
 				dinamica.aciertosAcumulados = 0;
@@ -299,7 +299,7 @@ public class LevelUmbral extends Level {
 			float fraccionAvanceSaltoGrueso = (float) dinamica.historial.size / saltosGruesos;
 			if (fraccionAvanceSaltoGrueso<1) {
 				int saltoMaximo = setupLevel.numeroDeEstimulosPorSerie/setupLevel.saltoInicialFraccion;
-				dinamica.saltosActivos = MathUtils.ceil(saltoMaximo*(1-fraccionAvanceSaltoGrueso)*Dinamica.saltoIntermedio);
+				dinamica.saltosActivos = MathUtils.ceil(saltoMaximo*(1-fraccionAvanceSaltoGrueso));
 			} else { 
 				float fraccionAvanceSaltoIntermedio = (float) (dinamica.historial.size - saltosGruesos) / (setupLevel.trialsPorNivel - saltosGruesos);
 				if (fraccionAvanceSaltoIntermedio<0.5) {

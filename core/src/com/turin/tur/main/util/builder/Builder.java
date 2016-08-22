@@ -7,6 +7,7 @@ import com.turin.tur.main.levelsDesign.Level.LISTAdeRECURSOS;
 import com.turin.tur.main.levelsDesign.Level.TIPOdeNivel;
 import com.turin.tur.main.levelsDesign.LevelEjemplos;
 import com.turin.tur.main.levelsDesign.LevelUmbralStatic;
+import com.turin.tur.main.util.Constants;
 
 public class Builder {
 
@@ -18,8 +19,8 @@ public class Builder {
 
 	static int contadorTrials = 0;
 
-	public static final int ResourceVersion = 40;
-	public static final int levelVersion = 40; 
+	public static final int ResourceVersion = Constants.CODEVERSION;
+	public static final int levelVersion = Constants.CODEVERSION; 
 	public static int levelVersionFinal = levelVersion; // Se modifica mas adelante si corresponde
 	
 	static final Boolean makeLevels = false; 

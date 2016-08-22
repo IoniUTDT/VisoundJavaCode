@@ -668,7 +668,7 @@ public class LevelUmbralStatic extends LevelUmbral {
 		setup.feedback = true;
 		setup.identificadorLevel = identificador;
 		setup.saltoGruesoFraccionNivel = 0.3f;
-		setup.saltoInicialFraccion = 2;
+		setup.saltoInicialFraccion = 4;
 		setup.signalProbability = 0.5f;
 		setup.testProbability = 0.2f;
 		setup.trialsPorNivel = 10;
@@ -697,19 +697,24 @@ public class LevelUmbralStatic extends LevelUmbral {
 
 	private static SetupResource makeSetupResources(LISTAdeRECURSOS identificador) {
 		SetupResource setup = new SetupResource();
+		Array<Double> neutros = new Array<Double> ();
+		neutros.addAll(0d, 1d, -1d, 2d, -2d, 3d, -3d, 4d, -4d, 5d, -5d, 6d, -6d, 7d, -7d, 8d, -8d, 9d, -9d, 10d, -10d);
+		Array<Float> fluctuaciones = new Array<Float> ();
+		fluctuaciones.addAll(0f,2.5f,-2.5f,5f,-5f);
+		
 		
 		if (identificador == LISTAdeRECURSOS.RecursosAngulosTutorial) {
 			setup.angulosReferencia.add(180d);
 			setup.fluctuacionesLocalesReferenciaSeries.add(0f);
-			setup.fluctuacionesLocalesReferenciaEstimuloCero.addAll(0d,2.5d,-2.5d,5d,-5d,7.5d,-7.5d,10d,-10d);
+			setup.fluctuacionesLocalesReferenciaEstimuloCero = neutros;
 			setup.numeroDeEstimulosPorSerie = 20;
 			setup.desvMax = 80;
 			setup.desvMin = 1;
 		}
 		if (identificador == LISTAdeRECURSOS.RecursosAngulosTransferencia) {
 			setup.angulosReferencia.addAll(30d,60d,120d,150d);
-			setup.fluctuacionesLocalesReferenciaSeries.addAll(0f,2.5f,-2.5f,5f,-5f);;
-			setup.fluctuacionesLocalesReferenciaEstimuloCero.addAll(0d,2.5d,-2.5d,5d,-5d,7.5d,-7.5d,10d,-10d);
+			setup.fluctuacionesLocalesReferenciaSeries = fluctuaciones;
+			setup.fluctuacionesLocalesReferenciaEstimuloCero = neutros;
 			setup.numeroDeEstimulosPorSerie = 200;
 			setup.desvMax = 80;
 			setup.desvMin = 1;
@@ -717,15 +722,15 @@ public class LevelUmbralStatic extends LevelUmbral {
 		if (identificador == LISTAdeRECURSOS.RecursosParalelismoTutorial) {
 			setup.angulosReferencia.addAll(0d);
 			setup.fluctuacionesLocalesReferenciaSeries.addAll(0f);
-			setup.fluctuacionesLocalesReferenciaEstimuloCero.addAll(0d,2.5d,-2.5d,5d,-5d,7.5d,-7.5d,10d,-10d);
+			setup.fluctuacionesLocalesReferenciaEstimuloCero = neutros;
 			setup.numeroDeEstimulosPorSerie = 20;
 			setup.desvMax = 50;
 			setup.desvMin = 0.1;
 		}
 		if (identificador == LISTAdeRECURSOS.RecursosParalelismoTransferencia) {
 			setup.angulosReferencia.addAll(30d,60d,120d,150d);
-			setup.fluctuacionesLocalesReferenciaSeries.addAll(0f,2.5f,-2.5f,5f,-5f);
-			setup.fluctuacionesLocalesReferenciaEstimuloCero.addAll(0d,2.5d,-2.5d,5d,-5d,7.5d,-7.5d,10d,-10d);
+			setup.fluctuacionesLocalesReferenciaSeries = fluctuaciones;
+			setup.fluctuacionesLocalesReferenciaEstimuloCero = neutros; 
 			setup.numeroDeEstimulosPorSerie = 200;
 			setup.desvMax = 50;
 			setup.desvMin = 0.1;
