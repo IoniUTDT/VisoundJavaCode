@@ -5,12 +5,15 @@ import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.levelsDesign.Level;
 import com.turin.tur.main.levelsDesign.Level.LISTAdeNIVELES;
 import com.turin.tur.main.levelsDesign.Level.LISTAdeRECURSOS;
 import com.turin.tur.main.screens.MenuScreen;
+import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.InternetNuevo;
 import com.turin.tur.main.util.builder.Builder;
 
@@ -31,9 +34,6 @@ public class Visound extends Game {
 	@Override
 	public void create () {
 
-		// Hacemos aca el chequeo porque sino se activan envios de internet y es un problema
-		// Internet.checkInternet();
-		
 		// Set Libgdx log level
 		if (mododesarrollo) {
 			Gdx.app.setLogLevel(Application.LOG_DEBUG);

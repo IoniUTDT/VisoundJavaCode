@@ -268,6 +268,7 @@ public class PCBuilder {
 				if (levelVersionReaded >= Builder.levelVersion) {
 					Builder.levelVersionFinal=levelVersionReaded+1;
 					Gdx.app.error(Builder.TAG, "OJO! Deberia actualizar la version del level. Se modificara sola al numero: " + Builder.levelVersionFinal);
+					System.exit(0);
 				}
 			} catch (NumberFormatException e) {
 				Gdx.app.error(Builder.TAG, "Error leyendo la version de los niveles preexistentes("+ e.getMessage() +"). Se llevara la version " + Builder.levelVersionFinal);

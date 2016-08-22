@@ -17,11 +17,11 @@ import com.turin.tur.Visound;
 public class InternetNuevo {
 
 	public static class Enviable {
+		public String origen;
 		ESTADOEnvio estadoEnvio;
+		long instance = TimeUtils.millis();
 		Object objeto;
 		TIPOdeENVIO tipo;
-		long instance = TimeUtils.millis();
-		public String origen;
 	}
 	
 	public class Envio {   
@@ -136,7 +136,6 @@ public class InternetNuevo {
         		if (servercontent.contains("\"on\"")) {
         			Gdx.app.debug(TAG, "Servidor Online");
         			InternetNuevo.afterEnvio();
-        			// estadoInternet = ESTADOInternet.ESPERANDO;
         		} else {
         			estadoInternet = ESTADOInternet.SINConexion;
         			Gdx.app.error(TAG, "El servidor esta marcado como apagado!");
@@ -155,59 +154,26 @@ public class InternetNuevo {
     }
 	
 	public enum TIPOdeENVIO {
-		SESION, INICIONIVEL, RESULTADOS
+		INICIONIVEL, RESULTADOS, SESION
 	}
 	
-	static long instance = TimeUtils.millis();
 	public static final String fileExt = ".data";
 	public static final String filename = "Internet";
 	public static final String path = Visound.pathLogs + "/" + filename + fileExt;
+	static long instance = TimeUtils.millis();
 	public static final String pathBackup = Visound.pathLogs + "/" + filename + instance + fileExt;
 	public static final String serverBackUP = "http://172.18.19.6:3000/";
 	public static final String serverMAIN = "http://turintur.dynu.com/";
-	private static final String TAG = InternetNuevo.class.getName();
 	private static Array<Enviable> CadenaEnvios = new Array<Enviable>();
 	private static ESTADOInternet estadoInternet = ESTADOInternet.ENVIOSPendientes;
-
-	protected static void afterEnvio() {
-		for (Enviable envio : CadenaEnvios) {
-			if (envio.estadoEnvio == ESTADOEnvio.ENVIANDO) {
-				return;
-			}
-		}
-		for (Enviable envio : CadenaEnvios) {
-			if (envio.estadoEnvio == ESTADOEnvio.ENVIAR) {
-				estadoInternet = ESTADOInternet.ENVIOSPendientes;
-				return;
-			}
-		}
-		InternetNuevo.savePendiente = true;
-		estadoInternet = ESTADOInternet.ESPERANDO;
-	}
-	
-	private static void saveDataToDisk() {
-		Json json = new Json();
-		json.setUsePrototypes(false);
-		FileHelper.writeLocalFile(path, json.toJson(CadenaEnvios));
-	}
-
-
-	private static String server=serverMAIN;
-	private static int serverStatus=0;
 	private static boolean savePendiente;
+	private static String server=serverMAIN;
 
-	public InternetNuevo() {
-	}
+	private static int serverStatus=0;
 	
-	public void update() {
-		if (estadoInternet == ESTADOInternet.ENVIOSPendientes){
-			makeEnvio();
-		}
-		if (savePendiente) {
-			saveDataToDisk();
-			savePendiente = false;
-		}
-	}
+	private static final String TAG = InternetNuevo.class.getName();
+
+
 	
 	public static void agregarEnvio(Object objeto, TIPOdeENVIO tipo, String origen) {
 		Enviable envio = new Enviable();
@@ -223,6 +189,31 @@ public class InternetNuevo {
 			saveDataToDisk();
 		}
 	}
+	private static void saveDataToDisk() {
+		Json json = new Json();
+		json.setUsePrototypes(false);
+		FileHelper.writeLocalFile(path, json.toJson(CadenaEnvios));
+	}
+
+	protected static void afterEnvio() {
+		for (Enviable envio : CadenaEnvios) {
+			if (envio.estadoEnvio == ESTADOEnvio.ENVIANDO) {
+				return;
+			}
+		}
+		for (Enviable envio : CadenaEnvios) {
+			if (envio.estadoEnvio == ESTADOEnvio.ENVIAR) {
+				estadoInternet = ESTADOInternet.ENVIOSPendientes;
+				return;
+			}
+		}
+		// Significa que no hay ni envio pendiente ni envio en proceso
+		InternetNuevo.savePendiente = true;
+		estadoInternet = ESTADOInternet.ESPERANDO;
+	}
+	
+	public InternetNuevo() {
+	}
 	
 	public void checkConectividad() {
 		estadoInternet = ESTADOInternet.PROCESANDOEnvios;
@@ -236,7 +227,6 @@ public class InternetNuevo {
 		}).start();
 		
 	}
-	
 	
 	public void loadSavedData() {
 		FileHandle dataFile = Gdx.files.external(path);
@@ -258,6 +248,25 @@ public class InternetNuevo {
 		}
 	}
 	
+	
+	public boolean offline() {
+		return (estadoInternet == ESTADOInternet.SINConexion);
+	}
+	
+	public boolean procesandoCosas() {
+		return (estadoInternet == ESTADOInternet.PROCESANDOEnvios);
+	}
+
+	public void update() {
+		if (estadoInternet == ESTADOInternet.ENVIOSPendientes){
+			makeEnvio();
+		}
+		if (savePendiente) {
+			saveDataToDisk();
+			savePendiente = false;
+		}
+	}
+
 	private void makeEnvio() {
 		if (Visound.modoDebug) {
 			return;
@@ -276,13 +285,5 @@ public class InternetNuevo {
 				}).start();
 			}
 		}
-	}
-
-	public boolean procesandoCosas() {
-		return (estadoInternet == ESTADOInternet.PROCESANDOEnvios);
-	}
-
-	public boolean offline() {
-		return (estadoInternet == ESTADOInternet.SINConexion);
 	}
 }
