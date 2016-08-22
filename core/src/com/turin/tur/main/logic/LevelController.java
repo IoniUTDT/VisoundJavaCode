@@ -86,10 +86,9 @@ public class LevelController implements InputProcessor {
 	}
 
 	public void update(float deltaTime) {
-		//Gdx.app.debug(TAG, estadoLoop.toString());
 		this.timeInTrial = this.timeInTrial + deltaTime;
 		
-		if (this.game.levelActivo.getrepeatnumber()<=this.runningSound.loopsCount) {
+		if ((this.game.levelActivo.getrepeatnumber()<=this.runningSound.loopsCount) && (this.runningSound.autoreproducir)){
 			this.runningSound.autoreproducir = false;
 		}
 		
@@ -118,8 +117,8 @@ public class LevelController implements InputProcessor {
 				this.goToResults();
 			} else {
 				this.trial = this.game.levelActivo.getNextTrial();
+				this.runningSound = new RunningSound(this.game.levelActivo.levelAssets);
 				this.confianzaReportada = -1;
-				//Gdx.app.debug(TAG, this.timeInTrial+"Tiempo a resetaer");
 				this.timeInTrial = 0;
 				this.timeConfiance = -2;
 				this.timeSelecion = -2;
@@ -165,9 +164,13 @@ public class LevelController implements InputProcessor {
 		runningSound.stop();
 		if (game.levelActivo.islevelCompleted()) {
 			game.session.user.levelFinished(game.levelActivo.identificador, game.levelActivo.getNivelSenalActual(), game.levelActivo.getDesviacionActual());
-		} else {
+		} 
+		/*
+		 else {
+		 
 			game.session.user.levelFinished(game.levelActivo.identificador, -1, -1);
 		}
+		*/
 		game.im.clear();
 		game.setScreen(new ResultsScreen(game));
 	}

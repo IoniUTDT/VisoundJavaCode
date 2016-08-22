@@ -18,7 +18,7 @@ public class RunningSound {
 	public long instance; // instancia que identifica cada reproduccion unequivocamente
 	private LevelAsset assets;
 	public long idSound;
-	public int loopsCount;
+	public int loopsCount = 0;
 	
 	// Info para el update
 	public NEXT action = NEXT.NADA;
