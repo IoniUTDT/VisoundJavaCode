@@ -125,7 +125,7 @@ public class LevelController implements InputProcessor {
 				this.estadoLoop = EstadoLoop.PantallaBlanca;
 			}
 		}
-		game.internetViejo.update();
+		//game.internetViejo.update();
 		game.internet.update();
 	}
 	
@@ -161,7 +161,7 @@ public class LevelController implements InputProcessor {
 
 	
 	private void goToResults() {
-		game.internetViejo.update();
+		//game.internetViejo.update();
 		game.internet.update();
 		runningSound.stop();
 		if (game.levelActivo.islevelCompleted()) {

@@ -9,8 +9,8 @@ import com.turin.tur.main.diseno.Session;
 import com.turin.tur.main.diseno.Trial;
 import com.turin.tur.main.diseno.Trial.JsonTrial;
 import com.turin.tur.main.util.FileHelper;
-import com.turin.tur.main.util.InternetNuevo.TIPOdeENVIO;
-import com.turin.tur.main.util.InternetNuevo;
+import com.turin.tur.main.util.Internet;
+import com.turin.tur.main.util.Internet.TIPOdeENVIO;
 
 
 public class LevelUmbral extends Level {
@@ -332,7 +332,7 @@ public class LevelUmbral extends Level {
 		log.dinamica.seriesEstimulos.clear();
 		log.dinamica.estimulosCeros.clear();
 		// Creamos el enviable
-		InternetNuevo.agregarEnvio(log, TIPOdeENVIO.RESULTADOS, identificador.toString());
+		Internet.crearEnvio(log, TIPOdeENVIO.RESULTADOS, identificador.toString());
 		//Internet.addDataToSend(log, TIPO_ENVIO.CONVERGENCIA, identificador.toString());
 	}
 

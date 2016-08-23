@@ -59,7 +59,7 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 	public boolean keyDown(int keycode) {
 		// exit app
 		if (keycode == Keys.ESCAPE || keycode == Keys.Q) {
-			if (!game.internetViejo.procesandoCosas()) {
+			if (!game.internet.treadActivo) {
 				Gdx.app.exit();
 			}
 		}
@@ -98,7 +98,7 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 		table.drawDebug(shapeRenderer); // This is optional, but enables debug
 										// lines for tables.
 		game.internet.update();
-		game.internetViejo.update();
+		// game.internetViejo.update();
 		guiRender();
 	}
 
@@ -186,7 +186,7 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 				public void clicked(InputEvent event, float x, float y) {
 					//game.session.user.pasarFase();
 					//game.setScreen(new MenuScreen(game));
-					if (!game.internetViejo.procesandoCosas()){
+					if (!game.internet.treadActivo){
 						Gdx.app.exit();
 					}
 				}
@@ -258,12 +258,12 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 	private void renderServerStatus() {
 		BitmapFont fpsFont = Assets.fonts.defaultFont;
 		fpsFont.getData().setScale(Constants.factorEscala());
-		if (game.internetViejo.offline()) {
+		if (!game.internet.internetDisponible) {
 			// show up in red
 			fpsFont.setColor(1, 0, 0, 1);
 			fpsFont.draw(batch, "Servidor offline", cameraGUI.viewportWidth*1/5, cameraGUI.viewportHeight - cameraGUI.viewportHeight*1/20);
 		}
-		if (game.internetViejo.procesandoCosas()) {
+		if (game.internet.treadActivo) {
 			fpsFont.draw(batch, "Enviando datos...", cameraGUI.viewportWidth - cameraGUI.viewportWidth*1/5, cameraGUI.viewportHeight - cameraGUI.viewportHeight*1/20);
 		}
 		fpsFont.setColor(1, 1, 1, 1); // white

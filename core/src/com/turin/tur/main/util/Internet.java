@@ -24,7 +24,7 @@ public class Internet {
 	private int serverStatus;
 	public boolean treadActivo = false;
 	public boolean internetDisponible = false; 
-	private Array<Enviable> bufferEnviables = new Array<Enviable>();
+	private static Array<Enviable> bufferEnviables = new Array<Enviable>();
 	
 	
 	public Internet() {
@@ -161,6 +161,7 @@ public class Internet {
 			        		String servercontent = httpResponse.getResultAsString();
 			        		if (servercontent.contains("\"on\"")) {
 			        			Gdx.app.debug(TAG, "Servidor Online");
+			        			internetDisponible = true;
 			        		} else {
 			        			internetDisponible = false;
 			        			Gdx.app.error(TAG, "El servidor esta marcado como apagado!");
@@ -216,7 +217,7 @@ public class Internet {
 		        
 	}
 	
-	public void crearEnvio(Object object, TIPOdeENVIO tipo, String origen) {
+	public static void crearEnvio(Object object, TIPOdeENVIO tipo, String origen) {
 		Enviable enviable = new Enviable();
 		enviable.instance = TimeUtils.millis();
 		enviable.objeto = object;

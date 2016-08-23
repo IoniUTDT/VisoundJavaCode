@@ -12,8 +12,8 @@ import com.turin.tur.main.levelsDesign.Level.ELECCION;
 import com.turin.tur.main.levelsDesign.Level.LISTAdeNIVELES;
 import com.turin.tur.main.util.Constants;
 import com.turin.tur.main.util.FileHelper;
-import com.turin.tur.main.util.InternetNuevo;
-import com.turin.tur.main.util.InternetNuevo.TIPOdeENVIO;
+import com.turin.tur.main.util.Internet;
+import com.turin.tur.main.util.Internet.TIPOdeENVIO;
 import com.turin.tur.main.util.builder.Builder;
 
 public class Session {
@@ -28,7 +28,7 @@ public class Session {
 	public static Session newSession() {
 		Session session = new Session();
 		session.user = User.loadUser(); 
-		InternetNuevo.agregarEnvio(session, TIPOdeENVIO.SESION, Long.toString(session.user.id));
+		Internet.crearEnvio(session, TIPOdeENVIO.SESION, Long.toString(session.user.id));
 		return session;
 	}
 	

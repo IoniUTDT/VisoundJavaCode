@@ -12,7 +12,6 @@ import com.turin.tur.main.levelsDesign.Level.LISTAdeNIVELES;
 import com.turin.tur.main.levelsDesign.Level.LISTAdeRECURSOS;
 import com.turin.tur.main.screens.MenuScreen;
 import com.turin.tur.main.util.Internet;
-import com.turin.tur.main.util.InternetNuevo;
 import com.turin.tur.main.util.builder.Builder;
 
 public class Visound extends Game {
@@ -26,7 +25,7 @@ public class Visound extends Game {
 	public static final boolean modoDebug = false;
 	public Session session;
 	public static float volumen = 0.5f;
-	public InternetNuevo internetViejo = new InternetNuevo();
+	// public InternetNuevo internetViejo = new InternetNuevo();
 	public Internet internet = new Internet();
 	public InputMultiplexer im = new InputMultiplexer();
 	
@@ -50,8 +49,8 @@ public class Visound extends Game {
 		}
 		 
 		internet.inicio();
-		internetViejo.checkConectividad();
-		internetViejo.loadSavedData();
+		//internetViejo.checkConectividad();
+		//internetViejo.loadSavedData();
 		this.session = Session.newSession();
 		setScreen(new MenuScreen(this));
 	}	
