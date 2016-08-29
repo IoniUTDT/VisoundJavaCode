@@ -28,7 +28,7 @@ public class LevelUmbral extends Level {
 		final int erroresUp = 1;
 		final int aciertosDown = 2; // Es la cantidad de aciertos que tiene que haber en el numero total de ultimas respuestas para que aumente la dificultad
 		final int rebotesActivarProporciones = 3; // Es la cantidad de rebotes que tiene que haber para que se active la proporcion de aciertos y errores, hasta este numero un acierto baja 
-		int rebotesAcumulados = 0; // Es la cantidad de rebotes acumulados
+		int erroresInicialesAcumulados = 0; // Es la cantidad de rebotes acumulados
 		double referencia;
 		int saltosActivos; // nivel del proximo salto (en numero de niveles de señal)
 		Array<SerieEstimulos> seriesEstimulos = new Array<SerieEstimulos>();
@@ -234,6 +234,7 @@ public class LevelUmbral extends Level {
 		// Almacenamos en el historial lo que paso
 		dinamica.historial.add(new Respuesta (dinamica.estimuloActivo, answerCorrect, confianzaReportada, dinamica.trialType, dinamica.nivelEstimulo, timeSelecion, timeConfiance, loopsCount));
 		
+		Gdx.app.debug(TAG, "Acerto: " + answerCorrect);
 		// Nos fijamos si ya se completo la dinamica o no. (antes de que salga si es un test trial)
 		if (this.trialsLeft() == 0) {
 			dinamica.levelFinalizadoCorrectamente=true;
@@ -254,7 +255,9 @@ public class LevelUmbral extends Level {
 			dinamica.erroresAcumulados++;
 		}
 		
-		if (dinamica.rebotesAcumulados>=dinamica.rebotesActivarProporciones) {
+		Gdx.app.debug(TAG, "Aciertos acumulados: " + dinamica.aciertosAcumulados + " Errores: " + dinamica.erroresAcumulados);
+		
+		if ((dinamica.erroresInicialesAcumulados>=dinamica.rebotesActivarProporciones) || (dinamica.historial.size > (setupLevel.trialsPorNivel  * setupLevel.saltoGruesoFraccionNivel)*3/4 )) {
 			if (dinamica.aciertosAcumulados == dinamica.aciertosDown) {
 				incrementarDificultad = true;
 				if (dinamica.ascendiendo) {
@@ -277,7 +280,7 @@ public class LevelUmbral extends Level {
 				}
 				dinamica.erroresAcumulados = 0;
 				dinamica.aciertosAcumulados = 0;
-				dinamica.rebotesAcumulados ++;
+				dinamica.erroresInicialesAcumulados ++;
 			}
 		} else {
 			if (dinamica.aciertosAcumulados == 1) {
@@ -289,7 +292,7 @@ public class LevelUmbral extends Level {
 				disminuirDificultad = true;
 				dinamica.erroresAcumulados = 0;
 				dinamica.aciertosAcumulados = 0;
-				dinamica.rebotesAcumulados ++;
+				dinamica.erroresInicialesAcumulados ++;
 			}
 		}
 

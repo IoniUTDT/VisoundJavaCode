@@ -12,7 +12,7 @@ public class Constants {
 	// al cambiar la version no se cargan los datos viejo ni las estructuras
 	// viejas
 	public static final float VERSION = 1.1f;
-	public static final int CODEVERSION = 41;
+	public static final int CODEVERSION = 42;
 
 	// Version of game for internal use
 	public static int version() {
@@ -21,7 +21,7 @@ public class Constants {
 		if (version_temp > Constants.VERSION) {
 			temp = -1;
 		} else {
-			temp = 0;
+			temp = 0; 
 		}
 		return version_temp + temp;
 	}

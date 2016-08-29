@@ -21,7 +21,7 @@ public class Visound extends Game {
 	
 	private static final String TAG = Visound.class.getName();
 	public static final String pathLogs = "logs";
-	public static final boolean mododesarrollo = true;
+	public static final boolean mododesarrollo = false;
 	public static final boolean modoDebug = false;
 	public Session session;
 	public static float volumen = 0.5f;
