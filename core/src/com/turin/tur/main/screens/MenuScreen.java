@@ -128,6 +128,7 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 		shapeRenderer = new ShapeRenderer();
 		skin = new Skin(Gdx.files.internal(Constants.SKIN_LIBGDX_UI));
 		
+		
 		if (this.game.session.user.faseDeExperimentoActiva == FASEdeEXPERIMENTO.Intro) {
 			// Creamos el boton de las instrucciones
 			TextButton instrucciones = new TextButton("Instrucciones", skin, "default");

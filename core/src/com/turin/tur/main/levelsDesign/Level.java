@@ -69,7 +69,7 @@ public abstract class Level {
 	}
 
 	public enum ELECCION {
-		TODAS, A30, A60, A120, A150, P30, P60, P120, P150
+		TODAS, A30, A60, A120, A150, P30, P60, P120, P150, CONTROL
 	}
 	
 	public enum LISTAdeRECURSOS {

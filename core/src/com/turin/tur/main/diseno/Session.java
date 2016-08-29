@@ -34,8 +34,7 @@ public class Session {
 	
 	public static class User {
 		public static final String USERFILE = Visound.pathLogs + "/user.txt";
-		public static final String eleccionFile = Visound.pathLogs + "/eleccion.txt";
-
+		public static final String eleccionFile = "/eleccion.txt";
 		public long id;
 		public FASEdeEXPERIMENTO faseDeExperimentoActiva;
 		private Array<LevelJugado> levelsJugados = new Array<LevelJugado>();
@@ -43,7 +42,7 @@ public class Session {
 		
 		User () {
 			this.id = TimeUtils.millis(); 
-			this.faseDeExperimentoActiva = FASEdeEXPERIMENTO.Intro;
+			this.faseDeExperimentoActiva = FASEdeEXPERIMENTO.Tutorial;
 			// Se fija si hay una eleccion guardada
 			FileHandle file = Gdx.files.local(User.eleccionFile);
 			if (file.exists()) {
@@ -66,7 +65,15 @@ public class Session {
 		}
 
 		public void pasarFase() {
-			this.faseDeExperimentoActiva = this.faseDeExperimentoActiva.etapaSiguiente;
+			if (this.eleccion != ELECCION.CONTROL) {
+				this.faseDeExperimentoActiva = this.faseDeExperimentoActiva.etapaSiguiente;
+			} else {
+				if (this.faseDeExperimentoActiva == FASEdeEXPERIMENTO.TestInicial) {
+					this.faseDeExperimentoActiva = FASEdeEXPERIMENTO.TestFinal;
+				} else {
+					this.faseDeExperimentoActiva = this.faseDeExperimentoActiva.etapaSiguiente;
+				}
+			}
 			this.saveUserInfo();
 		}
 		
