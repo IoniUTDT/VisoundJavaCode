@@ -257,7 +257,7 @@ public class LevelUmbral extends Level {
 		
 		Gdx.app.debug(TAG, "Aciertos acumulados: " + dinamica.aciertosAcumulados + " Errores: " + dinamica.erroresAcumulados);
 		
-		if ((dinamica.erroresInicialesAcumulados>=dinamica.rebotesActivarProporciones) || (dinamica.historial.size > (setupLevel.trialsPorNivel  * setupLevel.saltoGruesoFraccionNivel)*3/4 )) {
+		if (((dinamica.erroresInicialesAcumulados>=dinamica.rebotesActivarProporciones) || (dinamica.historial.size > (setupLevel.trialsPorNivel  * setupLevel.saltoGruesoFraccionNivel)*3/4 )) || (dinamica.herenciaRecibida)) {
 			if (dinamica.aciertosAcumulados == dinamica.aciertosDown) {
 				incrementarDificultad = true;
 				if (dinamica.ascendiendo) {
