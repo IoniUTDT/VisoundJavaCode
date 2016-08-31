@@ -19,52 +19,54 @@ import com.turin.tur.main.util.builder.Builder;
 public abstract class Level {
 
 	public enum LISTAdeNIVELES {
-		Ejemplos(LISTAdeRECURSOS.ImagenesEjemplos, TIPOdeNivel.Ejemplos, new ELECCION[] {ELECCION.TODAS}),
-		AngulosTutorial(LISTAdeRECURSOS.RecursosAngulosTutorial, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.TODAS}),
-		ParalelismoTutorial(LISTAdeRECURSOS.RecursosParalelismoTutorial, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.TODAS}), 
-		TESTP30(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.P30, ELECCION.TODAS}),
-		TESTP60(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.P60, ELECCION.TODAS}),
-		TESTP120(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.P120, ELECCION.TODAS}),
-		TESTP150(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.P150, ELECCION.TODAS}),
-		TESTA30(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.A30, ELECCION.TODAS}),
-		TESTA60(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.A60, ELECCION.TODAS}),
-		TESTA120(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.A120, ELECCION.TODAS}),
-		TESTA150(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.A150, ELECCION.TODAS}), 
-		ENTRENAMIENTOA30INICIAL(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.A30}),
-		ENTRENAMIENTOA30MEDIO(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.A30}),
-		ENTRENAMIENTOA30FINAL(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.A30}),
-		ENTRENAMIENTOP30INICIAL(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.P30}),
-		ENTRENAMIENTOP30MEDIO(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.P30}),
-		ENTRENAMIENTOP30FINAL(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.P30}),
-		ENTRENAMIENTOA60INICIAL(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.A60}),
-		ENTRENAMIENTOA60MEDIO(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.A60}),
-		ENTRENAMIENTOA60FINAL(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.A60}),
-		ENTRENAMIENTOP60INICIAL(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.P60}),
-		ENTRENAMIENTOP60MEDIO(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.P60}),
-		ENTRENAMIENTOP60FINAL(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.P60}),
-		ENTRENAMIENTOA120INICIAL(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.A120}),
-		ENTRENAMIENTOA120MEDIO(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.A120}),
-		ENTRENAMIENTOA120FINAL(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.A120}),
-		ENTRENAMIENTOP120INICIAL(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.P120}),
-		ENTRENAMIENTOP120MEDIO(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.P120}),
-		ENTRENAMIENTOP120FINAL(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.P120}),
-		ENTRENAMIENTOA150INICIAL(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.A150}),
-		ENTRENAMIENTOA150MEDIO(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.A150}),
-		ENTRENAMIENTOA150FINAL(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.A150}),
-		ENTRENAMIENTOP150INICIAL(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.P150}),
-		ENTRENAMIENTOP150MEDIO(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.P150}),
-		ENTRENAMIENTOP150FINAL(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.P150}),
+		Ejemplos(LISTAdeRECURSOS.ImagenesEjemplos, TIPOdeNivel.Ejemplos, new ELECCION[] {ELECCION.TODAS}, "Tutorial"),
+		AngulosTutorial(LISTAdeRECURSOS.RecursosAngulosTutorial, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.TODAS}, "Tutorial Angulos"),
+		ParalelismoTutorial(LISTAdeRECURSOS.RecursosParalelismoTutorial, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.TODAS}, "Tutorial Paralelas"), 
+		TESTP30(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.P30, ELECCION.TODAS}, "Nivel 1"),
+		TESTP60(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.P60, ELECCION.TODAS}, "Nivel 2"),
+		TESTP120(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.P120, ELECCION.TODAS}, "Nivel 3"),
+		TESTP150(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.P150, ELECCION.TODAS}, "Nivel 4"),
+		TESTA30(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.A30, ELECCION.TODAS}, "Nivel 5"),
+		TESTA60(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.A60, ELECCION.TODAS}, "Nivel 6"),
+		TESTA120(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.A120, ELECCION.TODAS}, "Nivel 7"),
+		TESTA150(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.A150, ELECCION.TODAS}, "Nivel 8"), 
+		ENTRENAMIENTOA30INICIAL(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.A30}, "Inicial"),
+		ENTRENAMIENTOA30MEDIO(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.A30}, "Intermedio"),
+		ENTRENAMIENTOA30FINAL(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.A30}, "Final"),
+		ENTRENAMIENTOP30INICIAL(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.P30}, "Inicial"),
+		ENTRENAMIENTOP30MEDIO(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.P30}, "Intermedio"),
+		ENTRENAMIENTOP30FINAL(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.P30}, "Final"),
+		ENTRENAMIENTOA60INICIAL(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.A60}, "Inicial"),
+		ENTRENAMIENTOA60MEDIO(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.A60}, "Intermedio"),
+		ENTRENAMIENTOA60FINAL(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.A60}, "Final"),
+		ENTRENAMIENTOP60INICIAL(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.P60}, "Inicial"),
+		ENTRENAMIENTOP60MEDIO(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.P60}, "Intermedio"),
+		ENTRENAMIENTOP60FINAL(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.P60}, "Final"),
+		ENTRENAMIENTOA120INICIAL(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.A120}, "Inicial"),
+		ENTRENAMIENTOA120MEDIO(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.A120}, "Intermedio"),
+		ENTRENAMIENTOA120FINAL(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.A120}, "Final"),
+		ENTRENAMIENTOP120INICIAL(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.P120}, "Inicial"),
+		ENTRENAMIENTOP120MEDIO(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.P120}, "Intermedio"),
+		ENTRENAMIENTOP120FINAL(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.P120}, "Final"),
+		ENTRENAMIENTOA150INICIAL(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.A150}, "Inicial"),
+		ENTRENAMIENTOA150MEDIO(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.A150}, "Intermedio"),
+		ENTRENAMIENTOA150FINAL(LISTAdeRECURSOS.RecursosAngulosTransferencia, TIPOdeNivel.Angulos, new ELECCION[] {ELECCION.A150}, "Final"),
+		ENTRENAMIENTOP150INICIAL(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.P150}, "Inicial"),
+		ENTRENAMIENTOP150MEDIO(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.P150}, "Intermedio"),
+		ENTRENAMIENTOP150FINAL(LISTAdeRECURSOS.RecursosParalelismoTransferencia, TIPOdeNivel.Paralelismo, new ELECCION[] {ELECCION.P150}, "Final"),
 		;
 		
 		public static final int levelVersion = Builder.levelVersionFinal;
 		public LISTAdeRECURSOS listaDeRecursos;
 		public TIPOdeNivel tipoDeNivel;
+		public String publicName;
 		public Array<ELECCION> eleccionesIncluidas = new Array<ELECCION>();
 
-		private LISTAdeNIVELES(LISTAdeRECURSOS listaDeRecursos, TIPOdeNivel tipoDeNivel, ELECCION[] elecciones) {
+		private LISTAdeNIVELES(LISTAdeRECURSOS listaDeRecursos, TIPOdeNivel tipoDeNivel, ELECCION[] elecciones, String publicName) {
 			this.listaDeRecursos = listaDeRecursos;
 			this.tipoDeNivel = tipoDeNivel;
 			this.eleccionesIncluidas.addAll(elecciones);
+			this.publicName = publicName;
 		}
 	}
 

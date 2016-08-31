@@ -234,7 +234,6 @@ public class LevelUmbral extends Level {
 		// Almacenamos en el historial lo que paso
 		dinamica.historial.add(new Respuesta (dinamica.estimuloActivo, answerCorrect, confianzaReportada, dinamica.trialType, dinamica.nivelEstimulo, timeSelecion, timeConfiance, loopsCount));
 		
-		Gdx.app.debug(TAG, "Acerto: " + answerCorrect);
 		// Nos fijamos si ya se completo la dinamica o no. (antes de que salga si es un test trial)
 		if (this.trialsLeft() == 0) {
 			dinamica.levelFinalizadoCorrectamente=true;
@@ -255,8 +254,8 @@ public class LevelUmbral extends Level {
 			dinamica.erroresAcumulados++;
 		}
 		
-		Gdx.app.debug(TAG, "Aciertos acumulados: " + dinamica.aciertosAcumulados + " Errores: " + dinamica.erroresAcumulados);
 		
+
 		if (((dinamica.erroresInicialesAcumulados>=dinamica.rebotesActivarProporciones) || (dinamica.historial.size > (setupLevel.trialsPorNivel  * setupLevel.saltoGruesoFraccionNivel)*3/4 )) || (dinamica.herenciaRecibida)) {
 			if (dinamica.aciertosAcumulados == dinamica.aciertosDown) {
 				incrementarDificultad = true;

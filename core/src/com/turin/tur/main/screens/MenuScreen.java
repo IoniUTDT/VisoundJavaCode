@@ -155,7 +155,7 @@ public class MenuScreen extends AbstractGameScreen implements InputProcessor{
 		
 		final LISTAdeNIVELES nextLevel = game.session.user.nextLevelToPlay();
 		for (final LISTAdeNIVELES nivel : game.session.user.faseDeExperimentoActiva.listaDeNivelesFiltrados(game.session.user.eleccion)) {
-			TextButton button = new TextButton(nivel.toString(), skin, "default");
+			TextButton button = new TextButton(nivel.publicName, skin, "default");
 			button.addListener(new ClickListener() {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
