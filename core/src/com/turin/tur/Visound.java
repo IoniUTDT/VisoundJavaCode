@@ -33,7 +33,7 @@ public class Visound extends Game {
 	public void create () {
 
 		// Set Libgdx log level
-		if (mododesarrollo) {
+		if (mododesarrollo) { 
 			Gdx.app.setLogLevel(Application.LOG_DEBUG);
 		}
 		

@@ -1,5 +1,6 @@
 package com.turin.tur.main.levelsDesign;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
@@ -14,11 +15,14 @@ import com.turin.tur.main.util.Constants.ResourcesCategorias;
 import com.turin.tur.main.util.Constants.ResourcesCategorias.CategoriasImagenes;
 import com.turin.tur.main.util.Constants.ResourcesCategorias.Paths;
 import com.turin.tur.main.util.FileHelper;
+import com.turin.tur.main.util.builder.Builder;
 import com.turin.tur.main.util.builder.Imagenes;
 import com.turin.tur.main.util.builder.Imagenes.Linea;
 import com.turin.tur.main.util.builder.PCBuilder;
 
 public class LevelEjemplos extends Level{
+	
+	final static String TAG = LevelEjemplos.class.getName();
 	
 	private static class Dibujo {
 		Array<Linea> lineas = new Array<Linea>();
@@ -594,7 +598,7 @@ public class LevelEjemplos extends Level{
 
 	@Override
 	void sendDataLevel() {
-		// En el caso del tutorial no enviamos datos del nivel cuando finaliza
+		Gdx.app.debug(TAG, "Llegue al sendDataLevel, aunque no haya que hacer nada");
 	}
 
 	@Override

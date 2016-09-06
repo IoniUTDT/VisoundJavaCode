@@ -110,7 +110,7 @@ public class Session {
 		}
 		
 		public LISTAdeNIVELES nextLevelToPlay () {
-			for (LISTAdeNIVELES identificador : faseDeExperimentoActiva.niveles) {
+			for (LISTAdeNIVELES identificador : faseDeExperimentoActiva.listaDeNivelesFiltrados(eleccion)) {
 				if (alreadyPlayed(identificador)) {
 				} else {
 					return identificador;
